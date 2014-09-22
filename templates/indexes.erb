@@ -1,0 +1,16 @@
+
+# Puppet Name: <%= title %>
+#
+[<%= title -%>]
+<%
+if title == 'main'
+    dbName = 'defaultdb'
+else
+    dbName = title
+end
+-%>
+homePath = volume:splunk_warm/<%= dbName -%>/db
+coldPath = volume:splunk_cold/<%= dbName -%>/colddb
+thawedPath = $SPLUNK_DB/<%= dbName -%>/thaweddb
+frozenTimePeriodInSecs = <%= frozenTime -%>
+

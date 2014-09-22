@@ -1,0 +1,13 @@
+
+# Puppet Name: <%= title %>
+#
+[<%= inputtype -%>://<%= target %>]
+disabled = <%= disabled %>
+<% if cache && inputtype != "monitor" -%>
+persistentQueueSize = <%= size -%>G
+<% end -%>
+index = <%= index %>
+<% if sourcetype != "auto" then %>sourcetype = <%= sourcetype %><% end %>
+<% options.each do |op| -%>
+<%= op %>
+<% end -%>

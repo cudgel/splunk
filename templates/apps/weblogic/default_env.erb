@@ -1,0 +1,14 @@
+##Set your WebLogic home path here
+export BEA_HOME=<%= wl_app -%>
+
+##Set your Splunk home path here
+export SPLUNK_HOME=<%= splunkhome -%>
+
+##Set your total number of domains here
+export DOMAIN_COUNT=<%= domain_count -%>
+
+export JMX_LOGFILE_MAX_SIZE=100000
+export PATH=<%= javahome -%>/bin:$PATH
+
+## For each domain on this server, add the domain path, adminServerName and admin port
+## Please make sure that the entries are in the respective order

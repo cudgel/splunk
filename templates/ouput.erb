@@ -1,0 +1,13 @@
+# Puppet Name: <%= title %>
+#
+[tcpout]
+indexAndForward=false
+defaultGroup=allIndexers
+
+[tcpout:allIndexers]
+disabled = false
+compressed = true
+autoLB = true
+autoLBFrequency = 30
+forceTimebasedAutoLB = true
+server = <%= splunk_indexers -%>
