@@ -1,15 +1,15 @@
 class splunk::params
 {
-    $install_path   = '/opt'
-    $splunkhome     = "${install_path}/splunk"
-    $splunklocal    = "${splunkhome}/etc/system/local"
-    $splunk_user    = 'splunk',
-    $splunk_group   = 'splunk',
-    $old_version    = '6.0.1'
-    $old_release    = '189883'
-    $version        = '6.0.3'
-    $release        = '204106'
-    $splunkdb       = "${splunkhome}/var/lib/splunk"
+    $splunk::params::install_path   = '/opt'
+    $splunk::params::splunkhome     = "${install_path}/splunk"
+    $splunk::params::splunklocal    = "${splunkhome}/etc/system/local"
+    $splunk::params::splunk_user    = 'splunk',
+    $splunk::params::splunk_group   = 'splunk',
+    $splunk::params::old_version    = '6.0.1'
+    $splunk::params::old_release    = '189883'
+    $splunk::params::version        = '6.0.3'
+    $splunk::params::release        = '204106'
+    $splunk::params::splunkdb       = "${splunkhome}/var/lib/splunk"
 
     if $osfamily    == "Solaris" {
         $splunkos   = 'SunOS'
