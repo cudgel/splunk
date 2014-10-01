@@ -36,13 +36,13 @@
 # Copyright 2014 Your name here, unless otherwise noted.
 #
 class splunk (
-  $splunkhome   = $splunk::params::splunkhome,
-  $splunklocal  = $splunk::params::splunklocal,
-  $version      = $splunk::params::version,
-  $release      = $splunk::params::release,
-  $splunk_user  = $splunk::params::splunk_user,
-  $splunk_group = $splunk::params::splunk_group
-) inherits splunk::params {
+  $splunkhome   = $::splunk::params::splunkhome,
+  $splunklocal  = $::splunk::params::splunklocal,
+  $version      = $::splunk::params::version,
+  $release      = $::splunk::params::release,
+  $splunk_user  = $::splunk::params::splunk_user,
+  $splunk_group = $::splunk::params::splunk_group
+) inherits ::splunk::params {
 
   exec { 'update-inputs':
     command     => "/bin/cat ${splunklocal}/inputs.d/* > ${splunklocal}/inputs.conf; \

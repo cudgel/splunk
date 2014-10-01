@@ -9,8 +9,8 @@ define index(
   )
 {
   file { "${splunklocal}/indexes.d/${title}":
-    owner   => ${splunk::params::splunk_user},
-    group   => ${splunk::params::splunk_group},
+    owner   => ${::splunk::splunk_user},
+    group   => ${::splunk::splunk_group},
     mode    => '0440',
     content => template('splunk/index.erb'),
     require => File["${splunklocal}/indexes.d"],
