@@ -41,14 +41,11 @@ class splunk (
   $version      = $::splunk::params::version,
   $release      = $::splunk::params::release,
   $splunk_user  = $::splunk::params::splunk_user,
-  $splunk_group = $::splunk::params::splunk_group
+  $splunk_group = $::splunk::params::splunk_group,
+  $install_path = $::splunk::params::install_path,
+  $old_version  = $::splunk::params::old_version,
+  $old_release  = $::splunk::params::old_release
 ) inherits ::splunk::params {
 
-  exec { 'update-inputs':
-    command     => "/bin/cat ${splunklocal}/inputs.d/* > ${splunklocal}/inputs.conf; \
-chown ${splunk_user}:${splunk_group} ${splunklocal}/inputs.conf",
-    refreshonly => true,
-    subscribe   => File["${splunklocal}/inputs.d/000_default"],
-    notify      => Service[splunk],
-  }
+
 }

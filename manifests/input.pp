@@ -16,8 +16,8 @@ define input(
 {
 
   file { "${splunklocal}/inputs.d/${title}":
-    owner   => ${::splunk::splunk_user},
-    group   => ${::splunk::splunk_group},
+    owner   => ${splunk_user},
+    group   => ${splunk_group},
     mode    => '0440',
     content => template('splunk/input.erb'),
     require => File["${splunklocal}/inputs.d"],
@@ -26,7 +26,15 @@ define input(
 
   if $inputtype == 'monitor' {
     fooacl::conf { "${target}":
-      permissions     => "group:${splunk::splunk_group}:r-X"
+      permissions     => "group:${splunk_group}:r-X"
     }
+  }
+
+  exec { 'update-inputs':
+    command     => "/bin/cat ${splunklocal}/inputs.d/* > ${splunklocal}/inputs.conf; \
+chown ${splunk_user}:${splunk_group} ${splunklocal}/inputs.conf",
+    refreshonly => true,
+    subscribe   => File["${splunklocal}/inputs.d/000_default"],
+    notify      => Service[splunk],
   }
 }
