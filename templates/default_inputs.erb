@@ -1,15 +1,15 @@
 [default]
-host = <%= host %>
+host = <%= ::fqdn %>
 
-[monitor:/<%= splunkhome %>/var/log/splunk]
+[monitor:/<%= ::splunk::splunkhome %>/var/log/splunk]
 index = _internal
 _TCP_ROUTING = *
 _whitelist = /(audit|license_audit|metrics|splunkd|splunkd_stderr|splunkd_stdout|splunklogger)\.log$
 
 [filter:blacklist:splunkvar]
-regex1 = ^<%= splunkhome %>/var
+regex1 = ^<%= ::splunk::splunkhome %>/var
 
-[fschange:<%= splunkhome %>]
+[fschange:<%= ::splunk::splunkhome %>]
 index = _audit
 disabled = false
 pollPeriod = 60

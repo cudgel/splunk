@@ -36,15 +36,18 @@
 # Copyright 2014 Your name here, unless otherwise noted.
 #
 class splunk (
-  $splunkhome   = $::splunk::params::splunkhome,
-  $splunklocal  = $::splunk::params::splunklocal,
-  $version      = $::splunk::params::version,
-  $release      = $::splunk::params::release,
-  $splunk_user  = $::splunk::params::splunk_user,
-  $splunk_group = $::splunk::params::splunk_group,
-  $install_path = $::splunk::params::install_path,
-  $old_version  = $::splunk::params::old_version,
-  $old_release  = $::splunk::params::old_release
+  $type              = $::splunk::params::type,
+  $splunkhome        = $::splunk::params::splunkhome,
+  $splunklocal       = $::splunk::params::splunklocal,
+  $version           = $::splunk::params::version,
+  $release           = $::splunk::params::release,
+  $splunk_user       = $::splunk::params::splunk_user,
+  $splunk_group      = $::splunk::params::splunk_group,
+  $install_path      = $::splunk::params::install_path,
+  $old_version       = $::splunk::params::old_version,
+  $old_release       = $::splunk::params::old_release,
+  $service_url       = $::splunk::params::service_url
+  $deployment_server = $::splunk::params::deployment_server
 ) inherits ::splunk::params {
 
 

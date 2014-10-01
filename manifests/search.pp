@@ -4,39 +4,27 @@
 #    search head -> indexer 8089/TCP 9997/TCP
 #    indexer -> search head 8089/TCP
 #    end user -> search head 8000/TCP
-class splunk::search($allow, $service_url)
+class splunk::search inherits
 {
-    $splunkhome = '/opt/splunk'
-    $splunklocal = "${splunkhome}/etc/system/local"
-
-    $splunksource = "splunk-${splunkver}-${splunkrel}-${splunkos}-${splunkarch}.${splunkext}"
-
+    class { 'splunk': type => 'search' }
     class { 'splunk::install': }
-    class { 'splunk': splunkhome => "${splunkhome}" }
-    class { 'splunk::search::nagios': }
+    class { 'splunk::service': }
 
-    firewall::rule { 'splunk-web':
-        port => '8000',
-        from => [ $allow ],
+    firewall { '020 splunk-web':
+      chain  => 'INPUT' ,
+      proto  => 'tcp',
+      dport  => '8000',
+      action => 'accept'
     }
 
-    class { 'firewall::lb':
-        port => ['8000', '8089']
+    firewall { '030 splunkd':
+      chain  => 'INPUT' ,
+      proto  => 'tcp',
+      dport  => '8089',
+      action => 'accept'
     }
 
-    # Allow all search heads to talk to each other for distributed search, license pool
-    firewall::rule { 'distSearch':
-        port => '8089',
-        from => $splunk_searchers
-    }
-
-    # Allow indexers to connect for distributed license pool
-    firewall::rule { 'splunkd':
-        port => '8089',
-        from => $splunk_indexers
-    }
-
-    if $osfamily == 'RedHat' {
+    if $::osfamily == 'RedHat' {
 #       support PDF Report Server
         package { [
             'xorg-x11-server-Xvfb',
@@ -47,9 +35,9 @@ class splunk::search($allow, $service_url)
         }
     }
 
-    file { "${splunklocal}/outputs.conf":
-        owner   => 'splunk',
-        group   => 'splunk',
+    file { "${::splunk::splunklocal}/outputs.conf":
+        owner   => $::splunk::splunk_user,
+        group   => $::splunk::splunk_user,
         content => template('splunk/outputs.erb'),
         mode    => '0644',
         require => File['splunk-home'],
@@ -57,9 +45,9 @@ class splunk::search($allow, $service_url)
         alias   => 'splunk-outputs'
     }
 
-    file { "${splunklocal}/alert_actions.conf":
-        owner   => 'splunk',
-        group   => 'splunk',
+    file { "${::splunk::splunklocal}/alert_actions.conf":
+        owner   => $::splunk::splunk_user,
+        group   => $::splunk::splunk_user,
         content => template('splunk/alert_actions.erb'),
         mode    => '0644',
         require => File['splunk-home'],
@@ -67,9 +55,9 @@ class splunk::search($allow, $service_url)
         alias   => 'alert-actions'
     }
 
-    file { "${splunklocal}/web.conf":
-        owner   => 'splunk',
-        group   => 'splunk',
+    file { "${::splunk::splunklocal}/web.conf":
+        owner   => $::splunk::splunk_user,
+        group   => $::splunk::splunk_user,
         source  => 'puppet:///modules/splunk/web.conf',
         mode    => '0644',
         require => File['splunk-home'],
@@ -77,9 +65,9 @@ class splunk::search($allow, $service_url)
         alias   => 'splunk-web',
     }
 
-  file { "${splunklocal}/ui-prefs.conf":
-        owner   => 'splunk',
-        group   => 'splunk',
+  file { "${::splunk::splunklocal}/ui-prefs.conf":
+        owner   => $::splunk::splunk_user,
+        group   => $::splunk::splunk_user,
         mode    => '0644',
         content => "# DO NOT EDIT -- managed by Puppet
 [default]
@@ -89,9 +77,9 @@ dispatch.latest_time = now
         notify  => Service['splunk']
     }
 
-    file { "${splunklocal}/limits.conf":
-        owner   => 'splunk',
-        group   => 'splunk',
+    file { "${::splunk::splunklocal}/limits.conf":
+        owner   => $::splunk::splunk_user,
+        group   => $::splunk::splunk_user,
         mode    => '0644',
         content => "# DO NOT EDIT -- managed by Puppet
 [subsearch]
@@ -102,7 +90,7 @@ ttl = 1200
 [search]
 dispatch_dir_warning_size = 3000
 ",
-        notify => Service[splunk]
+        notify  => Service[splunk]
     }
 
 }

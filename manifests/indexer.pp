@@ -1,77 +1,74 @@
 class splunk::indexer (
-    $warmpath,
-    $coldpath,
-    $maxwarm,
-    $maxcold
-) inherits splunk
+  $warmpath=$::splunk::params::splunkdb,
+  $coldpath=$::splunk::params::splunkdb,
+  $maxwarm=$::splunk::params::maxwarm,
+  $maxcold=$::splunk::params::maxcold
+)
 {
 
-    class { 'splunk::install': }
-    class { 'splunk': splunkhome => "${splunkhome}" }
-    class { 'splunk::apps::deploy': }
-    class { 'splunk::apps::unix': tier => 'indexer' }
-    class { 'splunk::apps::sos': tier => 'indexer' }
-    class { 'splunk::indexer::nagios': }
+  class { 'splunk': type => 'indexer' }
+  class { 'splunk::install': }
+  class { 'splunk::service': }
+  class { 'splunk::deploy': }
 
-    firewall::rule { 'distSearch':
-        port => '8089',
-        from => $splunk_searchers
-    }
 
-    firewall::rule { 'forwarders':
-        port => '9997'
-    }
+  firewall { '020 splunkd':
+    chain  => 'INPUT' ,
+    proto  => 'tcp',
+    dport  => '8089',
+    action => 'accept'
+  }
 
-    file { "${splunklocal}/outputs.conf":
-        ensure  => absent,
-        notify  => Service[splunk]
-    }
+  firewall { '025 Splunk forwarders':
+    chain  => 'INPUT' ,
+    proto  => 'tcp',
+    dport  => '9997',
+    action => 'accept'
+  }
 
-    file { "${splunklocal}/web.conf":
-        owner   => 'splunk',
-        group   => 'splunk',
-        source  => 'puppet:///modules/splunk/web.conf',
-        mode    => '0644',
-        require => File['splunk-home'],
-        notify  => Service[splunk],
-        alias   => 'splunk-web'
-    }
+  file { "${::splunk::splunklocal}/outputs.conf":
+    ensure  => absent,
+    notify  => Service[splunk]
+  }
 
-    file { "${splunklocal}/inputs.d/999_splunktcp":
-        owner   => 'splunk',
-        group   => 'splunk',
-        mode    => '0440',
-        content => template('splunk/splunktcp.erb'),
-        notify  => Exec['update-inputs']
-    }
+  file { "${::splunk::splunklocal}/web.conf":
+    owner   => 'splunk',
+    group   => 'splunk',
+    source  => 'puppet:///modules/splunk/web.conf',
+    mode    => '0644',
+    require => File['splunk-home'],
+    notify  => Service[splunk],
+    alias   => 'splunk-web'
+  }
 
-    file { "${splunklocal}/indexes.d":
-        ensure  => 'directory',
-        owner   => 'splunk',
-        group   => 'splunk',
-        mode    => '0555',
-        require => File['splunk-home']
-    }
+  file { "${::splunk::splunklocal}/inputs.d/999_splunktcp":
+    owner   => 'splunk',
+    group   => 'splunk',
+    mode    => '0440',
+    content => template('splunk/splunktcp.erb'),
+    notify  => Exec['update-inputs']
+  }
 
-    file { "${splunklocal}/indexes.d/000_default":
-        owner   => 'splunk',
-        group   => 'splunk',
-        mode    => '0440',
-        content => template('splunk/volumes.erb')
-    }
+  file { "${::splunk::splunklocal}/indexes.d":
+    ensure  => 'directory',
+    owner   => 'splunk',
+    group   => 'splunk',
+    mode    => '0555',
+    require => File['splunk-home']
+  }
 
-    exec { 'update-indexes':
-        command     => "/bin/cat ${splunklocal}/indexes.d/* > ${splunklocal}/indexes.conf; \
-chown splunk:splunk ${splunklocal}/indexes.conf",
-        refreshonly => true,
-        subscribe   => File["${splunklocal}/indexes.d/000_default"],
-        notify      => Service[splunk],
-    }
+  file { "${::splunk::splunklocal}/indexes.d/000_default":
+    owner   => 'splunk',
+    group   => 'splunk',
+    mode    => '0440',
+    content => template('splunk/volumes.erb')
+  }
 
-    file { "${splunklocal}/props.conf":
-        owner   => 'splunk',
-        group   => 'splunk',
-        mode    => '644',
-        source  => "puppet:///modules/splunk/indexer/props.conf"
-    }
+  exec { 'update-indexes':
+    command     => "/bin/cat ${::splunk::splunklocal}/indexes.d/* > ${::splunk::splunklocal}/indexes.conf; \
+chown splunk:splunk ${::splunk::splunklocal}/indexes.conf",
+    refreshonly => true,
+    subscribe   => File["${::splunk::splunklocal}/indexes.d/000_default"],
+    notify      => Service[splunk],
+  }
 }

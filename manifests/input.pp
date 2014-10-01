@@ -1,23 +1,25 @@
 # splunk::input()
 #
 define input(
-  $disabled = 'false',
+  $splunkhome = $::splunk::splunkhome,
+  $splunklocal = $::splunk::splunklocal,
+  $splunk_user = $::splunk::splunk_user,
+  $splunk_group = $::splunk::splunk_group,
+  $disabled = false,
   $target = '',
   $inputtype = 'monitor',
   $sourcetype = 'auto',
   $index = '',
-  $cache = 'true',
+  $cache = true,
   $size = '1',
-  $splunkhome,
-  $splunklocal,
   $options = '',
-  $recurse = 'false'
+  $recurse = false
   )
 {
 
   file { "${splunklocal}/inputs.d/${title}":
-    owner   => ${splunk_user},
-    group   => ${splunk_group},
+    owner   => $splunk_user,
+    group   => $splunk_group,
     mode    => '0440',
     content => template('splunk/input.erb'),
     require => File["${splunklocal}/inputs.d"],
@@ -25,7 +27,7 @@ define input(
   }
 
   if $inputtype == 'monitor' {
-    fooacl::conf { "${target}":
+    fooacl::conf { $target:
       permissions     => "group:${splunk_group}:r-X"
     }
   }
