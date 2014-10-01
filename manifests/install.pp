@@ -50,18 +50,18 @@ splunk --accept-license --answer-yes --no-prompt start",
     notify  => Service[splunk],
   }
 
-  file { "${local_conf}/inputs.d":
+  file { "${splunklocal}/inputs.d":
     ensure  => 'directory',
     owner   => ${splunk_user},
     group   => ${splunk_group},
     mode    => '0555',
   }
 
-  file { "${local_conf}/inputs.d/000_default":
+  file { "${splunklocal}/inputs.d/000_default":
     owner   => ${splunk_user},
     group   => ${splunk_group},
     mode    => '0440',
-    require => File["${local_conf}/inputs.d"],
+    require => File["${splunklocal}/inputs.d"],
     content => template('splunk/default_inputs.erb')
   }
 }

@@ -9,24 +9,24 @@ define input(
   $cache = 'true',
   $size = '1',
   $splunkhome,
-  $local_conf,
+  $splunklocal,
   $options = '',
   $recurse = 'false'
   )
 {
 
-  file { "${local_conf}/inputs.d/${title}":
-    owner   => ${splunk::params::user},
-    group   => ${splunk::params::group},
+  file { "${splunklocal}/inputs.d/${title}":
+    owner   => ${splunk::params::splunk_user},
+    group   => ${splunk::params::splunk_group},
     mode    => '0440',
     content => template('splunk/input.erb'),
-    require => File["${local_conf}/inputs.d"],
+    require => File["${splunklocal}/inputs.d"],
     notify  => Exec['update-inputs'],
   }
 
   if $inputtype == 'monitor' {
     fooacl::conf { "${target}":
-      permissions     => "group:${splunk::params::group}:r-X"
+      permissions     => "group:${splunk::params::splunk_group}:r-X"
     }
   }
 }

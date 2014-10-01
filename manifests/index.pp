@@ -5,15 +5,15 @@ define index(
   $archive = 'false',
   $frozenTime,
   $splunkhome,
-  $local_conf
+  $splunklocal
   )
 {
-  file { "${local_conf}/indexes.d/${title}":
-    owner   => ${splunk_user},
-    group   => ${splunk_group},
+  file { "${splunklocal}/indexes.d/${title}":
+    owner   => ${splunk::params::splunk_user},
+    group   => ${splunk::params::splunk_group},
     mode    => '0440',
     content => template('splunk/index.erb'),
-    require => File["${local_conf}/indexes.d"],
+    require => File["${splunklocal}/indexes.d"],
     notify  => Exec['update-indexes'],
   }
 }
