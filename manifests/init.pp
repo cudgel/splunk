@@ -46,7 +46,7 @@ class splunk (
   $install_path      = $::splunk::params::install_path,
   $old_version       = $::splunk::params::old_version,
   $old_release       = $::splunk::params::old_release,
-  $service_url       = $::splunk::params::service_url
+  $service_url       = $::splunk::params::service_url,
   $deployment_server = $::splunk::params::deployment_server
 ) inherits ::splunk::params {
 
