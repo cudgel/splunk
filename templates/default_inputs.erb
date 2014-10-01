@@ -1,15 +1,15 @@
 [default]
-host = <%= ::fqdn %>
+host = <%= scope.lookupvar('::fqdn') %>
 
-[monitor:/<%= ::splunk::splunkhome %>/var/log/splunk]
+[monitor:/<%= scope.lookupvar('::splunk::splunkhome') %>/var/log/splunk]
 index = _internal
 _TCP_ROUTING = *
 _whitelist = /(audit|license_audit|metrics|splunkd|splunkd_stderr|splunkd_stdout|splunklogger)\.log$
 
 [filter:blacklist:splunkvar]
-regex1 = ^<%= ::splunk::splunkhome %>/var
+regex1 = ^<%= scope.lookupvar('::splunk::splunkhome') %>/var
 
-[fschange:<%= ::splunk::splunkhome %>]
+[fschange:<%= scope.lookupvar('::splunk::splunkhome') %>]
 index = _audit
 disabled = false
 pollPeriod = 60

@@ -3,14 +3,14 @@
 # If unset, Splunk will use the parent of the directory this configuration
 # file was found in
 #
-SPLUNK_HOME=<%= ::splunk::splunkhome %>
+SPLUNK_HOME=<%= scope.lookupvar('::splunk::splunkhome') %>
 
 #
 # By default, Splunk stores its indexes under SPLUNK_HOME in the
 # var/lib/splunk subdirectory.  This can be overridden
 # here:
 #
-SPLUNK_DB=<%= ::splunk::splunkdb %>
+SPLUNK_DB=<%= scope.lookupvar('::splunk::splunkdb') %>
 <% if selinux == "true" %>
 SPLUNK_IGNORE_SELINUX = 1
 <% end %>
