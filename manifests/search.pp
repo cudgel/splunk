@@ -4,8 +4,8 @@
 #    search head -> indexer 8089/TCP 9997/TCP
 #    indexer -> search head 8089/TCP
 #    end user -> search head 8000/TCP
-class splunk::search inherits
-{
+class splunk::search {
+
     class { 'splunk': type => 'search' }
     class { 'splunk::install': }
     class { 'splunk::service': }
