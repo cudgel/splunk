@@ -12,7 +12,7 @@ define splunk::input(
   $index = '',
   $cache = true,
   $size = '1',
-  $options = '',
+  $options = [],
   $recurse = false
   )
 {
