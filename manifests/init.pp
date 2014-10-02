@@ -39,8 +39,8 @@ class splunk(
   $type              = 'forwarder',
   $version           = hiera('splunk::version', undef),
   $release           = hiera('splunk::release', undef),
-  $splunk_user       = 'splunk',
-  $splunk_group      = 'splunk',
+  $splunk_user       = hiera('splunk::splunk_user', 'splunk'),
+  $splunk_group      = hiera('splunk::splunk_group', 'splunk'),
   $install_path      = '/opt',
   $old_version       = hiera('splunk::old_version', undef),
   $old_release       = hiera('splunk::old_release', undef),
@@ -61,6 +61,16 @@ class splunk(
   $oldsource      = "${sourcepart}-${old_version}-${old_release}-${splunkos}-${splunkarch}.${splunkext}"
   $splunksource   = "${apppart}.${splunkext}"
   $manifest       = "${apppart}-manifest"
+
+
+  user { $splunk_user:
+    ensure     => present,
+    gid        => $splunk_group,
+    home       => $splunkhome,
+    managehome => false,
+    shell      => '/bin/bash',
+    password   => '!!'
+  }
 
   class { 'splunk::install': type => $type }
   class { 'splunk::service': }
