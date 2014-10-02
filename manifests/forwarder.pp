@@ -3,7 +3,6 @@ class splunk::forwarder($syslog=false)
   class { 'splunk': type => 'forwarder' }
   class { 'splunk::install': }
   class { 'splunk::service': }
-
   class { 'splunk::deploy': }
 
   include "splunk::forwarder::${::osfamily}"

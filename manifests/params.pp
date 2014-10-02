@@ -11,10 +11,6 @@ class splunk::params
   $splunklocal       = "${splunkhome}/etc/system/local"
   $splunk_user       = 'splunk'
   $splunk_group      = 'splunk'
-  $old_version       = '6.0.1'
-  $old_release       = '189883'
-  $version           = '6.0.3'
-  $release           = '204106'
   $splunkdb          = "${splunkhome}/var/lib/splunk"
   $serviceurl        = "http://${::fqdn}"
   $deployment_server = undef

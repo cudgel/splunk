@@ -36,7 +36,7 @@
 # Copyright 2014 Your name here, unless otherwise noted.
 #
 class splunk (
-  $type              = undef,
+  $type              = 'forwarder',
   $splunkhome        = $::splunk::params::splunkhome,
   $splunklocal       = $::splunk::params::splunklocal,
   $version           = $::splunk::params::version,
@@ -46,7 +46,7 @@ class splunk (
   $install_path      = $::splunk::params::install_path,
   $old_version       = $::splunk::params::old_version,
   $old_release       = $::splunk::params::old_release,
-  $service_url       = $::splunk::params::service_url,
+  $service_url       = "http://${::fqdn}",
   $deployment_server = $::splunk::params::deployment_server
 ) inherits ::splunk::params {
 
