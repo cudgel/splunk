@@ -1,4 +1,5 @@
-class splunk::install inherits ::splunk {
+class splunk::install
+{
 
   file { "${::splunk::install_path}/${::splunk::params::oldsource}":
     ensure => absent
