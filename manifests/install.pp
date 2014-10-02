@@ -69,6 +69,14 @@ splunk --accept-license --answer-yes --no-prompt start",
 
   if $type == 'forwarder' {
     if $syslog == true {
+      firewall { '000 nat table':
+        chain  => 'PREROUTING',
+        proto  => 'udp',
+        dport  => '514',
+        jump   => REDIRECT,
+        toport => '10514'
+      }
+
       firewall { '020 syslog':
         chain  => 'INPUT' ,
         proto  => ['tcp','udp'],
