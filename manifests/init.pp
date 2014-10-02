@@ -37,14 +37,14 @@
 #
 class splunk(
   $type              = 'forwarder',
-  $version           = undef,
-  $release           = undef,
+  $version           = hiera('splunk::version', undef),
+  $release           = hiera('splunk::release', undef),
   $splunk_user       = 'splunk',
   $splunk_group      = 'splunk',
   $install_path      = '/opt',
-  $old_version       = undef,
-  $old_release       = undef,
-  $deployment_server = undef,
+  $old_version       = hiera('splunk::old_version', undef),
+  $old_release       = hiera('splunk::old_release', undef),
+  $deployment_server = hiera('splunk::deployment_server', undef),
   $service_url       = $::fqdn,
 ) inherits ::splunk::params {
 
@@ -55,6 +55,7 @@ class splunk(
   }
   $splunkhome        = "${install_path}/${sourcepart}"
   $splunklocal       = "${splunkhome}/etc/system/local"
+  $splunkdb          = "${splunkhome}/var/lib/splunk"
 
   $apppart        = "${sourcepart}-${version}-${release}-${splunkos}-${splunkarch}"
   $oldsource      = "${sourcepart}-${old_version}-${old_release}-${splunkos}-${splunkarch}.${splunkext}"

@@ -1,9 +1,7 @@
 class splunk::params
 {
-  $splunkdb          = "${splunkhome}/var/lib/splunk"
-  $deployment_server = undef
-  $maxwarm           = '360000'
-  $maxcold           = '720000'
+  $maxwarm           = hiera('splunk::maxwarm', '360000')
+  $maxcold           = hiera('splunk::maxcold', '720000')
 
   if $::osfamily    == 'Solaris' {
     $splunkos   = 'SunOS'
@@ -26,8 +24,4 @@ class splunk::params
   } else {
     fail('Unsupported OS')
   }
-
-  $apppart        = "${::splunk::sourcepart}-${::splunk::version}-${::splunk::release}-${splunkos}-${splunkarch}"
-  $oldsource      = "${::splunk::sourcepart}-${::splunk::old_version}-${::splunk::old_release}-${splunkos}-${splunkarch}.${splunkext}"
-  $splunksource   = "${apppart}.${splunkext}"
 }
