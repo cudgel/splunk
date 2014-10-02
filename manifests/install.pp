@@ -18,7 +18,7 @@ class splunk::install($type,$syslog=false)
 chown -RL ${::splunk::splunk_user}:${::splunk::splunk_group} \
 ${::splunk::splunkhome}",
     path        => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
-    cwd         => $install_path,
+    cwd         => $::splunk::install_path,
     subscribe   => File["${::splunk::install_path}/${::splunk::splunksource}"],
     timeout     => 600,
     unless      => "test -e $::splunk::splunkhome}/${::splunk::manifest}",
