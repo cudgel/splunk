@@ -22,7 +22,6 @@ class splunk::forwarder($syslog=false)
     group   => $::splunk::splunk_user,
     content => template("${module_name}/output.erb"),
     mode    => '0644',
-    require => File['splunk-home'],
     notify  => Service[splunk],
     alias   => 'splunk-outputs'
   }
