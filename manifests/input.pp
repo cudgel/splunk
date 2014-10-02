@@ -1,6 +1,6 @@
 # splunk::input()
 #
-define input(
+define splunk::input(
   $splunkhome = $::splunk::splunkhome,
   $splunklocal = $::splunk::splunklocal,
   $splunk_user = $::splunk::splunk_user,
