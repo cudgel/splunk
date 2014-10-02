@@ -36,7 +36,7 @@
 # Copyright 2014 Your name here, unless otherwise noted.
 #
 class splunk (
-  $type              = $::splunk::params::type,
+  $type              = undef,
   $splunkhome        = $::splunk::params::splunkhome,
   $splunklocal       = $::splunk::params::splunklocal,
   $version           = $::splunk::params::version,

@@ -1,6 +1,6 @@
 class splunk::params
 {
-  $type              = 'forwarder'
+  $type              = $::splunk::type
   $install_path      = '/opt'
   if $type == 'forwarder' {
     $sourcepart = 'splunkforwarder'
