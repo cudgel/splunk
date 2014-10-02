@@ -1,7 +1,6 @@
 class splunk::install($type,$syslog=false)
 {
 
-  $manifest  = "${::splunk::apppart}-manifest"
 
   file { "${::splunk::install_path}/${::splunk::oldsource}":
     ensure => absent
@@ -23,8 +22,8 @@ ${::splunk::splunkhome}",
     cwd         => $install_path,
     subscribe   => File["${::splunk::install_path}/${::splunk::splunksource}"],
     timeout     => 600,
-    unless      => "test -e ${manifest}",
-    creates     => $manifest
+    unless      => "test -e $::splunk::splunkhome}/${::splunk::manifest}",
+    creates     => "${::splunk::splunkhome}/${::splunk::manifest}"
   }
 
   exec { 'firstStart':

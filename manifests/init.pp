@@ -60,6 +60,7 @@ class splunk(
   $apppart        = "${sourcepart}-${version}-${release}-${splunkos}-${splunkarch}"
   $oldsource      = "${sourcepart}-${old_version}-${old_release}-${splunkos}-${splunkarch}.${splunkext}"
   $splunksource   = "${apppart}.${splunkext}"
+  $manifest       = "${apppart}-manifest"
 
   class { 'splunk::install': type => $type }
   class { 'splunk::service': }
