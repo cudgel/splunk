@@ -16,9 +16,9 @@ SPLUNK_IGNORE_SELINUX = 1
 <% end %>
 
 # Splunkd daemon name
-SPLUNK_SERVER_NAME=<% scope.lookupvar('::splunk::type') %>
+SPLUNK_SERVER_NAME=<%= scope.lookupvar('::splunk::type') %>
 
 # Splunkweb daemon name
 SPLUNK_WEB_NAME=splunkweb
 
-SPLUNK_OS_USER=<% scope.lookupvar('::splunk::splunk_user') %>
+SPLUNK_OS_USER=<%= scope.lookupvar('::splunk::splunk_user') %>
