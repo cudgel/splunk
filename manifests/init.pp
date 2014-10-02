@@ -73,7 +73,7 @@ class splunk(
   }
 
   class { 'splunk::install': type => $type }->
-  class { 'splunk::service': }->
+  class { 'splunk::service': }
   if $type != 'search' {
       class { 'splunk::deploy': }
   }
