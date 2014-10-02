@@ -8,7 +8,7 @@ class splunk::install inherits ::splunk {
     owner   => $::splunk::splunk_user,
     group   => $::splunk::splunk_group,
     mode    => '0644',
-    source  => "puppet:///splunk/${::splunk::splunksource}",
+    source  => "puppet:///modules/${module_name}/${::splunk::splunksource}",
     notify  => Exec['unpackSplunk']
   }
 
