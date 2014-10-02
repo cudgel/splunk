@@ -78,4 +78,12 @@ class splunk(
       class { 'splunk::deploy': }
   }
 
+  exec { 'update-inputs':
+    command     => "/bin/cat ${splunklocal}/inputs.d/* > ${splunklocal}/inputs.conf; \
+chown ${splunk_user}:${splunk_group} ${splunklocal}/inputs.conf",
+    refreshonly => true,
+    subscribe   => File["${splunklocal}/inputs.d/000_default"],
+    notify      => Service[splunk],
+  }
+
 }
