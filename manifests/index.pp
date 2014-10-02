@@ -14,7 +14,7 @@ define index(
     owner   => $splunk_user,
     group   => $splunk_group,
     mode    => '0440',
-    content => template('splunk/index.erb'),
+    content => template("${module_name}/index.erb"),
     require => File["${splunklocal}/indexes.d"],
     notify  => Exec['update-indexes'],
   }

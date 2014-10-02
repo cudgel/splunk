@@ -45,7 +45,7 @@ splunk --accept-license --answer-yes --no-prompt start",
   file { "${::splunk::splunkhome}/etc/splunk-launch.conf":
     owner   => $::splunk::splunk_user,
     group   => $::splunk::splunk_group,
-    content => template('splunk/launch.erb'),
+    content => template("${module_name}/launch.erb"),
     mode    => '0644',
     require => Exec['unpackSplunk'],
     notify  => Service[splunk]
@@ -63,6 +63,6 @@ splunk --accept-license --answer-yes --no-prompt start",
     group   => $::splunk::splunk_group,
     mode    => '0440',
     require => File["${::splunk::splunklocal}/inputs.d"],
-    content => template('splunk/default_inputs.erb')
+    content => template("${module_name}/default_inputs.erb")
   }
 }

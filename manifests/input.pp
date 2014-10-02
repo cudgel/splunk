@@ -21,7 +21,7 @@ define input(
     owner   => $splunk_user,
     group   => $splunk_group,
     mode    => '0440',
-    content => template('splunk/input.erb'),
+    content => template("${module_name}/input.erb"),
     require => File["${splunklocal}/inputs.d"],
     notify  => Exec['update-inputs'],
   }

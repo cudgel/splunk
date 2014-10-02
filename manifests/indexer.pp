@@ -45,7 +45,7 @@ class splunk::indexer (
     owner   => 'splunk',
     group   => 'splunk',
     mode    => '0440',
-    content => template('splunk/splunktcp.erb'),
+    content => template("${module_name}/splunktcp.erb"),
     notify  => Exec['update-inputs']
   }
 
@@ -61,7 +61,7 @@ class splunk::indexer (
     owner   => 'splunk',
     group   => 'splunk',
     mode    => '0440',
-    content => template('splunk/volumes.erb')
+    content => template("${module_name}/volumes.erb")
   }
 
   exec { 'update-indexes':

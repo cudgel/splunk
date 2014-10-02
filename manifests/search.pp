@@ -38,7 +38,7 @@ class splunk::search {
     file { "${::splunk::splunklocal}/outputs.conf":
         owner   => $::splunk::splunk_user,
         group   => $::splunk::splunk_user,
-        content => template('splunk/outputs.erb'),
+        content => template("${module_name}/outputs.erb"),
         mode    => '0644',
         require => File['splunk-home'],
         notify  => Service[splunk],
@@ -48,7 +48,7 @@ class splunk::search {
     file { "${::splunk::splunklocal}/alert_actions.conf":
         owner   => $::splunk::splunk_user,
         group   => $::splunk::splunk_user,
-        content => template('splunk/alert_actions.erb'),
+        content => template("${module_name}/alert_actions.erb"),
         mode    => '0644',
         require => File['splunk-home'],
         notify  => Service[splunk],

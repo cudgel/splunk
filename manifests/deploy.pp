@@ -23,7 +23,7 @@ class splunk::deploy($deploymentserver='$::splunk::deploymentserver')
 
   if $deploymentserver {
     file { "${myappdir}/local/deploymentclient.conf":
-      content => template('splunk/apps/deploy/deployclient.erb'),
+      content => template("${module_name}/apps/deploy/deployclient.erb"),
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
       mode    => '0640',

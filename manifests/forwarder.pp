@@ -20,7 +20,7 @@ class splunk::forwarder($syslog=false)
   file { "${::splunk::splunklocal}/outputs.conf":
     owner   => $::splunk::splunk_user,
     group   => $::splunk::splunk_user,
-    content => template('splunk/output.erb'),
+    content => template("${module_name}/output.erb"),
     mode    => '0644',
     require => File['splunk-home'],
     notify  => Service[splunk],
