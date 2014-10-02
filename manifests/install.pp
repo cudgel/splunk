@@ -1,7 +1,6 @@
 class splunk::install($type,$syslog=false)
 {
 
-
   file { "${::splunk::install_path}/${::splunk::oldsource}":
     ensure => absent
   }

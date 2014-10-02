@@ -48,7 +48,7 @@ class splunk(
   $service_url       = $::fqdn,
 ) inherits ::splunk::params {
 
-  pe_accounts::user { $splunk_user: }
+  pe_accounts::user { $splunk_user: ensure => present }
 
   if $type == 'forwarder' {
     $sourcepart = 'splunkforwarder'
