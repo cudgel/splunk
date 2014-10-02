@@ -1,18 +1,6 @@
 class splunk::params
 {
-  $type              = $::splunk::type
-  $install_path      = '/opt'
-  if $type == 'forwarder' {
-    $sourcepart = 'splunkforwarder'
-  } else {
-    $sourcepart = 'splunk'
-  }
-  $splunkhome        = "${install_path}/${sourcepart}"
-  $splunklocal       = "${splunkhome}/etc/system/local"
-  $splunk_user       = 'splunk'
-  $splunk_group      = 'splunk'
   $splunkdb          = "${splunkhome}/var/lib/splunk"
-  $serviceurl        = "http://${::fqdn}"
   $deployment_server = undef
   $maxwarm           = '360000'
   $maxcold           = '720000'
@@ -39,8 +27,7 @@ class splunk::params
     fail('Unsupported OS')
   }
 
-  $oldsource      = "${sourcepart}-${old_version}-${old_release}-${splunkos}-${splunkarch}.${splunkext}"
-  $splunksource   = "${sourcepart}-${version}-${release}-${splunkos}-${splunkarch}.${splunkext}"
-
-
+  $apppart        = "${::splunk::sourcepart}-${::splunk::version}-${::splunk::release}-${splunkos}-${splunkarch}"
+  $oldsource      = "${::splunk::sourcepart}-${::splunk::old_version}-${::splunk::old_release}-${splunkos}-${splunkarch}.${splunkext}"
+  $splunksource   = "${apppart}.${splunkext}"
 }

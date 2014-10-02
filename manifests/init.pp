@@ -35,20 +35,35 @@
 #
 # Copyright 2014 Your name here, unless otherwise noted.
 #
-class splunk (
+class splunk(
   $type              = 'forwarder',
-  $splunkhome        = $::splunk::params::splunkhome,
-  $splunklocal       = $::splunk::params::splunklocal,
-  $version           = $::splunk::params::version,
-  $release           = $::splunk::params::release,
-  $splunk_user       = $::splunk::params::splunk_user,
-  $splunk_group      = $::splunk::params::splunk_group,
-  $install_path      = $::splunk::params::install_path,
-  $old_version       = $::splunk::params::old_version,
-  $old_release       = $::splunk::params::old_release,
-  $service_url       = "http://${::fqdn}",
-  $deployment_server = $::splunk::params::deployment_server
+  $version           = undef,
+  $release           = undef,
+  $splunk_user       = 'splunk',
+  $splunk_group      = 'splunk',
+  $install_path      = '/opt',
+  $old_version       = undef,
+  $old_release       = undef,
+  $deployment_server = undef,
+  $service_url       = $::fqdn,
 ) inherits ::splunk::params {
 
+  if $type == 'forwarder' {
+    $sourcepart = 'splunkforwarder'
+  } else {
+    $sourcepart = 'splunk'
+  }
+  $splunkhome        = "${install_path}/${sourcepart}"
+  $splunklocal       = "${splunkhome}/etc/system/local"
+
+  $apppart        = "${sourcepart}-${version}-${release}-${splunkos}-${splunkarch}"
+  $oldsource      = "${sourcepart}-${old_version}-${old_release}-${splunkos}-${splunkarch}.${splunkext}"
+  $splunksource   = "${apppart}.${splunkext}"
+
+  class { 'splunk::install': type => $type }
+  class { 'splunk::service': }
+  if $type != 'search' {
+      class { 'splunk::deploy': }
+  }
 
 }
