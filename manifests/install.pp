@@ -36,7 +36,7 @@ splunk --accept-license --answer-yes --no-prompt start",
   }
 
   exec { 'installSplunkService':
-    command   => "splunk enable boot-start -user ${::splunk::splunk_user}",
+    command   => 'splunk enable boot-start',
     path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
     subscribe => Exec['unpackSplunk'],
     unless    => 'test -e /etc/init.d/splunk',
