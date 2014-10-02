@@ -32,7 +32,7 @@ class splunk::params
     $tarcmd     = "${tar} xZf"
   } elsif $::kernel == 'Linux' {
     $splunkos   = 'Linux'
-    $splunkarch = $architecture ? {
+    $splunkarch = $::architecture ? {
       x86_64  => 'x86_64',
       default => 'i686'
     }
