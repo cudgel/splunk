@@ -48,6 +48,8 @@ class splunk(
   $service_url       = $::fqdn,
 ) inherits ::splunk::params {
 
+  realize (Pe_accounts::User[$splunk_user])
+
   if $type == 'forwarder' {
     $sourcepart = 'splunkforwarder'
   } else {
