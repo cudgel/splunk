@@ -4,12 +4,12 @@ define index(
   $frozenTime,
   $sign         = false,
   $archive      = false,
-  $splunkhome   =$::splunk::splunkhome,
-  $splunklocal  =$::splunk::splunklocal,
-  $splunk_user  =$::splunk::splunk_user,
-  $splunk_group =$::splunk::splunk_group,
-  $warmpath     =$::splunk::params::warmpath,
-  $coldpath     =$::splunk::params::coldpath
+  $splunkhome   = $::splunk::splunkhome,
+  $splunklocal  = $::splunk::splunklocal,
+  $splunk_user  = $::splunk::splunk_user,
+  $splunk_group = $::splunk::splunk_group,
+  $warmpath     = $::splunk::params::warmpath,
+  $coldpath     = $::splunk::params::coldpath
   )
 {
   file { "${splunklocal}/indexes.d/${title}":

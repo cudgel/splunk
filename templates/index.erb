@@ -8,12 +8,12 @@ if title == 'main'
 else
     dbName = title
 end
-if @warmpath
+if has_variable?('warmpath') && warmpath != :undef
   homePath = 'volume:splunk_warm'
 else
   homePath = '$SPLUNK_DB'
 end
-if @coldpath
+if has_variable?('coldpath') && coldpath != :undef
   coldPath = 'volume:splunk_cold'
 else
   coldPath = '$SPLUNK_DB'
