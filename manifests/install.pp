@@ -213,10 +213,10 @@ splunk --accept-license --answer-yes --no-prompt start",
       group   => $::splunk::splunk_user,
       mode    => '0644',
       content => "# DO NOT EDIT -- managed by Puppet
-  [default]
-  dispatch.earliest_time = @d
-  dispatch.latest_time = now
-  ",
+[default]
+dispatch.earliest_time = @d
+dispatch.latest_time = now
+",
       notify  => Service['splunk']
       }
 
