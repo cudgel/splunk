@@ -111,17 +111,17 @@ splunk --accept-license --answer-yes --no-prompt start",
     }
 
     file { "${::splunk::splunklocal}/outputs.conf":
-      ensure  => absent,
-      notify  => Service[splunk]
+      ensure => absent,
+      notify => Service[splunk]
     }
 
     file { "${::splunk::splunklocal}/web.conf":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_group,
-      source  => 'puppet:///modules/splunk/web.conf',
-      mode    => '0644',
-      notify  => Service[splunk],
-      alias   => 'splunk-web'
+      owner  => $::splunk::splunk_user,
+      group  => $::splunk::splunk_group,
+      source => 'puppet:///modules/splunk/web.conf',
+      mode   => '0644',
+      notify => Service[splunk],
+      alias  => 'splunk-web'
     }
 
     file { "${::splunk::splunklocal}/inputs.d/999_splunktcp":
@@ -133,10 +133,10 @@ splunk --accept-license --answer-yes --no-prompt start",
     }
 
     file { "${::splunk::splunklocal}/indexes.d":
-      ensure  => 'directory',
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_group,
-      mode    => '0555'
+      ensure => 'directory',
+      owner  => $::splunk::splunk_user,
+      group  => $::splunk::splunk_group,
+      mode   => '0555'
     }
 
     file { "${::splunk::splunklocal}/indexes.d/000_default":
@@ -200,12 +200,12 @@ splunk --accept-license --answer-yes --no-prompt start",
     }
 
     file { "${::splunk::splunklocal}/web.conf":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_user,
-      source  => 'puppet:///modules/splunk/web.conf',
-      mode    => '0644',
-      notify  => Service[splunk],
-      alias   => 'splunk-web',
+      owner  => $::splunk::splunk_user,
+      group  => $::splunk::splunk_user,
+      source => 'puppet:///modules/splunk/web.conf',
+      mode   => '0644',
+      notify => Service[splunk],
+      alias  => 'splunk-web',
     }
 
     file { "${::splunk::splunklocal}/ui-prefs.conf":
