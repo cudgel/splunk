@@ -6,23 +6,23 @@ class splunk::install($type,$syslog=false)
   }
 
   file { "${::splunk::install_path}/${::splunk::splunksource}":
-    owner   => $::splunk::splunk_user,
-    group   => $::splunk::splunk_group,
-    mode    => '0644',
-    source  => "puppet:///modules/${module_name}/${::splunk::splunksource}",
-    notify  => Exec['unpackSplunk']
+    owner  => $::splunk::splunk_user,
+    group  => $::splunk::splunk_group,
+    mode   => '0644',
+    source => "puppet:///modules/${module_name}/${::splunk::splunksource}",
+    notify => Exec['unpackSplunk']
   }
 
   exec { 'unpackSplunk':
-    command     => "${::splunk::params::tarcmd} ${::splunk::splunksource}; \
+    command   => "${::splunk::params::tarcmd} ${::splunk::splunksource}; \
 chown -RL ${::splunk::splunk_user}:${::splunk::splunk_group} \
 ${::splunk::splunkhome}",
-    path        => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
-    cwd         => $::splunk::install_path,
-    subscribe   => File["${::splunk::install_path}/${::splunk::splunksource}"],
-    timeout     => 600,
-    unless      => "test -e $::splunk::splunkhome}/${::splunk::manifest}",
-    creates     => "${::splunk::splunkhome}/${::splunk::manifest}"
+    path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
+    cwd       => $::splunk::install_path,
+    subscribe => File["${::splunk::install_path}/${::splunk::splunksource}"],
+    timeout   => 600,
+    unless    => "test -e $::splunk::splunkhome}/${::splunk::manifest}",
+    creates   => "${::splunk::splunkhome}/${::splunk::manifest}"
   }
 
   exec { 'firstStart':
@@ -53,10 +53,10 @@ splunk --accept-license --answer-yes --no-prompt start",
   }
 
   file { "${::splunk::splunklocal}/inputs.d":
-    ensure  => 'directory',
-    owner   => $::splunk::splunk_user,
-    group   => $::splunk::splunk_group,
-    mode    => '0555'
+    ensure => 'directory',
+    owner  => $::splunk::splunk_user,
+    group  => $::splunk::splunk_group,
+    mode   => '0555'
   }
 
   file { "${::splunk::splunklocal}/inputs.d/000_default":
