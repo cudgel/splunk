@@ -23,12 +23,12 @@ define splunk::input(
     mode    => '0440',
     content => template("${module_name}/input.erb"),
     require => File["${splunklocal}/inputs.d"],
-    notify  => Exec['::splunk::update-inputs'],
+    notify  => Exec['update-inputs'],
   }
 
   if $inputtype == 'monitor' {
     fooacl::conf { $target:
-      permissions     => "group:${splunk_group}:r-X"
+      permissions     => ["group:${splunk_group}:r-X"]
     }
   }
 }
