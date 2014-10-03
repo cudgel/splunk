@@ -1,14 +1,16 @@
 [default]
 
+<% if @warmpath -%>
 [volume:splunk_warm]
 path = <%= warmpath %>
 <% if maxwarm.to_i > 0 -%>
 maxVolumeDataSizeMB = <%= maxwarm %>
+<% end %>
 <% end -%>
-
-
+<% if @coldpath -%>
 [volume:splunk_cold]
 path = <%= coldpath %>
 <% if maxcold.to_i > 0 -%>
 maxVolumeDataSizeMB = <%= maxcold %>
 <% end %>
+<% end -%>

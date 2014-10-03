@@ -8,9 +8,19 @@ if title == 'main'
 else
     dbName = title
 end
+if @warmpath
+  homePath = 'volume:splunk_warm'
+else
+  homePath = '$SPLUNK_DB'
+end
+if @coldpath
+  coldPath = 'volume:splunk_cold'
+else
+  coldPath = '$SPLUNK_DB'
+end
 -%>
-homePath = volume:splunk_warm/<%= dbName -%>/db
-coldPath = volume:splunk_cold/<%= dbName -%>/colddb
+homePath = <%= homePath -%>/<%= dbName -%>/db
+coldPath = <%= coldPath -%>/<%= dbName -%>/colddb
 thawedPath = $SPLUNK_DB/<%= dbName -%>/thaweddb
 frozenTimePeriodInSecs = <%= frozenTime -%>
 

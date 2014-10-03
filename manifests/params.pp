@@ -1,7 +1,9 @@
 class splunk::params
 {
-  $maxwarm           = hiera('splunk::maxwarm', '360000')
-  $maxcold           = hiera('splunk::maxcold', '720000')
+  $warmpath = hiera('splunk::warmpath', undef)
+  $coldpath = hiera('splunk::coldpath', undef)
+  $maxwarm  = hiera('splunk::maxwarm', undef)
+  $maxcold  = hiera('splunk::maxcold', undef)
 
   if $::osfamily    == 'Solaris' {
     $splunkos   = 'SunOS'
