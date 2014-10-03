@@ -120,7 +120,6 @@ splunk --accept-license --answer-yes --no-prompt start",
       group   => $::splunk::splunk_group,
       source  => 'puppet:///modules/splunk/web.conf',
       mode    => '0644',
-      require => File['splunk-home'],
       notify  => Service[splunk],
       alias   => 'splunk-web'
     }
@@ -137,8 +136,7 @@ splunk --accept-license --answer-yes --no-prompt start",
       ensure  => 'directory',
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_group,
-      mode    => '0555',
-      require => File['splunk-home']
+      mode    => '0555'
     }
 
     file { "${::splunk::splunklocal}/indexes.d/000_default":
@@ -188,7 +186,6 @@ splunk --accept-license --answer-yes --no-prompt start",
       group   => $::splunk::splunk_user,
       content => template("${module_name}/outputs.erb"),
       mode    => '0644',
-      require => File['splunk-home'],
       notify  => Service[splunk],
       alias   => 'splunk-outputs'
     }
@@ -198,7 +195,6 @@ splunk --accept-license --answer-yes --no-prompt start",
       group   => $::splunk::splunk_user,
       content => template("${module_name}/alert_actions.erb"),
       mode    => '0644',
-      require => File['splunk-home'],
       notify  => Service[splunk],
       alias   => 'alert-actions'
     }
@@ -208,7 +204,6 @@ splunk --accept-license --answer-yes --no-prompt start",
       group   => $::splunk::splunk_user,
       source  => 'puppet:///modules/splunk/web.conf',
       mode    => '0644',
-      require => File['splunk-home'],
       notify  => Service[splunk],
       alias   => 'splunk-web',
     }
