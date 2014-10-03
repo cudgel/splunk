@@ -21,7 +21,7 @@ ${::splunk::splunkhome}",
     cwd       => $::splunk::install_path,
     subscribe => File["${::splunk::install_path}/${::splunk::splunksource}"],
     timeout   => 600,
-    unless    => "test -e $::splunk::splunkhome}/${::splunk::manifest}",
+    unless    => "test -e ${::splunk::splunkhome}/${::splunk::manifest}",
     creates   => "${::splunk::splunkhome}/${::splunk::manifest}"
   }
 
