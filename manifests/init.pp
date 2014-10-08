@@ -33,19 +33,24 @@
 #
 # Copyright 2014 Your name here, unless otherwise noted.
 #
-class splunk(
-  $type              = 'forwarder',
-  $version           = hiera('splunk::version', undef),
-  $release           = hiera('splunk::release', undef),
-  $splunk_user       = hiera('splunk::splunk_user', 'splunk'),
-  $splunk_group      = hiera('splunk::splunk_group', 'splunk'),
-  $install_path      = '/opt',
-  $old_version       = hiera('splunk::old_version', undef),
-  $old_release       = hiera('splunk::old_release', undef),
-  $deployment_server = hiera('splunk::deployment_server', undef),
-  $service_url       = $::fqdn,
-) inherits ::splunk::params {
+class splunk($type='forwarder') {
 
+  include splunk::params
+
+  $version           = $::splunk::params::version
+  $release           = $::splunk::params::release
+  $splunk_user       = $::splunk::params::splunk_user
+  $splunk_group      = $::splunk::params::splunk_group
+  $install_path      = $::splunk::params::install_path
+  $old_version       = $::splunk::params::old_version
+  $old_release       = $::splunk::params::old_release
+  $deployment_server = $::splunk::params::deployment_server
+  $service_url       = $::fqdn
+  $splunkos          = $::splunk::params::splunkos
+  $splunkarch        = $::splunk::params::splunkarch
+  $splunkext         = $::splunk::params::splunkext
+  $tar               = $::splunk::params::tar
+  $tarcmd            = $::splunk::params::tarcmd
   if $type == 'forwarder' {
     $sourcepart = 'splunkforwarder'
   } else {
@@ -54,6 +59,8 @@ class splunk(
   $splunkhome        = "${install_path}/${sourcepart}"
   $splunklocal       = "${splunkhome}/etc/system/local"
   $splunkdb          = "${splunkhome}/var/lib/splunk"
+
+
 
   $apppart        = "${sourcepart}-${version}-${release}-${splunkos}-${splunkarch}"
   $oldsource      = "${sourcepart}-${old_version}-${old_release}-${splunkos}-${splunkarch}.${splunkext}"
