@@ -23,13 +23,11 @@
 #
 # === Examples
 #
-#  class { splunk:
-#    servers => [ 'pool.ntp.org', 'ntp.local.company.com' ],
-#  }
+#  class { splunk: type => 'forwarder' }
 #
 # === Authors
 #
-# Author Name <author@domain.com>
+# Christopher Caldwell <author@domain.com>
 #
 # === Copyright
 #
