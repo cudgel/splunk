@@ -13,15 +13,22 @@ define splunk::input(
   $cache        = true,
   $size         = '1',
   $options      = [],
-  $recurse      = false
+  $recurse      = false,
+  $content      = undef
   )
 {
+
+  if $content != undef {
+    $mycontent = $content
+  } else {
+    $mycontent = template("${module_name}/input.erb")
+  }
 
   file { "${splunklocal}/inputs.d/${title}":
     owner   => $splunk_user,
     group   => $splunk_group,
     mode    => '0440',
-    content => template("${module_name}/input.erb"),
+    content => $mycontent,
     require => File["${splunklocal}/inputs.d"],
     notify  => Exec['update-inputs'],
   }
