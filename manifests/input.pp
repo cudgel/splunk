@@ -34,7 +34,7 @@ define splunk::input(
   }
 
   if $inputtype == 'monitor' {
-    fooacl::conf { $target:
+    ::fooacl::conf { $target:
       permissions     => ["group:${splunk_group}:r-X"]
     }
   }
