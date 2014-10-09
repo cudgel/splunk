@@ -22,6 +22,11 @@ define splunk::input(
     $mycontent = $content
   } else {
     $mycontent = template("${module_name}/input.erb")
+    if $inputtype == 'monitor' {
+      fooacl::conf { $target:
+        permissions     => ["group:${splunk_group}:r-X"]
+      }
+    }
   }
 
   file { "${splunklocal}/inputs.d/${title}":
@@ -33,9 +38,5 @@ define splunk::input(
     notify  => Exec['update-inputs'],
   }
 
-  if $inputtype == 'monitor' and $content == undef {
-    fooacl::conf { $target:
-      permissions     => ["group:${splunk_group}:r-X"]
-    }
-  }
+
 }
