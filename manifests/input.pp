@@ -33,8 +33,8 @@ define splunk::input(
     notify  => Exec['update-inputs'],
   }
 
-  if $inputtype == 'monitor' and content == undef {
-    ::fooacl::conf { $target:
+  if $inputtype == 'monitor' and $content == undef {
+    fooacl::conf { $target:
       permissions     => ["group:${splunk_group}:r-X"]
     }
   }
