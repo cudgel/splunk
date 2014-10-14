@@ -45,6 +45,7 @@ class splunk($type='forwarder') {
   $old_version       = $::splunk::params::old_version
   $old_release       = $::splunk::params::old_release
   $deployment_server = $::splunk::params::deployment_server
+  $indexers          = $::splunk::params::indexers
   $service_url       = $::fqdn
   $splunkos          = $::splunk::params::splunkos
   $splunkarch        = $::splunk::params::splunkarch

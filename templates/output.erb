@@ -10,4 +10,4 @@ compressed = true
 autoLB = true
 autoLBFrequency = 30
 forceTimebasedAutoLB = true
-server = <%= scope.lookupvar('::splunk::params::indexers') -%>
+server = <%= scope.lookupvar('::splunk::indexers') -%>

@@ -7,6 +7,7 @@ class splunk::params
   $old_version       = hiera('splunk::params::old_version', undef)
   $old_release       = hiera('splunk::params::old_release', undef)
   $deployment_server = hiera('splunk::params::deployment_server', undef)
+  $indexers          = hiera('splunk::params::indexers', undef)
   $install_path      = hiera('splunk::params::install_path', '/opt')
   $warmpath          = hiera('splunk::params::warmpath', undef)
   $coldpath          = hiera('splunk::params::coldpath', undef)
