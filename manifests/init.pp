@@ -60,7 +60,11 @@ class splunk($type='forwarder') {
   $splunkhome        = "${install_path}/${sourcepart}"
   $splunklocal       = "${splunkhome}/etc/system/local"
   $splunkdb          = "${splunkhome}/var/lib/splunk"
-
+  $myenv_dir        = hiera('env_dir')
+  $myaccounts_dir   = hiera('accounts_dir')
+  $myurl            = "${myenv_dir}/${::environment}/${myaccounts_dir}"
+  $mygids           = loadyaml("${myurl}/groups.yaml")
+  $splunkuid        = $mygids['splunk']['gid']
 
 
   $apppart        = "${sourcepart}-${version}-${release}-${splunkos}-${splunkarch}"
@@ -71,6 +75,7 @@ class splunk($type='forwarder') {
 
   user { $splunk_user:
     ensure     => present,
+    uid        => $splunkuid,
     gid        => $splunk_group,
     home       => $splunkhome,
     managehome => false,
