@@ -62,26 +62,11 @@ class splunk($type='forwarder') {
   $splunkdb          = "${splunkhome}/var/lib/splunk"
   $myenv_dir        = hiera('env_dir')
   $myaccounts_dir   = hiera('accounts_dir')
-  $myurl            = "${myenv_dir}/${::environment}/${myaccounts_dir}"
-  $mygids           = loadyaml("${myurl}/groups.yaml")
-  $splunkuid        = $mygids['splunk']['gid']
-
 
   $apppart        = "${sourcepart}-${version}-${release}-${splunkos}-${splunkarch}"
   $oldsource      = "${sourcepart}-${old_version}-${old_release}-${splunkos}-${splunkarch}.${splunkext}"
   $splunksource   = "${apppart}.${splunkext}"
   $manifest       = "${apppart}-manifest"
-
-
-  user { $splunk_user:
-    ensure     => present,
-    uid        => $splunkuid,
-    gid        => $splunk_group,
-    home       => $splunkhome,
-    managehome => false,
-    shell      => '/bin/bash',
-    password   => '!!'
-  }
 
   class { 'splunk::install': type => $type }->
   class { 'splunk::service': }
