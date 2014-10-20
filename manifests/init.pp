@@ -60,8 +60,6 @@ class splunk($type='forwarder') {
   $splunkhome        = "${install_path}/${sourcepart}"
   $splunklocal       = "${splunkhome}/etc/system/local"
   $splunkdb          = "${splunkhome}/var/lib/splunk"
-  $myenv_dir        = hiera('env_dir')
-  $myaccounts_dir   = hiera('accounts_dir')
 
   $apppart        = "${sourcepart}-${version}-${release}-${splunkos}-${splunkarch}"
   $oldsource      = "${sourcepart}-${old_version}-${old_release}-${splunkos}-${splunkarch}.${splunkext}"
