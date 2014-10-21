@@ -1,5 +1,4 @@
 [default]
-host = <%= scope.lookupvar('::fqdn') %>
 
 [monitor:/<%= scope.lookupvar('::splunk::splunkhome') %>/var/log/splunk]
 index = _internal
