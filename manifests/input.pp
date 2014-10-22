@@ -26,8 +26,8 @@ define splunk::input(
       splunk::acl { $title:
         target       => $target,
         splunk_user  => $splunk_user,
-        splunk_group => $splunk_group
-        recurse      => $recurse
+        splunk_group => $splunk_group,
+        recurse      => $recurse,
         readonly     => true
       }
     }
