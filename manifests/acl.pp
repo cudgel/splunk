@@ -72,7 +72,7 @@ setfacl -d -R -m ${acl} ${object}"
     # throw an error if acl's not supported on filesystem
     #
     exec { "setfacl_${title}":
-      target    => '/bin:/usr/bin',
+      path    => '/bin:/usr/bin',
       command => $setfacl,
       unless  => "${testnfs} || getfacl ${object} 2>/dev/null |
 egrep -q '${acl}'",
@@ -82,7 +82,7 @@ egrep -q '${acl}'",
     # set a sane default mask to the object so that group acls work in the
     # absence of liberal traditional permissions
     exec { "set_effective_rights_mask_${title}":
-      target    => '/bin:/usr/bin',
+      path    => '/bin:/usr/bin',
       command => "setfacl -R -m 'mask:rwx,default:mask:rwx' ${object}",
       unless  => "${testnfs} || getfacl ${object} 2>/dev/null |
 egrep -q '^mask::rwx' ",
@@ -133,7 +133,7 @@ find ${object} -type f -exec chmod A+${acl}:allow '{}' \\; "
         command => "${predicate} &&
 getent ${db} ${subject} &&
 ${setfacl}",
-        target    => '/bin:/sbin:/usr/bin:/usr/sbin',
+        path    => '/bin:/sbin:/usr/bin:/usr/sbin',
         unless  => "ls -dv ${object} |
 egrep '[0-9]:${acl_subject}' >/dev/null",
         timeout => '0',
