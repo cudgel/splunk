@@ -24,11 +24,10 @@ define splunk::input(
     $mycontent = template("${module_name}/input.erb")
     if $inputtype == 'monitor' {
       splunk::acl { $title:
-        target       => $target,
-        splunk_user  => $splunk_user,
-        splunk_group => $splunk_group,
-        recurse      => $recurse,
-        readonly     => true
+        target   => $target,
+        group    => $splunk_group,
+        recurse  => $recurse,
+        readonly => true
       }
     }
   }

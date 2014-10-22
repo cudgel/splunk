@@ -1,6 +1,6 @@
 define splunk::acl(
-  $target,
-  $user=$::splunk::splunk_user,
+  $target='',
+  $user='',
   $group=$::splunk::splunk_group,
   $recurse=false,
   $readonly=true
