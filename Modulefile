@@ -8,6 +8,5 @@ description 'UNKNOWN'
 project_page 'UNKNOWN'
 
 ## Add dependencies, if any:
-dependency 'thias/fooacl', '>= 1.0.0'
 dependency 'puppetlabs/firewall', '>= 1.1.3'
 
