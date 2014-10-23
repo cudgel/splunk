@@ -67,24 +67,6 @@ splunk --accept-license --answer-yes --no-prompt start",
     content => template("${module_name}/default_inputs.erb")
   }
 
-  if $type == 'forwarder' {
-    if $syslog == true {
-      firewall { '000 nat table':
-        chain  => 'PREROUTING',
-        proto  => 'udp',
-        dport  => '514',
-        jump   => REDIRECT,
-        toport => '10514'
-      }
-
-      firewall { '020 syslog':
-        chain  => 'INPUT' ,
-        proto  => ['tcp','udp'],
-        dport  => ['514', '5140', '10514', '10515'],
-        action => 'accept'
-      }
-    }
-
     file { "${::splunk::splunklocal}/outputs.conf":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
@@ -155,20 +137,6 @@ splunk --accept-license --answer-yes --no-prompt start",
     }
 
   } elsif $type == 'search' {
-
-    firewall { '020 splunk-web':
-      chain  => 'INPUT' ,
-      proto  => 'tcp',
-      dport  => '8000',
-      action => 'accept'
-    }
-
-    firewall { '030 splunkd':
-      chain  => 'INPUT' ,
-      proto  => 'tcp',
-      dport  => '8089',
-      action => 'accept'
-    }
 
     if $::osfamily == 'RedHat' {
     # support PDF Report Server
