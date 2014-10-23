@@ -1,3 +1,8 @@
+[SSL]
+serverCert=$SPLUNK_HOME/etc/auth/server.pem
+password=password
+rootCA=$SPLUNK_HOME/etc/auth/cacert.pem
+requireClientCert=false
+cipherSuite = TLSv1.2:!eNULL:!aNULL
 
-[splunktcp://9997]
-compressed = true
+[splunktcp-ssl://9997]

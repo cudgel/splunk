@@ -8,6 +8,8 @@ defaultGroup=allIndexers
 disabled = false
 compressed = true
 autoLB = true
-autoLBFrequency = 30
+autoLBFrequency = 60
 forceTimebasedAutoLB = true
 server = <%= scope.lookupvar('::splunk::indexers') %>:9997
+serverCert=$SPLUNK_HOME/etc/auth/server.pem
+password=password
