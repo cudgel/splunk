@@ -67,15 +67,16 @@ splunk --accept-license --answer-yes --no-prompt start",
     content => template("${module_name}/default_inputs.erb")
   }
 
-if $type == 'forwarder' {
-  file { "${::splunk::splunklocal}/outputs.conf":
-    owner   => $::splunk::splunk_user,
-    group   => $::splunk::splunk_user,
-    content => template("${module_name}/output.erb"),
-    mode    => '0644',
-    notify  => Service[splunk],
-    alias   => 'splunk-outputs'
-  }
+  if $type == 'forwarder' {
+
+    file { "${::splunk::splunklocal}/outputs.conf":
+      owner   => $::splunk::splunk_user,
+      group   => $::splunk::splunk_user,
+      content => template("${module_name}/output.erb"),
+      mode    => '0644',
+      notify  => Service[splunk],
+      alias   => 'splunk-outputs'
+    }
 
   } elsif $type == 'indexer' {
 
