@@ -1,9 +1,10 @@
 # splunk::index()
 #
-define index(
-  $frozenTime,
+define splunk::index(
+  $size         = undef,
   $sign         = false,
   $archive      = false,
+  $frozenTime   = $::splunk::params::frozenTime,
   $splunkhome   = $::splunk::splunkhome,
   $splunklocal  = $::splunk::splunklocal,
   $splunk_user  = $::splunk::splunk_user,

@@ -9,10 +9,13 @@ class splunk::params
   $deployment_server = hiera('splunk::params::deployment_server', undef)
   $indexers          = hiera('splunk::params::indexers', undef)
   $install_path      = hiera('splunk::params::install_path', '/opt')
+  $frozenTime        = hiera('splunk::params::frozenTime', undef)
   $warmpath          = hiera('splunk::params::warmpath', undef)
   $coldpath          = hiera('splunk::params::coldpath', undef)
-  $maxwarm           = hiera('splunk::params::maxwarm', undef)
-  $maxcold           = hiera('splunk::params::maxcold', undef)
+  $maxwarmlargeMB    = hiera('splunk::params::maxwarmlargeMB', undef)
+  $maxwarmsmallMB    = hiera('splunk::params::maxwarmsmallMB', undef)
+  $maxcoldlargeMB    = hiera('splunk::params::maxcoldlargeMB', undef)
+  $maxcoldsmallMB    = hiera('splunk::params::maxcoldsmallMB', undef)
 
   if $::osfamily    == 'Solaris' {
     $splunkos   = 'SunOS'
