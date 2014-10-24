@@ -67,30 +67,17 @@ splunk --accept-license --answer-yes --no-prompt start",
     content => template("${module_name}/default_inputs.erb")
   }
 
-    file { "${::splunk::splunklocal}/outputs.conf":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_user,
-      content => template("${module_name}/output.erb"),
-      mode    => '0644',
-      notify  => Service[splunk],
-      alias   => 'splunk-outputs'
-    }
+if $type == 'forwarder' {
+  file { "${::splunk::splunklocal}/outputs.conf":
+    owner   => $::splunk::splunk_user,
+    group   => $::splunk::splunk_user,
+    content => template("${module_name}/output.erb"),
+    mode    => '0644',
+    notify  => Service[splunk],
+    alias   => 'splunk-outputs'
+  }
 
   } elsif $type == 'indexer' {
-
-    firewall { '020 splunkd':
-      chain  => 'INPUT' ,
-      proto  => 'tcp',
-      dport  => '8089',
-      action => 'accept'
-    }
-
-    firewall { '025 Splunk forwarders':
-      chain  => 'INPUT' ,
-      proto  => 'tcp',
-      dport  => '9997',
-      action => 'accept'
-    }
 
     file { "${::splunk::splunklocal}/outputs.conf":
       ensure => absent,
@@ -133,7 +120,7 @@ splunk --accept-license --answer-yes --no-prompt start",
   chown ${::splunk::splunk_user}:${::splunk::splunk_group} ${::splunk::splunklocal}/indexes.conf",
       refreshonly => true,
       subscribe   => File["${::splunk::splunklocal}/indexes.d/000_default"],
-      notify      => Service[splunk],
+      notify      => Service[splunk]
     }
 
   } elsif $type == 'search' {
