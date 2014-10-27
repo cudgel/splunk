@@ -51,8 +51,7 @@ class splunk::install($type=$type)
   file { "${::splunk::splunkhome}/etc/splunk-launch.conf":
     owner     => $::splunk::splunk_user,
     group     => $::splunk::splunk_group,
-    content   => template("${module_name}/splunk-launch.conf.
-      erb"),
+    content   => template("${module_name}/splunk-launch.conf.erb"),
     mode      => '0644',
     subscribe => Exec['unpackSplunk'],
     notify    => Service[splunk]
