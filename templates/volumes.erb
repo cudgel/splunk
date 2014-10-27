@@ -1,33 +1,25 @@
 [default]
-<%
-warmpath = scope.lookupvar('::splunk::params::warmpath')
-coldpath = scope.lookupvar('::splunk::params::coldpath')
-maxwarmlargeMB = scope.lookupvar('::splunk::params::maxwarmlargeMB')
-maxwarmsmallMB = scope.lookupvar('::splunk::params::maxwarmsmallMB')
-maxcoldlargeMB = scope.lookupvar('::splunk::params::maxcoldlargeMB')
-maxcoldsmallMB = scope.lookupvar('::splunk::params::maxcoldsmallMB')
--%>
-<% if has_variable?('warmpath') && warmpath != :undef -%>
+<% if has_variable?('warmpath') && @warmpath != :undef -%>
 [volume:splunk_warm_large]
-path = <%= warmpath %>
-<% if maxwarmlargeMB.to_i > 0 -%>
-maxVolumeDataSizeMB = <%= maxwarmlargeMB %>
+path = <%= @warmpath %>
+<% if @maxwarmlargeMB.to_i > 0 -%>
+maxVolumeDataSizeMB = <%= @maxwarmlargeMB %>
 <% end %>
 [volume:splunk_warm_small]
 path = <%= warmpath %>
-<% if maxwarmsmallMB.to_i > 0 -%>
-maxVolumeDataSizeMB = <%= maxwarmsmallMB %>
+<% if @maxwarmsmallMB.to_i > 0 -%>
+maxVolumeDataSizeMB = <%= @maxwarmsmallMB %>
 <% end %>
 <% end -%>
-<% if has_variable?('coldpath') && coldpath != :undef -%>
+<% if has_variable?('coldpath') && @coldpath != :undef -%>
 [volume:splunk_cold_large]
-path = <%= coldpath %>
-<% if maxcoldlargeMB.to_i > 0 -%>
-maxVolumeDataSizeMB = <%= maxcoldlargeMB %>
+path = <%= @coldpath %>
+<% if @maxcoldlargeMB.to_i > 0 -%>
+maxVolumeDataSizeMB = <%= @maxcoldlargeMB %>
 <% end %>
 [volume:splunk_cold_small]
-path = <%= coldpath %>
-<% if maxcoldsmallMB.to_i > 0 -%>
-maxVolumeDataSizeMB = <%= maxcoldsmallMB %>
+path = <%= @coldpath %>
+<% if @maxcoldsmallMB.to_i > 0 -%>
+maxVolumeDataSizeMB = <%= @maxcoldsmallMB %>
 <% end %>
 <% end -%>
