@@ -42,7 +42,6 @@ class splunk($type='forwarder') {
   $splunk_group      = $::splunk::params::splunk_group
   $install_path      = $::splunk::params::install_path
   $current_version   = $::splunk_version
-  $indexers          = $::splunk::params::indexers
   $service_url       = $::fqdn
   $splunkos          = $::splunk::params::splunkos
   $splunkarch        = $::splunk::params::splunkarch
