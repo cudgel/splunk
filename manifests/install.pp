@@ -89,13 +89,6 @@ class splunk::install($type=$type)
 
   } elsif $type == 'indexer' {
 
-    $warmpath = hiera('::splunk::params::warmpath', undef)
-    $coldpath = hiera('::splunk::params::coldpath', undef)
-    $maxwarmlargeMB = hiera('::splunk::params::maxwarmlargeMB', undef)
-    $maxwarmsmallMB = hiera('::splunk::params::maxwarmsmallMB', undef)
-    $maxcoldlargeMB = hiera('::splunk::params::maxcoldlargeMB', undef)
-    $maxcoldsmallMB = hiera('::splunk::params::maxcoldsmallMB', undef)
-
     file { "${::splunk::local_path}/outputs.conf":
       ensure => absent,
       notify => Service[splunk]
