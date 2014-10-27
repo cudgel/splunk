@@ -49,11 +49,11 @@ class splunk::install($type=$type)
   } # end new version
 
   file { "${::splunk::splunkhome}/etc/splunk-launch.conf":
-    owner     => $::splunk::splunk_user,
-    group     => $::splunk::splunk_group,
-    content   => template("${module_name}/splunk-launch.conf.erb"),
-    mode      => '0644',
-    notify    => Service[splunk]
+    owner   => $::splunk::splunk_user,
+    group   => $::splunk::splunk_group,
+    content => template("${module_name}/splunk-launch.conf.erb"),
+    mode    => '0644',
+    notify  => Service[splunk]
   }
 
   file { "${::splunk::splunklocal}/inputs.d":
