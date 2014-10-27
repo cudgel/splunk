@@ -53,7 +53,6 @@ class splunk::install($type=$type)
     group     => $::splunk::splunk_group,
     content   => template("${module_name}/splunk-launch.conf.erb"),
     mode      => '0644',
-    subscribe => Exec['unpackSplunk'],
     notify    => Service[splunk]
   }
 
