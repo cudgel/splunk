@@ -1,3 +1,7 @@
+<%
+ssl = scope.lookupvar('::splunk::params::TCPSSL')
+-%>
+<% if ssl == true -%>
 [SSL]
 serverCert=$SPLUNK_HOME/etc/auth/server.pem
 password=password
@@ -6,3 +10,6 @@ requireClientCert=false
 cipherSuite = TLSv1.2:!eNULL:!aNULL
 
 [splunktcp-ssl://9997]
+<% else -%>
+[splunktcp://9997]
+<% end -%>

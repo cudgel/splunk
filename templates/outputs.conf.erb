@@ -1,0 +1,22 @@
+# Puppet Name: <%= @title %>
+#
+<%
+server = scope.lookupvar('::splunk::indexers')
+ssl = scope.lookupvar('::splunk::params::TCPSSL')
+-%>
+[tcpout]
+indexAndForward=false
+defaultGroup=allIndexers
+
+[tcpout:allIndexers]
+disabled = false
+compressed = true
+autoLB = true
+autoLBFrequency = 60
+forceTimebasedAutoLB = true
+server = <% if server_is_a?(Array) -%><%= server.join(',') -%><% else -%><%= server %><%  end -%>
+<% if ssl == true -%>
+serverCert=$SPLUNK_HOME/etc/auth/server.pem
+password=password
+<% end -%>
+

@@ -38,13 +38,10 @@ class splunk($type='forwarder') {
   include splunk::params
 
   $version           = $::splunk::params::version
-  $release           = $::splunk::params::release
   $splunk_user       = $::splunk::params::splunk_user
   $splunk_group      = $::splunk::params::splunk_group
   $install_path      = $::splunk::params::install_path
-  $old_version       = $::splunk::params::old_version
-  $old_release       = $::splunk::params::old_release
-  $deployment_server = $::splunk::params::deployment_server
+  $current_version   = $::splunk_version
   $indexers          = $::splunk::params::indexers
   $service_url       = $::fqdn
   $splunkos          = $::splunk::params::splunkos
@@ -61,8 +58,8 @@ class splunk($type='forwarder') {
   $splunklocal       = "${splunkhome}/etc/system/local"
   $splunkdb          = "${splunkhome}/var/lib/splunk"
 
-  $apppart        = "${sourcepart}-${version}-${release}-${splunkos}-${splunkarch}"
-  $oldsource      = "${sourcepart}-${old_version}-${old_release}-${splunkos}-${splunkarch}.${splunkext}"
+  $apppart        = "${sourcepart}-${version}-${splunkos}-${splunkarch}"
+  $oldsource      = "${sourcepart}-${current_version}-${splunkos}-${splunkarch}.${splunkext}"
   $splunksource   = "${apppart}.${splunkext}"
   $manifest       = "${apppart}-manifest"
 

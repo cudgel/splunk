@@ -1,55 +1,61 @@
-class splunk::install($type,$syslog=false)
+class splunk::install($type=$type)
 {
 
-  file { "${::splunk::install_path}/${::splunk::oldsource}":
-    ensure => absent
-  }
+  # begin version change
+  if $::splunk::current_version != $::splunk::version {
 
-  file { "${::splunk::install_path}/${::splunk::splunksource}":
-    owner  => $::splunk::splunk_user,
-    group  => $::splunk::splunk_group,
-    mode   => '0644',
-    source => "puppet:///modules/${module_name}/${::splunk::splunksource}",
-    notify => Exec['unpackSplunk']
-  }
+    file { "${::splunk::install_path}/${::splunk::oldsource}":
+      ensure => absent
+    }
 
-  exec { 'unpackSplunk':
-    command   => "${::splunk::params::tarcmd} ${::splunk::splunksource}; \
-chown -RL ${::splunk::splunk_user}:${::splunk::splunk_group} \
-${::splunk::splunkhome}",
-    path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
-    cwd       => $::splunk::install_path,
-    subscribe => File["${::splunk::install_path}/${::splunk::splunksource}"],
-    timeout   => 600,
-    unless    => "test -e ${::splunk::splunkhome}/${::splunk::manifest}",
-    creates   => "${::splunk::splunkhome}/${::splunk::manifest}"
-  }
+    file { "${::splunk::install_path}/${::splunk::splunksource}":
+      owner  => $::splunk::splunk_user,
+      group  => $::splunk::splunk_group,
+      mode   => '0644',
+      source => "puppet:///modules/${module_name}/${::splunk::splunksource}",
+      notify => Exec['unpackSplunk']
+    }
 
-  exec { 'firstStart':
-    command     => "splunk stop; \
-splunk --accept-license --answer-yes --no-prompt start",
-    path        => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
-    subscribe   => Exec['unpackSplunk'],
-    refreshonly => true,
-    user        => $::splunk::splunk_user,
-    group       => $::splunk::splunk_group
-  }
+    exec { 'unpackSplunk':
+      command   => "${::splunk::params::tarcmd} ${::splunk::splunksource}; \
+  chown -RL ${::splunk::splunk_user}:${::splunk::splunk_group} \
+  ${::splunk::splunkhome}",
+      path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
+      cwd       => $::splunk::install_path,
+      subscribe => File["${::splunk::install_path}/${::splunk::splunksource}"],
+      timeout   => 600,
+      unless    => "test -e ${::splunk::splunkhome}/${::splunk::manifest}",
+      creates   => "${::splunk::splunkhome}/${::splunk::manifest}"
+    }
 
-  exec { 'installSplunkService':
-    command   => 'splunk enable boot-start',
-    path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
-    subscribe => Exec['unpackSplunk'],
-    unless    => 'test -e /etc/init.d/splunk',
-    creates   => '/etc/init.d/splunk'
-  }
+    exec { 'firstStart':
+      command     => "splunk stop; \
+  splunk --accept-license --answer-yes --no-prompt start",
+      path        => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
+      subscribe   => Exec['unpackSplunk'],
+      refreshonly => true,
+      user        => $::splunk::splunk_user,
+      group       => $::splunk::splunk_group
+    }
+
+    exec { 'installSplunkService':
+      command   => 'splunk enable boot-start',
+      path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
+      subscribe => Exec['unpackSplunk'],
+      unless    => 'test -e /etc/init.d/splunk',
+      creates   => '/etc/init.d/splunk'
+    }
+
+  } # end new version
 
   file { "${::splunk::splunkhome}/etc/splunk-launch.conf":
-    owner   => $::splunk::splunk_user,
-    group   => $::splunk::splunk_group,
-    content => template("${module_name}/launch.erb"),
-    mode    => '0644',
-    require => Exec['unpackSplunk'],
-    notify  => Service[splunk]
+    owner     => $::splunk::splunk_user,
+    group     => $::splunk::splunk_group,
+    content   => template("${module_name}/splunk-launch.conf.
+      erb"),
+    mode      => '0644',
+    subscribe => Exec['unpackSplunk'],
+    notify    => Service[splunk]
   }
 
   file { "${::splunk::splunklocal}/inputs.d":
@@ -72,7 +78,7 @@ splunk --accept-license --answer-yes --no-prompt start",
     file { "${::splunk::splunklocal}/outputs.conf":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
-      content => template("${module_name}/output.erb"),
+      content => template("${module_name}/outputs.conf.erb"),
       mode    => '0644',
       notify  => Service[splunk],
       alias   => 'splunk-outputs'
@@ -86,12 +92,12 @@ splunk --accept-license --answer-yes --no-prompt start",
     }
 
     file { "${::splunk::splunklocal}/web.conf":
-      owner  => $::splunk::splunk_user,
-      group  => $::splunk::splunk_group,
-      source => 'puppet:///modules/splunk/web.conf',
-      mode   => '0644',
-      notify => Service[splunk],
-      alias  => 'splunk-web'
+      owner   => $::splunk::splunk_user,
+      group   => $::splunk::splunk_user,
+      content => template("${module_name}/web.conf.erb"),
+      mode    => '0644',
+      notify  => Service[splunk],
+      alias   => 'splunk-web',
     }
 
     file { "${::splunk::splunklocal}/inputs.d/999_splunktcp":
@@ -116,9 +122,13 @@ splunk --accept-license --answer-yes --no-prompt start",
       content => template("${module_name}/volumes.erb")
     }
 
+    $my_index_d = "${::splunk::splunklocal}/indexes.d/"
+    $my_index_c = "${::splunk::splunklocal}/indexes.conf"
+    $my_perms = "${::splunk::splunk_user}:${::splunk::splunk_group}"
+
     exec { 'update-indexes':
-      command     => "/bin/cat ${::splunk::splunklocal}/indexes.d/* > ${::splunk::splunklocal}/indexes.conf; \
-  chown ${::splunk::splunk_user}:${::splunk::splunk_group} ${::splunk::splunklocal}/indexes.conf",
+      command     => "/bin/cat ${my_index_d}/* > ${my_index_c}; \
+chown ${my_perms} ${my_index_c}",
       refreshonly => true,
       subscribe   => File["${::splunk::splunklocal}/indexes.d/000_default"],
       notify      => Service[splunk]
@@ -140,7 +150,7 @@ splunk --accept-license --answer-yes --no-prompt start",
     file { "${::splunk::splunklocal}/outputs.conf":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
-      content => template("${module_name}/outputs.erb"),
+      content => template("${module_name}/outputs.conf.erb"),
       mode    => '0644',
       notify  => Service[splunk],
       alias   => 'splunk-outputs'
@@ -149,50 +159,37 @@ splunk --accept-license --answer-yes --no-prompt start",
     file { "${::splunk::splunklocal}/alert_actions.conf":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
-      content => template("${module_name}/alert_actions.erb"),
+      content => template("${module_name}/alert_actions.conf.erb"),
       mode    => '0644',
       notify  => Service[splunk],
       alias   => 'alert-actions'
     }
 
     file { "${::splunk::splunklocal}/web.conf":
-      owner  => $::splunk::splunk_user,
-      group  => $::splunk::splunk_user,
-      source => 'puppet:///modules/splunk/web.conf',
-      mode   => '0644',
-      notify => Service[splunk],
-      alias  => 'splunk-web',
+      owner   => $::splunk::splunk_user,
+      group   => $::splunk::splunk_user,
+      content => template("${module_name}/web.conf.erb"),
+      mode    => '0644',
+      notify  => Service[splunk],
+      alias   => 'splunk-web',
     }
 
     file { "${::splunk::splunklocal}/ui-prefs.conf":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
       mode    => '0644',
-      content => "# DO NOT EDIT -- managed by Puppet
-[default]
-dispatch.earliest_time = @d
-dispatch.latest_time = now
-",
+      content => template("${module_name}/ui-prefs.conf.erb"),
       notify  => Service['splunk']
       }
+
 
     file { "${::splunk::splunklocal}/limits.conf":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
       mode    => '0644',
-      content => "# DO NOT EDIT -- managed by Puppet
-[subsearch]
-maxout = 15000
-maxtime = 600
-ttl = 1200
-
-[search]
-dispatch_dir_warning_size = 3000
-",
+      content => template("${module_name}/limits.conf.erb"),
       notify  => Service[splunk]
     }
-
-  } else {
 
   }
 

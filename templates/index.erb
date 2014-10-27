@@ -1,12 +1,11 @@
-
-# Puppet Name: <%= title %>
+# Puppet Name: <%= @title %>
 #
-[<%= title -%>]
+[<%= @title -%>]
 <%
-if title == 'main'
+if @title == 'main'
     dbName = 'defaultdb'
 else
-    dbName = title
+    dbName = @title
 end
 if has_variable?('warmpath') && @warmpath != :undef
   if @size == 'small'
@@ -30,5 +29,4 @@ end
 homePath = <%= homePath -%>/<%= dbName -%>/db
 coldPath = <%= coldPath -%>/<%= dbName -%>/colddb
 thawedPath = $SPLUNK_DB/<%= dbName -%>/thaweddb
-frozenTimePeriodInSecs = <%= frozenTime -%>
-
+frozenTimePeriodInSecs = <%= @frozenTime -%>
