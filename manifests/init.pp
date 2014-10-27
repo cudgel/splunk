@@ -37,42 +37,43 @@ class splunk($type='forwarder') {
 
   include splunk::params
 
-  $version           = $::splunk::params::version
-  $splunk_user       = $::splunk::params::splunk_user
-  $splunk_group      = $::splunk::params::splunk_group
-  $install_path      = $::splunk::params::install_path
-  $current_version   = $::splunk_version
-  $service_url       = $::fqdn
-  $splunkos          = $::splunk::params::splunkos
-  $splunkarch        = $::splunk::params::splunkarch
-  $splunkext         = $::splunk::params::splunkext
-  $tar               = $::splunk::params::tar
-  $tarcmd            = $::splunk::params::tarcmd
+  $version         = $::splunk::params::version
+  $splunk_user     = $::splunk::params::splunk_user
+  $splunk_group    = $::splunk::params::splunk_group
+  $install_path    = $::splunk::params::install_path
+  $current_version = $::splunk_version
+  $service_url     = $::fqdn
+  $splunkos        = $::splunk::params::splunkos
+  $splunkarch      = $::splunk::params::splunkarch
+  $splunkext       = $::splunk::params::splunkext
+  $tar             = $::splunk::params::tar
+  $tarcmd          = $::splunk::params::tarcmd
+
   if $type == 'forwarder' {
     $sourcepart = 'splunkforwarder'
   } else {
     $sourcepart = 'splunk'
   }
-  $splunkhome        = "${install_path}/${sourcepart}"
-  $splunklocal       = "${splunkhome}/etc/system/local"
-  $splunkdb          = "${splunkhome}/var/lib/splunk"
 
-  $apppart        = "${sourcepart}-${version}-${splunkos}-${splunkarch}"
-  $oldsource      = "${sourcepart}-${current_version}-${splunkos}-${splunkarch}.${splunkext}"
-  $splunksource   = "${apppart}.${splunkext}"
-  $manifest       = "${apppart}-manifest"
+  $splunkhome   = "${install_path}/${sourcepart}"
+  $local_path   = "${splunkhome}/etc/system/local"
+  $splunkdb     = "${splunkhome}/var/lib/splunk"
+  $apppart      = "${sourcepart}-${version}-${splunkos}-${splunkarch}"
+  $oldsource    = "${sourcepart}-${current_version}-${splunkos}-${splunkarch}.${splunkext}"
+  $splunksource = "${apppart}.${splunkext}"
+  $manifest     = "${apppart}-manifest"
 
   class { 'splunk::install': type => $type }->
   class { 'splunk::service': }
   if $type != 'search' {
-      class { 'splunk::deploy': }
+    class { 'splunk::deploy': }
   }
 
   exec { 'update-inputs':
-    command     => "/bin/cat ${splunklocal}/inputs.d/* > ${splunklocal}/inputs.conf; \
-chown ${splunk_user}:${splunk_group} ${splunklocal}/inputs.conf",
+    command     => "/bin/cat ${local_path}/inputs.d/* > ${local_path}/inputs.conf; \
+chown ${splunk_user}:${splunk_group} ${local_path}/inputs.conf",
     refreshonly => true,
-    subscribe   => File["${splunklocal}/inputs.d/000_default"],
+    subscribe   => File["${local_path}/inputs.d/000_default"],
     notify      => Service[splunk],
   }
 

@@ -2,7 +2,7 @@
 #
 define splunk::input(
   $splunkhome   = $::splunk::splunkhome,
-  $splunklocal  = $::splunk::splunklocal,
+  $local_path   = $::splunk::local_path,
   $splunk_user  = $::splunk::splunk_user,
   $splunk_group = $::splunk::splunk_group,
   $disabled     = false,
@@ -32,12 +32,12 @@ define splunk::input(
     }
   }
 
-  file { "${splunklocal}/inputs.d/${title}":
+  file { "${local_path}/inputs.d/${title}":
     owner   => $splunk_user,
     group   => $splunk_group,
     mode    => '0440',
     content => $mycontent,
-    require => File["${splunklocal}/inputs.d"],
+    require => File["${local_path}/inputs.d"],
     notify  => Exec['update-inputs'],
   }
 

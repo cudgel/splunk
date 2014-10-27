@@ -56,24 +56,24 @@ class splunk::install($type=$type)
     notify  => Service[splunk]
   }
 
-  file { "${::splunk::splunklocal}/inputs.d":
+  file { "${::splunk::local_path}/inputs.d":
     ensure => 'directory',
     owner  => $::splunk::splunk_user,
     group  => $::splunk::splunk_group,
     mode   => '0550'
   }
 
-  file { "${::splunk::splunklocal}/inputs.d/000_default":
+  file { "${::splunk::local_path}/inputs.d/000_default":
     owner   => $::splunk::splunk_user,
     group   => $::splunk::splunk_group,
     mode    => '0440',
-    require => File["${::splunk::splunklocal}/inputs.d"],
+    require => File["${::splunk::local_path}/inputs.d"],
     content => template("${module_name}/default_inputs.erb")
   }
 
   if $type == 'forwarder' {
 
-    file { "${::splunk::splunklocal}/outputs.conf":
+    file { "${::splunk::local_path}/outputs.conf":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
       content => template("${module_name}/outputs.conf.erb"),
@@ -84,12 +84,12 @@ class splunk::install($type=$type)
 
   } elsif $type == 'indexer' {
 
-    file { "${::splunk::splunklocal}/outputs.conf":
+    file { "${::splunk::local_path}/outputs.conf":
       ensure => absent,
       notify => Service[splunk]
     }
 
-    file { "${::splunk::splunklocal}/web.conf":
+    file { "${::splunk::local_path}/web.conf":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
       content => template("${module_name}/web.conf.erb"),
@@ -98,7 +98,7 @@ class splunk::install($type=$type)
       alias   => 'splunk-web',
     }
 
-    file { "${::splunk::splunklocal}/inputs.d/999_splunktcp":
+    file { "${::splunk::local_path}/inputs.d/999_splunktcp":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_group,
       mode    => '0440',
@@ -106,29 +106,29 @@ class splunk::install($type=$type)
       notify  => Exec['update-inputs']
     }
 
-    file { "${::splunk::splunklocal}/indexes.d":
+    file { "${::splunk::local_path}/indexes.d":
       ensure => 'directory',
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
       mode   => '0550'
     }
 
-    file { "${::splunk::splunklocal}/indexes.d/000_default":
+    file { "${::splunk::local_path}/indexes.d/000_default":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_group,
       mode    => '0440',
       content => template("${module_name}/volumes.erb")
     }
 
-    $my_index_d = "${::splunk::splunklocal}/indexes.d/"
-    $my_index_c = "${::splunk::splunklocal}/indexes.conf"
+    $my_index_d = "${::splunk::local_path}/indexes.d/"
+    $my_index_c = "${::splunk::local_path}/indexes.conf"
     $my_perms = "${::splunk::splunk_user}:${::splunk::splunk_group}"
 
     exec { 'update-indexes':
       command     => "/bin/cat ${my_index_d}/* > ${my_index_c}; \
 chown ${my_perms} ${my_index_c}",
       refreshonly => true,
-      subscribe   => File["${::splunk::splunklocal}/indexes.d/000_default"],
+      subscribe   => File["${::splunk::local_path}/indexes.d/000_default"],
       notify      => Service[splunk]
     }
 
@@ -145,7 +145,7 @@ chown ${my_perms} ${my_index_c}",
       }
     }
 
-    file { "${::splunk::splunklocal}/outputs.conf":
+    file { "${::splunk::local_path}/outputs.conf":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
       content => template("${module_name}/outputs.conf.erb"),
@@ -154,7 +154,7 @@ chown ${my_perms} ${my_index_c}",
       alias   => 'splunk-outputs'
     }
 
-    file { "${::splunk::splunklocal}/alert_actions.conf":
+    file { "${::splunk::local_path}/alert_actions.conf":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
       content => template("${module_name}/alert_actions.conf.erb"),
@@ -163,16 +163,16 @@ chown ${my_perms} ${my_index_c}",
       alias   => 'alert-actions'
     }
 
-    file { "${::splunk::splunklocal}/web.conf":
+    file { "${::splunk::local_path}/web.conf":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
       content => template("${module_name}/web.conf.erb"),
       mode    => '0640',
       notify  => Service[splunk],
-      alias   => 'splunk-web',
+      alias   => 'splunk-web'
     }
 
-    file { "${::splunk::splunklocal}/ui-prefs.conf":
+    file { "${::splunk::local_path}/ui-prefs.conf":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
       mode    => '0640',
@@ -181,7 +181,7 @@ chown ${my_perms} ${my_index_c}",
       }
 
 
-    file { "${::splunk::splunklocal}/limits.conf":
+    file { "${::splunk::local_path}/limits.conf":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
       mode    => '0640',
