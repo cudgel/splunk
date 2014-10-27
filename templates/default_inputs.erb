@@ -1,15 +1,20 @@
+# Puppet Name: <%= @title %>
+#
+<%
+splunkhome = scope.lookupvar('::splunk::splunkhome')
+-%>
 [default]
 host = <%= scope.lookupvar('::fqdn') %>
 
-[monitor:/<%= scope.lookupvar('::splunk::splunkhome') %>/var/log/splunk]
+[monitor:/<%= splunkhome %>/var/log/splunk]
 index = _internal
 _TCP_ROUTING = *
 _whitelist = /(audit|license_audit|metrics|splunkd|splunkd_stderr|splunkd_stdout|splunklogger)\.log$
 
 [filter:blacklist:splunkvar]
-regex1 = ^<%= scope.lookupvar('::splunk::splunkhome') %>/var
+regex1 = ^<%= splunkhome %>/var
 
-[fschange:<%= scope.lookupvar('::splunk::splunkhome') %>]
+[fschange:<%= splunkhome %>]
 index = _audit
 disabled = false
 pollPeriod = 60

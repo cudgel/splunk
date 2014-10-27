@@ -7,11 +7,11 @@ ttl = scope.lookupvar('::splunk::params::subsearch_ttl')
 dispatch_dir_warning_size = scope.lookupvar('::splunk::params::dispatch_size')
 -%>
 [subsearch]
-<% if maxout != undef -%>maxout = <%= maxout %><% end -%>
-<% if maxtime != undef -%>maxtime = <%= maxtime %><% end -%>
-<% if ttl != undef -%>ttl = <%= ttl %><% end -%>
+<% if maxout != :undef -%>maxout = <%= maxout %><% end -%>
+<% if maxtime != :undef -%>maxtime = <%= maxtime %><% end -%>
+<% if ttl != :undef -%>ttl = <%= ttl %><% end -%>
 
 [search]
-<% if dispatch_dir_warning_size != undef -%>
+<% if dispatch_dir_warning_size != :undef -%>
 dispatch_dir_warning_size = <%= dispatch_dir_warning_size %>
 <% end -%>

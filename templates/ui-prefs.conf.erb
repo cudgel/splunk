@@ -5,5 +5,5 @@ earliest_time = scope.lookupvar('::splunk::params::dispatch_earliest')
 latest_time = scope.lookupvar('::splunk::params::dispatch_latest')
 -%>
 [default]
-<% if earliest_time != undef -%>dispatch.earliest_time = <%= earliest_time %><% end -%>
-<% if latest_time != undef -%>dispatch.latest_time = <%= latest_time %><% end -%>
+<% if earliest_time != :undef -%>dispatch.earliest_time = <%= earliest_time %><% end -%>
+<% if latest_time != :undef -%>dispatch.latest_time = <%= latest_time %><% end -%>
