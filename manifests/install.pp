@@ -65,7 +65,7 @@ class splunk::install($type=$type)
     ensure => 'directory',
     owner  => $::splunk::splunk_user,
     group  => $::splunk::splunk_group,
-    mode   => '0550'
+    mode   => '0750'
   }
 
   file { "${::splunk::local_path}/inputs.d/000_default":
@@ -115,7 +115,7 @@ class splunk::install($type=$type)
       ensure => 'directory',
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
-      mode   => '0550'
+      mode   => '0750'
     }
 
     file { "${::splunk::local_path}/indexes.d/000_default":

@@ -59,7 +59,6 @@ class splunk($type='forwarder') {
   $local_path   = "${splunkhome}/etc/system/local"
   $splunkdb     = "${splunkhome}/var/lib/splunk"
   $apppart      = "${sourcepart}-${version}-${splunkos}-${splunkarch}"
-  $oldsource    = "${sourcepart}-${current_version}-${splunkos}-${splunkarch}.${splunkext}"
   $splunksource = "${apppart}.${splunkext}"
   $manifest     = "${apppart}-manifest"
 

@@ -1,5 +1,4 @@
 [default]
-
 <%
 warmpath = scope.lookupvar('::splunk::params::warmpath')
 coldpath = scope.lookupvar('::splunk::params::coldpath')
@@ -7,7 +6,8 @@ maxwarmlargeMB = scope.lookupvar('::splunk::params::maxwarmlargeMB')
 maxwarmsmallMB = scope.lookupvar('::splunk::params::maxwarmsmallMB')
 maxcoldlargeMB = scope.lookupvar('::splunk::params::maxcoldlargeMB')
 maxcoldsmallMB = scope.lookupvar('::splunk::params::maxcoldsmallMB')
-if has_variable?('warmpath') && warmpath != :undef -%>
+-%>
+<% if has_variable?('warmpath') && warmpath != :undef -%>
 [volume:splunk_warm_large]
 path = <%= warmpath %>
 <% if maxwarmlargeMB.to_i > 0 -%>
