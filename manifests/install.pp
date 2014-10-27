@@ -11,7 +11,7 @@ class splunk::install($type=$type)
     file { "${::splunk::install_path}/${::splunk::splunksource}":
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
-      mode   => '0644',
+      mode   => '0640',
       source => "puppet:///modules/${module_name}/${::splunk::splunksource}",
       notify => Exec['unpackSplunk']
     }
@@ -52,7 +52,7 @@ class splunk::install($type=$type)
     owner   => $::splunk::splunk_user,
     group   => $::splunk::splunk_group,
     content => template("${module_name}/splunk-launch.conf.erb"),
-    mode    => '0644',
+    mode    => '0640',
     notify  => Service[splunk]
   }
 
@@ -60,7 +60,7 @@ class splunk::install($type=$type)
     ensure => 'directory',
     owner  => $::splunk::splunk_user,
     group  => $::splunk::splunk_group,
-    mode   => '0555'
+    mode   => '0550'
   }
 
   file { "${::splunk::splunklocal}/inputs.d/000_default":
@@ -77,7 +77,7 @@ class splunk::install($type=$type)
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
       content => template("${module_name}/outputs.conf.erb"),
-      mode    => '0644',
+      mode    => '0640',
       notify  => Service[splunk],
       alias   => 'splunk-outputs'
     }
@@ -93,7 +93,7 @@ class splunk::install($type=$type)
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
       content => template("${module_name}/web.conf.erb"),
-      mode    => '0644',
+      mode    => '0640',
       notify  => Service[splunk],
       alias   => 'splunk-web',
     }
@@ -110,7 +110,7 @@ class splunk::install($type=$type)
       ensure => 'directory',
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
-      mode   => '0555'
+      mode   => '0550'
     }
 
     file { "${::splunk::splunklocal}/indexes.d/000_default":
@@ -149,7 +149,7 @@ chown ${my_perms} ${my_index_c}",
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
       content => template("${module_name}/outputs.conf.erb"),
-      mode    => '0644',
+      mode    => '0640',
       notify  => Service[splunk],
       alias   => 'splunk-outputs'
     }
@@ -158,7 +158,7 @@ chown ${my_perms} ${my_index_c}",
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
       content => template("${module_name}/alert_actions.conf.erb"),
-      mode    => '0644',
+      mode    => '0640',
       notify  => Service[splunk],
       alias   => 'alert-actions'
     }
@@ -167,7 +167,7 @@ chown ${my_perms} ${my_index_c}",
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
       content => template("${module_name}/web.conf.erb"),
-      mode    => '0644',
+      mode    => '0640',
       notify  => Service[splunk],
       alias   => 'splunk-web',
     }
@@ -175,7 +175,7 @@ chown ${my_perms} ${my_index_c}",
     file { "${::splunk::splunklocal}/ui-prefs.conf":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
-      mode    => '0644',
+      mode    => '0640',
       content => template("${module_name}/ui-prefs.conf.erb"),
       notify  => Service['splunk']
       }
@@ -184,7 +184,7 @@ chown ${my_perms} ${my_index_c}",
     file { "${::splunk::splunklocal}/limits.conf":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
-      mode    => '0644',
+      mode    => '0640',
       content => template("${module_name}/limits.conf.erb"),
       notify  => Service[splunk]
     }
