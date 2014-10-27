@@ -69,9 +69,13 @@ class splunk($type='forwarder') {
     class { 'splunk::deploy': }
   }
 
+  $my_input_d = "${::splunk::local_path}/inputs.d/"
+  $my_input_c = "${::splunk::local_path}/inputs.conf"
+  $my_perms   = "${::splunk::splunk_user}:${::splunk::splunk_group}"
+
   exec { 'update-inputs':
-    command     => "/bin/cat ${local_path}/inputs.d/* > ${local_path}/inputs.conf; \
-chown ${splunk_user}:${splunk_group} ${local_path}/inputs.conf",
+    command     => "/bin/cat ${my_input_d}/* > ${my_input_c}; \
+chown ${my_perms} ${my_input_c}",
     refreshonly => true,
     subscribe   => File["${local_path}/inputs.d/000_default"],
     notify      => Service[splunk],

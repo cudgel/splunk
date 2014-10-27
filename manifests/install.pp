@@ -1,8 +1,13 @@
 class splunk::install($type=$type)
 {
+  $sourcepart      = $::splunk::sourcepart
+  $current_version = $::splunk::current_version
+  $new_version     = $::splunk::version
 
   # begin version change
-  if $::splunk::current_version != $::splunk::version {
+  if $new_version != $current_version {
+    $apppart      = "${sourcepart}-${current_version}-${splunkos}-${splunkarch}"
+    $oldsource = "${apppart}.${splunkext}"
 
     file { "${::splunk::install_path}/${::splunk::oldsource}":
       ensure => absent
@@ -122,7 +127,7 @@ class splunk::install($type=$type)
 
     $my_index_d = "${::splunk::local_path}/indexes.d/"
     $my_index_c = "${::splunk::local_path}/indexes.conf"
-    $my_perms = "${::splunk::splunk_user}:${::splunk::splunk_group}"
+    $my_perms   = "${::splunk::splunk_user}:${::splunk::splunk_group}"
 
     exec { 'update-indexes':
       command     => "/bin/cat ${my_index_d}/* > ${my_index_c}; \
