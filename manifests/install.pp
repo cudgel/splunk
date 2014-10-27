@@ -11,7 +11,6 @@ class splunk::install($type=$type)
     $apppart   = "${sourcepart}-${current_version}-${splunkos}-${splunkarch}"
     $oldsource = "${apppart}.${splunkext}"
 
-    if
     file { "${::splunk::install_path}/${::splunk::oldsource}":
       ensure => absent
     }
