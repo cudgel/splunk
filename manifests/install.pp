@@ -192,6 +192,15 @@ chown ${my_perms} ${my_index_c}",
       alias   => 'splunk-outputs'
     }
 
+    file { "${::splunk::local_path}/default-mode.conf":
+      owner   => $::splunk::splunk_user,
+      group   => $::splunk::splunk_user,
+      content => template("${module_name}/default-mode.conf.erb"),
+      mode    => '0640',
+      notify  => Service[splunk],
+      alias   => 'splunk-mode'
+    }
+
     file { "${::splunk::local_path}/alert_actions.conf":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
