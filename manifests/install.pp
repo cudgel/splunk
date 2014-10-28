@@ -9,10 +9,10 @@ class splunk::install($type=$type)
 
   # begin version change
   if $new_version != $current_version {
-    $apppart   = "${sourcepart}-${current_version}-${splunkos}-${splunkarch}"
-    $oldsource = "${apppart}.${::splunk::splunkext}"
+    if $current_version != undef {
+      $apppart   = "${sourcepart}-${current_version}-${splunkos}-${splunkarch}"
+      $oldsource = "${apppart}.${::splunk::splunkext}"
 
-    if $oldsource =~ /^\d.\d.\d-\d*/ {
       file { "${::splunk::install_path}/${oldsource}":
         ensure => absent
       }
