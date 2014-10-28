@@ -5,14 +5,17 @@ class splunk::install($type=$type)
   $new_version     = $::splunk::version
   $splunkos        = $::splunk::splunkos
   $splunkarch      = $::splunk::splunkarch
+  $my_perms        = "${::splunk::splunk_user}:${::splunk::splunk_group}"
 
   # begin version change
   if $new_version != $current_version {
     $apppart   = "${sourcepart}-${current_version}-${splunkos}-${splunkarch}"
-    $oldsource = "${apppart}.${splunkext}"
+    $oldsource = "${apppart}.${::splunk::splunkext}"
 
-    file { "${::splunk::install_path}/${::splunk::oldsource}":
-      ensure => absent
+    if $oldsource =~ /^\d.\d.\d-\d*/ {
+      file { "${::splunk::install_path}/${oldsource}":
+        ensure => absent
+      }
     }
 
     file { "${::splunk::install_path}/${::splunk::splunksource}":
@@ -25,8 +28,7 @@ class splunk::install($type=$type)
 
     exec { 'unpackSplunk':
       command   => "${::splunk::params::tarcmd} ${::splunk::splunksource}; \
-  chown -RL ${::splunk::splunk_user}:${::splunk::splunk_group} \
-  ${::splunk::splunkhome}",
+chown -RL ${my_perms} ${::splunk::splunkhome}",
       path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
       cwd       => $::splunk::install_path,
       subscribe => File["${::splunk::install_path}/${::splunk::splunksource}"],
@@ -129,7 +131,6 @@ class splunk::install($type=$type)
 
     $my_index_d = "${::splunk::local_path}/indexes.d/"
     $my_index_c = "${::splunk::local_path}/indexes.conf"
-    $my_perms   = "${::splunk::splunk_user}:${::splunk::splunk_group}"
 
     exec { 'update-indexes':
       command     => "/bin/cat ${my_index_d}/* > ${my_index_c}; \
