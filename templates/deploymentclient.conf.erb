@@ -1,7 +1,7 @@
 # Puppet Name: <%= @title %>
 #
 <%
-enable = scope.lookupvar('::splunk::params::deployment_disable')
+disable = scope.lookupvar('::splunk::params::deployment_disable')
 targetUri = scope.lookupvar('::splunk::params::deployment_server')
 phoneHomeIntervalInSecs = scope.lookupvar('::splunk::params::deployment_interval')
 -%>
