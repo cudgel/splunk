@@ -103,6 +103,11 @@ chown -RL ${my_perms} ${::splunk::splunkhome}",
         group  => $::splunk::splunk_group,
         mode   => '0750'
       }
+      splunk::acl { $my_warmpath:
+        group    => $::splunk::splunk_user,
+        recurse  => false,
+        readonly => false
+      }
     }
 
     if $my_coldpath != undef {
@@ -112,7 +117,11 @@ chown -RL ${my_perms} ${::splunk::splunkhome}",
         group  => $::splunk::splunk_group,
         mode   => '0750'
       }
-    }
+      splunk::acl { $my_coldpath:
+        group    => $::splunk::splunk_user,
+        recurse  => false,
+        readonly => false
+      }    }
 
     file { "${::splunk::local_path}/outputs.conf":
       ensure => absent,
