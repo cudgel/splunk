@@ -3,7 +3,7 @@ class splunk::params
   $version             = hiera('splunk::params::version', undef)
   $splunk_user         = hiera('splunk::params::splunk_user', 'splunk')
   $splunk_group        = hiera('splunk::params::splunk_group', 'splunk')
-  $deployment_enable   = hiera('splunk::params::deployment_enable', false)
+  $deployment_disable  = hiera('splunk::params::deployment_disable', false)
   $deployment_interval = hiera('splunk::params::deployment_interval', 30)
   $deployment_server   = hiera('splunk::params::deployment_server', undef)
   $indexers            = hiera('splunk::params::indexers', undef)
