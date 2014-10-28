@@ -93,6 +93,27 @@ chown -RL ${my_perms} ${::splunk::splunkhome}",
 
   } elsif $type == 'indexer' {
 
+    $my_warmpath = $::splunk::params::warmpath
+    $my_coldpath = $::splunk::params::coldpath
+
+    if $my_warmpath != undef {
+      file { $my_warmpath:
+        ensure => 'directory',
+        owner  => $::splunk::splunk_user,
+        group  => $::splunk::splunk_group,
+        mode   => '0750'
+      }
+    }
+
+    if $my_coldpath != undef {
+      file {  $::splunk::params::coldpath:
+        ensure => 'directory',
+        owner  => $::splunk::splunk_user,
+        group  => $::splunk::splunk_group,
+        mode   => '0750'
+      }
+    }
+
     file { "${::splunk::local_path}/outputs.conf":
       ensure => absent,
       notify => Service[splunk]
