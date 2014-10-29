@@ -91,7 +91,7 @@ chown -RL ${my_perms} ${::splunk::splunkhome}",
       alias   => 'splunk-outputs'
     }
 
-  } elsif $type == 'indexer' {
+  } elsif $type == 'indexer' or $type == 'stack' {
 
     $my_warmpath = $::splunk::params::warmpath
     $my_coldpath = $::splunk::params::coldpath
@@ -170,7 +170,7 @@ chown ${my_perms} ${my_index_c}",
       notify      => Service[splunk]
     }
 
-  } elsif $type == 'search' {
+  } elsif $type == 'search' or $type == 'stack' {
 
     if $::osfamily == 'RedHat' {
     # support PDF Report Server
