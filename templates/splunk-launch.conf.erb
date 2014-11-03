@@ -1,11 +1,11 @@
 # Puppet Name: <%= @title %>
 #
 <%
-selinux = scope.lookupvar('::selinux')
-SPLUNK_DB = scope.lookupvar('::splunk::splunkdb')
-SPLUNK_HOME = scope.lookupvar('::splunk::splunkhome')
-SPLUNK_OS_USER = scope.lookupvar('::splunk::splunk_user')
-SPLUNK_SERVER_NAME = scope.lookupvar('::splunk::type')
+selinux = scope['::selinux']
+SPLUNK_DB = scope['::splunk::splunkdb']
+SPLUNK_HOME = scope['::splunk::splunkhome']
+SPLUNK_OS_USER = scope['::splunk::splunk_user']
+SPLUNK_SERVER_NAME = scope['::splunk::type']
 -%>
 # Modify the following line to suit the location of your Splunk install.
 # If unset, Splunk will use the parent of the directory this configuration

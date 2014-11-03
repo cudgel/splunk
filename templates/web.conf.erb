@@ -1,9 +1,9 @@
-# Puppet Name: <%= title %>
+# Puppet Name: <%= @title %>
 #
 <%
-enableSplunkWebSSL = scope.lookupvar('::splunk::params::webSSL')
-cipherSuite = scope.lookupvar('::splunk::params::cipherSuite')
-supportSSLV3Only = scope.lookupvar('::splunk::params::SSLV3')
+enableSplunkWebSSL = scope['::splunk::params::webSSL']
+cipherSuite = scope['::splunk::params::cipherSuite']
+supportSSLV3Only = scope['::splunk::params::SSLV3']
 -%>
 [settings]
 enableSplunkWebSSL = <%= enableSplunkWebSSL %>

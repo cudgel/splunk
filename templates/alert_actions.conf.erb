@@ -1,8 +1,8 @@
 # Puppet Name: <%= @title %>
 #
 <%
-hostname = scope.lookupvar('::splunk::service_url')
-from = scope.lookupvar('::fqdn')
+hostname = scope['::splunk::service_url']
+from = scope['::fqdn']
 -%>
 [email]
 inline = 1

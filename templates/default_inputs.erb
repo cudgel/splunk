@@ -1,10 +1,10 @@
 # Puppet Name: <%= @title %>
 #
 <%
-splunkhome = scope.lookupvar('::splunk::splunkhome')
+splunkhome = scope['::splunk::splunkhome']
 -%>
 [default]
-host = <%= scope.lookupvar('::fqdn') %>
+host = <%= scope['::fqdn'] %>
 
 [monitor:/<%= splunkhome %>/var/log/splunk]
 index = _internal

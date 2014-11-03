@@ -1,5 +1,5 @@
 <%
-ssl = scope.lookupvar('::splunk::params::TCPSSL')
+ssl = scope['::splunk::params::TCPSSL']
 -%>
 <% if ssl == true -%>
 [SSL]

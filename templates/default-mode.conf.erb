@@ -1,7 +1,7 @@
 # Puppet Name: <%= @title %>
 #
 <%
-scheduler = scope.lookupvar('::splunk::params::scheduler_disable')
+scheduler = scope['::splunk::params::scheduler_disable']
 -%>
 [pipeline:scheduler]
 disabled = <%= scheduler %>

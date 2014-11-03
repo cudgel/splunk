@@ -1,10 +1,10 @@
 # Puppet Name: <%= @title %>
 #
 <%
-maxout = scope.lookupvar('::splunk::params::subsearch_maxout')
-maxtime = scope.lookupvar('::splunk::params::subsearch_maxtime')
-ttl = scope.lookupvar('::splunk::params::subsearch_ttl')
-dispatch_dir_warning_size = scope.lookupvar('::splunk::params::dispatch_size')
+maxout = scope['::splunk::params::subsearch_maxout']
+maxtime = scope['::splunk::params::subsearch_maxtime']
+ttl = scope['::splunk::params::subsearch_ttl']
+dispatch_dir_warning_size = scope['::splunk::params::dispatch_size']
 -%>
 [subsearch]
 <% if maxout != :undef -%>maxout = <%= maxout %><% end -%>

@@ -1,8 +1,8 @@
 # Puppet Name: <%= @title %>
 #
 <%
-server = scope.lookupvar('::splunk::params::indexers')
-ssl = scope.lookupvar('::splunk::params::TCPSSL')
+server = scope['::splunk::params::indexers']
+ssl = scope['::splunk::params::TCPSSL']
 -%>
 [tcpout]
 indexAndForward=false
