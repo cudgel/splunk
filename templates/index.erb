@@ -9,8 +9,10 @@ else
 end
 if has_variable?('warmpath') && @warmpath != :undef
   if @size == 'small'
+    maxDataSize = 'auto'
     homePath = 'volume:splunk_warm_small'
   else
+    maxDataSize = 'auto_high_volume'
     homePath = 'volume:splunk_warm_large'
   end
 else
@@ -26,6 +28,7 @@ else
   coldPath = '$SPLUNK_DB'
 end
 -%>
+maxDataSize = <%. maxDataSize %>
 homePath = <%= homePath -%>/<%= dbName -%>/db
 coldPath = <%= coldPath -%>/<%= dbName -%>/colddb
 thawedPath = $SPLUNK_DB/<%= dbName -%>/thaweddb
