@@ -28,7 +28,7 @@ else
   coldPath = '$SPLUNK_DB'
 end
 -%>
-maxDataSize = <%. maxDataSize %>
+maxDataSize = <%= maxDataSize %>
 homePath = <%= homePath -%>/<%= dbName -%>/db
 coldPath = <%= coldPath -%>/<%= dbName -%>/colddb
 thawedPath = $SPLUNK_DB/<%= dbName -%>/thaweddb
