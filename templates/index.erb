@@ -1,5 +1,8 @@
 # Puppet Name: <%= @title %>
 #
+<% if @size == 'none' -%>
+# index <%= @title %> disabled
+<% else -%>
 [<%= @title -%>]
 <%
 if @title == 'main'
@@ -33,3 +36,4 @@ homePath = <%= homePath -%>/<%= dbName -%>/db
 coldPath = <%= coldPath -%>/<%= dbName -%>/colddb
 thawedPath = $SPLUNK_DB/<%= dbName -%>/thaweddb
 frozenTimePeriodInSecs = <%= @frozenTime %>
+<% end -%>
