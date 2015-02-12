@@ -16,7 +16,7 @@ class splunk::params
   $maxcoldlargeMB      = hiera('splunk::params::maxcoldlargeMB', undef)
   $maxcoldsmallMB      = hiera('splunk::params::maxcoldsmallMB', undef)
   $cipherSuite         = hiera('splunk::params::cipherSuite', undef)
-  $ssl_versions         = hiera('splunk::params::ssl_versions', undef)
+  $sslVersions         = hiera('splunk::params::sslVersions', 'tls')
   $TCPSSL              = hiera('splunk::params::TCPSSL', true)
   $webSSL              = hiera('splunk::params::webSSL', true)
   $SSLV3               = hiera('splunk::params::SSLV3', false)
