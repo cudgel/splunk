@@ -55,14 +55,14 @@ define splunk::acl(
 
     # test if the ACL is to be applied to an nfs mount
     # (extended posix ACLs cannot be set from the nfs client)
-    $testnfs = "df -P ${object} | tail -1 | awk '{print \$NF}' |
+    $testnfs = "df -P ${object} | tail -1 | awk '{print \$1}' |
 fgrep -f - /proc/mounts | grep -q nfs"
 
     # Recursive ACLs can only be applied to a directory.
     # Non-recursive ACLs can be applied to anything.
     #
     if $recurse == true {
-      $setfacl   = "setfacl -R -m ${acl} ${object} &&
+      $setfacl   = "setfacl -R -m ${acl} ${object} ||
 setfacl -d -R -m ${acl} ${object}"
     } else {
       $setfacl   = "setfacl -m ${acl} ${object}"
