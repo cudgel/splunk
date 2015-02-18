@@ -62,7 +62,7 @@ fgrep -f - /proc/mounts | grep -q nfs"
     # Non-recursive ACLs can be applied to anything.
     #
     if $recurse == true {
-      $setfacl   = "setfacl -R -m ${acl} ${object} ||
+      $setfacl   = "setfacl -R -m ${acl} ${object} &&
 setfacl -d -R -m ${acl} ${object}"
     } else {
       $setfacl   = "setfacl -m ${acl} ${object}"
@@ -74,7 +74,7 @@ setfacl -d -R -m ${acl} ${object}"
     exec { "setfacl_${title}":
       path    => '/bin:/usr/bin',
       command => $setfacl,
-      unless  => "${testnfs} && getfacl ${object} 2>/dev/null |
+      unless  => "${testnfs} || getfacl ${object} 2>/dev/null |
 egrep -q '${acl}'",
       timeout => '0'
     }
