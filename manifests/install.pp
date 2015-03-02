@@ -248,8 +248,8 @@ class splunk::install($type=$type)
       target => '/opt/mserver',
       url    => "puppet:///modules/${module_name}/",
       strip  => true,
-      owner  => $::splunk::splunk_user,
-      group  => $::splunk::splunk_user
+      owner  => 'root',
+      group  => 'root'
     }
 
     file { '/etc/init.d/splunkm':
