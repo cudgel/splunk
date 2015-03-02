@@ -7,6 +7,10 @@ class splunk::install($type=$type)
   $splunkarch      = $::splunk::splunkarch
   $my_perms        = "${::splunk::splunk_user}:${::splunk::splunk_group}"
 
+  class { '::deploy':
+    tempdir => '/opt/deploy'
+  }
+
   # begin common (non mserver)
   if $type != 'mserver' {
 
@@ -240,11 +244,7 @@ class splunk::install($type=$type)
     }
 
   } elsif $type == 'mserver' {
-    class { 'deploy':
-      tempdir => '/opt/deploy'
-    }
-
-    deploy::file { $::splunk::mserversource:
+    ::deploy::file { $::splunk::mserversource:
       target => '/opt/mserver',
       url    => "puppet:///modules/${module_name}/",
       strip  => true,

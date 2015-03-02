@@ -69,7 +69,7 @@ class splunk($type='forwarder') {
   if $type != 'mserver' {
     # configure deployment server for indexers and forwarders
     if $type != 'search' {
-      class { 'splunk::deploy': }
+      class { 'splunk::deployment': }
     }
 
     $my_input_d = "${::splunk::local_path}/inputs.d/"

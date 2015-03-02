@@ -1,4 +1,4 @@
-class splunk::deploy
+class splunk::deployment
 {
 
   $deployment_server = $::splunk::params::deployment_server
