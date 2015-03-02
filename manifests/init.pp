@@ -62,7 +62,7 @@ class splunk($type='forwarder') {
   $apppart       = "${sourcepart}-${version}-${splunkos}-${splunkarch}"
   $splunksource  = "${apppart}.${splunkext}"
   $manifest      = "${apppart}-manifest"
-  $mserversource = "mserver-linux-realease-${mserevr}.tgz"
+  $mserversource = "mserver-linux-realease-${mserver}.tgz"
 
   class { 'splunk::install': type => $type }->
   class { 'splunk::service': }
