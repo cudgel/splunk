@@ -41,7 +41,7 @@ class splunk::install($type=$type)
       }
 
       exec { 'firstStart':
-        command     => "splunk stop; splunk --accept-license --answer-yes --no-prompt start",
+        command     => 'splunk stop; splunk --accept-license --answer-yes --no-prompt start',
         path        => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
         subscribe   => Exec['unpackSplunk'],
         refreshonly => true,
