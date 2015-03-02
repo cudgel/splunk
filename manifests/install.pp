@@ -31,8 +31,7 @@ class splunk::install($type=$type)
       }
 
       exec { 'unpackSplunk':
-        command   => "${::splunk::params::tarcmd} ${::splunk::splunksource}; \
-chown -RL ${my_perms} ${::splunk::splunkhome}",
+        command   => "${::splunk::params::tarcmd} ${::splunk::splunksource}; chown -RL ${my_perms} ${::splunk::splunkhome}",
         path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
         cwd       => $::splunk::install_path,
         subscribe => File["${::splunk::install_path}/${::splunk::splunksource}"],
@@ -42,8 +41,7 @@ chown -RL ${my_perms} ${::splunk::splunkhome}",
       }
 
       exec { 'firstStart':
-        command     => "splunk stop; \
-splunk --accept-license --answer-yes --no-prompt start",
+        command     => "splunk stop; splunk --accept-license --answer-yes --no-prompt start",
         path        => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
         subscribe   => Exec['unpackSplunk'],
         refreshonly => true,
@@ -169,8 +167,7 @@ splunk --accept-license --answer-yes --no-prompt start",
     $my_index_c = "${::splunk::local_path}/indexes.conf"
 
     exec { 'update-indexes':
-      command     => "/bin/cat ${my_index_d}/* > ${my_index_c}; \
-chown ${my_perms} ${my_index_c}",
+      command     => "/bin/cat ${my_index_d}/* > ${my_index_c}; chown ${my_perms} ${my_index_c}",
       refreshonly => true,
       subscribe   => File["${::splunk::local_path}/indexes.d/000_default"],
       notify      => Service[splunk]
@@ -247,7 +244,7 @@ chown ${my_perms} ${my_index_c}",
       tempdir => '/opt/deploy'
     }
 
-    deploy::file { $::splunk::mserver_source}:
+    deploy::file { $::splunk::mserver_source:web:
       target => '/opt/mserver',
       url    => "puppet:///modules/${module_name}/",
       strip  => true,
