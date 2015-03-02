@@ -244,7 +244,7 @@ class splunk::install($type=$type)
       tempdir => '/opt/deploy'
     }
 
-    deploy::file { $::splunk::mserver_source:web:
+    deploy::file { ${::splunk::mserver_source:web}:
       target => '/opt/mserver',
       url    => "puppet:///modules/${module_name}/",
       strip  => true,
