@@ -48,6 +48,7 @@ class splunk($type='forwarder') {
   $splunkext       = $::splunk::params::splunkext
   $tar             = $::splunk::params::tar
   $tarcmd          = $::splunk::params::tarcmd
+  $mserver         = $::splunk::params::mserver
 
   if $type == 'forwarder' {
     $sourcepart = 'splunkforwarder'
@@ -55,29 +56,32 @@ class splunk($type='forwarder') {
     $sourcepart = 'splunk'
   }
 
-  $splunkhome   = "${install_path}/${sourcepart}"
-  $local_path   = "${splunkhome}/etc/system/local"
-  $splunkdb     = "${splunkhome}/var/lib/splunk"
-  $apppart      = "${sourcepart}-${version}-${splunkos}-${splunkarch}"
-  $splunksource = "${apppart}.${splunkext}"
-  $manifest     = "${apppart}-manifest"
+  $splunkhome    = "${install_path}/${sourcepart}"
+  $local_path    = "${splunkhome}/etc/system/local"
+  $splunkdb      = "${splunkhome}/var/lib/splunk"
+  $apppart       = "${sourcepart}-${version}-${splunkos}-${splunkarch}"
+  $splunksource  = "${apppart}.${splunkext}"
+  $manifest      = "${apppart}-manifest"
+  $mserversource = "mserver-linux-realease-${mserevr}.tgz"
 
   class { 'splunk::install': type => $type }->
   class { 'splunk::service': }
-  if $type != 'search' {
-    class { 'splunk::deploy': }
+  if $type != 'mserver' {
+    # configure deployment server for indexers and forwarders
+    if $type != 'search' {
+      class { 'splunk::deploy': }
+    }
+
+    $my_input_d = "${::splunk::local_path}/inputs.d/"
+    $my_input_c = "${::splunk::local_path}/inputs.conf"
+    $my_perms   = "${::splunk::splunk_user}:${::splunk::splunk_group}"
+
+    exec { 'update-inputs':
+      command     => "/bin/cat ${my_input_d}/* > ${my_input_c}; \
+  chown ${my_perms} ${my_input_c}",
+      refreshonly => true,
+      subscribe   => File["${local_path}/inputs.d/000_default"],
+      notify      => Service[splunk],
+    }
   }
-
-  $my_input_d = "${::splunk::local_path}/inputs.d/"
-  $my_input_c = "${::splunk::local_path}/inputs.conf"
-  $my_perms   = "${::splunk::splunk_user}:${::splunk::splunk_group}"
-
-  exec { 'update-inputs':
-    command     => "/bin/cat ${my_input_d}/* > ${my_input_c}; \
-chown ${my_perms} ${my_input_c}",
-    refreshonly => true,
-    subscribe   => File["${local_path}/inputs.d/000_default"],
-    notify      => Service[splunk],
-  }
-
 }
