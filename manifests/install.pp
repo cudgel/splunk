@@ -11,84 +11,79 @@ class splunk::install($type=$type)
     tempdir => '/opt/deploy'
   }
 
-  # begin common (non mserver)
-  if $type != 'mserver' {
+  # begin version change
+  if $new_version != $current_version {
 
-    # begin version change
-    if $new_version != $current_version {
+    if $current_version != undef {
+      $apppart   = "${sourcepart}-${current_version}-${splunkos}-${splunkarch}"
+      $oldsource = "${apppart}.${::splunk::splunkext}"
 
-      if $current_version != undef {
-        $apppart   = "${sourcepart}-${current_version}-${splunkos}-${splunkarch}"
-        $oldsource = "${apppart}.${::splunk::splunkext}"
-
-        file { "${::splunk::install_path}/${oldsource}":
-          ensure => absent
-        }
+      file { "${::splunk::install_path}/${oldsource}":
+        ensure => absent
       }
-
-      file { "${::splunk::install_path}/${::splunk::splunksource}":
-        owner  => $::splunk::splunk_user,
-        group  => $::splunk::splunk_group,
-        mode   => '0640',
-        source => "puppet:///modules/${module_name}/${::splunk::splunksource}",
-        notify => Exec['unpackSplunk']
-      }
-
-      exec { 'unpackSplunk':
-        command   => "${::splunk::params::tarcmd} ${::splunk::splunksource}; chown -RL ${my_perms} ${::splunk::splunkhome}",
-        path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
-        cwd       => $::splunk::install_path,
-        subscribe => File["${::splunk::install_path}/${::splunk::splunksource}"],
-        timeout   => 600,
-        unless    => "test -e ${::splunk::splunkhome}/${::splunk::manifest}",
-        creates   => "${::splunk::splunkhome}/${::splunk::manifest}"
-      }
-
-      exec { 'firstStart':
-        command     => 'splunk stop; splunk --accept-license --answer-yes --no-prompt start',
-        path        => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
-        subscribe   => Exec['unpackSplunk'],
-        refreshonly => true,
-        user        => $::splunk::splunk_user,
-        group       => $::splunk::splunk_group
-      }
-
-      exec { 'installSplunkService':
-        command   => 'splunk enable boot-start',
-        path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
-        subscribe => Exec['unpackSplunk'],
-        unless    => 'test -e /etc/init.d/splunk',
-        creates   => '/etc/init.d/splunk'
-      }
-
-    } # end new version
-
-    file { "${::splunk::splunkhome}/etc/splunk-launch.conf":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_group,
-      content => template("${module_name}/splunk-launch.conf.erb"),
-      mode    => '0640',
-      notify  => Service[splunk]
     }
 
-    file { "${::splunk::local_path}/inputs.d":
-      ensure => 'directory',
+    file { "${::splunk::install_path}/${::splunk::splunksource}":
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
-      mode   => '0750'
+      mode   => '0640',
+      source => "puppet:///modules/${module_name}/${::splunk::splunksource}",
+      notify => Exec['unpackSplunk']
     }
 
-    file { "${::splunk::local_path}/inputs.d/000_default":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_group,
-      mode    => '0440',
-      require => File["${::splunk::local_path}/inputs.d"],
-      content => template("${module_name}/default_inputs.erb")
+    exec { 'unpackSplunk':
+      command   => "${::splunk::params::tarcmd} ${::splunk::splunksource}; chown -RL ${my_perms} ${::splunk::splunkhome}",
+      path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
+      cwd       => $::splunk::install_path,
+      subscribe => File["${::splunk::install_path}/${::splunk::splunksource}"],
+      timeout   => 600,
+      unless    => "test -e ${::splunk::splunkhome}/${::splunk::manifest}",
+      creates   => "${::splunk::splunkhome}/${::splunk::manifest}"
     }
 
-  } # end common (not mserver)
+    exec { 'firstStart':
+      command     => 'splunk stop; splunk --accept-license --answer-yes --no-prompt start',
+      path        => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
+      subscribe   => Exec['unpackSplunk'],
+      refreshonly => true,
+      user        => $::splunk::splunk_user,
+      group       => $::splunk::splunk_group
+    }
 
-  if $type == 'forwarder' {
+    exec { 'installSplunkService':
+      command   => 'splunk enable boot-start',
+      path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
+      subscribe => Exec['unpackSplunk'],
+      unless    => 'test -e /etc/init.d/splunk',
+      creates   => '/etc/init.d/splunk'
+    }
+
+  } # end new version
+
+  file { "${::splunk::splunkhome}/etc/splunk-launch.conf":
+    owner   => $::splunk::splunk_user,
+    group   => $::splunk::splunk_group,
+    content => template("${module_name}/splunk-launch.conf.erb"),
+    mode    => '0640',
+    notify  => Service[splunk]
+  }
+
+  file { "${::splunk::local_path}/inputs.d":
+    ensure => 'directory',
+    owner  => $::splunk::splunk_user,
+    group  => $::splunk::splunk_group,
+    mode   => '0750'
+  }
+
+  file { "${::splunk::local_path}/inputs.d/000_default":
+    owner   => $::splunk::splunk_user,
+    group   => $::splunk::splunk_group,
+    mode    => '0440',
+    require => File["${::splunk::local_path}/inputs.d"],
+    content => template("${module_name}/default_inputs.erb")
+  }
+
+  if $type == 'forwarder' or $type == 'mserver' {
 
     file { "${::splunk::local_path}/outputs.conf":
       owner   => $::splunk::splunk_user,
@@ -243,7 +238,9 @@ class splunk::install($type=$type)
       notify  => Service[splunk]
     }
 
-  } elsif $type == 'mserver' {
+  }
+
+  if $type == 'mserver' {
     ::deploy::file { $::splunk::mserversource:
       target => '/opt/mserver',
       url    => "puppet:///modules/${module_name}/",

@@ -66,22 +66,20 @@ class splunk($type='forwarder') {
 
   class { 'splunk::install': type => $type }->
   class { 'splunk::service': }
-  if $type != 'mserver' {
-    # configure deployment server for indexers and forwarders
-    if $type != 'search' {
-      class { 'splunk::deployment': }
-    }
+  # configure deployment server for indexers and forwarders
+  if $type != 'search' {
+    class { 'splunk::deployment': }
+  }
 
-    $my_input_d = "${::splunk::local_path}/inputs.d/"
-    $my_input_c = "${::splunk::local_path}/inputs.conf"
-    $my_perms   = "${::splunk::splunk_user}:${::splunk::splunk_group}"
+  $my_input_d = "${::splunk::local_path}/inputs.d/"
+  $my_input_c = "${::splunk::local_path}/inputs.conf"
+  $my_perms   = "${::splunk::splunk_user}:${::splunk::splunk_group}"
 
-    exec { 'update-inputs':
-      command     => "/bin/cat ${my_input_d}/* > ${my_input_c}; \
-  chown ${my_perms} ${my_input_c}",
-      refreshonly => true,
-      subscribe   => File["${local_path}/inputs.d/000_default"],
-      notify      => Service[splunk],
-    }
+  exec { 'update-inputs':
+    command     => "/bin/cat ${my_input_d}/* > ${my_input_c}; \
+chown ${my_perms} ${my_input_c}",
+    refreshonly => true,
+    subscribe   => File["${local_path}/inputs.d/000_default"],
+    notify      => Service[splunk],
   }
 }

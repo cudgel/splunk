@@ -3,14 +3,14 @@ class splunk::service inherits ::splunk {
   if $type == 'mserver' {
     service { 'splunkm':
         ensure  => 'running',
-        enable  => true,
-        require => Class['::splunk::install']
+        enable  => true
     }
-  } else {
-    service { 'splunk':
+  }
+
+  service { 'splunk':
         ensure  => 'running',
         enable  => true,
         require => Class['::splunk::install']
-    }
   }
+
 }
