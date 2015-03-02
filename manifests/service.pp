@@ -6,7 +6,7 @@ class splunk::service inherits ::splunk {
         enable  => true,
         require => Class['::splunk::install']
     }
-  else {
+  } else {
     service { 'splunk':
         ensure  => 'running',
         enable  => true,
