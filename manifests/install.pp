@@ -227,8 +227,7 @@ class splunk::install($type=$type)
       mode    => '0640',
       content => template("${module_name}/ui-prefs.conf.erb"),
       notify  => Service['splunk']
-      }
-
+    }
 
     file { "${::splunk::local_path}/limits.conf":
       owner   => $::splunk::splunk_user,
