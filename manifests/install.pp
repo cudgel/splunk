@@ -7,10 +7,6 @@ class splunk::install($type=$type)
   $splunkarch      = $::splunk::splunkarch
   $my_perms        = "${::splunk::splunk_user}:${::splunk::splunk_group}"
 
-  class { '::deploy':
-    tempdir => '/opt/deploy'
-  }
-
   # begin version change
   if $new_version != $current_version {
 
