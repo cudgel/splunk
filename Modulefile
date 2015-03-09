@@ -1,9 +1,9 @@
-name    'gwudit/splunk'
+name    'cudgel/splunk'
 version '0.1.0'
-source 'https://git.es.gwu.edu/git/'
+source 'https://github.com/cudgel/splunk
 author 'cudgel'
 license 'Apache License, Version 2.0'
-summary 'UNKNOWN'
+summary 'Module to install/manage Splunk forwarders, indexers, search heads'
 description 'UNKNOWN'
 project_page 'UNKNOWN'
 

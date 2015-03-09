@@ -236,7 +236,7 @@ class splunk::install($type=$type)
   }
 
   if $type == 'mserver' {
-    ::deploy::file { $::splunk::mserversource:
+    deploy::file { $::splunk::mserversource:
       target => '/opt/mserver',
       url    => "puppet:///modules/${module_name}/",
       strip  => true,
