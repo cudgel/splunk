@@ -2,6 +2,54 @@ splunk
 
 This is the splunk module.
 
+It requires a fileserver definition, e.g.:
+
+[splunk]
+  path /etc/puppetlabs/puppet/files/splunk
+  allow *
+
+The file server should be populated with the tarballs for the splunk components you want to manage.
+
+# ls -1 /etc/puppetlabs/puppet/files/splunk
+mserver-linux-release-2.0.0.tgz
+splunk-6.1.6-249101-Linux-x86_64.tgz
+splunk-6.2.1-245427-Linux-x86_64.tgz
+splunkforwarder-6.1.6-249101-Linux-x86_64.tgz
+splunkforwarder-6.2.1-245427-Linux-x86_64.tgz
+
+It depends on hiera to supply global setttings.
+
+splunk::params::appIndex: 'apps'
+# splunk::params::cipherSuite: 'TLSv1.1'
+splunk::params::coldpath: '/srv/coldDB'
+splunk::params::deployment_disable: false
+splunk::params::deployment_interval: 20
+splunk::params::deployment_server: 'splunkdep1.localdomain:8089'
+splunk::params::dispatch_earliest: '-60m@m'
+splunk::params::dispatch_latest: 'now'
+splunk::params::frozenTime: 7776000
+# load balanced service
+splunk::params::indexers: 'splunkidx1.localdomain:9997'
+splunk::params::maxcoldlargeMB: 600000
+splunk::params::maxcoldsmallMB: 120000
+splunk::params::maxwarmlargeMB: 300000
+splunk::params::maxwarmsmallMB: 60000
+splunk::params::mserver: '2.0.0'
+splunk::params::dispatch_size: 6000
+splunk::params::scheduler_disable: false
+# load balanced service
+splunk::params::serviceurl: 'https://splunk.localdomain'
+splunk::params::splunk_group: 'splunk'
+splunk::params::splunk_user: 'splunk'
+splunk::params::sslVersions: 'tls'
+splunk::params::subsearch_maxout: 15000
+splunk::params::subsearch_maxtime: 600
+splunk::params::subsearch_ttl: 1200
+splunk::params::TCPSSL: false
+splunk::params::version: '6.1.6-249101'
+splunk::params::warmpath: '/opt/splunk/var/lib/splunk'
+splunk::params::webSSL: true
+
 License
 -------
 
