@@ -23,7 +23,7 @@ class splunk::install($type=$type)
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
       mode   => '0640',
-      source => "puppet:///modules/${module_name}/${::splunk::splunksource}",
+      source => "puppet:///splunk/${::splunk::splunksource}",
       notify => Exec['unpackSplunk']
     }
 
@@ -238,7 +238,7 @@ class splunk::install($type=$type)
   if $type == 'mserver' {
     deploy::file { $::splunk::mserversource:
       target => '/opt/mserver',
-      url    => "puppet:///modules/${module_name}/",
+      url    => "puppet:///splunk/",
       strip  => true,
       owner  => 'root',
       group  => 'root'
