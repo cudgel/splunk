@@ -1,6 +1,6 @@
-splunk
+Splunk
 
-This Splunk module supports deploying n-tier Splunk environments (forwarder, indexer, and search head roles).
+This Splunk module supports deploying n-tier Splunk environments (forwarder, indexer, and search head roles) as well as the Spunk Mobile Server.
 
 It requires a fileserver definition, e.g.:
 
@@ -53,6 +53,7 @@ splunk::params::webSSL: true
 License
 -------
 
+Apache 2.0
 
 Contact
 -------
