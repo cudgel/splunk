@@ -1,6 +1,6 @@
 splunk
 
-This is the splunk module.
+This Splunk module supports deploying n-tier Splunk environments (forwarder, indexer, and search head roles).
 
 It requires a fileserver definition, e.g.:
 
@@ -20,7 +20,7 @@ splunkforwarder-6.2.1-245427-Linux-x86_64.tgz
 It depends on hiera to supply global setttings.
 
 splunk::params::appIndex: 'apps'
-# splunk::params::cipherSuite: 'TLSv1.1'
+splunk::params::cipherSuite: 'TLSv1.1'
 splunk::params::coldpath: '/srv/coldDB'
 splunk::params::deployment_disable: false
 splunk::params::deployment_interval: 20
@@ -57,8 +57,9 @@ License
 Contact
 -------
 
+If you need help implementing, contact me [ caldwell @ gwu dot edu ]
 
 Support
 -------
 
-Please log tickets and issues at our [Projects site](http://projects.example.com)
+Please log tickets and issues at our [Projects site](https://github.com/cudgel/splunk)
