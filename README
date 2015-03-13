@@ -1,6 +1,6 @@
 Splunk
 
-This Splunk module supports deploying n-tier Splunk environments (forwarder, indexer, and search head roles) as well as the Spunk Mobile Server.
+This Splunk module supports deploying n-tier Splunk environments (forwarder, indexer, and search head roles) as well as the Spunk Mobile Server. It does not create a Splunk user or group but supports running as root or non-root user. It assumes running as user/group splunk/splunk and will apply ACLs to grant access to log files specified in the hiera hash splunk::inputs. If the node has a splunk role of indexer it will create indexes based on the hiera hash splunk::indexes.
 
 It requires a fileserver definition, e.g.:
 
@@ -49,6 +49,44 @@ splunk::params::TCPSSL: false
 splunk::params::version: '6.1.6-249101'
 splunk::params::warmpath: '/opt/splunk/var/lib/splunk'
 splunk::params::webSSL: true
+
+Sample node/role hiera data:
+
+splunk::inputs:
+  'messages':
+    target: '/var/log/messages'
+    index: 'main'
+    sourcetype: 'linux_messages_syslog'
+  'secure':
+    target: '/var/log/secure'
+    index: 'main'
+    sourcetype: 'linux_secure'
+  'maillog':
+    target: '/var/log/maillog'
+    index: 'main'
+    sourcetype: 'syslog'
+  'spooler':
+    target: '/var/log/spooler'
+    index: 'main'
+    sourcetype: 'syslog'
+  'cron':
+    target: '/var/log/cron'
+    index: 'main'
+    sourcetype: 'syslog'
+
+A sample manifest snippet:
+
+  $my_type = hiera('splunk::type', 'forwarder')
+
+  # create indexes if the host is an indexer
+  if $my_type == 'indexer' {
+    $my_indexes = hiera_hash('splunk::indexes')
+    create_resources('splunk::index', $my_indexes)
+  }
+
+  # create OS, role, and host specific inputs
+  $my_inputs = hiera_hash('splunk::inputs')
+  create_resources('splunk::input', $my_inputs)
 
 License
 -------
