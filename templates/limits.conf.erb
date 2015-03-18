@@ -15,3 +15,8 @@ dispatch_dir_warning_size = scope['::splunk::params::dispatch_size']
 <% if dispatch_dir_warning_size != :undef -%>
 dispatch_dir_warning_size = <%= dispatch_dir_warning_size %>
 <% end -%>
+
+[join]
+<% if maxout != :undef -%>subsearch_maxout = <%= maxout %><% end %>
+<% if maxtime != :undef -%>subsearch_maxtime = <%= maxtime %><% end %>
+<% if ttl != :undef -%>subsearch_ttl = <%= ttl %><% end %>
