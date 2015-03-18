@@ -7,9 +7,9 @@ ttl = scope['::splunk::params::subsearch_ttl']
 dispatch_dir_warning_size = scope['::splunk::params::dispatch_size']
 -%>
 [subsearch]
-<% if maxout != :undef -%>maxout = <%= maxout %><% end -%>
-<% if maxtime != :undef -%>maxtime = <%= maxtime %><% end -%>
-<% if ttl != :undef -%>ttl = <%= ttl %><% end -%>
+<% if maxout != :undef -%>maxout = <%= maxout %><% end %>
+<% if maxtime != :undef -%>maxtime = <%= maxtime %><% end %>
+<% if ttl != :undef -%>ttl = <%= ttl %><% end %>
 
 [search]
 <% if dispatch_dir_warning_size != :undef -%>
