@@ -1,6 +1,6 @@
 Splunk
 
-This Splunk module supports deploying n-tier Splunk environments (forwarder, indexer, and search head roles) as well as the Spunk Mobile Server. It does not create a Splunk user or group but supports running as root or non-root user. It assumes running as user/group splunk/splunk and will apply ACLs to grant access to log files specified in the hiera hash splunk::inputs. If the node has a splunk role of indexer it will create indexes based on the hiera hash splunk::indexes.
+This Splunk module supports deploying n-tier Splunk environments (forwarder, indexer, and search head roles) as well as the Spunk Mobile Server. It is does not create the user or group, leaving that up to your implementation. It supports running as root or a dedicated account. By default it assumes running as user/group splunk/splunk and will apply ACLs to grant access to log files specified in the hiera hash splunk::inputs. If the node has a splunk role of indexer it will create indexes based on the hiera hash splunk::indexes.
 
 It requires a fileserver definition, e.g.:
 
