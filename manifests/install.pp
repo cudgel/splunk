@@ -90,6 +90,15 @@ class splunk::install($type=$type)
       alias   => 'splunk-outputs'
     }
 
+    file { "${::splunk::local_path}/props.conf":
+      owner   => $::splunk::splunk_user,
+      group   => $::splunk::splunk_user,
+      source => 'puppet:///splunk/props.conf',
+      mode    => '0640',
+      notify  => Service[splunk],
+      alias   => 'splunk-props'
+    }
+
   } elsif $type == 'indexer' or $type == 'stack' {
 
     $my_warmpath = $::splunk::params::warmpath
