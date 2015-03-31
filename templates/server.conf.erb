@@ -1,7 +1,10 @@
 # Puppet Name: <%= @title %>
 #
+[general]
+serverName = <%= scope['::fqdn'] %>
+
+
 <%
-enableSplunkWebSSL = scope['::splunk::params::webSSL']
 ssl = scope['::splunk::params::TCPSSL']
 if ssl == true
   cipherSuite = scope['::splunk::params::cipherSuite']
