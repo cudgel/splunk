@@ -9,7 +9,7 @@ rootCA=$SPLUNK_HOME/etc/auth/cacert.pem
 requireClientCert=false
 cipherSuite = TLSv1.2:!eNULL:!aNULL
 
-[splunktcp-ssl://9997]
-<% else -%>
-[splunktcp://9997]
+[splunktcp-ssl://9998]
+
 <% end -%>
+[splunktcp://9997]

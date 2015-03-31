@@ -99,6 +99,15 @@ class splunk::install($type=$type)
       alias   => 'splunk-props'
     }
 
+    file { "${::splunk::local_path}/server.conf":
+      owner   => $::splunk::splunk_user,
+      group   => $::splunk::splunk_user,
+      content => template("${module_name}/server.conf.erb"),
+      mode    => '0640',
+      notify  => Service[splunk],
+      alias   => 'splunk-server'
+    }
+
   } elsif $type == 'indexer' or $type == 'stack' {
 
     $my_warmpath = $::splunk::params::warmpath
@@ -129,7 +138,8 @@ class splunk::install($type=$type)
         group    => $::splunk::splunk_user,
         recurse  => false,
         readonly => false
-      }    }
+      }
+    }
 
     file { "${::splunk::local_path}/outputs.conf":
       ensure => absent,
@@ -143,6 +153,15 @@ class splunk::install($type=$type)
       mode    => '0640',
       notify  => Service[splunk],
       alias   => 'splunk-web',
+    }
+
+    file { "${::splunk::local_path}/server.conf":
+      owner   => $::splunk::splunk_user,
+      group   => $::splunk::splunk_user,
+      content => template("${module_name}/server.conf.erb"),
+      mode    => '0640',
+      notify  => Service[splunk],
+      alias   => 'splunk-server'
     }
 
     file { "${::splunk::local_path}/inputs.d/999_splunktcp":
