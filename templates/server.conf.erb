@@ -3,7 +3,6 @@
 [general]
 serverName = <%= scope['::fqdn'] %>
 
-
 <%
 ssl = scope['::splunk::params::TCPSSL']
 if ssl == true
@@ -11,8 +10,8 @@ if ssl == true
   sslVersions = scope['::splunk::params::sslVersions']
 end
 -%>
-[sslConfig]
 <% if ssl == true -%>
+[sslConfig]
 sslVersions = <%= sslVersions %>
 cipherSuite = <%= cipherSuite %>
 <% end -%>
