@@ -17,9 +17,10 @@ cipherSuite = <%= cipherSuite %>
 <% end -%>
 
 <%
-shkey = scope['::splunk::params::shkey']
-if shkey != :undef
+shKey = scope['::splunk::params::shKey']
+shRole = scope['::splunk::params::shRole']
+if shrole != :undef
 -%>
 [shclustering]
-pass4SymmKey = <%= shkey %>
+pass4SymmKey = <%= shKey %>
 <% end -%>
