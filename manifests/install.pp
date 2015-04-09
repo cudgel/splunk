@@ -28,7 +28,8 @@ class splunk::install($type=$type)
     }
 
     exec { 'unpackSplunk':
-      command   => "${::splunk::params::tarcmd} ${::splunk::splunksource}; chown -RL ${my_perms} ${::splunk::splunkhome}",
+      command   => "${::splunk::params::tarcmd} ${::splunk::splunksource}; \
+chown -RL ${my_perms} ${::splunk::splunkhome}",
       path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
       cwd       => $::splunk::install_path,
       subscribe => File["${::splunk::install_path}/${::splunk::splunksource}"],
@@ -38,7 +39,8 @@ class splunk::install($type=$type)
     }
 
     exec { 'firstStart':
-      command     => 'splunk stop; splunk --accept-license --answer-yes --no-prompt start',
+      command     => 'splunk stop; \
+splunk --accept-license --answer-yes --no-prompt start',
       path        => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
       subscribe   => Exec['unpackSplunk'],
       refreshonly => true,
@@ -93,7 +95,7 @@ class splunk::install($type=$type)
     file { "${::splunk::local_path}/props.conf":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
-      source => 'puppet:///splunk/props.conf',
+      source  => 'puppet:///splunk/props.conf',
       mode    => '0640',
       notify  => Service[splunk],
       alias   => 'splunk-props'

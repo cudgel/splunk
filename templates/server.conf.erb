@@ -15,3 +15,11 @@ end
 sslVersions = <%= sslVersions %>
 cipherSuite = <%= cipherSuite %>
 <% end -%>
+
+<%
+shkey = scope['::splunk::params::shkey']
+if shkey != :undef
+-%>
+[shclustering]
+pass4SymmKey = <%= shkey %>
+<% end -%>
