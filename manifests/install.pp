@@ -58,6 +58,12 @@ splunk --accept-license --answer-yes --no-prompt start',
 
   } # end new version
 
+  file { "${splunk::splunkhome}":
+    owner   => $::splunk::splunk_user,
+    group   => $::splunk::splunk_group,
+    mode    => '0770'
+  }
+
   file { "${::splunk::splunkhome}/etc/splunk-launch.conf":
     owner   => $::splunk::splunk_user,
     group   => $::splunk::splunk_group,
