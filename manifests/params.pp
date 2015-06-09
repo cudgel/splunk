@@ -17,6 +17,7 @@ class splunk::params
   $maxwarmsmallMB      = hiera('splunk::params::maxwarmsmallMB', undef)
   $mserver             = hiera('splunk::params::mserver', undef)
   $scheduler_disable   = hiera('splunk::params::scheduler_disable', undef)
+  $serviceurl          = hiera('splunk::params::serviceurl', undef)
   $splunk_group        = hiera('splunk::params::splunk_group', 'splunk')
   $splunk_user         = hiera('splunk::params::splunk_user', 'splunk')
   $SSLV3               = hiera('splunk::params::SSLV3', false)
