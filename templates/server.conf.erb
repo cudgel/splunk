@@ -22,7 +22,7 @@ cipherSuite = <%= cipherSuite %>
 <% end -%>
 
 <%
-if shRole != :undef
+if @shRole
 -%>
 [shclustering]
 pass4SymmKey = <%= shKey %>

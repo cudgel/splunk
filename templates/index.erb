@@ -10,7 +10,7 @@ if @title == 'main'
 else
     dbName = @title
 end
-if has_variable?('warmpath') && @warmpath != :undef
+if @warmpath
   if @size == 'small'
     maxDataSize = 'auto'
     homePath = 'volume:splunk_warm_small'
@@ -21,7 +21,7 @@ if has_variable?('warmpath') && @warmpath != :undef
 else
   homePath = '$SPLUNK_DB'
 end
-if has_variable?('coldpath') && @coldpath != :undef
+if @coldpath
   if @size == 'small'
     coldPath = 'volume:splunk_cold_small'
   else
