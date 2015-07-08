@@ -2,15 +2,14 @@
 #
 define splunk::index(
   $size         = undef,
-  $sign         = false,
   $archive      = false,
   $frozenTime   = $::splunk::params::frozenTime,
   $splunkhome   = $::splunk::splunkhome,
   $local_path   = $::splunk::local_path,
   $splunk_user  = $::splunk::splunk_user,
   $splunk_group = $::splunk::splunk_group,
-  $warmpath     = $::splunk::params::warmpath,
-  $coldpath     = $::splunk::params::coldpath
+  $warmpath     = undef,
+  $coldpath     = undef
   )
 {
   file { "${local_path}/indexes.d/${title}":
