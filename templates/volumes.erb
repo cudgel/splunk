@@ -7,7 +7,7 @@
   maxcoldlargeMB = scope['::splunk::params::maxcoldlargeMB']
   maxcoldsmallMB = scope['::splunk::params::maxcoldsmallMB']
 -%>
-<% if warmpath != :undef -%>
+<% if @warmpath -%>
 [volume:splunk_warm_large]
 path = <%= warmpath %>
 maxVolumeDataSizeMB = <%= maxwarmlargeMB %>
@@ -15,7 +15,7 @@ maxVolumeDataSizeMB = <%= maxwarmlargeMB %>
 path = <%= warmpath %>
 maxVolumeDataSizeMB = <%= maxwarmsmallMB %>
 <% end -%>
-<% if coldpath != :undef -%>
+<% if @coldpath -%>
 [volume:splunk_cold_large]
 path = <%= coldpath %>
 maxVolumeDataSizeMB = <%= maxcoldlargeMB %>
