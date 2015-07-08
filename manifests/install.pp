@@ -157,14 +157,14 @@ splunk --accept-license --answer-yes --no-prompt start',
       alias   => 'splunk-web',
     }
 
-    file { "${::splunk::local_path}/server.conf":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_user,
-      content => template("${module_name}/server.conf.erb"),
-      mode    => '0640',
-      notify  => Service[splunk],
-      alias   => 'splunk-server'
-    }
+#    file { "${::splunk::local_path}/server.conf":
+#      owner   => $::splunk::splunk_user,
+#      group   => $::splunk::splunk_user,
+#      content => template("${module_name}/server.conf.erb"),
+#      mode    => '0640',
+#      notify  => Service[splunk],
+#      alias   => 'splunk-server'
+#    }
 
     file { "${::splunk::local_path}/inputs.d/999_splunktcp":
       owner   => $::splunk::splunk_user,
