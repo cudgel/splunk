@@ -110,7 +110,7 @@ splunk --accept-license --answer-yes --no-prompt start',
       alias   => 'splunk-server'
     }
 
-  } elsif $type == 'indexer {
+  } elsif $type == 'indexer' {
 
     file { "${::splunk::local_path}/outputs.conf":
       ensure => absent,
@@ -141,6 +141,26 @@ splunk --accept-license --answer-yes --no-prompt start',
       mode    => '0440',
       content => template("${module_name}/splunktcp.erb"),
       notify  => Exec['update-inputs']
+    }
+
+  } elsif $type == 'index_master' {
+
+    file { "${::splunk::local_path}/outputs.conf":
+      owner   => $::splunk::splunk_user,
+      group   => $::splunk::splunk_user,
+      content => template("${module_name}/outputs.conf.erb"),
+      mode    => '0640',
+      notify  => Service[splunk],
+      alias   => 'splunk-outputs'
+    }
+
+    file { "${::splunk::local_path}/web.conf":
+      owner   => $::splunk::splunk_user,
+      group   => $::splunk::splunk_user,
+      content => template("${module_name}/web.conf.erb"),
+      mode    => '0640',
+      notify  => Service[splunk],
+      alias   => 'splunk-web',
     }
 
   } elsif $type == 'search' {
