@@ -1,7 +1,6 @@
 class splunk::params
 {
   $cipherSuite         = hiera('splunk::params::cipherSuite', undef)
-  $coldpath            = hiera('splunk::params::coldpath', undef)
   $deployment_disable  = hiera('splunk::params::deployment_disable', false)
   $deployment_interval = hiera('splunk::params::deployment_interval', 30)
   $deployment_server   = hiera('splunk::params::deployment_server', undef)
@@ -11,10 +10,6 @@ class splunk::params
   $frozenTime          = hiera('splunk::params::frozenTime', undef)
   $indexers            = hiera('splunk::params::indexers', undef)
   $install_path        = hiera('splunk::params::install_path', '/opt')
-  $maxcoldlargeMB      = hiera('splunk::params::maxcoldlargeMB', undef)
-  $maxcoldsmallMB      = hiera('splunk::params::maxcoldsmallMB', undef)
-  $maxwarmlargeMB      = hiera('splunk::params::maxwarmlargeMB', undef)
-  $maxwarmsmallMB      = hiera('splunk::params::maxwarmsmallMB', undef)
   $mserver             = hiera('splunk::params::mserver', undef)
   $scheduler_disable   = hiera('splunk::params::scheduler_disable', undef)
   $serviceurl          = hiera('splunk::params::serviceurl', undef)
@@ -27,7 +22,6 @@ class splunk::params
   $subsearch_ttl       = hiera('splunk::params::subsearch_ttl', undef)
   $TCPSSL              = hiera('splunk::params::TCPSSL', true)
   $version             = hiera('splunk::params::version', undef)
-  $warmpath            = hiera('splunk::params::warmpath', undef)
   $webSSL              = hiera('splunk::params::webSSL', true)
 
   if $::osfamily    == 'Solaris' {

@@ -110,38 +110,7 @@ splunk --accept-license --answer-yes --no-prompt start',
       alias   => 'splunk-server'
     }
 
-  } elsif $type == 'indexer' or $type == 'stack' {
-
-    $my_warmpath = $::splunk::params::warmpath
-    $my_coldpath = $::splunk::params::coldpath
-
-    if $my_warmpath != undef {
-      file { $my_warmpath:
-        ensure => 'directory',
-        owner  => $::splunk::splunk_user,
-        group  => $::splunk::splunk_group,
-        mode   => '0750'
-      }
-      splunk::acl { $my_warmpath:
-        group    => $::splunk::splunk_user,
-        recurse  => false,
-        readonly => false
-      }
-    }
-
-    if $my_coldpath != undef {
-      file {  $::splunk::params::coldpath:
-        ensure => 'directory',
-        owner  => $::splunk::splunk_user,
-        group  => $::splunk::splunk_group,
-        mode   => '0750'
-      }
-      splunk::acl { $my_coldpath:
-        group    => $::splunk::splunk_user,
-        recurse  => false,
-        readonly => false
-      }
-    }
+  } elsif $type == 'indexer {
 
     file { "${::splunk::local_path}/outputs.conf":
       ensure => absent,
@@ -174,31 +143,7 @@ splunk --accept-license --answer-yes --no-prompt start',
       notify  => Exec['update-inputs']
     }
 
-    file { "${::splunk::local_path}/indexes.d":
-      ensure => 'directory',
-      owner  => $::splunk::splunk_user,
-      group  => $::splunk::splunk_group,
-      mode   => '0750'
-    }
-
-    file { "${::splunk::local_path}/indexes.d/000_default":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_group,
-      mode    => '0440',
-      content => template("${module_name}/volumes.erb")
-    }
-
-    $my_index_d = "${::splunk::local_path}/indexes.d/"
-    $my_index_c = "${::splunk::local_path}/indexes.conf"
-
-    exec { 'update-indexes':
-      command     => "/bin/cat ${my_index_d}/* > ${my_index_c}; chown ${my_perms} ${my_index_c}",
-      refreshonly => true,
-      subscribe   => File["${::splunk::local_path}/indexes.d/000_default"],
-      notify      => Service[splunk]
-    }
-
-  } elsif $type == 'search' or $type == 'stack' {
+  } elsif $type == 'search' {
 
     if $::osfamily == 'RedHat' {
     # support PDF Report Server
