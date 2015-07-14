@@ -81,13 +81,13 @@ egrep -q '${acl}'",
 
     # set a sane default mask to the object so that group acls work in the
     # absence of liberal traditional permissions
-#    exec { "set_effective_rights_mask_${title}":
-#      path    => '/bin:/usr/bin',
-#      command => "setfacl -R -m 'mask:rwx,default:mask:rwx' ${object}",
-#      unless  => "${testnfs} || getfacl ${object} 2>/dev/null |
-#egrep -q '^mask::rwx' ",
-#      timeout => '0'
-#    }
+    exec { "set_effective_rights_mask_${title}":
+      path    => '/bin:/usr/bin',
+      command => "setfacl -R -m 'mask:rwx,default:mask:rwx' ${object}",
+      unless  => "${testnfs} || getfacl ${object} 2>/dev/null |
+egrep -q '^mask::rwx' ",
+      timeout => '0'
+    }
 
   } # end redhat
 
