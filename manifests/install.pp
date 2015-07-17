@@ -96,14 +96,6 @@ splunk --accept-license --answer-yes --no-prompt start',
       alias   => 'splunk-props'
     }
 
-    file { "${::splunk::local_path}/server.conf":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_user,
-      content => template("${module_name}/server.conf.erb"),
-      notify  => Service[splunk],
-      alias   => 'splunk-server'
-    }
-
   } elsif $type == 'indexer' {
 
     file { "${::splunk::local_path}/outputs.conf":
