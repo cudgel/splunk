@@ -1,12 +1,9 @@
 # Puppet Name: <%= @title %>
 #
 <%
-shKey = scope['::splunk::params::shKey']
-shRole = scope['::splunk::params::shRole']
 ssl = scope['::splunk::params::TCPSSL']
 -%>
 [general]
-pass4SymmKey = <%= shKey %>
 serverName = <%= scope['::fqdn'] %>
 
 <%
@@ -19,11 +16,4 @@ end
 [sslConfig]
 sslVersions = <%= sslVersions %>
 cipherSuite = <%= cipherSuite %>
-<% end -%>
-
-<%
-if @shRole
--%>
-[shclustering]
-pass4SymmKey = <%= shKey %>
 <% end -%>

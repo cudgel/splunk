@@ -62,7 +62,6 @@ splunk --accept-license --answer-yes --no-prompt start',
     owner   => $::splunk::splunk_user,
     group   => $::splunk::splunk_group,
     content => template("${module_name}/splunk-launch.conf.erb"),
-    mode    => '0640',
     notify  => Service[splunk]
   }
 
@@ -70,13 +69,11 @@ splunk --accept-license --answer-yes --no-prompt start',
     ensure => 'directory',
     owner  => $::splunk::splunk_user,
     group  => $::splunk::splunk_group,
-    mode   => '0750'
   }
 
   file { "${::splunk::local_path}/inputs.d/000_default":
     owner   => $::splunk::splunk_user,
     group   => $::splunk::splunk_group,
-    mode    => '0440',
     require => File["${::splunk::local_path}/inputs.d"],
     content => template("${module_name}/default_inputs.erb")
   }
@@ -87,7 +84,6 @@ splunk --accept-license --answer-yes --no-prompt start',
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
       content => template("${module_name}/outputs.conf.erb"),
-      mode    => '0640',
       notify  => Service[splunk],
       alias   => 'splunk-outputs'
     }
@@ -96,7 +92,6 @@ splunk --accept-license --answer-yes --no-prompt start',
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
       source  => 'puppet:///splunk/props.conf',
-      mode    => '0640',
       notify  => Service[splunk],
       alias   => 'splunk-props'
     }
@@ -105,7 +100,6 @@ splunk --accept-license --answer-yes --no-prompt start',
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
       content => template("${module_name}/server.conf.erb"),
-      mode    => '0640',
       notify  => Service[splunk],
       alias   => 'splunk-server'
     }
@@ -121,24 +115,13 @@ splunk --accept-license --answer-yes --no-prompt start',
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
       content => template("${module_name}/web.conf.erb"),
-      mode    => '0640',
       notify  => Service[splunk],
       alias   => 'splunk-web',
     }
 
-#    file { "${::splunk::local_path}/server.conf":
-#      owner   => $::splunk::splunk_user,
-#      group   => $::splunk::splunk_user,
-#      content => template("${module_name}/server.conf.erb"),
-#      mode    => '0640',
-#      notify  => Service[splunk],
-#      alias   => 'splunk-server'
-#    }
-
     file { "${::splunk::local_path}/inputs.d/999_splunktcp":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_group,
-      mode    => '0440',
       content => template("${module_name}/splunktcp.erb"),
       notify  => Exec['update-inputs']
     }
@@ -149,7 +132,6 @@ splunk --accept-license --answer-yes --no-prompt start',
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
       content => template("${module_name}/outputs.conf.erb"),
-      mode    => '0640',
       notify  => Service[splunk],
       alias   => 'splunk-outputs'
     }
@@ -158,7 +140,6 @@ splunk --accept-license --answer-yes --no-prompt start',
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
       content => template("${module_name}/web.conf.erb"),
-      mode    => '0640',
       notify  => Service[splunk],
       alias   => 'splunk-web',
     }
@@ -180,7 +161,6 @@ splunk --accept-license --answer-yes --no-prompt start',
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
       content => template("${module_name}/outputs.conf.erb"),
-      mode    => '0640',
       notify  => Service[splunk],
       alias   => 'splunk-outputs'
     }
@@ -189,7 +169,6 @@ splunk --accept-license --answer-yes --no-prompt start',
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
       content => template("${module_name}/default-mode.conf.erb"),
-      mode    => '0640',
       notify  => Service[splunk],
       alias   => 'splunk-mode'
     }
@@ -198,7 +177,6 @@ splunk --accept-license --answer-yes --no-prompt start',
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
       content => template("${module_name}/alert_actions.conf.erb"),
-      mode    => '0640',
       notify  => Service[splunk],
       alias   => 'alert-actions'
     }
@@ -207,7 +185,6 @@ splunk --accept-license --answer-yes --no-prompt start',
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
       content => template("${module_name}/web.conf.erb"),
-      mode    => '0640',
       notify  => Service[splunk],
       alias   => 'splunk-web'
     }
@@ -215,7 +192,6 @@ splunk --accept-license --answer-yes --no-prompt start',
     file { "${::splunk::local_path}/ui-prefs.conf":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
-      mode    => '0640',
       content => template("${module_name}/ui-prefs.conf.erb"),
       notify  => Service['splunk']
     }
@@ -223,7 +199,6 @@ splunk --accept-license --answer-yes --no-prompt start',
     file { "${::splunk::local_path}/limits.conf":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
-      mode    => '0640',
       content => template("${module_name}/limits.conf.erb"),
       notify  => Service[splunk]
     }
