@@ -85,7 +85,7 @@ egrep -q '${acl}'",
     # absence of liberal traditional permissions
     exec { "set_effective_rights_mask_${title}":
       path    => '/bin:/usr/bin',
-      command => "setfacl -R -m mask:${perm},default:mask:${perm}' ${object}",
+      command => "setfacl -R -m mask:${perm},default:mask:${perm} ${object}",
       unless  => "${testnfs} || getfacl ${object} 2>/dev/null |
 egrep -q '^mask::rwx' ",
       timeout => '0'
