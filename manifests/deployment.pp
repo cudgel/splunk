@@ -10,15 +10,13 @@ class splunk::deployment
     ensure  => directory,
     owner   => $::splunk::splunk_user,
     group   => $::splunk::splunk_user,
-    recurse => true,
-    mode    => '0640',
+    recurse => true
   }
 
   file { "${myappdir}/local":
     ensure  => directory,
     owner   => $::splunk::splunk_user,
     group   => $::splunk::splunk_user,
-    mode    => '0640',
     require => File[$myappdir]
   }
 
@@ -27,7 +25,6 @@ class splunk::deployment
       content => template("${module_name}/deploymentclient.conf.erb"),
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
-      mode    => '0640',
       require => File["${myappdir}/local"],
       notify  => Service[splunk]
     }

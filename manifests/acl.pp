@@ -35,20 +35,22 @@ define splunk::acl(
     if $user {
       $subject = $user
       if $readonly == true {
-        $acl = "user:${user}:r-x"
+        $perm = 'r-x'
       } else {
-        $acl = "user:${user}:rwx"
+        $perm = 'rwx'
       }
+      $acl = "user:${user}:${perm}"
       $db = 'passwd'
       $entity = "user:${user}"
 
     } else {
       $subject = $group
       if $readonly == true {
-        $acl = "group:${group}:r-x"
+        $perm = 'r-x'
       } else {
-        $acl = "group:${group}:rwx"
+        $perm = 'rwx'
       }
+      $acl = "group:${group}:${perm}"
       $db = 'group'
       $entity = "group:${group}"
     }
@@ -83,7 +85,7 @@ egrep -q '${acl}'",
     # absence of liberal traditional permissions
     exec { "set_effective_rights_mask_${title}":
       path    => '/bin:/usr/bin',
-      command => "setfacl -R -m 'mask:rwx,default:mask:rwx' ${object}",
+      command => "setfacl -R -m mask:${perm},default:mask:${perm}' ${object}",
       unless  => "${testnfs} || getfacl ${object} 2>/dev/null |
 egrep -q '^mask::rwx' ",
       timeout => '0'
