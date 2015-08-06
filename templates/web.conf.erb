@@ -2,11 +2,8 @@
 #
 <%
 enableSplunkWebSSL = scope['::splunk::params::webSSL']
-ssl = scope['::splunk::params::TCPSSL']
-if ssl == true
-  cipherSuite = scope['::splunk::params::cipherSuite']
-  sslVersions = scope['::splunk::params::sslVersions']
-end
+cipherSuite = scope['::splunk::params::cipherSuite']
+sslVersions = scope['::splunk::params::sslVersions']
 -%>
 [settings]
 enableSplunkWebSSL = <%= enableSplunkWebSSL %>
