@@ -8,7 +8,5 @@ sslVersions = scope['::splunk::params::sslVersions']
 [settings]
 enableSplunkWebSSL = <%= enableSplunkWebSSL %>
 supportSSLV3Only = False
-<% if ssl == true -%>
 cipherSuite = <%= cipherSuite %>
 sslVersions = <%= sslVersions %>
-<% end -%>
