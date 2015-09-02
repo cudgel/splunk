@@ -19,6 +19,7 @@ infocsv_log_level = WARN
 <% if dispatch_dir_warning_size != :undef -%>
 dispatch_dir_warning_size = <%= dispatch_dir_warning_size %>
 <% end -%>
+max_searches_per_cpu = 2
 
 [join]
 <% if maxtime != :undef -%>subsearch_maxtime = <%= maxtime %><% end %>
