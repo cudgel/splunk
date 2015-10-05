@@ -1,19 +1,12 @@
 # Puppet Name: <%= @title %>
 #
-<%
-ssl = scope['::splunk::params::TCPSSL']
--%>
 [general]
 serverName = <%= scope['::fqdn'] %>
 
 <%
-if ssl == true
   cipherSuite = scope['::splunk::params::cipherSuite']
   sslVersions = scope['::splunk::params::sslVersions']
-end
 -%>
-<% if ssl == true -%>
 [sslConfig]
 sslVersions = <%= sslVersions %>
 cipherSuite = <%= cipherSuite %>
-<% end -%>
