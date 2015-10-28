@@ -9,7 +9,5 @@ splunkType = scope['::splunk::type']
 [settings]
 enableSplunkWebSSL = <%= enableSplunkWebSSL %>
 allowSslRenegotiation = false
-<% if splunkType != 'search' -%>
 cipherSuite = <%= cipherSuite %>
-<% end -%>
 sslVersions = <%= sslVersions %>
