@@ -8,5 +8,9 @@ serverName = <%= scope['::fqdn'] %>
   sslVersions = scope['::splunk::params::sslVersions']
 -%>
 [sslConfig]
+enableSplunkdSSL = true
+useClientSSLCompression = true
+useSplunkdClientSSLCompression = true
+allowSslRenegotiation = false
 sslVersions = <%= sslVersions %>
 cipherSuite = <%= cipherSuite %>
