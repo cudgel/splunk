@@ -88,14 +88,6 @@ splunk --accept-license --answer-yes --no-prompt start',
       alias   => 'splunk-outputs'
     }
 
-    file { "${::splunk::local_path}/props.conf":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_user,
-      source  => 'puppet:///splunk_files/props.conf',
-      notify  => Service[splunk],
-      alias   => 'splunk-props'
-    }
-
   } elsif $type == 'indexer' {
 
     file { "${::splunk::local_path}/outputs.conf":
