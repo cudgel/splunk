@@ -91,7 +91,7 @@ splunk --accept-license --answer-yes --no-prompt start',
     file { "${::splunk::local_path}/props.conf":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
-      source  => 'puppet:///splunk/props.conf',
+      source  => 'puppet:///splunk_files/props.conf',
       notify  => Service[splunk],
       alias   => 'splunk-props'
     }
@@ -200,7 +200,7 @@ splunk --accept-license --answer-yes --no-prompt start',
   if $type == 'mserver' {
     deploy::file { $::splunk::mserversource:
       target => '/opt/mserver',
-      url    => 'puppet:///splunk/',
+      url    => 'puppet:///splunk_files/',
       strip  => true,
       owner  => 'root',
       group  => 'root'
