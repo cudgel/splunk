@@ -1,7 +1,7 @@
 # Puppet Name: <%= @title %>
 #
 <%
-ssl = scope['::splunk::params::TCPSSL']
+ssl = scope['::splunk::params::tcpssl']
 if ssl == true
   server = scope['::splunk::params::ssl_indexers']
 else

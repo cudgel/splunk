@@ -44,7 +44,7 @@ splunk::params::sslVersions: 'tls'
 splunk::params::subsearch_maxout: 15000
 splunk::params::subsearch_maxtime: 600
 splunk::params::subsearch_ttl: 1200
-splunk::params::TCPSSL: true
+splunk::params::tcpssl: true
 splunk::params::version: '6.1.6-249101'
 splunk::params::warmpath: '/opt/splunk/var/lib/splunk'
 splunk::params::webSSL: true
