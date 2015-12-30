@@ -1,6 +1,5 @@
 define splunk::acl(
   $target='',
-  $user='',
   $group=$::splunk::splunk_group,
   $recurse=false,
   $readonly=true
@@ -8,12 +7,6 @@ define splunk::acl(
 
   # Validate parameters
   #
-  if $user and $group {
-      fail('Setting both a user and group ACL is not supported')
-  }
-  if ! $user and ! $group {
-      fail('Must specify either a user or a group')
-  }
   if $target == '' {
       $object = $title
   } else {
@@ -29,31 +22,16 @@ define splunk::acl(
 
   if $::osfamily == 'RedHat' {
 
-    # Calculate the ACE by combining $user, $group, and $readonly.
+    # Calculate the ACE by combining $group, and $readonly.
     # Set the $subject and $db to later verify that the subject exists.
     #
-    if $user {
-      $subject = $user
-      if $readonly == true {
-        $perm = 'r-x'
-      } else {
-        $perm = 'rwx'
-      }
-      $acl = "user:${user}:${perm}"
-      $db = 'passwd'
-      $entity = "user:${user}"
-
+    $subject = $group
+    if $readonly == true {
+      $perm = 'r-x'
     } else {
-      $subject = $group
-      if $readonly == true {
-        $perm = 'r-x'
-      } else {
-        $perm = 'rwx'
-      }
-      $acl = "group:${group}:${perm}"
-      $db = 'group'
-      $entity = "group:${group}"
+      $perm = 'rwx'
     }
+    $acl = "group:${group}:${perm}"
 
     # test if the ACL is to be applied to an nfs mount
     # (extended posix ACLs cannot be set from the nfs client)
@@ -95,28 +73,17 @@ egrep -q '^mask::rwx' ",
 
   if $::osfamily == 'Solaris' {
 
-    # Calculate the ACE by combining $user, $group, and $readonly.
+    # Calculate the ACE by combining $group, and $readonly.
     # Set the $subject and $db to later verify that the subject exists.
     #
-    if $user {
-      $subject = $user
-      if $readonly == true {
-        $acl = "user:${user}:rxaRcs"
-      } else {
-        $acl = "user:${user}:rwxpcCosRrWaAdD"
-      }
-      $acl_subject = "user:${user}"
-      $db = 'passwd'
+    $subject = $group
+    if $readonly == true {
+      $acl = "group:${group}:rxaRcs"
     } else {
-      $subject = $group
-      if $readonly == true {
-        $acl = "group:${group}:rxaRcs"
-      } else {
-        $acl = "group:${group}:rwxpcCosRrWaAdD"
-      }
-      $acl_subject = "group:${group}"
-      $db = 'group'
+      $acl = "group:${group}:rwxpcCosRrWaAdD"
     }
+    $acl_subject = "group:${group}"
+    $db = 'group'
 
     # Recursive ACLs can only be applied to a directory.
     # Non-recursive ACLs can be applied to anything.
