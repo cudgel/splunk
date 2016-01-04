@@ -23,7 +23,7 @@ class splunk::install($type=$type)
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
       mode   => '0640',
-      source => "puppet:///splunk/${::splunk::splunksource}",
+      source => "puppet:///splunk_files/${::splunk::splunksource}",
       notify => Exec['unpackSplunk']
     }
 
@@ -78,7 +78,7 @@ splunk --accept-license --answer-yes --no-prompt start',
     content => template("${module_name}/default_inputs.erb")
   }
 
-  if $type == 'forwarder' or $type == 'mserver' {
+  if $type == 'forwarder' {
 
     file { "${::splunk::local_path}/outputs.conf":
       owner   => $::splunk::splunk_user,
@@ -186,22 +186,5 @@ splunk --accept-license --answer-yes --no-prompt start',
       content => template("${module_name}/limits.conf.erb"),
       notify  => Service[splunk]
     }
-
   }
-
-  if $type == 'mserver' {
-    deploy::file { $::splunk::mserversource:
-      target => '/opt/mserver',
-      url    => 'puppet:///splunk_files/',
-      strip  => true,
-      owner  => 'root',
-      group  => 'root'
-    }
-
-    file { '/etc/init.d/splunkm':
-      ensure => 'link',
-      target => '/opt/mserver/bin/splunkm.sh'
-    }
-  }
-
 }
