@@ -1,12 +1,7 @@
 # Puppet Name: <%= @title %>
 #
 <%
-ssl = scope['::splunk::params::tcpssl']
-if ssl == true
-  server = scope['::splunk::params::ssl_indexers']
-else
   server = scope['::splunk::params::indexers']
-end
 -%>
 [tcpout]
 indexAndForward=false
@@ -20,7 +15,9 @@ autoLBFrequency = 60
 forceTimebasedAutoLB = true
 server = <% if server.is_a?(Array) -%><%= server.join(',') -%><% else -%><%= server %><%  end %>
 <% if ssl == true -%>
-serverCert=$SPLUNK_HOME/etc/auth/server.pem
+sslVerifyServerCert = false
+sslRootCAPath = $SPLUNK_HOME/etc/auth/cacert.pem
+sslCertPath = $SPLUNK_HOME/etc/auth/server.pem
 password=password
 <% end -%>
 
