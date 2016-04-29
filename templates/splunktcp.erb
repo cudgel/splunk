@@ -1,15 +1,17 @@
 <%
-ssl = scope['::splunk::params::tcpssl']
+  cipherSuite = scope['::splunk::params::cipherSuite']
+  sslVersions = scope['::splunk::params::sslVersions']
 -%>
-<% if ssl == true -%>
 [SSL]
-serverCert=$SPLUNK_HOME/etc/auth/server.pem
+cipherSuite = <%= cipherSuite %>
 password=password
-rootCA=$SPLUNK_HOME/etc/auth/cacert.pem
 requireClientCert=false
-cipherSuite = TLSv1.2:!eNULL:!aNULL
+rootCA=$SPLUNK_HOME/etc/auth/cacert.pem
+serverCert=$SPLUNK_HOME/etc/auth/server.pem
+sslVersions = <%= sslVersions %>
+
+[splunktcp://9997]
+disabled=false
 
 [splunktcp-ssl://9998]
-
-<% end -%>
-[splunktcp://9997]
+disabled=false
