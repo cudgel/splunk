@@ -9,8 +9,8 @@ serverName = <%= scope['::fqdn'] %>
 -%>
 [sslConfig]
 enableSplunkdSSL = true
-useClientSSLCompression = true
-useSplunkdClientSSLCompression = true
+useClientSSLCompression = false
+useSplunkdClientSSLCompression = false
 allowSslRenegotiation = false
 sslVersions = <%= sslVersions %>
 cipherSuite = <%= cipherSuite %>
