@@ -1,13 +1,14 @@
 <%
+  caPath = scope['::splunk::params::caPath']
+  certPath = scope['::splunk::params::certPath']
   cipherSuite = scope['::splunk::params::cipherSuite']
   sslVersions = scope['::splunk::params::sslVersions']
 -%>
 [SSL]
 cipherSuite = <%= cipherSuite %>
-password=password
 requireClientCert=false
-rootCA=$SPLUNK_HOME/etc/auth/cacert.pem
-serverCert=$SPLUNK_HOME/etc/auth/server.pem
+rootCA = $SPLUNK_HOME/<% caPath %>
+serverCert = $SPLUNK_HOME/<% certPath %>
 sslVersions = <%= sslVersions %>
 
 [splunktcp://9997]

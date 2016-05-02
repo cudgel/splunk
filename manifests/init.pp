@@ -48,7 +48,6 @@ class splunk($type='forwarder') {
   $splunkext       = $::splunk::params::splunkext
   $tar             = $::splunk::params::tar
   $tarcmd          = $::splunk::params::tarcmd
-  $mserver         = $::splunk::params::mserver
 
   if $type == 'forwarder' or $type == 'mserver' {
     $sourcepart = 'splunkforwarder'
@@ -62,7 +61,6 @@ class splunk($type='forwarder') {
   $apppart       = "${sourcepart}-${version}-${splunkos}-${splunkarch}"
   $splunksource  = "${apppart}.${splunkext}"
   $manifest      = "${apppart}-manifest"
-  $mserversource = "mserver-linux-release-${mserver}.tgz"
 
   class { 'splunk::install': type => $type }->
   class { 'splunk::service': }
