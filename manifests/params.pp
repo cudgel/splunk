@@ -1,8 +1,11 @@
 class splunk::params
 {
+  # splunkd
   $caCertPath          = hiera('splunk::params::caCertPath', 'etc/auth/cacert.pem')
-  $caWebCertPath       = hiera('splunk::params::caWebCertPath', 'etc/auth/splunkweb/cert.pem')
   $serverCertPath      = hiera('splunk::params::serverCertPath', 'etc/auth/server.pem')
+  # splunkweb
+  $privKeyPath         = hiera('splunk::params::privKeyPath', 'etc/auth/splunkweb/privkey.pem')
+  $webCertPath         = hiera('splunk::params::webCertPath', 'etc/auth/splunkweb/cert.pem')
   $cipherSuite         = hiera('splunk::params::cipherSuite', undef)
   $deployment_disable  = hiera('splunk::params::deployment_disable', false)
   $deployment_interval = hiera('splunk::params::deployment_interval', 30)
@@ -13,7 +16,7 @@ class splunk::params
   $frozenTime          = hiera('splunk::params::frozenTime', undef)
   $indexers            = hiera('splunk::params::indexers', undef)
   $install_path        = hiera('splunk::params::install_path', '/opt')
-  $privKeyPath         = hiera('splunk::params::privKeyPath', 'etc/auth/splunkweb/privkey.pem')
+
   $scheduler_disable   = hiera('splunk::params::scheduler_disable', undef)
   $serviceurl          = hiera('splunk::params::serviceurl', undef)
   $splunk_group        = hiera('splunk::params::splunk_group', 'splunk')
