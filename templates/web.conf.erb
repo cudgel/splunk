@@ -2,6 +2,8 @@
 #
 <%
 enableSplunkWebSSL = scope['::splunk::params::webSSL']
+privKeyPath = scope['::splunk::params::privKeyPath']
+caCertPath = scope['::splunk::params::caCertPath']
 cipherSuite = scope['::splunk::params::cipherSuite']
 sslVersions = scope['::splunk::params::sslVersions']
 splunkType = scope['::splunk::type']
@@ -9,5 +11,8 @@ splunkType = scope['::splunk::type']
 [settings]
 enableSplunkWebSSL = <%= enableSplunkWebSSL %>
 allowSslRenegotiation = false
+<% if privKeyPath == true -%>
+privKeyPath = etc/auth/<%= privKeyPath %>
+caCertPath = etc/auth/<%= caCertPath %><% end -%>
 cipherSuite = <%= cipherSuite %>
 sslVersions = <%= sslVersions %>
