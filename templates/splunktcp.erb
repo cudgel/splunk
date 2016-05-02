@@ -7,8 +7,8 @@
 [SSL]
 cipherSuite = <%= cipherSuite %>
 requireClientCert=false
-rootCA = $SPLUNK_HOME/<% caCertPath %>
-serverCert = $SPLUNK_HOME/<% serverCertPath %>
+rootCA = $SPLUNK_HOME/<%= caCertPath %>
+serverCert = $SPLUNK_HOME/<%= serverCertPath %>
 sslVersions = <%= sslVersions %>
 
 [splunktcp://9997]

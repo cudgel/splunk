@@ -125,7 +125,7 @@ splunk --accept-license --answer-yes --no-prompt start',
       group   => $::splunk::splunk_user,
       content => template("${module_name}/web.conf.erb"),
       notify  => Service[splunk],
-      alias   => 'splunk-web',
+      alias   => 'splunk-web'
     }
 
   } elsif $type == 'search' {
