@@ -1,6 +1,8 @@
 class splunk::params
 {
+  $caPath              = hiera('splunk::params::caPath', 'etc/auth/cacert.pem')
   $caCertPath          = hiera('splunk::params::caCertPath', 'etc/auth/splunkweb/cert.pem')
+  $certPath            = hiera('splunk::params::certPath', 'etc/auth/server.pem')
   $cipherSuite         = hiera('splunk::params::cipherSuite', undef)
   $deployment_disable  = hiera('splunk::params::deployment_disable', false)
   $deployment_interval = hiera('splunk::params::deployment_interval', 30)
