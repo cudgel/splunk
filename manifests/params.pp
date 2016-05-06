@@ -3,7 +3,7 @@ class splunk::params
   # splunkd
   $caCertPath          = hiera('splunk::params::caCertPath', 'etc/auth/cacert.pem')
   $serverCertPath      = hiera('splunk::params::serverCertPath', 'etc/auth/server.pem')
-  $serverCertPass      = hiera('splunk::params::serverCertPass', undef)
+  $serverCertPass      = hiera('splunk::params::serverCertPass', 'password')
   # splunkweb
   $privKeyPath         = hiera('splunk::params::privKeyPath', 'etc/auth/splunkweb/privkey.pem')
   $webCertPath         = hiera('splunk::params::webCertPath', 'etc/auth/splunkweb/cert.pem')

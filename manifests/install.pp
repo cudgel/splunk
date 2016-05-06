@@ -78,19 +78,7 @@ splunk --accept-license --answer-yes --no-prompt start',
     content => template("${module_name}/default_inputs.erb")
   }
 
-  if $type == 'forwarder' {
-
-    file { "${::splunk::local_path}/outputs.conf":
-      ensure => absent,
-      alias  => 'splunk-outputs'
-    }
-
-  } elsif $type == 'indexer' {
-
-    file { "${::splunk::local_path}/outputs.conf":
-      ensure => absent,
-      notify => Service[splunk]
-    }
+  if $type == 'indexer' {
 
     file { "${::splunk::local_path}/web.conf":
       owner   => $::splunk::splunk_user,
@@ -108,14 +96,6 @@ splunk --accept-license --answer-yes --no-prompt start',
     }
 
   } elsif $type == 'index_master' {
-
-    file { "${::splunk::local_path}/outputs.conf":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_user,
-      content => template("${module_name}/outputs.conf.erb"),
-      notify  => Service[splunk],
-      alias   => 'splunk-outputs'
-    }
 
     file { "${::splunk::local_path}/web.conf":
       owner   => $::splunk::splunk_user,
@@ -136,14 +116,6 @@ splunk --accept-license --answer-yes --no-prompt start',
         'liberation-serif-fonts' ]:
         ensure => installed,
       }
-    }
-
-    file { "${::splunk::local_path}/outputs.conf":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_user,
-      content => template("${module_name}/outputs.conf.erb"),
-      notify  => Service[splunk],
-      alias   => 'splunk-outputs'
     }
 
     file { "${::splunk::local_path}/default-mode.conf":
