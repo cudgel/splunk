@@ -81,11 +81,8 @@ splunk --accept-license --answer-yes --no-prompt start',
   if $type == 'forwarder' {
 
     file { "${::splunk::local_path}/outputs.conf":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_user,
-      content => template("${module_name}/outputs.conf.erb"),
-      notify  => Service[splunk],
-      alias   => 'splunk-outputs'
+      ensure => absent,
+      alias  => 'splunk-outputs'
     }
 
   } elsif $type == 'indexer' {
