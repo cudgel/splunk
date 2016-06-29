@@ -291,7 +291,6 @@ splunk --accept-license --answer-yes --no-prompt start',
         content => template("${module_name}/replication.erb"),
         notify  => Exec['update-server']
       }
-
     }
   }
 

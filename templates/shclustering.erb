@@ -16,4 +16,7 @@ conf_replication_include.mobile_access_settings = true
 mgmt_uri = https://<%= fqdn %>:8089
 pass4SymmKey = <%= symmKey %>
 shcluster_label = <%= shcluster_label %>
+<% elsif shcluster_mode == 'deployer' -%>
+[shclustering]
+shcluster_label = <%= shcluster_label %>
 <% end %>
