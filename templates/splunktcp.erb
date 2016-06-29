@@ -10,8 +10,8 @@
 password = <%= serverCertPass %>
 cipherSuite = <%= cipherSuite %>
 requireClientCert=false
-rootCA = $SPLUNK_HOME/<%= caCertPath %>
-serverCert = $SPLUNK_HOME/<%= serverCertPath %>
+rootCA = $SPLUNK_HOME/etc/auth/<%= caCertPath %>
+serverCert = $SPLUNK_HOME/etc/auth/<%= serverCertPath %>
 sslVersions = <%= sslVersions %>
 
 [splunktcp://9997]

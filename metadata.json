@@ -6,7 +6,7 @@
       "version_requirement": "\u003e\u003d 1.1.3"
     }
   ],
-  "description": "Deploy n-tier Splunk environments, including mserver.",
+  "description": "Deploy n-tier Splunk environments",
   "license": "Apache License, Version 2.0",
   "name": "cudgel-splunk",
   "operatingsystem_support": ["Linux", "Solaris"],
@@ -15,5 +15,5 @@
   "source": "https://github.com/cudgel/splunk",
   "summary": "Splunk Deployment App",
   "tags": [],
-  "version": "0.1.0"
+  "version": "0.9.0"
 }

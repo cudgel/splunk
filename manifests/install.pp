@@ -65,8 +65,49 @@ splunk --accept-license --answer-yes --no-prompt start',
     notify  => Service[splunk]
   }
 
+  if $::splunk::params::caCertPath != 'cacert.pem' {
+    file { "${::splunk::splunkhome}/etc/auth/${::splunk::params::caCertPath}":
+      owner  => $::splunk::splunk_user,
+      group  => $::splunk::splunk_group,
+      mode   => '0640',
+      source => "puppet:///splunk_files/auth/${::splunk::params::caCertPath}",
+      notify => Service[splunk]
+    }
+  }
+
+  if $::splunk::params::privKeyPath != 'privkey.pem' {
+    file { "${::splunk::splunkhome}/etc/auth/splunkweb/${::splunk::params::privKeyPath}":
+      owner  => $::splunk::splunk_user,
+      group  => $::splunk::splunk_group,
+      mode   => '0640',
+      source => "puppet:///splunk_files/auth/splunkweb/${::splunk::params::privKeyPath}",
+      notify => Service[splunk]
+    }
+  }
+
+  if $::splunk::params::serverCertPath != 'server.pem' {
+    file { "${::splunk::splunkhome}/etc/auth/${::splunk::params::serverCertPath}":
+      owner  => $::splunk::splunk_user,
+      group  => $::splunk::splunk_group,
+      mode   => '0640',
+      source => "puppet:///splunk_files/auth/${::splunk::params::serverCertPath}",
+      notify => Service[splunk]
+    }
+  }
+
+  if $::splunk::params::webCertPath != 'cert.pem' {
+    file { "${::splunk::splunkhome}/etc/auth/splunkweb/${::splunk::params::webCertPath}":
+      owner  => $::splunk::splunk_user,
+      group  => $::splunk::splunk_group,
+      mode   => '0640',
+      source => "puppet:///splunk_files/auth/splunkweb/${::splunk::params::webCertPath}",
+      notify => Service[splunk]
+    }
+  }
+
   file { "${::splunk::local_path}/inputs.d":
     ensure => 'directory',
+    mode   => '0750',
     owner  => $::splunk::splunk_user,
     group  => $::splunk::splunk_group,
   }
@@ -78,24 +119,82 @@ splunk --accept-license --answer-yes --no-prompt start',
     content => template("${module_name}/default_inputs.erb")
   }
 
-  if $type == 'indexer' {
+  if $type != 'forwarder' {
 
-    file { "${::splunk::local_path}/web.conf":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_user,
-      content => template("${module_name}/web.conf.erb"),
-      notify  => Service[splunk],
-      alias   => 'splunk-web',
+    if $type != 'indexer' {
+      file { "${::splunk::local_path}/outputs.d":
+        ensure => 'directory',
+        mode   => '0750',
+        owner  => $::splunk::splunk_user,
+        group  => $::splunk::splunk_group,
+      }
+
+      file { "${::splunk::local_path}/outputs.d/000_default":
+        owner   => $::splunk::splunk_user,
+        group   => $::splunk::splunk_group,
+        content => template("${module_name}/outputs.erb"),
+        require => File["${::splunk::local_path}/outputs.d"],
+        notify  => Exec['update-outputs']
+      }
     }
 
-    file { "${::splunk::local_path}/inputs.d/999_splunktcp":
+    file { "${::splunk::local_path}/server.d":
+      ensure => 'directory',
+      mode   => '0750',
+      owner  => $::splunk::splunk_user,
+      group  => $::splunk::splunk_group,
+    }
+
+    file { "${::splunk::local_path}/server.d/000_default":
+      ensure => absent
+    }
+
+    file { "${::splunk::local_path}/server.d/000_header":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_group,
-      content => template("${module_name}/splunktcp.erb"),
-      notify  => Exec['update-inputs']
+      require => File["${::splunk::local_path}/server.d"],
+      content => '# DO NOT EDIT -- Managed by Puppet',
+      notify  => Exec['update-server']
     }
 
-  } elsif $type == 'index_master' {
+    file { "${::splunk::local_path}/server.d/001_license":
+      owner   => $::splunk::splunk_user,
+      group   => $::splunk::splunk_group,
+      require => File["${::splunk::local_path}/server.d"],
+      content => template("${module_name}/license.erb")
+    }
+
+    file { "${::splunk::local_path}/server.d/999_ixclustering":
+      ensure => absent
+    }
+
+    file { "${::splunk::local_path}/server.d/998_ixclustering":
+      ensure => absent
+    }
+
+    file { "${::splunk::local_path}/server.d/997_ixclustering":
+      owner   => $::splunk::splunk_user,
+      group   => $::splunk::splunk_group,
+      require => File["${::splunk::local_path}/server.d"],
+      content => template("${module_name}/ixclustering.erb"),
+      notify  => Exec['update-server']
+    }
+
+    file { "${::splunk::local_path}/server.d/998_ssl":
+      owner   => $::splunk::splunk_user,
+      group   => $::splunk::splunk_group,
+      require => File["${::splunk::local_path}/server.d"],
+      content => template("${module_name}/ssl_server.erb"),
+      notify  => Exec['update-server']
+    }
+
+    file { "${::splunk::local_path}/server.d/999_default":
+      owner   => $::splunk::splunk_user,
+      group   => $::splunk::splunk_group,
+      require => File["${::splunk::local_path}/server.d"],
+      content => template("${module_name}/default_server.erb"),
+      notify  => Exec['update-server']
+    }
 
     file { "${::splunk::local_path}/web.conf":
       owner   => $::splunk::splunk_user,
@@ -105,9 +204,29 @@ splunk --accept-license --answer-yes --no-prompt start',
       alias   => 'splunk-web'
     }
 
-  } elsif $type == 'search' {
+    if $type == 'indexer' {
+
+    file { "${::splunk::local_path}/inputs.d/999_splunktcp":
+      owner   => $::splunk::splunk_user,
+      group   => $::splunk::splunk_group,
+      content => template("${module_name}/splunktcp.erb"),
+      notify  => Exec['update-inputs']
+    }
+
+    file { "${::splunk::local_path}/server.d/995_replication":
+      owner   => $::splunk::splunk_user,
+      group   => $::splunk::splunk_group,
+      require => File["${::splunk::local_path}/server.d"],
+      content => template("${module_name}/replication.erb"),
+      notify  => Exec['update-server']
+    }
+
+    }
+
+    if $type == 'search' {
 
     if $::osfamily == 'RedHat' {
+
     # support PDF Report Server
       package { [
         'xorg-x11-server-Xvfb',
@@ -116,6 +235,7 @@ splunk --accept-license --answer-yes --no-prompt start',
         'liberation-serif-fonts' ]:
         ensure => installed,
       }
+
     }
 
     file { "${::splunk::local_path}/default-mode.conf":
@@ -134,14 +254,6 @@ splunk --accept-license --answer-yes --no-prompt start',
       alias   => 'alert-actions'
     }
 
-    file { "${::splunk::local_path}/web.conf":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_user,
-      content => template("${module_name}/web.conf.erb"),
-      notify  => Service[splunk],
-      alias   => 'splunk-web'
-    }
-
     file { "${::splunk::local_path}/ui-prefs.conf":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_user,
@@ -155,5 +267,32 @@ splunk --accept-license --answer-yes --no-prompt start',
       content => template("${module_name}/limits.conf.erb"),
       notify  => Service[splunk]
     }
+
+      file { "${::splunk::local_path}/server.d/998_shclustering":
+        ensure => absent
   }
+
+      file { "${::splunk::local_path}/server.d/997_shclustering":
+        ensure => absent
+      }
+
+      file { "${::splunk::local_path}/server.d/996_shclustering":
+        owner   => $::splunk::splunk_user,
+        group   => $::splunk::splunk_group,
+        require => File["${::splunk::local_path}/server.d"],
+        content => template("${module_name}/shclustering.erb"),
+        notify  => Exec['update-server']
+      }
+    }
+
+    file { "${::splunk::local_path}/server.d/995_replication":
+      owner   => $::splunk::splunk_user,
+      group   => $::splunk::splunk_group,
+      require => File["${::splunk::local_path}/server.d"],
+      content => template("${module_name}/replication.erb"),
+      notify  => Exec['update-server']
+    }
+
+  }
+
 }

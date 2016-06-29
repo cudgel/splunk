@@ -10,7 +10,7 @@ sslVersions = scope['::splunk::params::sslVersions']
 [settings]
 enableSplunkWebSSL = <%= enableSplunkWebSSL %>
 allowSslRenegotiation = false
-privKeyPath = <%= privKeyPath %>
-caCertPath = <%= webCertPath %>
+privKeyPath = etc/auth/splunkweb/<%= privKeyPath %>
+caCertPath = etc/auth/splunkweb/<%= webCertPath %>
 cipherSuite = <%= cipherSuite %>
 sslVersions = <%= sslVersions %>

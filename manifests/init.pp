@@ -69,8 +69,13 @@ class splunk($type='forwarder') {
     class { 'splunk::deployment': }
   }
 
-  $my_input_d = "${::splunk::local_path}/inputs.d/"
-  $my_input_c = "${::splunk::local_path}/inputs.conf"
+  $my_input_d  = "${local_path}/inputs.d/"
+  $my_input_c  = "${local_path}/inputs.conf"
+  $my_output_d = "${local_path}/outputs.d/"
+  $my_output_c = "${local_path}/outputs.conf"
+  $my_server_d = "${local_path}/server.d/"
+  $my_server_c = "${local_path}/server.conf"
+
   $my_perms   = "${::splunk::splunk_user}:${::splunk::splunk_group}"
 
   exec { 'update-inputs':
@@ -78,6 +83,21 @@ class splunk($type='forwarder') {
 chown ${my_perms} ${my_input_c}",
     refreshonly => true,
     subscribe   => File["${local_path}/inputs.d/000_default"],
-    notify      => Service[splunk],
+    notify      => Service[splunk]
+  }
+
+  exec { 'update-outputs':
+    command     => "/bin/cat ${my_output_d}/* > ${my_output_c}; \
+chown ${my_perms} ${my_output_c}",
+    refreshonly => true,
+    notify      => Service[splunk]
+  }
+
+  exec { 'update-server':
+    command     => "/bin/cat ${my_server_d}/* > ${my_server_c}; \
+chown ${my_perms} ${my_server_c}",
+    refreshonly => true,
+    subscribe   => File["${local_path}/server.d/999_default"],
+    notify      => Service[splunk]
   }
 }

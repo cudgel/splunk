@@ -1,0 +1,40 @@
+<%
+  license_master = scope['::splunk::params::license_master']
+  license_master_mode = scope['::splunk::params::license_master_mode']
+  splunk_licenses = scope['::splunk::params::licenses']
+-%>
+
+# license manager
+
+[lmpool:auto_generated_pool_download-trial]
+description = auto_generated_pool_download-trial
+quota = MAX
+slaves = *
+stack_id = download-trial
+
+[lmpool:auto_generated_pool_forwarder]
+description = auto_generated_pool_forwarder
+quota = MAX
+slaves = *
+stack_id = forwarder
+
+[lmpool:auto_generated_pool_free]
+description = auto_generated_pool_free
+quota = MAX
+slaves = *
+stack_id = free
+
+[license]
+<% if license_master_mode == 'slave' -%>
+master_uri = https://<%= license_master %>
+<% else -%>
+active_group = Enterprise
+<% for lmpool in splunk_licenses -%>
+
+[lmpool:<%= lmpool['label'] %>]
+description = <%= lmpool['description'] %>
+stack_id = <%= lmpool['stack_id'] %>
+quota = <%= lmpool['quota'] %>
+slaves = <% lmpool['slaves'].each do |slave| -%><%= slave %><%= "," unless slave == lmpool['slaves'].last %><% end -%>
+<% end %>
+<% end -%>

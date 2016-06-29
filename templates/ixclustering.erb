@@ -1,0 +1,64 @@
+<%
+  repl_port = scope['::splunk::params::repl_port']
+  cluster_mode = scope['::splunk::params::cluster_mode']
+  splunk_clusters = scope['::splunk::params::clusters']
+  symmKey = scope['::splunk::params::symmKey']
+-%>
+<<<<<<< Updated upstream
+<% if cluster_mode == 'slave' -%>
+
+# indexer replication
+[replication_port://<%= repl_port %>]
+<% end -%>
+=======
+>>>>>>> Stashed changes
+
+<% if cluster_mode != 'none' -%>
+# indexer clustering
+[clustering]
+mode = <%= cluster_mode %>
+<% if cluster_mode == 'slave' -%>
+master_uri = <% splunk_clusters.each do |cm| %>https://<%= cm['uri'] %><%= "," unless cm == splunk_clusters.last %><% end %>
+pass4SymmKey = <%= symmKey %>
+<% elsif cluster_mode == 'searchhead' -%>
+master_uri = <% splunk_clusters.each do |cm| %>clustermaster:<%= cm['label'] %><%= "," unless cm == splunk_clusters.last %><% end %>
+<% end -%>
+<% if cluster_mode == 'master' -%>
+# cluster master config
+pass4SymmKey = <%= symmKey %>
+<% for cm in splunk_clusters %>
+# cluster config
+cluster_label = <%= cm['label'] %>
+access_logging_for_heartbeats = <%= cm['access_logging'] %>
+max_peer_build_load = <%= cm['build_load'] %>
+<% if cm['multisite'] == true -%>
+# multi-site cluster
+multisite = true
+available_sites = <% cm['sites'].each do |site| %><%= site %><%= "," unless site == cm['sites'].last %><% end %>
+site_replication_factor =  <%= cm['repl_factor'] %>
+site_search_factor = <%= cm['search_factor'] %>
+<% else -%>
+# single-site cluster
+multisite = false
+replication_factor = <%= cm['repl_factor'] %>
+search_factor = <%= cm['search_factor'] %><% end %><%# end sites for this cluster -%>
+<% end -%><%# end index cluster configs -%>
+<% end -%><%# end cluster master config -%>
+
+<% if cluster_mode == 'searchhead' -%>
+# search head config
+<% for cm in splunk_clusters %>
+[clustermaster:<%= cm['label'] %>]
+<% if cm['multisite'] == true -%>
+# multi-site cluster
+multisite = true
+<% else -%>
+# single-site cluster
+multisite = false
+<% end -%><%# end multisite -%>
+site = <% cm['sites'].each do |site| %><%= site %><%= "," unless site == cm['sites'].last %><% end %>
+master_uri = https://<%= cm['uri'] %>
+pass4SymmKey = <%= symmKey %>
+<% end -%><%# end index clusters to search -%>
+<% end -%><%# end search head config -%>
+<% end -%><%# end clustering -%>
