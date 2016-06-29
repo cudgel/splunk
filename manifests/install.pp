@@ -206,71 +206,71 @@ splunk --accept-license --answer-yes --no-prompt start',
 
     if $type == 'indexer' {
 
-    file { "${::splunk::local_path}/inputs.d/999_splunktcp":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_group,
-      content => template("${module_name}/splunktcp.erb"),
-      notify  => Exec['update-inputs']
-    }
+      file { "${::splunk::local_path}/inputs.d/999_splunktcp":
+        owner   => $::splunk::splunk_user,
+        group   => $::splunk::splunk_group,
+        content => template("${module_name}/splunktcp.erb"),
+        notify  => Exec['update-inputs']
+      }
 
-    file { "${::splunk::local_path}/server.d/995_replication":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_group,
-      require => File["${::splunk::local_path}/server.d"],
-      content => template("${module_name}/replication.erb"),
-      notify  => Exec['update-server']
-    }
+      file { "${::splunk::local_path}/server.d/995_replication":
+        owner   => $::splunk::splunk_user,
+        group   => $::splunk::splunk_group,
+        require => File["${::splunk::local_path}/server.d"],
+        content => template("${module_name}/replication.erb"),
+        notify  => Exec['update-server']
+      }
 
     }
 
     if $type == 'search' {
 
-    if $::osfamily == 'RedHat' {
+      if $::osfamily == 'RedHat' {
 
-    # support PDF Report Server
-      package { [
-        'xorg-x11-server-Xvfb',
-        'liberation-mono-fonts',
-        'liberation-sans-fonts',
-        'liberation-serif-fonts' ]:
-        ensure => installed,
+        # support PDF Report Server
+        package { [
+          'xorg-x11-server-Xvfb',
+          'liberation-mono-fonts',
+          'liberation-sans-fonts',
+          'liberation-serif-fonts' ]:
+          ensure => installed,
+        }
+
       }
 
-    }
+      file { "${::splunk::local_path}/default-mode.conf":
+        owner   => $::splunk::splunk_user,
+        group   => $::splunk::splunk_user,
+        content => template("${module_name}/default-mode.conf.erb"),
+        notify  => Service[splunk],
+        alias   => 'splunk-mode'
+      }
 
-    file { "${::splunk::local_path}/default-mode.conf":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_user,
-      content => template("${module_name}/default-mode.conf.erb"),
-      notify  => Service[splunk],
-      alias   => 'splunk-mode'
-    }
+      file { "${::splunk::local_path}/alert_actions.conf":
+        owner   => $::splunk::splunk_user,
+        group   => $::splunk::splunk_user,
+        content => template("${module_name}/alert_actions.conf.erb"),
+        notify  => Service[splunk],
+        alias   => 'alert-actions'
+      }
 
-    file { "${::splunk::local_path}/alert_actions.conf":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_user,
-      content => template("${module_name}/alert_actions.conf.erb"),
-      notify  => Service[splunk],
-      alias   => 'alert-actions'
-    }
+      file { "${::splunk::local_path}/ui-prefs.conf":
+        owner   => $::splunk::splunk_user,
+        group   => $::splunk::splunk_user,
+        content => template("${module_name}/ui-prefs.conf.erb"),
+        notify  => Service['splunk']
+      }
 
-    file { "${::splunk::local_path}/ui-prefs.conf":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_user,
-      content => template("${module_name}/ui-prefs.conf.erb"),
-      notify  => Service['splunk']
-    }
-
-    file { "${::splunk::local_path}/limits.conf":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_user,
-      content => template("${module_name}/limits.conf.erb"),
-      notify  => Service[splunk]
-    }
+      file { "${::splunk::local_path}/limits.conf":
+        owner   => $::splunk::splunk_user,
+        group   => $::splunk::splunk_user,
+        content => template("${module_name}/limits.conf.erb"),
+        notify  => Service[splunk]
+      }
 
       file { "${::splunk::local_path}/server.d/998_shclustering":
         ensure => absent
-  }
+      }
 
       file { "${::splunk::local_path}/server.d/997_shclustering":
         ensure => absent
@@ -283,16 +283,16 @@ splunk --accept-license --answer-yes --no-prompt start',
         content => template("${module_name}/shclustering.erb"),
         notify  => Exec['update-server']
       }
-    }
 
-    file { "${::splunk::local_path}/server.d/995_replication":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_group,
-      require => File["${::splunk::local_path}/server.d"],
-      content => template("${module_name}/replication.erb"),
-      notify  => Exec['update-server']
-    }
+      file { "${::splunk::local_path}/server.d/995_replication":
+        owner   => $::splunk::splunk_user,
+        group   => $::splunk::splunk_group,
+        require => File["${::splunk::local_path}/server.d"],
+        content => template("${module_name}/replication.erb"),
+        notify  => Exec['update-server']
+      }
 
+    }
   }
 
 }
