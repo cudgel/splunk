@@ -7,6 +7,6 @@
 [general]
 serverName = <%= scope['::fqdn'] %>
 pass4SymmKey = <%= symmKey %>
-<% if cluster_mode == 'master' -%>
+<% if cluster_mode == 'master' || cluster_mode == 'slave' -%>
 site = <%= server_site %>
 <% end -%>
