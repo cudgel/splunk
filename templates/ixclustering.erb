@@ -4,14 +4,6 @@
   splunk_clusters = scope['::splunk::params::clusters']
   symmKey = scope['::splunk::params::symmKey']
 -%>
-<<<<<<< Updated upstream
-<% if cluster_mode == 'slave' -%>
-
-# indexer replication
-[replication_port://<%= repl_port %>]
-<% end -%>
-=======
->>>>>>> Stashed changes
 
 <% if cluster_mode != 'none' -%>
 # indexer clustering
