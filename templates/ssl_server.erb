@@ -9,7 +9,7 @@
 [sslConfig]
 allowSslRenegotiation = false
 caCertFile = <%= caCertPath %>
-cipherSuite = AES256-SHA:AES128-SHA:DES-CBC3-SHA
+cipherSuite = <%= cipherSuite %>
 requireClientCert = false
 sslKeysfile = <%= serverCertPath %>
 sslKeysfilePassword = <%= serverCertPass %>
@@ -17,4 +17,3 @@ sslVerifyServerCert = false
 sslVersions = <%= sslVersions %>
 useClientSSLCompression = false
 useSplunkdClientSSLCompression = false
-cipherSuite = <%= cipherSuite %>
