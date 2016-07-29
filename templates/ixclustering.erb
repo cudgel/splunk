@@ -5,7 +5,7 @@
   symmKey = scope['::splunk::params::symmKey']
 -%>
 
-<% if cluster_mode != 'none' -%>
+<% if cluster_mode != 'none' && cluster_mode !='standby' -%>
 # indexer clustering
 [clustering]
 mode = <%= cluster_mode %>

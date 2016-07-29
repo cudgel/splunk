@@ -86,6 +86,8 @@ chown ${my_perms} ${my_input_c}",
     notify      => Service[splunk]
   }
 
+  if $type != 'forwarder' {
+
   exec { 'update-outputs':
     command     => "/bin/cat ${my_output_d}/* > ${my_output_c}; \
 chown ${my_perms} ${my_output_c}",
@@ -97,6 +99,10 @@ chown ${my_perms} ${my_output_c}",
     command     => "/bin/cat ${my_server_d}/* > ${my_server_c}; \
 chown ${my_perms} ${my_server_c}",
     refreshonly => true,
+      subscribe => [File["${local_path}/server.d/000_header"], File["${local_path}/server.d/998_ssl"], File["${local_path}/server.d/999_default"]],
     notify      => Service[splunk]
+    }
+
   }
+
 }
