@@ -37,7 +37,7 @@ define splunk::acl(
     # (extended posix ACLs cannot be set from the nfs client)
     $testnfs = "df -P ${object} | tail -1 | awk '{print \$1}' |
 fgrep -f - /proc/mounts | grep -q nfs"
-
+df -P ${object} | tail -1 | awk '{print \$1}' | fgrep -f - /proc/mounts | grep -q nfs
     # Recursive ACLs can only be applied to a directory.
     # Non-recursive ACLs can be applied to anything.
     #
@@ -64,8 +64,7 @@ egrep -q '${acl}'",
     exec { "set_effective_rights_mask_${title}":
       path    => '/bin:/usr/bin',
       command => "setfacl -R -m mask:${perm},default:mask:${perm} ${object}",
-      unless  => "${testnfs} || getfacl ${object} 2>/dev/null |
-egrep -q '^mask::rwx' ",
+      unless  => "${testnfs} || getfacl ${object} 2>/dev/null | egrep -q '^mask::r-x' ",
       timeout => '0'
     }
 
