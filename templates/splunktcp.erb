@@ -14,8 +14,8 @@ rootCA = $SPLUNK_HOME/etc/auth/<%= caCertPath %>
 serverCert = $SPLUNK_HOME/etc/auth/<%= serverCertPath %>
 sslVersions = <%= sslVersions %>
 
-#[splunktcp://9997]
-#disabled=false
+[splunktcp://9997]
+disabled=false
 
 [splunktcp-ssl://9998]
 disabled=false
