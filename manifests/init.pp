@@ -103,7 +103,7 @@ chown ${my_perms} ${my_server_c}",
       notify      => Service[splunk]
     }
 
-  } else {
+  } elsif $type == 'forwarder' or $type == 'heavyforwarder' {
     class { 'splunk::deployment': }
   }
 
