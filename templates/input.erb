@@ -1,6 +1,7 @@
 # Puppet Name: <%= @title %>
 #
 [<%= @inputtype -%>://<%= @target %>]
+_meta = input_host::<%= scope['::hostname'] %> input_name::<%= @title %>
 disabled = <%= @disabled %>
 <% if @cache && @inputtype != 'monitor' -%>
 persistentQueueSize = <%= @size -%>G
