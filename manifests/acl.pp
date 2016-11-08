@@ -65,7 +65,7 @@ egrep -q '${acl}'",
       path    => '/bin:/usr/bin',
       command => "setfacl -R -m mask:${perm},default:mask:${perm} ${object}",
       unless  => "${testnfs} || getfacl ${object} 2>/dev/null |
-egrep -q '^mask::rwx' ",
+egrep -q '^mask::r-x' ",
       timeout => '0'
     }
 

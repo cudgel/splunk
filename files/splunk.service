@@ -1,0 +1,12 @@
+[Unit]
+Description=Regular background program processing daemon
+Documentation=man:splunk(1)
+
+[Service]
+EnvironmentFile=-/etc/default/cron
+ExecStart=/opt/splunkforwarder/bin/splunk -f $EXTRA_OPTS
+IgnoreSIGPIPE=false
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
