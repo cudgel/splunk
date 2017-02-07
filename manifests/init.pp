@@ -65,7 +65,7 @@ class splunk($type='forwarder') {
   class { 'splunk::install': type => $type }->
   class { 'splunk::service': }
   # configure deployment server for indexers and forwarders
-  if $type == 'forwarder' {
+  if $type == 'forwarder' or $type == 'heavyforwarder' {
     class { 'splunk::deployment': }
   }
 

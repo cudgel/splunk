@@ -36,6 +36,7 @@ class splunk::params
   $splunk_user       = hiera('splunk::params::splunk_user', 'splunk')
   $sslv3             = hiera('splunk::params::SSLV3', false)
   $sslVersions       = hiera('splunk::params::sslVersions', 'tls')
+  $max_searches      = hiera('splunk::params::max_searches', 2)
   $subsearch_maxout  = hiera('splunk::params::subsearch_maxout', undef)
   $subsearch_maxtime = hiera('splunk::params::subsearch_maxtime', undef)
   $subsearch_ttl     = hiera('splunk::params::subsearch_ttl', undef)
