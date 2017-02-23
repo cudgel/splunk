@@ -7,17 +7,17 @@ class splunk::service inherits ::splunk {
       group  => 'root',
       mode   => '0644',
       source => 'puppet:///modules/splunk/splunk.service',
-    }
-  service { 'splunk':
-        ensure  => 'running',
-        enable  => true,
-        require => Class['::splunk::install']
-  }
-  } elsif $::osfamily == 'RedHat' {
+      }
     service { 'splunk':
         ensure  => 'running',
         enable  => true,
         require => Class['::splunk::install']
+      }
+  } elsif $::osfamily == 'RedHat' {
+    service { 'splunk':
+      ensure  => 'running',
+      enable  => true,
+      require => Class['::splunk::install']
     }
-    }
+  }
 }
