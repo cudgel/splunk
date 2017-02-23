@@ -15,7 +15,7 @@ serverCert = $SPLUNK_HOME/etc/auth/<%= servercertpath %>
 sslVersions = <%= sslversions %>
 
 [splunktcp://9997]
-disabled=false
+disabled = true
 
 [splunktcp-ssl://9998]
-disabled=false
+disabled = false
