@@ -9,4 +9,3 @@ project_page 'UNKNOWN'
 
 ## Add dependencies, if any:
 dependency 'puppetlabs/firewall', '>= 1.1.3'
-dependency 'puppetlabs/concat', '>= 1.0.0'
