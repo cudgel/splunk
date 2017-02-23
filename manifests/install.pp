@@ -6,6 +6,10 @@ class splunk::install($type=$type)
   $splunkos        = $::splunk::splunkos
   $splunkarch      = $::splunk::splunkarch
   $my_perms        = "${::splunk::splunk_user}:${::splunk::splunk_group}"
+  $cacertpath      = $::splunk::params::cacertpath
+  $privkeypath     = $::splunk::params::privkeypath
+  $servercertpath  = $::splunk::params::servercertpath
+  $webcertpath     = $::splunk::params::webcertpath
 
   # begin version change
   if $new_version != $current_version {
@@ -28,8 +32,7 @@ class splunk::install($type=$type)
     }
 
     exec { 'unpackSplunk':
-      command   => "${::splunk::params::tarcmd} ${::splunk::splunksource}; \
-chown -RL ${my_perms} ${::splunk::splunkhome}",
+      command   => "${::splunk::params::tarcmd} ${::splunk::splunksource}; chown -RL ${my_perms} ${::splunk::splunkhome}",
       path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
       cwd       => $::splunk::install_path,
       subscribe => File["${::splunk::install_path}/${::splunk::splunksource}"],
@@ -39,8 +42,7 @@ chown -RL ${my_perms} ${::splunk::splunkhome}",
     }
 
     exec { 'firstStart':
-      command     => 'splunk stop; \
-splunk --accept-license --answer-yes --no-prompt start',
+      command     => 'splunk stop; splunk --accept-license --answer-yes --no-prompt start',
       path        => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
       subscribe   => Exec['unpackSplunk'],
       refreshonly => true,
@@ -65,42 +67,42 @@ splunk --accept-license --answer-yes --no-prompt start',
     notify  => Service[splunk]
   }
 
-  if $::splunk::params::caCertPath != 'cacert.pem' {
-    file { "${::splunk::splunkhome}/etc/auth/${::splunk::params::caCertPath}":
+  if $cacertpath != 'cacert.pem' {
+    file { "${::splunk::splunkhome}/etc/auth/${cacertpath}":
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
       mode   => '0640',
-      source => "puppet:///splunk_files/auth/${::splunk::params::caCertPath}",
+      source => "puppet:///splunk_files/auth/${cacertpath}",
       notify => Service[splunk]
     }
   }
 
-  if $::splunk::params::privKeyPath != 'privkey.pem' {
-    file { "${::splunk::splunkhome}/etc/auth/splunkweb/${::splunk::params::privKeyPath}":
+  if $privkeypath != 'privkey.pem' {
+    file { "${::splunk::splunkhome}/etc/auth/splunkweb/${privkeypath}":
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
       mode   => '0640',
-      source => "puppet:///splunk_files/auth/splunkweb/${::splunk::params::privKeyPath}",
+      source => "puppet:///splunk_files/auth/splunkweb/${privkeypath}",
       notify => Service[splunk]
     }
   }
 
-  if $::splunk::params::serverCertPath != 'server.pem' {
-    file { "${::splunk::splunkhome}/etc/auth/${::splunk::params::serverCertPath}":
+  if $servercertpath != 'server.pem' {
+    file { "${::splunk::splunkhome}/etc/auth/${servercertpath}":
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
       mode   => '0640',
-      source => "puppet:///splunk_files/auth/${::splunk::params::serverCertPath}",
+      source => "puppet:///splunk_files/auth/${servercertpath}",
       notify => Service[splunk]
     }
   }
 
-  if $::splunk::params::webCertPath != 'cert.pem' {
-    file { "${::splunk::splunkhome}/etc/auth/splunkweb/${::splunk::params::webCertPath}":
+  if $webcertpath != 'cert.pem' {
+    file { "${::splunk::splunkhome}/etc/auth/splunkweb/${webcertpath}":
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
       mode   => '0640',
-      source => "puppet:///splunk_files/auth/splunkweb/${::splunk::params::webCertPath}",
+      source => "puppet:///splunk_files/auth/splunkweb/${webcertpath}",
       notify => Service[splunk]
     }
   }

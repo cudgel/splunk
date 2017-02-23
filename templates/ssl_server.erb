@@ -1,20 +1,20 @@
 <%
-  caCertPath = scope['::splunk::params::caCertPath']
-  serverCertPass = scope['::splunk::params::serverCertPass']
-  serverCertPath = scope['::splunk::params::serverCertPath']
-  cipherSuite = scope['::splunk::params::cipherSuite']
-  sslVersions = scope['::splunk::params::sslVersions']
+  cacertpath = scope['::splunk::params::cacertpath']
+  servercertpass = scope['::splunk::params::servercertpass']
+  servercertpath = scope['::splunk::params::servercertpath']
+  ciphersuite = scope['::splunk::params::ciphersuite']
+  sslversions = scope['::splunk::params::sslversions']
 -%>
 
 [sslConfig]
 allowSslRenegotiation = false
-caCertFile = <%= caCertPath %>
-cipherSuite = <%= cipherSuite %>
+caCertFile = <%= cacertpath %>
+cipherSuite = <%= ciphersuite %>
 requireClientCert = false
 sendStrictTransportSecurityHeader = true
-sslKeysfile = <%= serverCertPath %>
-sslKeysfilePassword = <%= serverCertPass %>
+sslKeysfile = <%= servercertpath %>
+sslKeysfilePassword = <%= servercertpass %>
 sslVerifyServerCert = false
-sslVersions = <%= sslVersions %>
+sslVersions = <%= sslversions %>
 useClientSSLCompression = false
 useSplunkdClientSSLCompression = false

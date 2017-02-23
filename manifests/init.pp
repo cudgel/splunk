@@ -49,7 +49,7 @@ class splunk($type='forwarder') {
   $tar             = $::splunk::params::tar
   $tarcmd          = $::splunk::params::tarcmd
 
-  if $type == 'forwarder' or $type == 'mserver' {
+  if $type == 'forwarder' {
     $sourcepart = 'splunkforwarder'
   } else {
     $sourcepart = 'splunk'

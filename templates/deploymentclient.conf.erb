@@ -2,11 +2,11 @@
 #
 <%
 disable = scope['::splunk::params::deployment_disable']
-targetUri = scope['::splunk::params::deployment_server']
+targeturi = scope['::splunk::params::deployment_server']
 phoneHomeIntervalInSecs = scope['::splunk::params::deployment_interval']
 -%>
 [deployment-client]
 disabled = <%= disable %>
 phoneHomeIntervalInSecs = <%= phoneHomeIntervalInSecs %>
 [target-broker:deploymentServer]
-targetUri = <%= targetUri %>
+targetUri = <%= targeturi %>

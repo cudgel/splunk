@@ -2,15 +2,13 @@
 #
 <%
   indexers       = scope['::splunk::params::tcpout']
-  caCertPath     = scope['::splunk::params::caCertPath']
-  serverCertPass = scope['::splunk::params::serverCertPass']
-  serverCertPath = scope['::splunk::params::serverCertPath']
-  cipherSuite    = scope['::splunk::params::cipherSuite']
-  sslVersions    = scope['::splunk::params::sslVersions']
+  cacertpath     = scope['::splunk::params::cacertpath']
+  servercertpass = scope['::splunk::params::servercertpass']
+  servercertpath = scope['::splunk::params::servercertpath']
 -%>
 [tcpout]
-indexAndForward=false
-defaultGroup=<%= indexers['group'] %>
+indexAndForward = false
+defaultGroup = <%= indexers['group'] %>
 
 [tcpout:<%= indexers['group'] %>]
 autoLB = true
@@ -19,9 +17,9 @@ compressed = false
 disabled = false
 forceTimebasedAutoLB = true
 server = <% indexers['servers'].each do |server| %><%= server %><%= "," unless server == indexers['servers'].last %><% end %>
-sslCertPath = $SPLUNK_HOME/etc/auth/<%= serverCertPath %>
-sslPassword = <%= serverCertPass %>
-sslRootCAPath = $SPLUNK_HOME/etc/auth/<%= caCertPath %>
+sslCertPath = $SPLUNK_HOME/etc/auth/<%= servercertpath %>
+sslPassword = <%= servercertpass %>
+sslRootCAPath = $SPLUNK_HOME/etc/auth/<%= cacertpath %>
 sslVerifyServerCert = false
 sslCommonNameToCheck = <%= indexers['cname'] %>
 useClientSSLCompression = false

@@ -13,8 +13,7 @@ class splunk::service inherits ::splunk {
         enable  => true,
         require => Class['::splunk::install']
   }
-  }
-    elsif $::osfamily == 'RedHat' {
+  } elsif $::osfamily == 'RedHat' {
     service { 'splunk':
         ensure  => 'running',
         enable  => true,

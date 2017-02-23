@@ -2,7 +2,7 @@
   repl_port = scope['::splunk::params::repl_port']
 -%>
 
-<% if repl_port != :undef -%>
+<% if repl_port != 'none' -%>
 
 # replication
 [replication_port://<%= repl_port %>]

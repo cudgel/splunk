@@ -1,21 +1,21 @@
 <%
-  caCertPath = scope['::splunk::params::caCertPath']
-  serverCertPass = scope['splunk::params::serverCertPass']
-  serverCertPath = scope['::splunk::params::serverCertPath']
-  cipherSuite = scope['::splunk::params::cipherSuite']
-  sslVersions = scope['::splunk::params::sslVersions']
+  cacertpath = scope['::splunk::params::cacertpath']
+  servercertpass = scope['splunk::params::servercertpass']
+  servercertpath = scope['::splunk::params::servercertpath']
+  cipherSuite = scope['::splunk::params::ciphersuite']
+  sslversions = scope['::splunk::params::sslversions']
 -%>
 
 [SSL]
-password = <%= serverCertPass %>
-cipherSuite = <%= cipherSuite %>
+password = <%= servercertpass %>
+cipherSuite = <%= ciphersuite %>
 requireClientCert=false
-rootCA = $SPLUNK_HOME/etc/auth/<%= caCertPath %>
-serverCert = $SPLUNK_HOME/etc/auth/<%= serverCertPath %>
-sslVersions = <%= sslVersions %>
+rootCA = $SPLUNK_HOME/etc/auth/<%= cacertpath %>
+serverCert = $SPLUNK_HOME/etc/auth/<%= servercertpath %>
+sslVersions = <%= sslversions %>
 
-#[splunktcp://9997]
-#disabled=false
+[splunktcp://9997]
+disabled=false
 
 [splunktcp-ssl://9998]
 disabled=false
