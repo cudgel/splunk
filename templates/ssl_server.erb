@@ -3,19 +3,25 @@
   servercertpass = scope['::splunk::params::servercertpass']
   servercertpath = scope['::splunk::params::servercertpath']
   ciphersuite = scope['::splunk::params::ciphersuite']
+  sslclientcompression = scope['::splunk::params::sslclientcompression']
+  sslcompression = scope['::splunk::params::sslcompression']
   sslversions = scope['::splunk::params::sslversions']
+  sslverify = scope['::splunk::params::sslverify']
+  sslclientcert = scope['::splunk::params::sslclientcert']
+  sslnegotiation = scope['::splunk::params::sslnegotiation']
+  sslstsheader = scope['::splunk::params::sslstsheader']
 -%>
 
 [sslConfig]
-allowSslRenegotiation = false
-allowSslCompression = false
+allowSslRenegotiation = <%= sslnegotiation %>
+allowSslCompression = <%= sslcompression %>
 caCertFile = <%= cacertpath %>
 cipherSuite = <%= ciphersuite %>
-requireClientCert = false
-sendStrictTransportSecurityHeader = true
+requireClientCert = <%= sslclientcert %>
+sendStrictTransportSecurityHeader = <%= sslstsheader %>
 sslKeysfile = <%= servercertpath %>
 sslKeysfilePassword = <%= servercertpass %>
-sslVerifyServerCert = false
+sslVerifyServerCert = <%= sslverify %>
 sslVersions = <%= sslversions %>
-useClientSSLCompression = false
-useSplunkdClientSSLCompression = false
+useClientSSLCompression = <%= sslclientcompression %>
+useSplunkdClientSSLCompression = <%= sslclientcompression %>

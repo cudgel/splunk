@@ -19,7 +19,7 @@ splunkforwarder-6.2.1-245427-Linux-x86_64.tgz
 
 It depends on hiera to supply global setttings.
 
-splunk::params::cipherSuite: 'TLSv1.1'
+splunk::params::ciphersuite: 'TLSv1.1'
 splunk::params::coldpath: '/srv/coldDB'
 splunk::params::deployment_disable: false
 splunk::params::deployment_interval: 20
