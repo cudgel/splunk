@@ -52,6 +52,9 @@ class splunk::params
   $subsearch_maxout     = hiera('splunk::params::subsearch_maxout', undef)
   $subsearch_maxtime    = hiera('splunk::params::subsearch_maxtime', undef)
   $subsearch_ttl        = hiera('splunk::params::subsearch_ttl', undef)
+  # inputs - true disables, false enables
+  $splunknotcp          = hiera('splunk::params::splunknotcp', true)
+  $splunknotcp_ssl      = hiera('splunk::params::splunknotcp_ssl', false)
 
   if $::osfamily    == 'Solaris' {
     $splunkos   = 'SunOS'

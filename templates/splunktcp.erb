@@ -5,6 +5,8 @@
   ciphersuite = scope['::splunk::params::ciphersuite']
   sslversions = scope['::splunk::params::sslversions']
   sslclientcert = scope['::splunk::params::sslclientcert']
+  splunknotcp = scope['::splunk::params::splunknotcp']
+  splunknotcp_ssl = scope['::splunk::params::splunknotcp_ssl']
 -%>
 
 [SSL]
@@ -16,7 +18,7 @@ serverCert = $SPLUNK_HOME/etc/auth/<%= servercertpath %>
 sslVersions = <%= sslversions %>
 
 [splunktcp://9997]
-disabled = true
+disabled = <%= splunknotcp %>
 
 [splunktcp-ssl://9998]
-disabled = false
+disabled = <%= splunknotcp_ssl %>
