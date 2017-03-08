@@ -49,6 +49,8 @@ class splunk::params
   $max_searches         = hiera('splunk::params::max_searches', 1)
   $scheduler_disable    = hiera('splunk::params::scheduler_disable', undef)
   $serviceurl           = hiera('splunk::params::serviceurl', undef)
+  $search_maxinfocsv    = hiera('splunk::params::search_maxinfocsv', 20)
+  $search_maxqueue      = hiera('splunk::params::search_maxqueue', 100)
   $subsearch_maxout     = hiera('splunk::params::subsearch_maxout', undef)
   $subsearch_maxtime    = hiera('splunk::params::subsearch_maxtime', undef)
   $subsearch_ttl        = hiera('splunk::params::subsearch_ttl', undef)
