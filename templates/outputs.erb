@@ -5,21 +5,25 @@
   cacertpath     = scope['::splunk::params::cacertpath']
   servercertpass = scope['::splunk::params::servercertpass']
   servercertpath = scope['::splunk::params::servercertpath']
+  sslclientcompression = scope['::splunk::params::sslclientcompression']
+  sslverify = scope['::splunk::params::sslverify']
+  autolb = scope['splunk::params::autolb']
+  autolbfrequency = scope['splunk::params::autolbfrequency']
+  forcetimebasedautolb = scope['splunk::params::forcetimebasedautolb']
 -%>
 [tcpout]
 indexAndForward = false
 defaultGroup = <%= indexers['group'] %>
 
 [tcpout:<%= indexers['group'] %>]
-autoLB = true
-autoLBFrequency = 60
-compressed = false
+autoLB = <%= autolb %>
+autoLBFrequency = <%= autolbfrequency %>
 disabled = false
-forceTimebasedAutoLB = true
+forceTimebasedAutoLB = <%= forcetimebasedautolb %>
 server = <% indexers['servers'].each do |server| %><%= server %><%= "," unless server == indexers['servers'].last %><% end %>
 sslCertPath = $SPLUNK_HOME/etc/auth/<%= servercertpath %>
 sslPassword = <%= servercertpass %>
 sslRootCAPath = $SPLUNK_HOME/etc/auth/<%= cacertpath %>
-sslVerifyServerCert = false
+sslVerifyServerCert = <%= sslverify %>
 sslCommonNameToCheck = <%= indexers['cname'] %>
-useClientSSLCompression = false
+useClientSSLCompression = <%= sslclientcompression %>

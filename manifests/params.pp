@@ -6,6 +6,10 @@ class splunk::params
   $splunk_user          = hiera('splunk::params::splunk_user', 'splunk')
   $version              = hiera('splunk::params::version', undef)
   $tcpout               = hiera('splunk::params::tcpout', undef)
+  # outputs
+  $autolb               = hiera('splunk::params::autolb', true)
+  $autolbfrequency      = hiera('splunk::params::autolbfrequency', 60)
+  $forcetimebasedautolb = hiera('splunk::params::forcetimebasedautolb', true)
   # ssl
   $sslv3                = hiera('splunk::params::sslv3', false)
   $sslversions          = hiera('splunk::params::sslversions', 'tls1.1')
