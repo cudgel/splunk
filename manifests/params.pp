@@ -8,7 +8,7 @@ class splunk::params
   $tcpout               = hiera('splunk::params::tcpout', undef)
   # ssl
   $sslv3                = hiera('splunk::params::sslv3', false)
-  $sslversions          = hiera('splunk::params::sslversions', 'tls')
+  $sslversions          = hiera('splunk::params::sslversions', 'tls1.1')
   $sslverify            = hiera('splunk::params::sslverify', false)
   $sslclientcert        = hiera('splunk::params::sslclientcert', false)
   $sslclientcompression = hiera('splunk::params::sslclientcompression', false)
@@ -23,7 +23,7 @@ class splunk::params
   # splunkweb
   $privkeypath          = hiera('splunk::params::privkeypath', 'privkey.pem')
   $webcertpath          = hiera('splunk::params::webcertpath', 'cert.pem')
-  $ciphersuite          = hiera('splunk::params::ciphersuite', undef)
+  $ciphersuite          = hiera('splunk::params::ciphersuite', 'TLSv1.1:!eNULL:!aNULL')
   $webssl               = hiera('splunk::params::webssl', true)
   # clustering
   $repl_port            = hiera('splunk::params::repl_port', 'none')
@@ -43,17 +43,17 @@ class splunk::params
   $deployment_interval  = hiera('splunk::params::deployment_interval', 30)
   $deployment_server    = hiera('splunk::params::deployment_server', undef)
   # search
-  $dispatch_earliest    = hiera('splunk::params::dispatch_earliest', undef)
-  $dispatch_latest      = hiera('splunk::params::dispatch_latest', undef)
-  $dispatch_size        = hiera('splunk::params::dispatch_size', undef)
+  $dispatch_earliest    = hiera('splunk::params::dispatch_earliest', '-60m@m')
+  $dispatch_latest      = hiera('splunk::params::dispatch_latest', 'now')
+  $dispatch_size        = hiera('splunk::params::dispatch_size', 5000)
   $max_searches         = hiera('splunk::params::max_searches', 1)
-  $scheduler_disable    = hiera('splunk::params::scheduler_disable', undef)
+  $scheduler_disable    = hiera('splunk::params::scheduler_disable', false)
   $serviceurl           = hiera('splunk::params::serviceurl', undef)
   $search_maxinfocsv    = hiera('splunk::params::search_maxinfocsv', 20)
   $search_maxqueue      = hiera('splunk::params::search_maxqueue', 100)
-  $subsearch_maxout     = hiera('splunk::params::subsearch_maxout', undef)
-  $subsearch_maxtime    = hiera('splunk::params::subsearch_maxtime', undef)
-  $subsearch_ttl        = hiera('splunk::params::subsearch_ttl', undef)
+  $subsearch_maxout     = hiera('splunk::params::subsearch_maxout', 50000)
+  $subsearch_maxtime    = hiera('splunk::params::subsearch_maxtime', 60)
+  $subsearch_ttl        = hiera('splunk::params::subsearch_ttl', 300)
   # inputs - true disables, false enables
   $splunknotcp          = hiera('splunk::params::splunknotcp', true)
   $splunknotcp_ssl      = hiera('splunk::params::splunknotcp_ssl', false)
