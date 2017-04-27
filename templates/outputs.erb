@@ -21,7 +21,7 @@ autoLBFrequency = <%= autolbfrequency %>
 disabled = false
 forceTimebasedAutoLB = <%= forcetimebasedautolb %>
 server = <% indexers['servers'].each do |server| %><%= server %><%= "," unless server == indexers['servers'].last %><% end %>
-sslCertPath = $SPLUNK_HOME/etc/auth/<%= servercertpath %>
+clientCert = $SPLUNK_HOME/etc/auth/<%= servercertpath %>
 sslPassword = <%= servercertpass %>
 sslRootCAPath = $SPLUNK_HOME/etc/auth/<%= cacertpath %>
 sslVerifyServerCert = <%= sslverify %>

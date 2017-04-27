@@ -19,8 +19,9 @@ caCertFile = <%= cacertpath %>
 cipherSuite = <%= ciphersuite %>
 requireClientCert = <%= sslclientcert %>
 sendStrictTransportSecurityHeader = <%= sslstsheader %>
-sslKeysfile = <%= servercertpath %>
-sslKeysfilePassword = <%= servercertpass %>
+clientCert = <%= servercertpath %>
+serverCert = <%= servercertpath %>
+sslPassword = <%= servercertpass %>
 sslVerifyServerCert = <%= sslverify %>
 sslVersions = <%= sslversions %>
 useClientSSLCompression = <%= sslclientcompression %>
