@@ -4,7 +4,7 @@
 _meta = input_host::<%= scope['::hostname'] %> input_name::<%= @title %>
 disabled = <%= @disabled %>
 <% if @cache && @inputtype != 'monitor' -%>
-persistentQueueSize = <%= @size -%>G
+persistentQueueSize = <%= @size -%>GB
 <% end -%>
 index = <%= @index %>
 <% if @sourcetype != 'auto' then %>sourcetype = <%= @sourcetype %><% end %>
