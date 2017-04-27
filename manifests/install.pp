@@ -26,13 +26,13 @@ class splunk::install($type=$type)
     file { "${::splunk::install_path}/${::splunk::splunksource}":
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
-      mode   => '0640',
+      mode   => '0750',
       source => "puppet:///splunk_files/${::splunk::splunksource}",
       notify => Exec['unpackSplunk']
     }
 
     exec { 'unpackSplunk':
-      command   => "${::splunk::params::tarcmd} ${::splunk::splunksource}; chown -RL ${my_perms} ${::splunk::splunkhome}",
+      command   => "${::splunk::params::tarcmd} ${::splunk::splunksource}; chown -RL ${my_perms} ${::splunk::splunkhome}; chmod 400 ${::splunk::splunkhome}/var/lib/splunk/kvstore/mongo/splunk.key",
       path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
       cwd       => $::splunk::install_path,
       subscribe => File["${::splunk::install_path}/${::splunk::splunksource}"],
