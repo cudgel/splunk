@@ -75,6 +75,7 @@ class splunk::params
     $splunkos   = 'Linux'
     $splunkarch = $::architecture ? {
       x86_64  => 'x86_64',
+      amd64   => 'x86_64',
       default => 'i686'
     }
     $splunkext  = 'tgz'
