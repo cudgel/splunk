@@ -1,6 +1,7 @@
 # Puppet Name: <%= @title %>
 #
 <%
+capath = scope['::splunk::params::capath']
 enablesplunkwebssl = scope['::splunk::params::webssl']
 privkeypath = scope['::splunk::params::privkeypath']
 webcertpath = scope['::splunk::params::webcertpath']
@@ -11,7 +12,7 @@ sslnegotiation = scope['::splunk::params::sslnegotiation']
 [settings]
 enableSplunkWebSSL = <%= enablesplunkwebssl %>
 allowSslRenegotiation = <%= sslnegotiation %>
-privKeyPath = etc/auth/splunkweb/<%= privkeypath %>
-serverCert = etc/auth/splunkweb/<%= webcertpath %>
+privKeyPath = <%= capath -%>/splunkweb/<%= privkeypath %>
+serverCert = <%= capath -%>/splunkweb/<%= webcertpath %>
 cipherSuite = <%= ciphersuite %>
 sslVersions = <%= sslversions %>
