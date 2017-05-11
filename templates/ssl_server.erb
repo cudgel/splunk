@@ -1,5 +1,4 @@
 <%
-  capath = scope['::splunk::capath']
   cacertpath = scope['::splunk::params::cacertpath']
   servercertpass = scope['::splunk::params::servercertpass']
   servercertpath = scope['::splunk::params::servercertpath']
@@ -16,12 +15,12 @@
 [sslConfig]
 allowSslRenegotiation = <%= sslnegotiation %>
 allowSslCompression = <%= sslcompression %>
-sslRootCAPath = <%= capath -%>/<%= cacertpath %>
+caCertFile = <%= cacertpath %>
 cipherSuite = <%= ciphersuite %>
 requireClientCert = <%= sslclientcert %>
 sendStrictTransportSecurityHeader = <%= sslstsheader %>
-serverCert = <%= capath -%>/<%= servercertpath %>
-sslPassword = <%= servercertpass %>
+sslKeysfile = <%= servercertpath %>
+sslKeysfilePassword = <%= servercertpass %>
 sslVerifyServerCert = <%= sslverify %>
 sslVersions = <%= sslversions %>
 useClientSSLCompression = <%= sslclientcompression %>
