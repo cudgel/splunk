@@ -56,14 +56,14 @@ class splunk($type='forwarder') {
   }
 
   $splunkhome    = "${install_path}/${sourcepart}"
+  $capath        = "${splunkhome}/etc/auth"
   $local_path    = "${splunkhome}/etc/system/local"
   $splunkdb      = "${splunkhome}/var/lib/splunk"
   $apppart       = "${sourcepart}-${version}-${splunkos}-${splunkarch}"
   $splunksource  = "${apppart}.${splunkext}"
   $manifest      = "${apppart}-manifest"
 
-  class { 'splunk::install': type => $type }->
-  class { 'splunk::service': }
+  class { 'splunk::install': type => $type }-> class { 'splunk::service': }
   # configure deployment server for indexers and forwarders
   if $type == 'forwarder' or $type == 'heavyforwarder' {
     class { 'splunk::deployment': }

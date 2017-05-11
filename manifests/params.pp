@@ -84,6 +84,4 @@ class splunk::params
   } else {
     fail('Unsupported OS')
   }
-
-  $capath = "${::splunk::splunkhome}/etc/auth"
 }
