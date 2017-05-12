@@ -5,11 +5,19 @@ class splunk::install($type=$type)
   $new_version     = $::splunk::version
   $splunkos        = $::splunk::splunkos
   $splunkarch      = $::splunk::splunkarch
+  $splunkhome      = $::splunk::splunkhome
   $my_perms        = "${::splunk::splunk_user}:${::splunk::splunk_group}"
   $cacertpath      = $::splunk::params::cacertpath
   $privkeypath     = $::splunk::params::privkeypath
   $servercertpath  = $::splunk::params::servercertpath
   $webcertpath     = $::splunk::params::webcertpath
+
+file { $splunkhome:
+  ensure => directory,
+  owner  => $::splunk::splunk_user,
+  group  => $::splunk::splunk_group,
+  mode   => '0750'
+}
 
   # begin version change
   if $new_version != $current_version {
@@ -31,18 +39,27 @@ class splunk::install($type=$type)
       notify => Exec['unpackSplunk']
     }
 
+    if $type != 'forwarder' {
+      $stopcmd = 'splunk offline'
+    } else {
+      $stopcmd = 'splunk stop'
+    }
+    $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
+
     exec { 'unpackSplunk':
-      command   => "${::splunk::params::tarcmd} ${::splunk::splunksource}; chown -RL ${my_perms} ${::splunk::splunkhome}; chmod 400 ${::splunk::splunkhome}/var/lib/splunk/kvstore/mongo/splunk.key",
+      command   => "${::splunk::params::tarcmd} ${::splunk::splunksource}",
       path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
       cwd       => $::splunk::install_path,
       subscribe => File["${::splunk::install_path}/${::splunk::splunksource}"],
       timeout   => 600,
       unless    => "test -e ${::splunk::splunkhome}/${::splunk::manifest}",
-      creates   => "${::splunk::splunkhome}/${::splunk::manifest}"
+      creates   => "${::splunk::splunkhome}/${::splunk::manifest}",
+      user      => $::splunk::splunk_user,
+      group     => $::splunk::splunk_group
     }
 
     exec { 'firstStart':
-      command     => 'splunk stop; splunk start --accept-license --answer-yes --no-prompt',
+      command     => "${stopcmd}; ${startcmd}",
       path        => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
       subscribe   => Exec['unpackSplunk'],
       refreshonly => true,
