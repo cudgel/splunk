@@ -16,13 +16,14 @@
 [sslConfig]
 allowSslCompression = <%= sslcompression %>
 allowSslRenegotiation = <%= sslnegotiation %>
-sslRootCAPath = $SPLUNK_HOME/etc/auth/<%= cacertpath %>
+caCertFile = <%= cacertpath %>
 cipherSuite = <%= ciphersuite %>
 enableSplunkdSSL = true
 requireClientCert = <%= sslclientcert %>
 sendStrictTransportSecurityHeader = <%= sslstsheader %>
 serverCert = $SPLUNK_HOME/etc/auth/<%= servercertpath %>
 sslPassword = <%= servercertpass %>
+sslRootCAPath = $SPLUNK_HOME/etc/auth/<%= cacertpath %>
 sslVerifyServerCert = <%= sslverify %>
 sslVersions = <%= sslversions %>
 sslVersionsForClient = <%= sslversions %>
