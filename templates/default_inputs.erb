@@ -9,7 +9,12 @@ host = <%= scope['::hostname'] %>
 [monitor:/<%= splunkhome %>/var/log/splunk]
 index = _internal
 _TCP_ROUTING = *
-_whitelist = /(audit|license_audit|metrics|splunkd|splunkd_stderr|splunkd_stdout|splunklogger)\.log$
+_whitelist = /(audit|license_audit|metrics|mongod|python|splunkd|splunkd_stderr|splunkd_stdout|splunklogger)\.log$
+
+[monitor:/<%= splunkhome %>/var/log/introspection]
+index = _internal
+_TCP_ROUTING = *
+_whitelist = /(kvstore)\.log$
 
 [filter:blacklist:splunkvar]
 regex1 = ^<%= splunkhome %>/var
