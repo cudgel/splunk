@@ -12,12 +12,14 @@ class splunk::install($type=$type)
   $servercertpath  = $::splunk::params::servercertpath
   $webcertpath     = $::splunk::params::webcertpath
 
-file { $splunkhome:
-  ensure => directory,
-  owner  => $::splunk::splunk_user,
-  group  => $::splunk::splunk_group,
-  mode   => '0750'
-}
+  if $type != 'forwarder' {
+    file { $splunkhome:
+      ensure => directory,
+      owner  => $::splunk::splunk_user,
+      group  => $::splunk::splunk_group,
+      mode   => '0750'
+    }
+  }
 
   # begin version change
   if $new_version != $current_version {
