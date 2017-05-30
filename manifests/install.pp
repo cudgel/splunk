@@ -41,11 +41,7 @@ class splunk::install($type=$type)
       notify => Exec['unpackSplunk']
     }
 
-    if $type != 'forwarder' {
-      $stopcmd = 'splunk offline'
-    } else {
-      $stopcmd = 'splunk stop'
-    }
+    $stopcmd = 'splunk stop'
     $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
 
     exec { 'unpackSplunk':
