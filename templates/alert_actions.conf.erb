@@ -7,7 +7,7 @@ from = scope['::fqdn']
 [email]
 inline = 1
 mailserver = localhost
-<% if hostname != :undef -%>
+<% if hostname != nil -%>
 hostname = <%= hostname %>
 <% else -%>
 hostname = <%= from %>

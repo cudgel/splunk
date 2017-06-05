@@ -14,16 +14,16 @@ max_infocsv_messages  = <%= maxinfocsv %>
 infocsv_log_level = WARN
 
 [subsearch]
-<% if maxout != :undef -%>maxout = <%= maxout %><% end %>
-<% if maxtime != :undef -%>maxtime = <%= maxtime %><% end %>
-<% if ttl != :undef -%>ttl = <%= ttl %><% end %>
+<% if maxout != nil -%>maxout = <%= maxout %><% end %>
+<% if maxtime != nil -%>maxtime = <%= maxtime %><% end %>
+<% if ttl != nil -%>ttl = <%= ttl %><% end %>
 
 [search]
-<% if dispatch_dir_warning_size != :undef -%>
+<% if dispatch_dir_warning_size != nil -%>
 dispatch_dir_warning_size = <%= dispatch_dir_warning_size %>
 <% end -%>
 max_searches_per_cpu = <%= max_searches %>
 result_queue_max_size = <%= max_queue %>
 
 [join]
-<% if maxtime != :undef -%>subsearch_maxtime = <%= maxtime %><% end %>
+<% if maxtime != nil -%>subsearch_maxtime = <%= maxtime %><% end %>
