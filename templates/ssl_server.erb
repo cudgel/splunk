@@ -1,6 +1,7 @@
 <%
 
   cacertpath = scope['::splunk::params::cacertpath']
+  ecdhcurves = scope['::splunk::params::ecdhcurves']
   servercertpass = scope['::splunk::params::servercertpass']
   servercertpath = scope['::splunk::params::servercertpath']
   ciphersuite = scope['::splunk::params::ciphersuite']
@@ -18,6 +19,9 @@ allowSslCompression = <%= sslcompression %>
 allowSslRenegotiation = <%= sslnegotiation %>
 caCertFile = <%= cacertpath %>
 cipherSuite = <%= ciphersuite %>
+<% if ecdhcurves != :undef -%>
+ecdhCurves = <%= ecdhcurves %>
+<% end -%>
 enableSplunkdSSL = true
 requireClientCert = <%= sslclientcert %>
 sendStrictTransportSecurityHeader = <%= sslstsheader %>
