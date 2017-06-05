@@ -19,7 +19,7 @@ allowSslCompression = <%= sslcompression %>
 allowSslRenegotiation = <%= sslnegotiation %>
 caCertFile = <%= cacertpath %>
 cipherSuite = <%= ciphersuite %>
-<% if ecdhcurves != :undef -%>
+<% if ecdhcurves != '' -%>
 ecdhCurves = <%= ecdhcurves %>
 <% end -%>
 enableSplunkdSSL = true
