@@ -20,7 +20,7 @@ class splunk::params
   $sslnegotiation       = hiera('splunk::params::sslnegotiation', false)
   $sslstsheader         = hiera('splunk::params::sslstsheader', true)
   $symmkey              = hiera('splunk::params::symmkey', undef)
-  $ecdhcurves           = hiera('splunk::params::ecdhcurves')
+  $ecdhcurves           = hiera('splunk::params::ecdhcurves', undef)
   # splunkd
   $cacertpath           = hiera('splunk::params::cacertpath', 'cacert.pem')
   $servercertpath       = hiera('splunk::params::servercertpath', 'server.pem')
