@@ -5,6 +5,7 @@ class splunk::params
   $splunk_group         = hiera('splunk::params::splunk_group', 'splunk')
   $splunk_user          = hiera('splunk::params::splunk_user', 'splunk')
   $version              = hiera('splunk::params::version', undef)
+  $release              = hiera('splunk::params::version', undef)
   $tcpout               = hiera('splunk::params::tcpout', undef)
   # outputs
   $autolb               = hiera('splunk::params::autolb', true)

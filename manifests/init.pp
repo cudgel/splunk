@@ -38,6 +38,7 @@ class splunk($type='forwarder') {
   include splunk::params
 
   $version         = $::splunk::params::version
+  $release         = $::splunk::params::release
   $splunk_user     = $::splunk::params::splunk_user
   $splunk_group    = $::splunk::params::splunk_group
   $install_path    = $::splunk::params::install_path
