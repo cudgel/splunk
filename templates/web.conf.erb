@@ -12,7 +12,7 @@ sslnegotiation = scope['::splunk::params::sslnegotiation']
 [settings]
 enableSplunkWebSSL = <%= enablesplunkwebssl %>
 allowSslRenegotiation = <%= sslnegotiation %>
-privKeyPath = <%= splunkhome %>/etc/auth/splunkweb/<%= privkeypath %>
-serverCert = <%= splunkhome %>/etc/auth/splunkweb/<%= webcertpath %>
+privKeyPath = etc/auth/splunkweb/<%= privkeypath %>
+serverCert = etc/auth/splunkweb/<%= webcertpath %>
 cipherSuite = <%= ciphersuite %>
 sslVersions = <%= sslversions %>
