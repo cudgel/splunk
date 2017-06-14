@@ -50,6 +50,12 @@ class splunk($type='forwarder') {
   $tar             = $::splunk::params::tar
   $tarcmd          = $::splunk::params::tarcmd
 
+  if $release != undef {
+    $new_version = "${version}-${release}"
+  } else {
+    $new_version = $version
+  }
+
   if $type == 'forwarder' {
     $sourcepart = 'splunkforwarder'
   } else {

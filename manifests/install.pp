@@ -2,7 +2,7 @@ class splunk::install($type=$type)
 {
   $sourcepart      = $::splunk::sourcepart
   $current_version = $::splunk::current_version
-  $version         = $::splunk::params::version
+  $new_version     = $::splunk::new_version
   $release         = $::splunk::params::release
   $splunkos        = $::splunk::splunkos
   $splunkarch      = $::splunk::splunkarch
@@ -20,12 +20,6 @@ class splunk::install($type=$type)
       group  => $::splunk::splunk_group,
       mode   => '0750'
     }
-  }
-
-  if $release != undef {
-    $new_version = "${version}-${release}"
-  } else {
-    $new_version = $version
   }
 
   # begin version change
