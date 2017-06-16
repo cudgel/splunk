@@ -66,7 +66,7 @@ class splunk($type='forwarder') {
   $capath        = "${splunkhome}/etc/auth"
   $local_path    = "${splunkhome}/etc/system/local"
   $splunkdb      = "${splunkhome}/var/lib/splunk"
-  $apppart       = "${sourcepart}-${version}-${splunkos}-${splunkarch}"
+  $apppart       = "${sourcepart}-${new_version}-${splunkos}-${splunkarch}"
   $splunksource  = "${apppart}.${splunkext}"
   $manifest      = "${apppart}-manifest"
 
