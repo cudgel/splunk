@@ -1,5 +1,5 @@
 <%
-
+  splunkhome = scope['::splunk::splunkhome']
   cacertpath = scope['::splunk::params::cacertpath']
   ecdhcurves = scope['::splunk::params::ecdhcurves']
   servercertpass = scope['::splunk::params::servercertpass']
@@ -25,9 +25,9 @@ ecdhCurves = <%= ecdhcurves %>
 enableSplunkdSSL = true
 requireClientCert = <%= sslclientcert %>
 sendStrictTransportSecurityHeader = <%= sslstsheader %>
-serverCert = $SPLUNK_HOME/etc/auth/<%= servercertpath %>
+serverCert = <%= splunkhome -%>/etc/auth/<%= servercertpath %>
 sslPassword = <%= servercertpass %>
-sslRootCAPath = $SPLUNK_HOME/etc/auth/<%= cacertpath %>
+sslRootCAPath = <%= splunkhome -%>/etc/auth/<%= cacertpath %>
 sslVerifyServerCert = <%= sslverify %>
 sslVersions = <%= sslversions %>
 sslVersionsForClient = <%= sslversions %>
