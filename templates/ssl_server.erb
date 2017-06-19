@@ -17,7 +17,7 @@
 allowSslCompression = <%= sslcompression %>
 allowSslRenegotiation = <%= sslnegotiation %>
 caPath = $SPLUNK_HOME/etc/auth
-caCertFile = $SPLUNK_HOME/etc/auth/<%= cacert %>
+caCertFile = <%= cacert %>
 cipherSuite = <%= ciphersuite %>
 <% if ecdhcurves != nil -%>
 ecdhCurves = <%= ecdhcurves %>
