@@ -4,6 +4,7 @@
   indexers             = scope['::splunk::params::tcpout']
   cacertpath           = scope['::splunk::params::cacertpath']
   ciphersuite          = scope['::splunk::params::ciphersuite']
+  ecdhcurves           = scope['::splunk::params::ecdhcurves']
   servercertpass       = scope['::splunk::params::servercertpass']
   servercertpath       = scope['::splunk::params::servercertpath']
   sslclientcompression = scope['::splunk::params::sslclientcompression']
@@ -20,6 +21,9 @@ defaultGroup = <%= indexers['group'] %>
 [tcpout:<%= indexers['group'] %>]
 autoLBFrequency = <%= autolbfrequency %>
 cipherSuite = <%= ciphersuite %>
+<% if ecdhcurves != nil -%>
+ecdhCurves = <%= ecdhcurves %>
+<% end -%>
 clientCert = $SPLUNK_HOME/etc/auth/<%= servercertpath %>
 disabled = false
 forceTimebasedAutoLB = <%= forcetimebasedautolb %>
