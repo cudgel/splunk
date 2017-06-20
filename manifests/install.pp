@@ -12,6 +12,7 @@ class splunk::install($type=$type)
   $privkeypath     = $::splunk::params::privkeypath
   $servercertpath  = $::splunk::params::servercertpath
   $webcertpath     = $::splunk::params::webcertpath
+  $managesecret    = $::splunk::params::managesecret
 
   if $type != 'forwarder' {
     file { $splunkhome:
@@ -119,6 +120,16 @@ class splunk::install($type=$type)
       group  => $::splunk::splunk_group,
       mode   => '0640',
       source => "puppet:///splunk_files/auth/splunkweb/${webcertpath}",
+      notify => Service[splunk]
+    }
+  }
+
+  if $managesecret == true {
+    file { "${::splunk::splunkhome}/etc/splunk.secret":
+      owner  => $::splunk::splunk_user,
+      group  => $::splunk::splunk_group,
+      mode   => '0640',
+      source => 'puppet:///splunk_files/splunk.secret',
       notify => Service[splunk]
     }
   }

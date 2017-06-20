@@ -26,6 +26,7 @@ class splunk::params
   $cacertpath           = hiera('splunk::params::cacertpath', 'cacert.pem')
   $servercertpath       = hiera('splunk::params::servercertpath', 'server.pem')
   $servercertpass       = hiera('splunk::params::servercertpass', 'password')
+  $managesecret         = hiera('splunk::params::managesecret', false)
   # splunkweb
   $privkeypath          = hiera('splunk::params::privkeypath', 'privkey.pem')
   $webcertpath          = hiera('splunk::params::webcertpath', 'cert.pem')
