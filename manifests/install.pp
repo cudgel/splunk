@@ -8,10 +8,10 @@ class splunk::install($type=$type)
   $splunkarch      = $::splunk::splunkarch
   $splunkhome      = $::splunk::splunkhome
   $my_perms        = "${::splunk::splunk_user}:${::splunk::splunk_group}"
-  $cacert      = $::splunk::params::cacert
-  $privkey     = $::splunk::params::privkey
-  $servercert  = $::splunk::params::servercert
-  $webcert     = $::splunk::params::webcert
+  $cacert          = $::splunk::params::cacert
+  $privkey         = $::splunk::params::privkey
+  $servercert      = $::splunk::params::servercert
+  $webcert         = $::splunk::params::webcert
   $managesecret    = $::splunk::params::managesecret
 
   if $type != 'forwarder' {

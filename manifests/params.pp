@@ -23,13 +23,13 @@ class splunk::params
   $symmkey              = hiera('splunk::params::symmkey', undef)
   $ecdhcurves           = hiera('splunk::params::ecdhcurves', undef)
   # splunkd
-  $cacert           = hiera('splunk::params::cacert', 'cacert.pem')
-  $servercert       = hiera('splunk::params::servercert', 'server.pem')
+  $cacert               = hiera('splunk::params::cacert', 'cacert.pem')
+  $servercert           = hiera('splunk::params::servercert', 'server.pem')
   $servercertpass       = hiera('splunk::params::servercertpass', 'password')
   $managesecret         = hiera('splunk::params::managesecret', false)
   # splunkweb
-  $privkey          = hiera('splunk::params::privkey', 'privkey.pem')
-  $webcert          = hiera('splunk::params::webcert', 'cert.pem')
+  $privkey              = hiera('splunk::params::privkey', 'privkey.pem')
+  $webcert              = hiera('splunk::params::webcert', 'cert.pem')
   $ciphersuite          = hiera('splunk::params::ciphersuite', 'TLSv1.1:!eNULL:!aNULL')
   $webssl               = hiera('splunk::params::webssl', true)
   # clustering
