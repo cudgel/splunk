@@ -126,6 +126,10 @@ class splunk::install($type=$type)
 
   if $managesecret == true {
     file { "${::splunk::splunkhome}/etc/splunk.secret":
+      ensure => absent
+    }
+
+    file { "${::splunk::splunkhome}/etc/auth/splunk.secret":
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
       mode   => '0640',
