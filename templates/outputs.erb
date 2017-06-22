@@ -2,11 +2,11 @@
 #
 <%
   indexers             = scope['::splunk::params::tcpout']
-  cacertpath           = scope['::splunk::params::cacertpath']
+  cacert           = scope['::splunk::params::cacert']
   ciphersuite          = scope['::splunk::params::ciphersuite']
   ecdhcurves           = scope['::splunk::params::ecdhcurves']
   servercertpass       = scope['::splunk::params::servercertpass']
-  servercertpath       = scope['::splunk::params::servercertpath']
+  servercert       = scope['::splunk::params::servercert']
   sslclientcompression = scope['::splunk::params::sslclientcompression']
   sslverify            = scope['::splunk::params::sslverify']
   sslversions          = scope['::splunk::params::sslversions']
@@ -24,7 +24,7 @@ cipherSuite = <%= ciphersuite %>
 <% if ecdhcurves != nil -%>
 ecdhCurves = <%= ecdhcurves %>
 <% end -%>
-clientCert = $SPLUNK_HOME/etc/auth/<%= servercertpath %>
+clientCert = $SPLUNK_HOME/etc/auth/<%= servercert %>
 disabled = false
 forceTimebasedAutoLB = <%= forcetimebasedautolb %>
 server = <% indexers['servers'].each do |server| %><%= server %><%= "," unless server == indexers['servers'].last %><% end %>

@@ -3,8 +3,8 @@
 <%
 splunkhome = scope['::splunk::splunkhome']
 enablesplunkwebssl = scope['::splunk::params::webssl']
-privkeypath = scope['::splunk::params::privkeypath']
-webcertpath = scope['::splunk::params::webcertpath']
+privkey = scope['::splunk::params::privkey']
+webcert = scope['::splunk::params::webcert']
 ciphersuite = scope['::splunk::params::ciphersuite']
 ecdhcurves = scope['::splunk::params::ecdhcurves']
 sslversions = scope['::splunk::params::sslversions']
@@ -13,8 +13,8 @@ sslnegotiation = scope['::splunk::params::sslnegotiation']
 [settings]
 enableSplunkWebSSL = <%= enablesplunkwebssl %>
 allowSslRenegotiation = <%= sslnegotiation %>
-privKeyPath = etc/auth/splunkweb/<%= privkeypath %>
-serverCert = etc/auth/splunkweb/<%= webcertpath %>
+privkey = etc/auth/splunkweb/<%= privkey %>
+serverCert = etc/auth/splunkweb/<%= webcert %>
 cipherSuite = <%= ciphersuite %>
 <% if ecdhcurves != nil -%>
 ecdhCurves = <%= ecdhcurves %>

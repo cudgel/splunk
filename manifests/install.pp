@@ -8,10 +8,10 @@ class splunk::install($type=$type)
   $splunkarch      = $::splunk::splunkarch
   $splunkhome      = $::splunk::splunkhome
   $my_perms        = "${::splunk::splunk_user}:${::splunk::splunk_group}"
-  $cacertpath      = $::splunk::params::cacertpath
-  $privkeypath     = $::splunk::params::privkeypath
-  $servercertpath  = $::splunk::params::servercertpath
-  $webcertpath     = $::splunk::params::webcertpath
+  $cacert      = $::splunk::params::cacert
+  $privkey     = $::splunk::params::privkey
+  $servercert  = $::splunk::params::servercert
+  $webcert     = $::splunk::params::webcert
   $managesecret    = $::splunk::params::managesecret
 
   if $type != 'forwarder' {
@@ -84,42 +84,42 @@ class splunk::install($type=$type)
     notify  => Service[splunk]
   }
 
-  if $cacertpath != 'cacert.pem' {
-    file { "${::splunk::splunkhome}/etc/auth/${cacertpath}":
+  if $cacert != 'cacert.pem' {
+    file { "${::splunk::splunkhome}/etc/auth/${cacert}":
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
       mode   => '0640',
-      source => "puppet:///splunk_files/auth/${cacertpath}",
+      source => "puppet:///splunk_files/auth/${cacert}",
       notify => Service[splunk]
     }
   }
 
-  if $privkeypath != 'privkey.pem' {
-    file { "${::splunk::splunkhome}/etc/auth/splunkweb/${privkeypath}":
+  if $privkey != 'privkey.pem' {
+    file { "${::splunk::splunkhome}/etc/auth/splunkweb/${privkey}":
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
       mode   => '0640',
-      source => "puppet:///splunk_files/auth/splunkweb/${privkeypath}",
+      source => "puppet:///splunk_files/auth/splunkweb/${privkey}",
       notify => Service[splunk]
     }
   }
 
-  if $servercertpath != 'server.pem' {
-    file { "${::splunk::splunkhome}/etc/auth/${servercertpath}":
+  if $servercert != 'server.pem' {
+    file { "${::splunk::splunkhome}/etc/auth/${servercert}":
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
       mode   => '0640',
-      source => "puppet:///splunk_files/auth/${servercertpath}",
+      source => "puppet:///splunk_files/auth/${servercert}",
       notify => Service[splunk]
     }
   }
 
-  if $webcertpath != 'cert.pem' {
-    file { "${::splunk::splunkhome}/etc/auth/splunkweb/${webcertpath}":
+  if $webcert != 'cert.pem' {
+    file { "${::splunk::splunkhome}/etc/auth/splunkweb/${webcert}":
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
       mode   => '0640',
-      source => "puppet:///splunk_files/auth/splunkweb/${webcertpath}",
+      source => "puppet:///splunk_files/auth/splunkweb/${webcert}",
       notify => Service[splunk]
     }
   }
