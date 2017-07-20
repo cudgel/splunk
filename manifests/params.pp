@@ -7,6 +7,7 @@ class splunk::params
   $version              = hiera('splunk::params::version', undef)
   $release              = hiera('splunk::params::release', undef)
   $tcpout               = hiera('splunk::params::tcpout', undef)
+  $email                = hiera('splunk::params::email', 'your Splunk administrator')
   # outputs
   $autolb               = hiera('splunk::params::autolb', true)
   $autolbfrequency      = hiera('splunk::params::autolbfrequency', 60)
