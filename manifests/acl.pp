@@ -20,7 +20,7 @@ define splunk::acl(
   }
 
 
-  if $::osfamily == 'RedHat' {
+  if $::kernel == 'Linux`' {
 
     # Calculate the ACE by combining $group, and $readonly.
     # Set the $subject and $db to later verify that the subject exists.
