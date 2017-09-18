@@ -5,11 +5,18 @@
 #
 define splunk::fetch(
   $splunksource,
+  $type       = $type,
   $sourcepart = $::splunk::sourcepart,
-  $version = $::splunk::version,
-  $release = $::splunk::release) {
+  $version    = $::splunk::version,
+  $release    = $::splunk::release) {
 
-  $wget_url = "https://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=linux&version=${version}&product=${sourcepart}&filename=${sourcepart}-${version}-${release}-Linux-x86_64.tgz&wget=true"
+  if $type == 'forwarder' {
+    $product = 'universalforwarder'
+  } else {
+    $product = 'splunk'
+  }
+
+  $wget_url = "https://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=linux&version=${version}&product=${product}&filename=${sourcepart}-${version}-${release}-Linux-x86_64.tgz&wget=true"
 
   exec{"retrieve_${splunksource}":
     command => "wget -O ${splunksource} \'${wget_url}\'",

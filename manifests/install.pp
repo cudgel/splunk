@@ -35,7 +35,8 @@ class splunk::install($type=$type)
     }
 
     splunk::fetch{ 'sourcefile':
-      splunksource => $::splunk::splunksource
+      splunksource => $::splunk::splunksource,
+      type         => $type
     }
 
     $stopcmd = 'splunk stop'
