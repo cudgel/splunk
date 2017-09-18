@@ -128,7 +128,7 @@ class splunk::install($type=$type)
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
       mode   => '0640',
-      source => 'puppet:///modules/splunk_files/splunk.secret',
+      source => 'puppet:///splunk_files/splunk.secret',
       notify => Service[splunk]
     }
   }
