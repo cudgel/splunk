@@ -10,9 +10,7 @@ define splunk::fetch(
     command => "wget -O ${splunksource} \'${wget_url}\'",
     path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
     cwd     => $::splunk::install_path,
-    creates => "$::splunk::install_path}/$splunksource",
-    user    => $::splunk::splunk_user,
-    group   => $::splunk::splunk_group
+    creates => "$::splunk::install_path}/$splunksource"
   }
 
   file{"${::splunk::install_path}/${splunksource}":
