@@ -34,8 +34,8 @@ class splunk::install($type=$type)
       }
     }
 
-    splunk::fetch{'sourcefile':
-      splunksource => ${::splunk::splunksource}
+    splunk::fetch{ 'sourcefile':
+      splunksource => $::splunk::splunksource
     }
 
     # file { "${::splunk::install_path}/${::splunk::splunksource}":
