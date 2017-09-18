@@ -35,7 +35,7 @@ class splunk::install($type=$type)
       }
     }
 
-    fetch{'sourcefile':
+    splunk::fetch{'sourcefile':
       sourcefile => "${sourcepart}-${new_version}-Linux-x86_64.tgz"
     }
 
