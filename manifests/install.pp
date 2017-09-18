@@ -3,7 +3,6 @@ class splunk::install($type=$type)
   $sourcepart      = $::splunk::sourcepart
   $current_version = $::splunk::current_version
   $new_version     = $::splunk::new_version
-  $release         = $::splunk::params::release
   $splunkos        = $::splunk::splunkos
   $splunkarch      = $::splunk::splunkarch
   $splunkhome      = $::splunk::splunkhome
@@ -35,10 +34,8 @@ class splunk::install($type=$type)
       }
     }
 
-    $sourcefile = "${sourcepart}-${new_version}-Linux-x86_64.tgz"
-
     splunk::fetch{'sourcefile':
-      sourcefile => $sourcefile
+      splunksource => ${::splunk::splunksource}
     }
 
     # file { "${::splunk::install_path}/${::splunk::splunksource}":
@@ -56,7 +53,7 @@ class splunk::install($type=$type)
       command   => "${::splunk::params::tarcmd} ${::splunk::splunksource}",
       path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
       cwd       => $::splunk::install_path,
-      subscribe => File["${::splunk::install_path}/${sourcefile}"],
+      subscribe => File["${::splunk::install_path}/${::splunk::splunksource}"],
       timeout   => 600,
       unless    => "test -e ${::splunk::splunkhome}/${::splunk::manifest}",
       creates   => "${::splunk::splunkhome}/${::splunk::manifest}",
