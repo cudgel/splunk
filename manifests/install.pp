@@ -38,14 +38,6 @@ class splunk::install($type=$type)
       splunksource => $::splunk::splunksource
     }
 
-    # file { "${::splunk::install_path}/${::splunk::splunksource}":
-    #   owner  => $::splunk::splunk_user,
-    #   group  => $::splunk::splunk_group,
-    #   mode   => '0750',
-    #   source => "puppet:///modules/splunk_files/${::splunk::splunksource}",
-    #   notify => Exec['unpackSplunk']
-    # }
-
     $stopcmd = 'splunk stop'
     $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
 

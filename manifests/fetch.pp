@@ -1,3 +1,8 @@
+# splunk::fetch()
+#
+# retrieves the specified splunk or splunkforwarder package directly from
+# Splunk instead of from a local file source
+#
 define splunk::fetch(
   $splunksource,
   $sourcepart = $::splunk::sourcepart,
@@ -10,7 +15,7 @@ define splunk::fetch(
     command => "wget -O ${splunksource} \'${wget_url}\'",
     path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
     cwd     => $::splunk::install_path,
-    creates => "$::splunk::install_path}/$splunksource"
+    creates => "${::splunk::install_path}/${splunksource}"
   }
 
   file{"${::splunk::install_path}/${splunksource}":
