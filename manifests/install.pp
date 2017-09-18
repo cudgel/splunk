@@ -84,7 +84,7 @@ class splunk::install($type=$type)
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
       mode   => '0640',
-      source => "puppet:///modules/splunk_files/auth/${cacert}",
+      source => "puppet:///splunk_files/auth/${cacert}",
       notify => Service[splunk]
     }
   }
@@ -94,7 +94,7 @@ class splunk::install($type=$type)
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
       mode   => '0640',
-      source => "puppet:///modules/splunk_files/auth/splunkweb/${privkey}",
+      source => "puppet:///splunk_files/auth/splunkweb/${privkey}",
       notify => Service[splunk]
     }
   }
@@ -104,7 +104,7 @@ class splunk::install($type=$type)
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
       mode   => '0640',
-      source => "puppet:///modules/splunk_files/auth/${servercert}",
+      source => "puppet:///splunk_files/auth/${servercert}",
       notify => Service[splunk]
     }
   }
@@ -114,7 +114,7 @@ class splunk::install($type=$type)
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
       mode   => '0640',
-      source => "puppet:///modules/splunk_files/auth/splunkweb/${webcert}",
+      source => "puppet:///splunk_files/auth/splunkweb/${webcert}",
       notify => Service[splunk]
     }
   }
