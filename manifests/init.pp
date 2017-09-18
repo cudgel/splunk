@@ -50,11 +50,7 @@ class splunk($type='forwarder') {
   $tar             = $::splunk::params::tar
   $tarcmd          = $::splunk::params::tarcmd
 
-  if $release != undef {
-    $new_version = "${version}-${release}"
-  } else {
-    $new_version = $version
-  }
+
 
   if $type == 'forwarder' {
     $sourcepart = 'splunkforwarder'
@@ -70,8 +66,11 @@ class splunk($type='forwarder') {
   $splunksource  = "${apppart}.${splunkext}"
   $manifest      = "${apppart}-manifest"
 
-  $http_source = "https://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=linux&version=${version}&product=splunk&filename=${sourcepart}-${version}-${release}-Linux-x86_64.tgz&wget=true"
-
+  if $release != undef {
+    $new_version = "${version}-${release}"
+  } else {
+    $new_version = $version
+  }
 
   class { 'splunk::install': type => $type }-> class { 'splunk::service': }
   # configure deployment server for indexers and forwarders
