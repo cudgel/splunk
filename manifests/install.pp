@@ -28,22 +28,22 @@ class splunk::install($type=$type)
 
   if $maj_version != $cut_version {
 
-    if $current_version != undef {
-
-      $apppart     = "${sourcepart}-${current_version}-${splunkos}-${splunkarch}"
-      $oldsource   = "${apppart}.${::splunk::splunkext}"
-
-      file { "${::splunk::install_path}/${oldsource}":
-        ensure => absent
-      }
-
-    } else {
-
-      $new_install = true
-
-    }
-
     if versioncmp($maj_version, $cut_version) > 0 {
+
+      if $current_version != undef {
+
+        $apppart     = "${sourcepart}-${current_version}-${splunkos}-${splunkarch}"
+        $oldsource   = "${apppart}.${::splunk::splunkext}"
+
+        file { "${::splunk::install_path}/${oldsource}":
+          ensure => absent
+        }
+
+      } else {
+
+        $new_install = true
+
+      }
 
       splunk::fetch{ 'sourcefile':
         splunksource => $::splunk::splunksource,
