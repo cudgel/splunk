@@ -34,41 +34,44 @@ class splunk::install($type=$type)
       }
     }
 
-    splunk::fetch{ 'sourcefile':
-      splunksource => $::splunk::splunksource,
-      type         => $type
-    }
+    if versioncmp($new_version, $current_version) > 0 {
 
-    $stopcmd = 'splunk stop'
-    $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
+      splunk::fetch{ 'sourcefile':
+        splunksource => $::splunk::splunksource,
+        type         => $type
+      }
 
-    exec { 'unpackSplunk':
-      command   => "${::splunk::params::tarcmd} ${::splunk::splunksource}",
-      path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
-      cwd       => $::splunk::install_path,
-      subscribe => File["${::splunk::install_path}/${::splunk::splunksource}"],
-      timeout   => 600,
-      unless    => "test -e ${::splunk::splunkhome}/${::splunk::manifest}",
-      creates   => "${::splunk::splunkhome}/${::splunk::manifest}",
-      user      => $::splunk::splunk_user,
-      group     => $::splunk::splunk_group
-    }
+      $stopcmd = 'splunk stop'
+      $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
 
-    exec { 'firstStart':
-      command     => "${stopcmd}; ${startcmd}",
-      path        => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
-      subscribe   => Exec['unpackSplunk'],
-      refreshonly => true,
-      user        => $::splunk::splunk_user,
-      group       => $::splunk::splunk_group
-    }
+      exec { 'unpackSplunk':
+        command   => "${::splunk::params::tarcmd} ${::splunk::splunksource}",
+        path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
+        cwd       => $::splunk::install_path,
+        subscribe => File["${::splunk::install_path}/${::splunk::splunksource}"],
+        timeout   => 600,
+        unless    => "test -e ${::splunk::splunkhome}/${::splunk::manifest}",
+        creates   => "${::splunk::splunkhome}/${::splunk::manifest}",
+        user      => $::splunk::splunk_user,
+        group     => $::splunk::splunk_group
+      }
 
-    exec { 'installSplunkService':
-      command   => 'splunk enable boot-start',
-      path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
-      subscribe => Exec['unpackSplunk'],
-      unless    => 'test -e /etc/init.d/splunk',
-      creates   => '/etc/init.d/splunk'
+      exec { 'firstStart':
+        command     => "${stopcmd}; ${startcmd}",
+        path        => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
+        subscribe   => Exec['unpackSplunk'],
+        refreshonly => true,
+        user        => $::splunk::splunk_user,
+        group       => $::splunk::splunk_group
+      }
+
+      exec { 'installSplunkService':
+        command   => 'splunk enable boot-start',
+        path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
+        subscribe => Exec['unpackSplunk'],
+        unless    => 'test -e /etc/init.d/splunk',
+        creates   => '/etc/init.d/splunk'
+      }
     }
 
   } # end new version
