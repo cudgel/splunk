@@ -19,7 +19,7 @@ class splunk::install($type=$type)
       ensure => directory,
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
-      mode   => '0750'
+      mode   => '0755'
     }
   }
 
