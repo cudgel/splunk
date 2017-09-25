@@ -3,6 +3,7 @@ class splunk::install($type=$type)
   $sourcepart      = $::splunk::sourcepart
   $current_version = $::splunk::current_version
   $new_version     = $::splunk::new_version
+  $maj_version     = $::splunk::version
   $splunkos        = $::splunk::splunkos
   $splunkarch      = $::splunk::splunkarch
   $splunkhome      = $::splunk::splunkhome
@@ -23,7 +24,9 @@ class splunk::install($type=$type)
   }
 
   # begin version change
-  if $new_version != $current_version {
+  $cut_version = regsubst($current_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
+
+  if $maj_version != $cut_version {
 
     if $current_version != undef {
 
@@ -40,7 +43,7 @@ class splunk::install($type=$type)
 
     }
 
-    if versioncmp($new_version, $current_version) > 0 {
+    if versioncmp($maj_version, $cut_version) > 0 {
 
       splunk::fetch{ 'sourcefile':
         splunksource => $::splunk::splunksource,
