@@ -26,12 +26,15 @@ class splunk::install($type=$type)
   if $new_version != $current_version {
 
     if $current_version != undef {
-      $apppart   = "${sourcepart}-${current_version}-${splunkos}-${splunkarch}"
-      $oldsource = "${apppart}.${::splunk::splunkext}"
+
+      $apppart     = "${sourcepart}-${current_version}-${splunkos}-${splunkarch}"
+      $oldsource   = "${apppart}.${::splunk::splunkext}"
+      $new_install = true
 
       file { "${::splunk::install_path}/${oldsource}":
         ensure => absent
       }
+
     }
 
     if versioncmp($new_version, $current_version) > 0 {
@@ -56,7 +59,7 @@ class splunk::install($type=$type)
         group     => $::splunk::splunk_group
       }
 
-      exec { 'firstStart':
+      exec { 'serviceStart':
         command     => "${stopcmd}; ${startcmd}",
         path        => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
         subscribe   => Exec['unpackSplunk'],
@@ -65,13 +68,18 @@ class splunk::install($type=$type)
         group       => $::splunk::splunk_group
       }
 
-      exec { 'installSplunkService':
-        command   => 'splunk enable boot-start',
-        path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
-        subscribe => Exec['unpackSplunk'],
-        unless    => 'test -e /etc/init.d/splunk',
-        creates   => '/etc/init.d/splunk'
+      if $new_install == true {
+
+        exec { 'installSplunkService':
+          command   => 'splunk enable boot-start',
+          path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
+          subscribe => Exec['unpackSplunk'],
+          unless    => 'test -e /etc/init.d/splunk',
+          creates   => '/etc/init.d/splunk'
+        }
+
       }
+
     }
 
   } # end new version
