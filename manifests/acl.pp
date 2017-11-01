@@ -78,8 +78,8 @@ egrep -q '^mask::r-x' ",
         if (! defined(File[$full_path]) and $full_path != '/') {
           exec { "setfacl_${directory}":
             path    => '/bin:/usr/bin',
-            command => "setfacl -m ${acl} ${directory}",
-            unless  => "${testnfs} || getfacl ${directory} 2>/dev/null |
+            command => "setfacl -m ${acl} ${full_path}",
+            unless  => "${testnfs} || getfacl ${full_path} 2>/dev/null |
       egrep -q '${acl}'",
             timeout => '0'
           }
