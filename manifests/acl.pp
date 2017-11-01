@@ -81,7 +81,7 @@ egrep -q '^mask::r-x' ",
             path    => '/bin:/usr/bin',
             command => "setfacl -m ${gacl} ${full_path}",
             unless  => "${testnfs} || getfacl ${full_path} 2>/dev/null |
-      egrep -q '${acl}'",
+      egrep -q '${gacl}'",
             timeout => '0'
           }
         }
