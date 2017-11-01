@@ -72,8 +72,10 @@ egrep -q '^mask::r-x' ",
     if $parents == true {
       $directories = split($object, '/')
 
-      each($directories) |$directory| {
-        if ! defined (File[$directory]) {
+      $directories.each |$index, $directory| {
+        $calculated_dir = inline_template("<%= @directories[0, @index + 1].join('/') %>")
+        $full_path = "/${calculated_dir}"
+        if (! defined(File[$full_path]) and $full_path != '/') {
           exec { "setfacl_${directory}":
             path    => '/bin:/usr/bin',
             command => "setfacl -m ${acl} ${directory}",
