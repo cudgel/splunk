@@ -1,8 +1,9 @@
 define splunk::acl(
-  $target='',
-  $group=$::splunk::splunk_group,
-  $recurse=false,
-  $readonly=true
+  $target   = '',
+  $group    = $::splunk::splunk_group,
+  $recurse  = false,
+  $readonly = true,
+  $parents  = false
 ) {
 
   # Validate parameters
@@ -18,7 +19,6 @@ define splunk::acl(
   if $recurse != true and $recurse != false {
       fail('variable "recurse" must be either true or false')
   }
-
 
   if $::kernel == 'Linux`' {
 
@@ -67,6 +67,22 @@ egrep -q '${acl}'",
       unless  => "${testnfs} || getfacl ${object} 2>/dev/null |
 egrep -q '^mask::r-x' ",
       timeout => '0'
+    }
+
+    if $parents == true {
+      $directories = split($object, '/')
+
+      each($directories) |$directory| {
+        if ! defined (File[$directory]) {
+          exec { "setfacl_${directory}":
+            path    => '/bin:/usr/bin',
+            command => $setfacl,
+            unless  => "${testnfs} || getfacl ${directory} 2>/dev/null |
+      egrep -q '${acl}'",
+            timeout => '0'
+          }
+        }
+      }
     }
 
   } # end redhat
