@@ -76,7 +76,7 @@ egrep -q '^mask::r-x' ",
         if ! defined (File[$directory]) {
           exec { "setfacl_${directory}":
             path    => '/bin:/usr/bin',
-            command => $setfacl,
+            command => "setfacl -m ${acl} ${directory}",
             unless  => "${testnfs} || getfacl ${directory} 2>/dev/null |
       egrep -q '${acl}'",
             timeout => '0'
