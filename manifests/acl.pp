@@ -20,7 +20,7 @@ define splunk::acl(
       fail('variable "recurse" must be either true or false')
   }
 
-  if $::kernel == 'Linux`' {
+  if $::kernel == 'Linux' {
 
     # Calculate the ACE by combining $group, and $readonly.
     # Set the $subject and $db to later verify that the subject exists.
