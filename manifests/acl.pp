@@ -3,7 +3,7 @@ define splunk::acl(
   $group    = $::splunk::splunk_group,
   $recurse  = false,
   $readonly = true,
-  $parents  = false
+  $parents  = true
 ) {
 
   # Validate parameters
@@ -32,6 +32,7 @@ define splunk::acl(
       $perm = 'rwx'
     }
     $acl = "group:${group}:${perm}"
+    $gacl = "group:${group}:r-x"
 
     # test if the ACL is to be applied to an nfs mount
     # (extended posix ACLs cannot be set from the nfs client)
@@ -78,7 +79,7 @@ egrep -q '^mask::r-x' ",
         if (! defined(File[$full_path]) and $full_path != '/') {
           exec { "setfacl_${directory}":
             path    => '/bin:/usr/bin',
-            command => "setfacl -m ${acl} ${full_path}",
+            command => "setfacl -m ${gacl} ${full_path}",
             unless  => "${testnfs} || getfacl ${full_path} 2>/dev/null |
       egrep -q '${acl}'",
             timeout => '0'
