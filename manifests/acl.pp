@@ -3,7 +3,7 @@ define splunk::acl(
   $group    = $::splunk::splunk_group,
   $recurse  = false,
   $readonly = true,
-  $parents  = true
+  $parents  = false
 ) {
 
   # Validate parameters
