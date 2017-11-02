@@ -22,7 +22,8 @@ define splunk::fetch(
     command => "wget -O ${splunksource} \'${wget_url}\'",
     path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
     cwd     => $::splunk::install_path,
-    creates => "${::splunk::install_path}/${splunksource}"
+    creates => "${::splunk::install_path}/${splunksource}",
+    onlyif  => 'wget --server-response https://www.splunk.com 2>&1'
   }
 
   file{"${::splunk::install_path}/${splunksource}":
