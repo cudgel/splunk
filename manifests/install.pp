@@ -60,6 +60,7 @@ class splunk::install($type=$type)
         subscribe => File["${::splunk::install_path}/${::splunk::splunksource}"],
         timeout   => 600,
         unless    => "test -e ${::splunk::splunkhome}/${::splunk::manifest}",
+        onlyif    => "if [ -s ${::splunk::splunksource} ]; then return 0; else; return 1; fi",
         creates   => "${::splunk::splunkhome}/${::splunk::manifest}",
         user      => $::splunk::splunk_user,
         group     => $::splunk::splunk_group
