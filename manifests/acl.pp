@@ -84,6 +84,14 @@ egrep -q '^mask::r-x' ",
       egrep -q '${gacl}'",
             timeout => '0'
           }
+
+          exec { "set_effective_rights_mask_${directory}":
+            path    => '/bin:/usr/bin',
+            command => "setfacl -m mask:r-x,default:mask:r-x ${full_path}",
+            unless  => "${testnfs} || getfacl ${full_path} 2>/dev/null |
+      egrep -q '^mask::r-x' ",
+            timeout => '0'
+          }
         }
       }
     }
