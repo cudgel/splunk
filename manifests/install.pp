@@ -73,7 +73,6 @@ class splunk::install($type=$type)
       }
 
       if $new_install == true {
-
         exec { 'installSplunkService':
           command   => 'splunk enable boot-start',
           path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
@@ -81,7 +80,6 @@ class splunk::install($type=$type)
           unless    => 'test -e /etc/init.d/splunk',
           creates   => '/etc/init.d/splunk'
         }
-
       }
 
     }
