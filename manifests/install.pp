@@ -88,10 +88,10 @@ class splunk::install($type=$type)
 
   if ($type == 'forwarder') and ($adminpass != 'changeme')  {
     exec { 'changeAdminPass':
-      command => "splunk edit user admin -password ${adminpass} -auth admin:changeme && touch ${::splunk::splunkhome}/admin.pass",
+      command => "splunk edit user admin -password ${adminpass} -auth admin:changeme && touch ${::splunk::splunkhome}/.admin_pass",
       path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
-      unless  => "test -e ${::splunk::splunkhome}/admin.pass",
-      creates => "${::splunk::splunkhome}/admin.pass"
+      unless  => "test -e ${::splunk::splunkhome}/.admin_pass",
+      creates => "${::splunk::splunkhome}/.admin_pass"
     }
   }
 
