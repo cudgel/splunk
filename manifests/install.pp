@@ -13,13 +13,14 @@ class splunk::install($type=$type)
   $servercert      = $::splunk::params::servercert
   $webcert         = $::splunk::params::webcert
   $managesecret    = $::splunk::params::managesecret
+  $adminpass       = $::splunk::params::adminpass
 
   if $type != 'forwarder' {
     file { $splunkhome:
       ensure => directory,
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
-      mode   => '0755'
+      mode   => '0750'
     }
   }
 
@@ -31,18 +32,14 @@ class splunk::install($type=$type)
     if versioncmp($maj_version, $cut_version) > 0 {
 
       if $current_version != undef {
-
         $apppart     = "${sourcepart}-${current_version}-${splunkos}-${splunkarch}"
         $oldsource   = "${apppart}.${::splunk::splunkext}"
 
         file { "${::splunk::install_path}/${oldsource}":
           ensure => absent
         }
-
       } else {
-
         $new_install = true
-
       }
 
       splunk::fetch{ 'sourcefile':
@@ -90,6 +87,15 @@ class splunk::install($type=$type)
     }
 
   } # end new version
+
+  if ($type == 'forwarder') and ($adminpass != 'changeme')  {
+    exec { 'changeAdminPass':
+      command => "splunk edit user admin -password ${adminpass} -auth admin:changeme && touch ${::splunk::splunkhome}/admin.pass",
+      path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
+      unless  => "test -e ${::splunk::splunkhome}/admin.pass",
+      creates => "${::splunk::splunkhome}/admin.pass"
+    }
+  }
 
   file_line { 'splunk-start':
     path     => '/etc/init.d/splunk',

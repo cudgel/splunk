@@ -28,6 +28,7 @@ class splunk::params
   $servercert           = hiera('splunk::params::servercert', 'server.pem')
   $servercertpass       = hiera('splunk::params::servercertpass', 'password')
   $managesecret         = hiera('splunk::params::managesecret', false)
+  $adminpass            = hiera('splunk::paramgs::adminpass', 'changeme')
   # splunkweb
   $privkey              = hiera('splunk::params::privkey', 'privkey.pem')
   $webcert              = hiera('splunk::params::webcert', 'cert.pem')
