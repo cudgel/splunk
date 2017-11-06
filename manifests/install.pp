@@ -97,7 +97,7 @@ class splunk::install($type=$type)
 
   file_line { 'splunk-start':
     path     => '/etc/init.d/splunk',
-    line     => "\ \ su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" start\'",
+    line     => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" start\'",
     match    => "^\ \ \"${::splunk::splunkhome}/bin/splunk\" start",
     multiple => true
   }
