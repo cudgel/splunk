@@ -92,9 +92,11 @@ class splunk::install($type=$type)
   } # end new version
 
   file_line { 'splunk-init':
-    path  => '/etc/init.d/splunk',
-    line  => "su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\"\'",
-    match => "\"${::splunk::splunkhome}/bin/splunk\""
+    path    => '/etc/init.d/splunk',
+    line    => "su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\"\'",
+    match   => "\"${::splunk::splunkhome}/bin/splunk\"",
+    muliple => true,
+    onlyif  => 'test -e /etc/init.d/splunk'
   }
 
   file { "${::splunk::splunkhome}/etc/splunk-launch.conf":
