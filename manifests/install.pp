@@ -95,32 +95,34 @@ class splunk::install($type=$type)
     }
   }
 
+  file_line { 'splunk-bug':
+    path  => '/etc/init.d/splunk',
+    line  => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" start --no-prompt --answer-yes\'",
+    match => "^\\\ \\\ su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" start\'"
+  }
+
   file_line { 'splunk-start':
-    path     => '/etc/init.d/splunk',
-    line     => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" start\'",
-    match    => "^\ \ \"${::splunk::splunkhome}/bin/splunk\" start",
-    multiple => true
+    path  => '/etc/init.d/splunk',
+    line  => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" start --no-prompt --answer-yes\'",
+    match => "^\ \ \"${::splunk::splunkhome}/bin/splunk\" start"
   }
 
   file_line { 'splunk-stop':
-    path     => '/etc/init.d/splunk',
-    line     => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" stop\'",
-    match    => "^\ \ \"${::splunk::splunkhome}/bin/splunk\" stop",
-    multiple => true
+    path  => '/etc/init.d/splunk',
+    line  => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" stop\'",
+    match => "^\ \ \"${::splunk::splunkhome}/bin/splunk\" stop"
   }
 
   file_line { 'splunk-restart':
-    path     => '/etc/init.d/splunk',
-    line     => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" restart\'",
-    match    => "^\ \ \"${::splunk::splunkhome}/bin/splunk\" restart",
-    multiple => true
+    path  => '/etc/init.d/splunk',
+    line  => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" restart\'",
+    match => "^\ \ \"${::splunk::splunkhome}/bin/splunk\" restart"
   }
 
   file_line { 'splunk-status':
-    path     => '/etc/init.d/splunk',
-    line     => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" status\'",
-    match    => "^\ \ \"${::splunk::splunkhome}/bin/splunk\" status",
-    multiple => true
+    path  => '/etc/init.d/splunk',
+    line  => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" status\'",
+    match => "^\ \ \"${::splunk::splunkhome}/bin/splunk\" status"
   }
 
   file { "${::splunk::splunkhome}/etc/splunk-launch.conf":
