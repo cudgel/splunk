@@ -91,6 +91,12 @@ class splunk::install($type=$type)
 
   } # end new version
 
+  file_line { 'splunk-init':
+    path  => '/etc/inid.d/splunk',
+    line  => "su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\"\'",
+    match => "\"${::splunk::splunkhome}/bin/splunk\""
+  }
+
   file { "${::splunk::splunkhome}/etc/splunk-launch.conf":
     owner   => $::splunk::splunk_user,
     group   => $::splunk::splunk_group,
