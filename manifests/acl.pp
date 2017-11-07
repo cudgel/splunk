@@ -97,45 +97,6 @@ egrep -q '^mask::r-x' ",
       }
     }
 
-  } # end redhat
-
-  if $::osfamily == 'Solaris' {
-
-    # Calculate the ACE by combining $group, and $readonly.
-    # Set the $subject and $db to later verify that the subject exists.
-    #
-    $subject = $group
-    if $readonly == true {
-      $acl = "group:${group}:rxaRcs"
-    } else {
-      $acl = "group:${group}:rwxpcCosRrWaAdD"
-    }
-    $acl_subject = "group:${group}"
-    $db = 'group'
-
-    # Recursive ACLs can only be applied to a directory.
-    # Non-recursive ACLs can be applied to anything.
-    #
-    if $recurse == true {
-      $predicate = "test -d ${object}"
-      $setfacl   = "find ${object} -type d
--exec chmod A+${acl}:fd:allow '{}' \\; &&
-find ${object} -type f -exec chmod A+${acl}:allow '{}' \\; "
-    } else {
-        $predicate = '/bin/true'
-        $setfacl   = "chmod A+${acl}:allow ${object}"
-    }
-
-    exec { "chmod_${title}":
-        command => "${predicate} &&
-getent ${db} ${subject} &&
-${setfacl}",
-        path    => '/bin:/sbin:/usr/bin:/usr/sbin',
-        unless  => "ls -dv ${object} |
-egrep '[0-9]:${acl_subject}' >/dev/null",
-        timeout => '0',
-    }
-
-  } # end solaris
+  } # end linux
 
 }
