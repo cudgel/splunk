@@ -36,6 +36,7 @@ define splunk::acl(
 
     # test if the ACL is to be applied to an nfs mount
     # (extended posix ACLs cannot be set from the nfs client)
+    # returns 0 if object is on nfs mount
     $testnfs = "df -P ${object} | tail -1 | awk '{print \$1}' |
 fgrep -f - /proc/mounts | grep -q nfs"
 
@@ -65,7 +66,7 @@ egrep -q '${acl}'",
     exec { "set_effective_rights_mask_${title}":
       path    => '/bin:/usr/bin',
       command => "setfacl -R -m mask:${perm},default:mask:${perm} ${object}",
-      unless  => "${testnfs} || getfacl ${object} 2>/dev/null |
+      unless  => "${testnfs} || test -f ${object} || getfacl ${object} 2>/dev/null |
 egrep -q '^mask::r-x' ",
       timeout => '0'
     }
