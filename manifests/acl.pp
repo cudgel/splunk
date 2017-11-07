@@ -40,6 +40,13 @@ define splunk::acl(
     $testnfs = "df -P ${object} | tail -1 | awk '{print \$1}' |
 fgrep -f - /proc/mounts | grep -q nfs"
 
+    # returns 0 if the mount containing the object suports ACLs
+    $testacl = "df -P ${object} | tail -1 | awk '{print \$1}' |
+fgrep -f - /proc/mounts | grep -q seclabel"
+
+    # returns 0 if the object is a file
+    $testdir = "test -d ${object}"
+
     # Recursive ACLs can only be applied to a directory.
     # Non-recursive ACLs can be applied to anything.
     #
@@ -56,7 +63,8 @@ setfacl -d -R -m ${acl} ${object}"
     exec { "setfacl_${title}":
       path    => '/bin:/usr/bin',
       command => $setfacl,
-      unless  => "${testnfs} || getfacl ${object} 2>/dev/null |
+      onlyif  => $testacl,
+      unless  => "getfacl ${object} 2>/dev/null |
 egrep -q '${acl}'",
       timeout => '0'
     }
@@ -66,7 +74,8 @@ egrep -q '${acl}'",
     exec { "set_effective_rights_mask_${title}":
       path    => '/bin:/usr/bin',
       command => "setfacl -R -m mask:${perm},default:mask:${perm} ${object}",
-      unless  => "${testnfs} || test -f ${object} || getfacl ${object} 2>/dev/null |
+      onlyif  => "${testacl} && ${testdir}",
+      unless  => "getfacl ${object} 2>/dev/null |
 egrep -q '^mask::r-x' ",
       timeout => '0'
     }
@@ -81,7 +90,8 @@ egrep -q '^mask::r-x' ",
           exec { "setfacl_${directory}":
             path    => '/bin:/usr/bin',
             command => "setfacl -m ${gacl} ${full_path}",
-            unless  => "${testnfs} || getfacl ${full_path} 2>/dev/null |
+            onlyif  => "${testacl} && ${testdir}",
+            unless  => "getfacl ${full_path} 2>/dev/null |
       egrep -q '${gacl}'",
             timeout => '0'
           }
@@ -89,7 +99,8 @@ egrep -q '^mask::r-x' ",
           exec { "set_effective_rights_mask_${directory}":
             path    => '/bin:/usr/bin',
             command => "setfacl -m mask:r-x,default:mask:r-x ${full_path}",
-            unless  => "${testnfs} || getfacl ${full_path} 2>/dev/null |
+            onlyif  => "${testacl} && ${testdir}",
+            unless  => "getfacl ${full_path} 2>/dev/null |
       egrep -q '^mask::r-x' ",
             timeout => '0'
           }
