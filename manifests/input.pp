@@ -1,5 +1,9 @@
 # splunk::input()
 #
+# create a network or file monitor input snippet to be concatenated into
+# $SPLUNK_HOME/etc/system/local/inputs.conf
+# if creating a file monitor, apply acl to the object as well
+#
 define splunk::input(
   $splunkhome   = $::splunk::splunkhome,
   $local_path   = $::splunk::local_path,

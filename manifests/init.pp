@@ -106,7 +106,8 @@ chown ${my_perms} ${my_input_c}",
       command     => "/bin/cat ${my_server_d}/* > ${my_server_c}; \
 chown ${my_perms} ${my_server_c}",
       refreshonly => true,
-      subscribe   => [File["${local_path}/server.d/000_header"], File["${local_path}/server.d/998_ssl"], File["${local_path}/server.d/999_default"]],
+      subscribe   => [File["${local_path}/server.d/000_header"],
+File["${local_path}/server.d/998_ssl"], File["${local_path}/server.d/999_default"]],
       notify      => Service[splunk]
     }
 

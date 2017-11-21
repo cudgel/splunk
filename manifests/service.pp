@@ -1,3 +1,5 @@
+# manage Splunk service state
+#
 class splunk::service inherits ::splunk {
 
   if $::osfamily == 'Debian' {

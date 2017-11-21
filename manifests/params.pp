@@ -1,3 +1,5 @@
+# initialize module parameters from hiera data
+#
 class splunk::params
 {
   # general

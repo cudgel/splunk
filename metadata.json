@@ -6,14 +6,13 @@
       "version_requirement": "\u003e\u003d 1.1.3"
     }
   ],
-  "description": "Deploy n-tier Splunk environments",
-  "license": "Apache License, Version 2.0",
+  "license": "Apache-2.0",
   "name": "cudgel-splunk",
   "operatingsystem_support": ["Linux", "Solaris"],
   "project_page": "https://github.com/cudgel/splunk",
   "requirements": [],
   "source": "https://github.com/cudgel/splunk",
   "summary": "Splunk Deployment App",
-  "tags": [],
+  "tags": [ "splunk", "cluster" ],
   "version": "0.9.0"
 }
