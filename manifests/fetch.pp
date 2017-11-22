@@ -20,11 +20,11 @@ define splunk::fetch(
   if $source == 'fileserver' {
 
     file{ "${::splunk::install_path}/${splunk_bundle}":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_group,
-      mode    => '0750',
-      source  => "puppet:///splunk_files/${splunk_bundle}",
-      notify  => Exec['unpacksplunk']
+      owner  => $::splunk::splunk_user,
+      group  => $::splunk::splunk_group,
+      mode   => '0750',
+      source => "puppet:///splunk_files/${splunk_bundle}",
+      notify => Exec['unpacksplunk']
     }
 
   } else {

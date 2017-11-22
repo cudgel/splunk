@@ -69,7 +69,7 @@ class splunk($type='forwarder') {
   $local_path    = "${splunkhome}/etc/system/local"
   $splunkdb      = "${splunkhome}/var/lib/splunk"
   $apppart       = "${sourcepart}-${new_version}-${splunkos}-${splunkarch}"
-  $splunk_bundle    = "${sourcepart}-${new_version}-Linux-x86_64.tgz"
+  $splunk_bundle = "${sourcepart}-${new_version}-Linux-x86_64.tgz"
   $manifest      = "${apppart}-manifest"
 
   class { 'splunk::install': type => $type }-> class { 'splunk::service': }

@@ -6,7 +6,7 @@ class splunk::params
   $install_path         = hiera('splunk::params::install_path', '/opt')
   $splunk_group         = hiera('splunk::params::splunk_group', 'splunk')
   $splunk_user          = hiera('splunk::params::splunk_user', 'splunk')
-  $source               = hiera('splunk::params::source', 'puppet')
+  $source               = hiera('splunk::params::source', 'splunk')
   $version              = hiera('splunk::params::version', undef)
   $release              = hiera('splunk::params::release', undef)
   $tcpout               = hiera('splunk::params::tcpout', undef)

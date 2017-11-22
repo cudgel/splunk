@@ -58,8 +58,8 @@ class splunk::install($type=$type)
     if versioncmp($maj_version, $cut_version) > 0 {
 
       if $current_version != undef {
-        $apppart     = "${sourcepart}-${current_version}-${splunkos}-${splunkarch}"
-        $oldsource   = "${apppart}.${::splunk::splunkext}"
+        $apppart   = "${sourcepart}-${current_version}-${splunkos}-${splunkarch}"
+        $oldsource = "${apppart}.${::splunk::splunkext}"
 
         file { "${::splunk::install_path}/${oldsource}":
           ensure => absent
@@ -74,7 +74,7 @@ class splunk::install($type=$type)
         source        => $source
       }
 
-      $stopcmd = 'splunk stop'
+      $stopcmd  = 'splunk stop'
       $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
 
       exec { 'unpackSplunk':
