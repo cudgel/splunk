@@ -1,11 +1,35 @@
+# == Class: splunk::install
+#
+# This class maintains the installation of Splunk, installing a new Splunk
+# instance or upgrading an existing one. Currently it tries to fetch the
+# specified version of either splunk or splunkforwarder (depending on the
+# type of install) from splunk.com or a hiera-defined server.
+# Manages system/local config files, certificates (if defined in hiera and
+# served via puppet fileserver), and service installation.
+#
+# === Examples
+#
+#  class { splunk::install: type => 'forwarder' }
+#
+# === Authors
+#
+# Christopher Caldwell <author@domain.com>
+#
+# === Copyright
+#
+# Copyright 2017 Christopher Caldwell
+#
 class splunk::install($type=$type)
 {
   $sourcepart      = $::splunk::sourcepart
+  # currently installed version from fact
   $current_version = $::splunk::current_version
+  # version to be installed
   $new_version     = $::splunk::new_version
   $maj_version     = $::splunk::version
   $splunkos        = $::splunk::splunkos
   $splunkarch      = $::splunk::splunkarch
+  $source          = $::splunk::params::source
   $splunkhome      = $::splunk::splunkhome
   $my_perms        = "${::splunk::splunk_user}:${::splunk::splunk_group}"
   $cacert          = $::splunk::params::cacert
@@ -25,6 +49,8 @@ class splunk::install($type=$type)
   }
 
   # begin version change
+  # because the legacy fact does not represent splunk version as version-release,
+  # we cut the version from the string.
   $cut_version = regsubst($current_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
 
   if $maj_version != $cut_version {
@@ -43,21 +69,22 @@ class splunk::install($type=$type)
       }
 
       splunk::fetch{ 'sourcefile':
-        splunksource => $::splunk::splunksource,
-        type         => $type
+        splunk_bundle => $::splunk::splunk_bundle,
+        type          => $type,
+        source        => $source
       }
 
       $stopcmd = 'splunk stop'
       $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
 
       exec { 'unpackSplunk':
-        command   => "${::splunk::params::tarcmd} ${::splunk::splunksource}",
+        command   => "${::splunk::params::tarcmd} ${::splunk::splunk_bundle}",
         path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
         cwd       => $::splunk::install_path,
-        subscribe => File["${::splunk::install_path}/${::splunk::splunksource}"],
+        subscribe => File["${::splunk::install_path}/${::splunk::splunk_bundle}"],
         timeout   => 600,
         unless    => "test -e ${::splunk::splunkhome}/${::splunk::manifest}",
-        onlyif    => "test -s ${::splunk::splunksource}",
+        onlyif    => "test -s ${::splunk::splunk_bundle}",
         creates   => "${::splunk::splunkhome}/${::splunk::manifest}",
         user      => $::splunk::splunk_user,
         group     => $::splunk::splunk_group
@@ -93,12 +120,6 @@ class splunk::install($type=$type)
       unless  => "test -e ${::splunk::splunkhome}/.admin_pass",
       creates => "${::splunk::splunkhome}/.admin_pass"
     }
-  }
-
-  file_line { 'splunk-bug':
-    path  => '/etc/init.d/splunk',
-    line  => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" start --no-prompt --answer-yes\'",
-    match => "^\\\ \\\ su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" start\'"
   }
 
   file_line { 'splunk-start':

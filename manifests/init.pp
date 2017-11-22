@@ -31,7 +31,7 @@
 #
 # === Copyright
 #
-# Copyright 2014 Your name here, unless otherwise noted.
+# Copyright 2017 Christopher Caldwell
 #
 class splunk($type='forwarder') {
 
@@ -42,6 +42,7 @@ class splunk($type='forwarder') {
   $splunk_user     = $::splunk::params::splunk_user
   $splunk_group    = $::splunk::params::splunk_group
   $install_path    = $::splunk::params::install_path
+  # currently installed version from fact
   $current_version = $::splunk_version
   $serviceurl      = $::splunk::params::serviceurl
   $splunkos        = $::splunk::params::splunkos
@@ -50,6 +51,7 @@ class splunk($type='forwarder') {
   $tar             = $::splunk::params::tar
   $tarcmd          = $::splunk::params::tarcmd
 
+  # version to be installed
   if $release != undef {
     $new_version = "${version}-${release}"
   } else {
@@ -67,7 +69,7 @@ class splunk($type='forwarder') {
   $local_path    = "${splunkhome}/etc/system/local"
   $splunkdb      = "${splunkhome}/var/lib/splunk"
   $apppart       = "${sourcepart}-${new_version}-${splunkos}-${splunkarch}"
-  $splunksource  = "${sourcepart}-${new_version}-Linux-x86_64.tgz"
+  $splunk_bundle    = "${sourcepart}-${new_version}-Linux-x86_64.tgz"
   $manifest      = "${apppart}-manifest"
 
   class { 'splunk::install': type => $type }-> class { 'splunk::service': }
