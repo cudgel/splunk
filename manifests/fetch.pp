@@ -28,7 +28,7 @@ define splunk::fetch(
 
   } else {
 
-    if source == 'splunk' {
+    if $source == 'splunk' {
       $wget_url = "https://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=linux&version=${version}&product=${product}&filename=${sourcepart}-${version}-${release}-Linux-x86_64.tgz&wget=true"
     } else {
       $wget_url = "${source}/${splunk_bundle}"
