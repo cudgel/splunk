@@ -39,14 +39,12 @@ class splunk::install($type=$type)
   $managesecret    = $::splunk::params::managesecret
   $adminpass       = $::splunk::params::adminpass
 
-  if $type != 'forwarder' {
     file { $splunkhome:
       ensure => directory,
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
       mode   => '0750'
     }
-  }
 
   # begin version change
   # because the legacy fact does not represent splunk version as version-release,
