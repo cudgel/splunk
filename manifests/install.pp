@@ -124,27 +124,31 @@ class splunk::install($type=$type)
   }
 
   file_line { 'splunk-start':
-    path  => '/etc/init.d/splunk',
-    line  => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" start --no-prompt --answer-yes\'",
-    match => "^\ \ \"${::splunk::splunkhome}/bin/splunk\" start"
+    path    => '/etc/init.d/splunk',
+    line    => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" start --no-prompt --answer-yes\'",
+    match   => "^\ \ \"${::splunk::splunkhome}/bin/splunk\" start",
+    require => File['/etc/init.d/splunk']
   }
 
   file_line { 'splunk-stop':
-    path  => '/etc/init.d/splunk',
-    line  => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" stop\'",
-    match => "^\ \ \"${::splunk::splunkhome}/bin/splunk\" stop"
+    path    => '/etc/init.d/splunk',
+    line    => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" stop\'",
+    match   => "^\ \ \"${::splunk::splunkhome}/bin/splunk\" stop",
+    require => File['/etc/init.d/splunk']
   }
 
   file_line { 'splunk-restart':
-    path  => '/etc/init.d/splunk',
-    line  => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" restart\'",
-    match => "^\ \ \"${::splunk::splunkhome}/bin/splunk\" restart"
+    path    => '/etc/init.d/splunk',
+    line    => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" restart\'",
+    match   => "^\ \ \"${::splunk::splunkhome}/bin/splunk\" restart",
+    require => File['/etc/init.d/splunk']
   }
 
   file_line { 'splunk-status':
-    path  => '/etc/init.d/splunk',
-    line  => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" status\'",
-    match => "^\ \ \"${::splunk::splunkhome}/bin/splunk\" status"
+    path    => '/etc/init.d/splunk',
+    line    => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" status\'",
+    match   => "^\ \ \"${::splunk::splunkhome}/bin/splunk\" status",
+    require => File['/etc/init.d/splunk']
   }
 
   file { "${::splunk::splunkhome}/etc/splunk-launch.conf":
