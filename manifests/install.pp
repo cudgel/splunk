@@ -39,16 +39,19 @@ class splunk::install($type=$type)
   $managesecret    = $::splunk::params::managesecret
   $adminpass       = $::splunk::params::adminpass
 
+  if $type != 'forwarder' {
     file { $splunkhome:
       ensure => directory,
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
       mode   => '0750'
     }
+  }
+
 
   # begin version change
-  # because the legacy fact does not represent splunk version as version-release,
-  # we cut the version from the string.
+  # because the legacy fact does not represent splunk version as
+  # version-release, we cut the version from the string.
   $cut_version = regsubst($current_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
 
   if $maj_version != $cut_version {
