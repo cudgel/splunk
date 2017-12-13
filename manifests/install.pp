@@ -88,7 +88,8 @@ class splunk::install($type=$type)
         onlyif    => "test -s ${::splunk::splunk_bundle}",
         creates   => "${::splunk::splunkhome}/${::splunk::manifest}",
         user      => $::splunk::splunk_user,
-        group     => $::splunk::splunk_group
+        group     => $::splunk::splunk_group,
+        require   => User[$::splunk::splunk_user]
       }
 
       exec { 'serviceStart':
