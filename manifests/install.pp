@@ -100,14 +100,12 @@ class splunk::install($type=$type)
         group       => $::splunk::splunk_group
       }
 
-      if $new_install == true {
-        exec { 'installSplunkService':
-          command   => 'splunk enable boot-start',
-          path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
-          subscribe => Exec['unpackSplunk'],
-          unless    => 'test -e /etc/init.d/splunk',
-          creates   => '/etc/init.d/splunk'
-        }
+      exec { 'installSplunkService':
+        command   => 'splunk enable boot-start',
+        path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
+        subscribe => Exec['unpackSplunk'],
+        unless    => 'test -e /etc/init.d/splunk',
+        creates   => '/etc/init.d/splunk'
       }
 
     }
