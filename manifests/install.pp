@@ -85,11 +85,11 @@ class splunk::install($type=$type)
         subscribe => File["${::splunk::install_path}/${::splunk::splunk_bundle}"],
         timeout   => 600,
         unless    => "test -e ${::splunk::splunkhome}/${::splunk::manifest}",
-        onlyif    => "test -s ${::splunk::splunk_bundle}",
+        onlyif    => "test -s ${::splunk::splunk_bundle} \
+        && test -d ${::splunk::splunkhome}",
         creates   => "${::splunk::splunkhome}/${::splunk::manifest}",
         user      => $::splunk::splunk_user,
-        group     => $::splunk::splunk_group,
-        require   => User[$::splunk::splunk_user]
+        group     => $::splunk::splunk_group
       }
 
       exec { 'serviceStart':
