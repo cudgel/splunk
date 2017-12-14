@@ -9,5 +9,5 @@
   "source": "https://github.com/cudgel/splunk",
   "summary": "Splunk Deployment App",
   "tags": [ "splunk", "cluster" ],
-  "version": "1.0.0"
+  "version": "1.0.1"
 }
