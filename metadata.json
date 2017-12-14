@@ -1,18 +1,13 @@
 {
   "author": "Christopher Caldwell",
-  "dependencies": [
-    {
-      "name": "puppetlabs/firewall",
-      "version_requirement": "\u003e\u003d 1.1.3"
-    }
-  ],
+  "dependencies": [ ],
   "license": "Apache-2.0",
   "name": "cudgel-splunk",
-  "operatingsystem_support": ["Linux", "Solaris"],
+  "operatingsystem_support": ["Linux"],
   "project_page": "https://github.com/cudgel/splunk",
   "requirements": [],
   "source": "https://github.com/cudgel/splunk",
   "summary": "Splunk Deployment App",
   "tags": [ "splunk", "cluster" ],
-  "version": "0.9.0"
+  "version": "1.0.0"
 }
