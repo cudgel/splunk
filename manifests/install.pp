@@ -129,6 +129,7 @@ class splunk::install($type=$type)
     path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
     cwd     => $::splunk::install_path,
     user    => $::splunk::splunk_user,
+    unless  => "test -d ${::splunk::splunkhome}/etc",
     group   => $::splunk::splunk_group
   }
 
