@@ -112,7 +112,8 @@ class splunk::install($type=$type)
 
     }
 
-  } # end new version
+  # end version change
+  }
 
   if ($type == 'forwarder') and ($adminpass != 'changeme')  {
     exec { 'changeAdminPass':
@@ -128,7 +129,6 @@ class splunk::install($type=$type)
     path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
     cwd     => $::splunk::install_path,
     timeout => 600,
-    onlyif  => "test -d ${::splunk::splunkhome}",
     user    => $::splunk::splunk_user,
     group   => $::splunk::splunk_group
   }

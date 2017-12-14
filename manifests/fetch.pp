@@ -35,7 +35,7 @@ define splunk::fetch(
     }
 
     exec{ "retrieve_${splunk_bundle}":
-      command => "wget -O ${splunk_bundle} \'${wget_url}\'",
+      command => "wget -O ${splunk_bundle} \'${wget_url}\' >/dev/null",
       path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
       cwd     => $::splunk::install_path,
       creates => "${::splunk::install_path}/${splunk_bundle}",
