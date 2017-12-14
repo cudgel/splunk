@@ -227,7 +227,7 @@ class splunk::install($type=$type)
 
   if $type != 'forwarder' {
 
-    if $type != 'indexer' {
+    if ($type != 'indexer') and ($type != 'standalone') {
       file { "${::splunk::local_path}/outputs.d":
         ensure => 'directory',
         mode   => '0750',
@@ -329,7 +329,7 @@ class splunk::install($type=$type)
 
     }
 
-    if $type == 'search' {
+    if ($type == 'search') or ($type == 'standalone') {
 
       if $::osfamily == 'RedHat' {
 
