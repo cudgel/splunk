@@ -125,7 +125,7 @@ class splunk::install($type=$type)
   }
 
   exec { 'test_for_splunk':
-    command => "test -d ${::splunk::splunkhome}/etc ]",
+    command => "test -d ${::splunk::splunkhome}/etc",
     path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
     cwd     => $::splunk::install_path,
     user    => $::splunk::splunk_user,
