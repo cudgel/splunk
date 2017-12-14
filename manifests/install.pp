@@ -123,7 +123,7 @@ class splunk::install($type=$type)
   }
 
   exec { 'test_for_splunk':
-    command => "bash -c \"while [ ! -f ${::splunk::splunkhome}/etc ]; do sleep 2; done\"; fi",
+    command => "bash -c \"while [ ! -f ${::splunk::splunkhome}/etc ]; do sleep 2; done\"",
     path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
     cwd     => $::splunk::install_path,
     timeout => 600,
