@@ -135,28 +135,28 @@ file_line { 'splunk-start':
   path    => '/etc/init.d/splunk',
   line    => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" start --no-prompt --answer-yes\'",
   match   => "^\ \ \"${::splunk::splunkhome}/bin/splunk\" start",
-  require => Service[splunk]
+  require => User[$::splunk::splunk_user]
 }
 
 file_line { 'splunk-stop':
   path    => '/etc/init.d/splunk',
   line    => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" stop\'",
   match   => "^\ \ \"${::splunk::splunkhome}/bin/splunk\" stop",
-  require => Service[splunk]
+  require => User[$::splunk::splunk_user]
 }
 
 file_line { 'splunk-restart':
   path    => '/etc/init.d/splunk',
   line    => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" restart\'",
   match   => "^\ \ \"${::splunk::splunkhome}/bin/splunk\" restart",
-  require => Service[splunk]
+  require => User[$::splunk::splunk_user]
 }
 
 file_line { 'splunk-status':
   path    => '/etc/init.d/splunk',
   line    => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" status\'",
   match   => "^\ \ \"${::splunk::splunkhome}/bin/splunk\" status",
-  require => Service[splunk]
+  require => User[$::splunk::splunk_user]
 }
 
   file { "${::splunk::splunkhome}/etc/splunk-launch.conf":
@@ -164,7 +164,7 @@ file_line { 'splunk-status':
     group   => $::splunk::splunk_group,
     content => template("${module_name}/splunk-launch.conf.erb"),
     notify  => Service[splunk],
-    require => Service[splunk]
+    require => User[$::splunk::splunk_user]
   }
 
   if $cacert != 'cacert.pem' {
@@ -174,7 +174,7 @@ file_line { 'splunk-status':
       mode    => '0640',
       source  => "puppet:///splunk_files/auth/${cacert}",
       notify  => Service[splunk],
-      require => Service[splunk]
+      require => User[$::splunk::splunk_user]
     }
   }
 
@@ -185,7 +185,7 @@ file_line { 'splunk-status':
       mode    => '0640',
       source  => "puppet:///splunk_files/auth/splunkweb/${privkey}",
       notify  => Service[splunk],
-      require => Service[splunk]
+      require => User[$::splunk::splunk_user]
     }
   }
 
@@ -196,7 +196,7 @@ file_line { 'splunk-status':
       mode    => '0640',
       source  => "puppet:///splunk_files/auth/${servercert}",
       notify  => Service[splunk],
-      require => Service[splunk]
+      require => User[$::splunk::splunk_user]
     }
   }
 
@@ -207,7 +207,7 @@ file_line { 'splunk-status':
       mode    => '0640',
       source  => "puppet:///splunk_files/auth/splunkweb/${webcert}",
       notify  => Service[splunk],
-      require => Service[splunk]
+      require => User[$::splunk::splunk_user]
     }
   }
 
@@ -222,7 +222,7 @@ file_line { 'splunk-status':
       mode    => '0640',
       source  => 'puppet:///splunk_files/splunk.secret',
       notify  => Service[splunk],
-      require => Service[splunk]
+      require => User[$::splunk::splunk_user]
     }
   }
 
@@ -231,7 +231,7 @@ file_line { 'splunk-status':
     mode    => '0750',
     owner   => $::splunk::splunk_user,
     group   => $::splunk::splunk_group,
-    require => Service[splunk]
+    require => User[$::splunk::splunk_user]
   }
 
   file { "${::splunk::local_path}/inputs.d/000_default":
@@ -249,7 +249,7 @@ file_line { 'splunk-status':
         mode    => '0750',
         owner   => $::splunk::splunk_user,
         group   => $::splunk::splunk_group,
-        require => Service[splunk]
+        require => User[$::splunk::splunk_user]
       }
 
       file { "${::splunk::local_path}/outputs.d/000_default":
@@ -266,7 +266,7 @@ file_line { 'splunk-status':
       mode    => '0750',
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_group,
-      require => Service[splunk]
+      require => User[$::splunk::splunk_user]
     }
 
     file { "${::splunk::local_path}/server.d/000_default":
@@ -326,7 +326,7 @@ file_line { 'splunk-status':
       content => template("${module_name}/web.conf.erb"),
       notify  => Service[splunk],
       alias   => 'splunk-web',
-      require => Service[splunk]
+      require => User[$::splunk::splunk_user]
     }
 
     if $type == 'indexer' {
@@ -370,7 +370,7 @@ file_line { 'splunk-status':
         content => template("${module_name}/default-mode.conf.erb"),
         notify  => Service[splunk],
         alias   => 'splunk-mode',
-        require => Service[splunk]
+        require => User[$::splunk::splunk_user]
       }
 
       file { "${::splunk::local_path}/alert_actions.conf":
@@ -379,7 +379,7 @@ file_line { 'splunk-status':
         content => template("${module_name}/alert_actions.conf.erb"),
         notify  => Service[splunk],
         alias   => 'alert-actions',
-        require => Service[splunk]
+        require => User[$::splunk::splunk_user]
       }
 
       file { "${::splunk::local_path}/ui-prefs.conf":
@@ -387,7 +387,7 @@ file_line { 'splunk-status':
         group   => $::splunk::splunk_user,
         content => template("${module_name}/ui-prefs.conf.erb"),
         notify  => Service['splunk'],
-        require => Service[splunk]
+        require => User[$::splunk::splunk_user]
       }
 
       file { "${::splunk::local_path}/limits.conf":
@@ -395,7 +395,7 @@ file_line { 'splunk-status':
         group   => $::splunk::splunk_user,
         content => template("${module_name}/limits.conf.erb"),
         notify  => Service[splunk],
-        require => Service[splunk]
+        require => User[$::splunk::splunk_user]
       }
 
       file { "${::splunk::local_path}/server.d/998_shclustering":
