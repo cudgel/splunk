@@ -150,11 +150,13 @@ class splunk::install($type=$type)
   #   require => File['/etc/init.d/splunk']
   # }
 
-  file { "${::splunk::splunkhome}/etc":
-    owner   => $::splunk::splunk_user,
-    group   => $::splunk::splunk_group,
-    mode    => '0750',
-    require => File['/etc/init.d/splunk']
+
+  exec { 'test_for_splunk':
+    command => "test -d ${::splunk::splunkhome}/etc",
+    cwd     => $::splunk::install_path,
+    onlyif  => "test -d ${::splunk::splunkhome}/etc",
+    user    => $::splunk::splunk_user,
+    group   => $::splunk::splunk_group
   }
 
   file { "${::splunk::splunkhome}/etc/splunk-launch.conf":
@@ -162,7 +164,7 @@ class splunk::install($type=$type)
     group   => $::splunk::splunk_group,
     content => template("${module_name}/splunk-launch.conf.erb"),
     notify  => Service[splunk],
-    require => File["${::splunk::splunkhome}/etc"]
+    require => Exec['test_for_splunk']
   }
 
   if $cacert != 'cacert.pem' {
@@ -172,7 +174,7 @@ class splunk::install($type=$type)
       mode    => '0640',
       source  => "puppet:///splunk_files/auth/${cacert}",
       notify  => Service[splunk],
-      require => File["${::splunk::splunkhome}/etc"]
+      require => Exec['test_for_splunk']
     }
   }
 
@@ -183,7 +185,7 @@ class splunk::install($type=$type)
       mode    => '0640',
       source  => "puppet:///splunk_files/auth/splunkweb/${privkey}",
       notify  => Service[splunk],
-      require => File["${::splunk::splunkhome}/etc"]
+      require => Exec['test_for_splunk']
     }
   }
 
@@ -194,7 +196,7 @@ class splunk::install($type=$type)
       mode    => '0640',
       source  => "puppet:///splunk_files/auth/${servercert}",
       notify  => Service[splunk],
-      require => File["${::splunk::splunkhome}/etc"]
+      require => Exec['test_for_splunk']
     }
   }
 
@@ -205,7 +207,7 @@ class splunk::install($type=$type)
       mode    => '0640',
       source  => "puppet:///splunk_files/auth/splunkweb/${webcert}",
       notify  => Service[splunk],
-      require => File["${::splunk::splunkhome}/etc"]
+      require => Exec['test_for_splunk']
     }
   }
 
@@ -220,7 +222,7 @@ class splunk::install($type=$type)
       mode    => '0640',
       source  => 'puppet:///splunk_files/splunk.secret',
       notify  => Service[splunk],
-      require => File["${::splunk::splunkhome}/etc"]
+      require => Exec['test_for_splunk']
     }
   }
 
@@ -229,7 +231,7 @@ class splunk::install($type=$type)
     mode    => '0750',
     owner   => $::splunk::splunk_user,
     group   => $::splunk::splunk_group,
-    require => File["${::splunk::splunkhome}/etc"]
+    require => Exec['test_for_splunk']
   }
 
   file { "${::splunk::local_path}/inputs.d/000_default":
@@ -247,7 +249,7 @@ class splunk::install($type=$type)
         mode    => '0750',
         owner   => $::splunk::splunk_user,
         group   => $::splunk::splunk_group,
-        require => File["${::splunk::splunkhome}/etc"]
+        require => Exec['test_for_splunk']
       }
 
       file { "${::splunk::local_path}/outputs.d/000_default":
@@ -264,7 +266,7 @@ class splunk::install($type=$type)
       mode    => '0750',
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_group,
-      require => File["${::splunk::splunkhome}/etc"]
+      require => Exec['test_for_splunk']
     }
 
     file { "${::splunk::local_path}/server.d/000_default":
@@ -324,7 +326,7 @@ class splunk::install($type=$type)
       content => template("${module_name}/web.conf.erb"),
       notify  => Service[splunk],
       alias   => 'splunk-web',
-      require => File["${::splunk::splunkhome}/etc"]
+      require => Exec['test_for_splunk']
     }
 
     if $type == 'indexer' {
@@ -368,7 +370,7 @@ class splunk::install($type=$type)
         content => template("${module_name}/default-mode.conf.erb"),
         notify  => Service[splunk],
         alias   => 'splunk-mode',
-        require => File["${::splunk::splunkhome}/etc"]
+        require => Exec['test_for_splunk']
       }
 
       file { "${::splunk::local_path}/alert_actions.conf":
@@ -377,7 +379,7 @@ class splunk::install($type=$type)
         content => template("${module_name}/alert_actions.conf.erb"),
         notify  => Service[splunk],
         alias   => 'alert-actions',
-        require => File["${::splunk::splunkhome}/etc"]
+        require => Exec['test_for_splunk']
       }
 
       file { "${::splunk::local_path}/ui-prefs.conf":
@@ -385,7 +387,7 @@ class splunk::install($type=$type)
         group   => $::splunk::splunk_user,
         content => template("${module_name}/ui-prefs.conf.erb"),
         notify  => Service['splunk'],
-        require => File["${::splunk::splunkhome}/etc"]
+        require => Exec['test_for_splunk']
       }
 
       file { "${::splunk::local_path}/limits.conf":
@@ -393,7 +395,7 @@ class splunk::install($type=$type)
         group   => $::splunk::splunk_user,
         content => template("${module_name}/limits.conf.erb"),
         notify  => Service[splunk],
-        require => File["${::splunk::splunkhome}/etc"]
+        require => Exec['test_for_splunk']
       }
 
       file { "${::splunk::local_path}/server.d/998_shclustering":
