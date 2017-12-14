@@ -38,6 +38,7 @@ define splunk::fetch(
       command => "wget -O ${splunk_bundle} \'${wget_url}\'",
       path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
       cwd     => $::splunk::install_path,
+      timeout => 600,
       creates => "${::splunk::install_path}/${splunk_bundle}",
       onlyif  => 'wget --server-response https://www.splunk.com 2>&1'
     }
