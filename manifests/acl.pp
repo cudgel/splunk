@@ -6,8 +6,8 @@
 define splunk::acl(
   $target   = '',
   $group    = $::splunk::splunk_group,
+  $type     = 'file',
   $recurse  = false,
-  $readonly = true,
   $parents  = false
 ) {
 
@@ -17,9 +17,6 @@ define splunk::acl(
       $object = $title
   } else {
       $object = $target
-  }
-  if $readonly != true and $readonly != false {
-      fail('variable "readonly" must be either true or false')
   }
   if $recurse != true and $recurse != false {
       fail('variable "recurse" must be either true or false')
@@ -31,10 +28,10 @@ define splunk::acl(
     # Set the $subject and $db to later verify that the subject exists.
     #
     $subject = $group
-    if $readonly == true {
-      $perm = 'r-x'
+    if ($type == 'file') or ($recurse != true) {
+      $perm = 'r--'
     } else {
-      $perm = 'rwx'
+      $perm = 'r-x'
     }
     $acl = "group:${group}:${perm}"
     $gacl = "group:${group}:r-x"

@@ -9,7 +9,9 @@
 <% if shcluster_mode == 'peer' %>
 [shclustering]
 disabled = false
+<% if id != nil -%>
 id = <%= id %>
+<% end -%>
 conf_deploy_fetch_url = https://<%= confdeploy %>
 conf_replication_include.mobile_access = true
 conf_replication_include.mobile_access_users = true
