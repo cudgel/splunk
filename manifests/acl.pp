@@ -8,6 +8,7 @@ define splunk::acl(
   $group    = $::splunk::splunk_group,
   $type     = 'file',
   $recurse  = false,
+  $readonly = true,
   $parents  = false
 ) {
 
