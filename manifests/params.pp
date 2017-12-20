@@ -39,6 +39,7 @@ class splunk::params
   $webssl               = hiera('splunk::params::webssl', true)
   # clustering
   $repl_port            = hiera('splunk::params::repl_port', 'none')
+  $repl_count           = hiera('splunk::params::repl_count', 3)
   $clusters             = hiera('splunk::params::clusters', undef)
   $cluster_mode         = hiera('splunk::params::cluster_mode', 'none')
   $shcluster_id         = hiera('splunk::params::shcluster_id', undef)
@@ -46,6 +47,8 @@ class splunk::params
   $shcluster_mode       = hiera('splunk::params::shcluster_mode', 'none')
   $shcluster_label      = hiera('splunk::params::shcluster_label', undef)
   $server_site          = hiera('splunk::params::server_site', 'default')
+  $is_captain           = hiera('splunk::params::is_captain', false)
+  $shcluster_members    = hiera_array('splunk::params::shcluster_members', undef)
   # license
   $license_master       = hiera('splunk::params::license_master', undef)
   $license_master_mode  = hiera('splunk::params::license_master_mode', 'slave')

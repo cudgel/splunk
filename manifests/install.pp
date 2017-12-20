@@ -21,23 +21,32 @@
 #
 class splunk::install($type=$type)
 {
-  $sourcepart      = $::splunk::sourcepart
+  $sourcepart        = $::splunk::sourcepart
   # currently installed version from fact
-  $current_version = $::splunk::current_version
+  $current_version   = $::splunk::current_version
   # version to be installed
-  $new_version     = $::splunk::new_version
-  $maj_version     = $::splunk::version
-  $splunkos        = $::splunk::splunkos
-  $splunkarch      = $::splunk::splunkarch
-  $source          = $::splunk::params::source
-  $splunkhome      = $::splunk::splunkhome
-  $my_perms        = "${::splunk::splunk_user}:${::splunk::splunk_group}"
-  $cacert          = $::splunk::params::cacert
-  $privkey         = $::splunk::params::privkey
-  $servercert      = $::splunk::params::servercert
-  $webcert         = $::splunk::params::webcert
-  $managesecret    = $::splunk::params::managesecret
-  $adminpass       = $::splunk::params::adminpass
+  $new_version       = $::splunk::new_version
+  $maj_version       = $::splunk::version
+  $splunkos          = $::splunk::splunkos
+  $splunkarch        = $::splunk::splunkarch
+  $source            = $::splunk::params::source
+  $splunkhome        = $::splunk::splunkhome
+  $my_perms          = "${::splunk::splunk_user}:${::splunk::splunk_group}"
+  $cacert            = $::splunk::params::cacert
+  $privkey           = $::splunk::params::privkey
+  $servercert        = $::splunk::params::servercert
+  $webcert           = $::splunk::params::webcert
+  $managesecret      = $::splunk::params::managesecret
+  $adminpass         = $::splunk::params::adminpass
+  $id                = $::splunk::params::shcluster_id
+  $confdeploy        = $::splunk::params::search_deploy
+  $repl_port         = $::splunk::params::repl_port
+  $repl_count        = $::splunk::params::repl_count
+  $shcluster_mode    = $::splunk::params::shcluster_mode
+  $shcluster_label   = $::splunk::params::shcluster_label
+  $is_captain        = $::splunk::params::is_captain
+  $shcluster_members = $::splunk::params::shcluster_members
+  $symmkey           = $::splunk::params::symmkey
 
   if $type != 'forwarder' {
     file { $splunkhome:
@@ -353,6 +362,32 @@ file_line { 'splunk-status':
     }
 
     if ($type == 'search') or ($type == 'standalone') {
+
+      if shcluster_mode == 'peer' {
+        if is_captain == true {
+          $shcluster_members.each |String $member| {
+            $servers_list = "${servers_list}.${member}:8089"
+          }
+
+          exec { 'bootstrap_cluster':
+            command => "splunk bootstrap shcluster-captain -servers_list \"${servers_list}\" -auth admin:changeme",
+            path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
+            cwd     => $::splunk::install_path,
+            user    => $::splunk::splunk_user,
+            unless  => "grep -q id ${::splunk::splunkhome}/etc/system/local/server.conf",
+            group   => $::splunk::splunk_group
+          }
+        } else {
+          exec { 'join_cluster':
+            command => "splunk init shcluster-config -auth admin:changeme -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} -secret ${symmkey} -shcluster_label ${shcluster_label}",
+            path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
+            cwd     => $::splunk::install_path,
+            user    => $::splunk::splunk_user,
+            unless  => "grep -q id ${::splunk::splunkhome}/etc/system/local/server.conf",
+            group   => $::splunk::splunk_group
+          }
+        }
+      }
 
       if $::osfamily == 'RedHat' {
 
