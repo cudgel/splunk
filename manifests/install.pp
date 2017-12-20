@@ -382,13 +382,12 @@ file_line { 'splunk-status':
       if $shcluster_mode == 'peer' {
         unless $shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/ {
           exec { 'changedAdminPass_do':
-            command     => 'splunk edit user admin -password changed -auth admin:changeme',
-            environment => "export SPLUNK_HOME=${::splunk::splunkdir}",
-            user        => $::splunk::splunk_user,
-            group       => $::splunk::splunk_group,
-            cwd         => $::splunk::install_path,
-            path        => "${::splunk::splunkdir}/bin:/bin:/usr/bin:",
-            require     => File["${::splunk::local_path}/server.d"]
+            command => 'splunk edit user admin -password changed -auth admin:changeme',
+            user    => $::splunk::splunk_user,
+            group   => $::splunk::splunk_group,
+            cwd     => $::splunk::install_path,
+            path    => "${::splunk::splunkdir}/bin:/bin:/usr/bin:",
+            require => [ File["${::splunk::local_path}/server.d"], File["${splunk_home}/.bashrc.custom"] ]
           }
 
           if $is_captain == true {
@@ -420,7 +419,6 @@ file_line { 'splunk-status':
 
           exec { 'changedAdminPass_undo':
             command     => 'splunk edit user admin -password changme -auth admin:changed',
-            environment => "export SPLUNK_HOME=${::splunk::splunkdir}",
             user        => $::splunk::splunk_user,
             group       => $::splunk::splunk_group,
             cwd         => $::splunk::install_path,
