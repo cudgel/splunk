@@ -21,6 +21,7 @@
 #
 class splunk::install($type=$type)
 {
+  $splunk_home       = $::splunk_home
   $sourcepart        = $::splunk::sourcepart
   # currently installed version from fact
   $current_version   = $::splunk::current_version
@@ -56,6 +57,20 @@ class splunk::install($type=$type)
       group  => $::splunk::splunk_group,
       mode   => '0750'
     }
+  }
+
+  $bashrc = "
+  SPLUNK_HOME = ${::splunkdir}
+  export SPLUNK_HOME
+  PATH= \$SPLUNK_HOME/bin:\$PATH
+  export \$PATH
+  "
+
+  file { "${splunk_home}/.bashrc.custom":
+    owner   => $::splunk::splunk_user,
+    group   => $::splunk::splunk_group,
+    require => User[$::splunk::splunk_user],
+    content => $bashrc
   }
 
 
@@ -368,7 +383,7 @@ file_line { 'splunk-status':
         unless $shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/ {
           exec { 'changedAdminPass_do':
             command     => 'splunk edit user admin -password changed -auth admin:changeme',
-            environment => 'export SPLUNK_HOME=$HOME',
+            environment => "export SPLUNK_HOME=${::splunk::splunkdir}",
             user        => $::splunk::splunk_user,
             group       => $::splunk::splunk_group,
             cwd         => $::splunk::install_path,
@@ -405,7 +420,7 @@ file_line { 'splunk-status':
 
           exec { 'changedAdminPass_undo':
             command     => 'splunk edit user admin -password changme -auth admin:changed',
-            environment => 'export SPLUNK_HOME=$HOME',
+            environment => "export SPLUNK_HOME=${::splunk::splunkdir}",
             user        => $::splunk::splunk_user,
             group       => $::splunk::splunk_group,
             cwd         => $::splunk::install_path,
