@@ -381,7 +381,7 @@ file_line { 'splunk-status':
             }
           } else {
             exec { 'join_cluster':
-              command => "splunk init shcluster-config -auth admin:changeme -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} -secret ${symmkey} -shcluster_label ${shcluster_label}; splunk restart",
+              command => "splunk init shcluster-config -auth admin:changeme -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} -secret ${symmkey} -shcluster_label ${shcluster_label} && splunk restart",
               path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
               timeout => 600,
               cwd     => $::splunk::install_path,
@@ -440,28 +440,32 @@ file_line { 'splunk-status':
         require => Exec['test_for_splunk']
       }
 
-      file { "${::splunk::local_path}/server.d/998_shclustering":
-        ensure => absent
-      }
+      if $shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/ {
+        # if clustering has already been set up, manage configs
+        file { "${::splunk::local_path}/server.d/996_shclustering":
+          owner   => $::splunk::splunk_user,
+          group   => $::splunk::splunk_group,
+          require => File["${::splunk::local_path}/server.d"],
+          content => template("${module_name}/shclustering.erb"),
+          notify  => Exec['update-server']
+        }
 
-      file { "${::splunk::local_path}/server.d/997_shclustering":
-        ensure => absent
-      }
+        file { "${::splunk::local_path}/server.d/995_replication":
+          owner   => $::splunk::splunk_user,
+          group   => $::splunk::splunk_group,
+          require => File["${::splunk::local_path}/server.d"],
+          content => template("${module_name}/replication.erb"),
+          notify  => Exec['update-server']
+        }
+      } else {
+        # remove any fragments from unconfigure shc member or standalone
+        file { "${::splunk::local_path}/server.d/996_shclustering":
+          ensure => absent
+        }
 
-      file { "${::splunk::local_path}/server.d/996_shclustering":
-        owner   => $::splunk::splunk_user,
-        group   => $::splunk::splunk_group,
-        require => File["${::splunk::local_path}/server.d"],
-        content => template("${module_name}/shclustering.erb"),
-        notify  => Exec['update-server']
-      }
-
-      file { "${::splunk::local_path}/server.d/995_replication":
-        owner   => $::splunk::splunk_user,
-        group   => $::splunk::splunk_group,
-        require => File["${::splunk::local_path}/server.d"],
-        content => template("${module_name}/replication.erb"),
-        notify  => Exec['update-server']
+        file { "${::splunk::local_path}/server.d/995_replication":
+          ensure => absent
+        }
       }
     }
   }
