@@ -366,6 +366,12 @@ file_line { 'splunk-status':
 
       if $shcluster_mode == 'peer' {
         unless $shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/ {
+          exec { 'changedAdminPass_do':
+            command => 'splunk edit user admin -password changed -auth admin:changeme',
+            path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:"
+          }
+
+
           if $is_captain == true {
             $shcluster_members.each |String $member| {
               $servers_list = "${servers_list}.${member}:8089"
@@ -377,7 +383,8 @@ file_line { 'splunk-status':
               cwd     => $::splunk::install_path,
               user    => $::splunk::splunk_user,
               group   => $::splunk::splunk_group,
-              require => Exec['test_for_splunk']
+              require => [ Exec['test_for_splunk'], Exec['changedAdminPass_do'] ],
+              notify  => Exec['changedAdminPass_undo']
             }
           } else {
             exec { 'join_cluster':
@@ -387,9 +394,16 @@ file_line { 'splunk-status':
               cwd     => $::splunk::install_path,
               user    => $::splunk::splunk_user,
               group   => $::splunk::splunk_group,
-              require => Exec['test_for_splunk']
+              require => [ Exec['test_for_splunk'], Exec['changedAdminPass_do'] ],
+              notify  => Exec['changedAdminPass_undo']
             }
           }
+
+          exec { 'changedAdminPass_undo':
+            command => 'splunk edit user admin -password changme -auth admin:changed',
+            path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:"
+          }
+
         }
       }
 
