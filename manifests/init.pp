@@ -46,7 +46,6 @@ class splunk($type='forwarder') {
   $current_version = $::splunk_version
   # cluster id from initialized cluster
   $shcluster_id    = $::splunk_shcluster_id
-  # splunk user home dir from fact
   $serviceurl      = $::splunk::params::serviceurl
   $splunkos        = $::splunk::params::splunkos
   $splunkarch      = $::splunk::params::splunkarch

@@ -21,6 +21,7 @@
 #
 class splunk::install($type=$type)
 {
+  # splunk user home dir from fact
   $splunk_home       = $::splunk_home
   $sourcepart        = $::splunk::sourcepart
   # currently installed version from fact
