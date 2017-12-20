@@ -363,8 +363,8 @@ file_line { 'splunk-status':
 
     if ($type == 'search') or ($type == 'standalone') {
 
-      if shcluster_mode == 'peer' {
-        if is_captain == true {
+      if $shcluster_mode == 'peer' {
+        if $is_captain == true {
           $shcluster_members.each |String $member| {
             $servers_list = "${servers_list}.${member}:8089"
           }
@@ -374,16 +374,17 @@ file_line { 'splunk-status':
             path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
             cwd     => $::splunk::install_path,
             user    => $::splunk::splunk_user,
-            unless  => "grep -q id ${::splunk::splunkhome}/etc/system/local/server.conf",
+            unless  => "splunk show shcluster-status -auth admin:changeme | grep id | cut -d':' -f2 | tr -d '[:space:]'",
             group   => $::splunk::splunk_group
           }
         } else {
           exec { 'join_cluster':
-            command => "splunk init shcluster-config -auth admin:changeme -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} -secret ${symmkey} -shcluster_label ${shcluster_label}",
+            command => "splunk init shcluster-config -auth admin:changeme -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} -secret ${symmkey} -shcluster_label ${shcluster_label}; splunk restart",
             path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
+            timeout => 600,
             cwd     => $::splunk::install_path,
             user    => $::splunk::splunk_user,
-            unless  => "grep -q id ${::splunk::splunkhome}/etc/system/local/server.conf",
+            unless  => "splunk show shcluster-status -auth admin:changeme | grep id | cut -d':' -f2 | tr -d '[:space:]'",
             group   => $::splunk::splunk_group
           }
         }
