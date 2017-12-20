@@ -368,6 +368,7 @@ file_line { 'splunk-status':
         unless $shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/ {
           exec { 'changedAdminPass_do':
             command => 'splunk edit user admin -password changed -auth admin:changeme',
+            user    => $::splunk::splunk_user,
             path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:"
           }
 
@@ -401,6 +402,7 @@ file_line { 'splunk-status':
 
           exec { 'changedAdminPass_undo':
             command => 'splunk edit user admin -password changme -auth admin:changed',
+            user    => $::splunk::splunk_user,
             path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:"
           }
 
