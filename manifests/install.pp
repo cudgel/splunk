@@ -365,7 +365,7 @@ file_line { 'splunk-status':
     if ($type == 'search') or ($type == 'standalone') {
 
       if $shcluster_mode == 'peer' {
-        if $shcluster_id == undef {
+        unless $shcluster_id == /\w{8}-(?:\w{4}-){3}\w{12}/ {
           if $is_captain == true {
             $shcluster_members.each |String $member| {
               $servers_list = "${servers_list}.${member}:8089"
