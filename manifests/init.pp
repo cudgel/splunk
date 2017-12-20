@@ -44,6 +44,8 @@ class splunk($type='forwarder') {
   $install_path    = $::splunk::params::install_path
   # currently installed version from fact
   $current_version = $::splunk_version
+  # cluster id from initialized cluster
+  $shcluster_id    = $::splunk_shcluster_id
   $serviceurl      = $::splunk::params::serviceurl
   $splunkos        = $::splunk::params::splunkos
   $splunkarch      = $::splunk::params::splunkarch
