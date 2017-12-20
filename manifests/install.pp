@@ -372,7 +372,8 @@ file_line { 'splunk-status':
             user        => $::splunk::splunk_user,
             group       => $::splunk::splunk_group,
             cwd         => $::splunk::install_path,
-            path        => "${::splunk::splunkdir}/bin:/bin:/usr/bin:"
+            path        => "${::splunk::splunkdir}/bin:/bin:/usr/bin:",
+            require     => File["${::splunk::local_path}/server.d"]
           }
 
           if $is_captain == true {
@@ -408,7 +409,8 @@ file_line { 'splunk-status':
             user        => $::splunk::splunk_user,
             group       => $::splunk::splunk_group,
             cwd         => $::splunk::install_path,
-            path        => "${::splunk::splunkdir}/bin:/bin:/usr/bin:"
+            path        => "${::splunk::splunkdir}/bin:/bin:/usr/bin:",
+            refreshonly => true
           }
 
         }
