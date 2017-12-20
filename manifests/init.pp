@@ -66,10 +66,10 @@ class splunk($type='forwarder') {
     $sourcepart = 'splunk'
   }
 
-  $splunkhome    = "${install_path}/${sourcepart}"
-  $capath        = "${splunkhome}/etc/auth"
-  $local_path    = "${splunkhome}/etc/system/local"
-  $splunkdb      = "${splunkhome}/var/lib/splunk"
+  $splunkdir    = "${install_path}/${sourcepart}"
+  $capath        = "${splunkdir}/etc/auth"
+  $local_path    = "${splunkdir}/etc/system/local"
+  $splunkdb      = "${splunkdir}/var/lib/splunk"
   $apppart       = "${sourcepart}-${new_version}-${splunkos}-${splunkarch}"
   $splunk_bundle = "${sourcepart}-${new_version}-Linux-x86_64.tgz"
   $manifest      = "${apppart}-manifest"

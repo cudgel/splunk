@@ -30,7 +30,7 @@ class splunk::install($type=$type)
   $splunkos          = $::splunk::splunkos
   $splunkarch        = $::splunk::splunkarch
   $source            = $::splunk::params::source
-  $splunkhome        = $::splunk::splunkhome
+  $splunkdir         = $::splunk::splunkdir
   $my_perms          = "${::splunk::splunk_user}:${::splunk::splunk_group}"
   $cacert            = $::splunk::params::cacert
   $privkey           = $::splunk::params::privkey
@@ -50,7 +50,7 @@ class splunk::install($type=$type)
   $symmkey           = $::splunk::params::symmkey
 
   if $type != 'forwarder' {
-    file { $splunkhome:
+    file { $splunkdir:
       ensure => directory,
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
@@ -91,21 +91,21 @@ class splunk::install($type=$type)
       exec { 'unpackSplunk':
         before    => Exec['test_for_splunk'],
         command   => "${::splunk::params::tarcmd} ${::splunk::splunk_bundle}",
-        path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
+        path      => "${::splunk::splunkdir}/bin:/bin:/usr/bin:",
         cwd       => $::splunk::install_path,
         subscribe => File["${::splunk::install_path}/${::splunk::splunk_bundle}"],
         timeout   => 600,
-        unless    => "test -e ${::splunk::splunkhome}/${::splunk::manifest}",
+        unless    => "test -e ${::splunk::splunkdir}/${::splunk::manifest}",
         onlyif    => "test -s ${::splunk::splunk_bundle} \
-        && test -d ${::splunk::splunkhome}",
-        creates   => "${::splunk::splunkhome}/${::splunk::manifest}",
+        && test -d ${::splunk::splunkdir}",
+        creates   => "${::splunk::splunkdir}/${::splunk::manifest}",
         user      => $::splunk::splunk_user,
         group     => $::splunk::splunk_group
       }
 
       exec { 'serviceStart':
         command     => "${stopcmd}; ${startcmd}",
-        path        => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
+        path        => "${::splunk::splunkdir}/bin:/bin:/usr/bin:",
         subscribe   => Exec['unpackSplunk'],
         refreshonly => true,
         user        => $::splunk::splunk_user,
@@ -114,7 +114,7 @@ class splunk::install($type=$type)
 
       exec { 'installSplunkService':
         command   => 'splunk enable boot-start',
-        path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
+        path      => "${::splunk::splunkdir}/bin:/bin:/usr/bin:",
         subscribe => Exec['unpackSplunk'],
         unless    => 'test -e /etc/init.d/splunk',
         creates   => '/etc/init.d/splunk'
@@ -127,52 +127,52 @@ class splunk::install($type=$type)
 
   if ($type == 'forwarder') and ($adminpass != 'changeme')  {
     exec { 'changeAdminPass':
-      command => "splunk edit user admin -password ${adminpass} -auth admin:changeme && touch ${::splunk::splunkhome}/.admin_pass",
-      path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
-      unless  => "test -e ${::splunk::splunkhome}/.admin_pass",
-      creates => "${::splunk::splunkhome}/.admin_pass"
+      command => "splunk edit user admin -password ${adminpass} -auth admin:changeme && touch ${::splunk::splunkdir}/.admin_pass",
+      path    => "${::splunk::splunkdir}/bin:/bin:/usr/bin:",
+      unless  => "test -e ${::splunk::splunkdir}/.admin_pass",
+      creates => "${::splunk::splunkdir}/.admin_pass"
     }
   }
 
   exec { 'test_for_splunk':
-    command => "test -d ${::splunk::splunkhome}/etc",
-    path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
+    command => "test -d ${::splunk::splunkdir}/etc",
+    path    => "${::splunk::splunkdir}/bin:/bin:/usr/bin:",
     cwd     => $::splunk::install_path,
     user    => $::splunk::splunk_user,
-    unless  => "test -d ${::splunk::splunkhome}/etc",
+    unless  => "test -d ${::splunk::splunkdir}/etc",
     group   => $::splunk::splunk_group
   }
 
 
 file_line { 'splunk-start':
   path    => '/etc/init.d/splunk',
-  line    => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" start --no-prompt --answer-yes\'",
-  match   => "^\ \ \"${::splunk::splunkhome}/bin/splunk\" start",
+  line    => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkdir}/bin/splunk\" start --no-prompt --answer-yes\'",
+  match   => "^\ \ \"${::splunk::splunkdir}/bin/splunk\" start",
   require => Exec['test_for_splunk']
 }
 
 file_line { 'splunk-stop':
   path    => '/etc/init.d/splunk',
-  line    => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" stop\'",
-  match   => "^\ \ \"${::splunk::splunkhome}/bin/splunk\" stop",
+  line    => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkdir}/bin/splunk\" stop\'",
+  match   => "^\ \ \"${::splunk::splunkdir}/bin/splunk\" stop",
   require => Exec['test_for_splunk']
 }
 
 file_line { 'splunk-restart':
   path    => '/etc/init.d/splunk',
-  line    => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" restart\'",
-  match   => "^\ \ \"${::splunk::splunkhome}/bin/splunk\" restart",
+  line    => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkdir}/bin/splunk\" restart\'",
+  match   => "^\ \ \"${::splunk::splunkdir}/bin/splunk\" restart",
   require => Exec['test_for_splunk']
 }
 
 file_line { 'splunk-status':
   path    => '/etc/init.d/splunk',
-  line    => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkhome}/bin/splunk\" status\'",
-  match   => "^\ \ \"${::splunk::splunkhome}/bin/splunk\" status",
+  line    => "  su - ${::splunk::splunk_user} -c \'\"${::splunk::splunkdir}/bin/splunk\" status\'",
+  match   => "^\ \ \"${::splunk::splunkdir}/bin/splunk\" status",
   require => Exec['test_for_splunk']
 }
 
-  file { "${::splunk::splunkhome}/etc/splunk-launch.conf":
+  file { "${::splunk::splunkdir}/etc/splunk-launch.conf":
     owner   => $::splunk::splunk_user,
     group   => $::splunk::splunk_group,
     content => template("${module_name}/splunk-launch.conf.erb"),
@@ -181,7 +181,7 @@ file_line { 'splunk-status':
   }
 
   if $cacert != 'cacert.pem' {
-    file { "${::splunk::splunkhome}/etc/auth/${cacert}":
+    file { "${::splunk::splunkdir}/etc/auth/${cacert}":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_group,
       mode    => '0640',
@@ -192,7 +192,7 @@ file_line { 'splunk-status':
   }
 
   if $privkey != 'privkey.pem' {
-    file { "${::splunk::splunkhome}/etc/auth/splunkweb/${privkey}":
+    file { "${::splunk::splunkdir}/etc/auth/splunkweb/${privkey}":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_group,
       mode    => '0640',
@@ -203,7 +203,7 @@ file_line { 'splunk-status':
   }
 
   if $servercert != 'server.pem' {
-    file { "${::splunk::splunkhome}/etc/auth/${servercert}":
+    file { "${::splunk::splunkdir}/etc/auth/${servercert}":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_group,
       mode    => '0640',
@@ -214,7 +214,7 @@ file_line { 'splunk-status':
   }
 
   if $webcert != 'cert.pem' {
-    file { "${::splunk::splunkhome}/etc/auth/splunkweb/${webcert}":
+    file { "${::splunk::splunkdir}/etc/auth/splunkweb/${webcert}":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_group,
       mode    => '0640',
@@ -225,11 +225,11 @@ file_line { 'splunk-status':
   }
 
   if $managesecret == true {
-    file { "${::splunk::splunkhome}/etc/splunk.secret":
+    file { "${::splunk::splunkdir}/etc/splunk.secret":
       ensure => absent
     }
 
-    file { "${::splunk::splunkhome}/etc/auth/splunk.secret":
+    file { "${::splunk::splunkdir}/etc/auth/splunk.secret":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_group,
       mode    => '0640',
@@ -367,11 +367,12 @@ file_line { 'splunk-status':
       if $shcluster_mode == 'peer' {
         unless $shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/ {
           exec { 'changedAdminPass_do':
-            command => 'splunk edit user admin -password h@sb33nch@ng3d -auth admin:changeme',
-            user    => $::splunk::splunk_user,
-            group   => $::splunk::splunk_group,
-            cwd     => $::splunk::install_path,
-            path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:"
+            command     => 'splunk edit user admin -password changed -auth admin:changeme',
+            environment => 'SPLUNK_HOME=$HOME',
+            user        => $::splunk::splunk_user,
+            group       => $::splunk::splunk_group,
+            cwd         => $::splunk::install_path,
+            path        => "${::splunk::splunkdir}/bin:/bin:/usr/bin:"
           }
 
           if $is_captain == true {
@@ -380,8 +381,8 @@ file_line { 'splunk-status':
             }
 
             exec { 'bootstrap_cluster':
-              command => "splunk bootstrap shcluster-captain -servers_list \"${servers_list}\" -auth admin:h@sb33nch@ng3d",
-              path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
+              command => "splunk bootstrap shcluster-captain -servers_list \"${servers_list}\" -auth admin:changed",
+              path    => "${::splunk::splunkdir}/bin:/bin:/usr/bin:",
               cwd     => $::splunk::install_path,
               user    => $::splunk::splunk_user,
               group   => $::splunk::splunk_group,
@@ -391,7 +392,7 @@ file_line { 'splunk-status':
           } else {
             exec { 'join_cluster':
               command => "splunk init shcluster-config -auth admin:changed -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} -secret ${symmkey} -shcluster_label ${shcluster_label} && splunk restart",
-              path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
+              path    => "${::splunk::splunkdir}/bin:/bin:/usr/bin:",
               timeout => 600,
               cwd     => $::splunk::install_path,
               user    => $::splunk::splunk_user,
@@ -402,11 +403,12 @@ file_line { 'splunk-status':
           }
 
           exec { 'changedAdminPass_undo':
-            command => 'splunk edit user admin -password changme -auth admin:changed',
-            user    => $::splunk::splunk_user,
-            group   => $::splunk::splunk_group,
-            cwd     => $::splunk::install_path,
-            path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:"
+            command     => 'splunk edit user admin -password changme -auth admin:changed',
+            environment => 'SPLUNK_HOME=$HOME',
+            user        => $::splunk::splunk_user,
+            group       => $::splunk::splunk_group,
+            cwd         => $::splunk::install_path,
+            path        => "${::splunk::splunkdir}/bin:/bin:/usr/bin:"
           }
 
         }
