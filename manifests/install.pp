@@ -369,9 +369,10 @@ file_line { 'splunk-status':
           exec { 'changedAdminPass_do':
             command => 'splunk edit user admin -password changed -auth admin:changeme',
             user    => $::splunk::splunk_user,
+            group   => $::splunk::splunk_group,
+            cwd     => $::splunk::install_path,
             path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:"
           }
-
 
           if $is_captain == true {
             $shcluster_members.each |String $member| {
@@ -403,6 +404,8 @@ file_line { 'splunk-status':
           exec { 'changedAdminPass_undo':
             command => 'splunk edit user admin -password changme -auth admin:changed',
             user    => $::splunk::splunk_user,
+            group   => $::splunk::splunk_group,
+            cwd     => $::splunk::install_path,
             path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:"
           }
 
