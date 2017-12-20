@@ -378,7 +378,7 @@ file_line { 'splunk-status':
             }
 
             exec { 'bootstrap_cluster':
-              command => "splunk bootstrap shcluster-captain -servers_list \"${servers_list}\" -auth admin:changeme",
+              command => "splunk bootstrap shcluster-captain -servers_list \"${servers_list}\" -auth admin:changed",
               path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
               cwd     => $::splunk::install_path,
               user    => $::splunk::splunk_user,
@@ -388,7 +388,7 @@ file_line { 'splunk-status':
             }
           } else {
             exec { 'join_cluster':
-              command => "splunk init shcluster-config -auth admin:changeme -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} -secret ${symmkey} -shcluster_label ${shcluster_label} && splunk restart",
+              command => "splunk init shcluster-config -auth admin:changed -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} -secret ${symmkey} -shcluster_label ${shcluster_label} && splunk restart",
               path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
               timeout => 600,
               cwd     => $::splunk::install_path,
@@ -474,11 +474,13 @@ file_line { 'splunk-status':
       } else {
         # remove any fragments from unconfigure shc member or standalone
         file { "${::splunk::local_path}/server.d/996_shclustering":
-          ensure => absent
+          ensure => absent,
+          notify => Exec['update-server']
         }
 
         file { "${::splunk::local_path}/server.d/995_replication":
-          ensure => absent
+          ensure => absent,
+          notify => Exec['update-server']
         }
       }
     }
