@@ -376,8 +376,8 @@ file_line { 'splunk-status':
               path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
               cwd     => $::splunk::install_path,
               user    => $::splunk::splunk_user,
-              unless  => "splunk show shcluster-status -auth admin:changeme | grep id | cut -d':' -f2 | tr -d '[:space:]'",
-              group   => $::splunk::splunk_group
+              group   => $::splunk::splunk_group,
+              require => Exec['test_for_splunk']
             }
           } else {
             exec { 'join_cluster':
@@ -386,8 +386,8 @@ file_line { 'splunk-status':
               timeout => 600,
               cwd     => $::splunk::install_path,
               user    => $::splunk::splunk_user,
-              unless  => "splunk show shcluster-status -auth admin:changeme | grep id | cut -d':' -f2 | tr -d '[:space:]'",
-              group   => $::splunk::splunk_group
+              group   => $::splunk::splunk_group,
+              require => Exec['test_for_splunk']
             }
           }
         }
