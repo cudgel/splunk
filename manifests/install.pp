@@ -477,7 +477,7 @@ file_line { 'splunk-status':
         require => Exec['test_for_splunk']
       }
 
-      if $shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/ {
+      if ($shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/) or ($shcluster_mode == 'deployer') {
         # if clustering has already been set up, manage configs
         file { "${::splunk::local_path}/server.d/996_shclustering":
           owner   => $::splunk::splunk_user,
