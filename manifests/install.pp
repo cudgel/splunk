@@ -367,7 +367,7 @@ file_line { 'splunk-status':
       if $shcluster_mode == 'peer' {
         unless $shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/ {
           exec { 'changedAdminPass_do':
-            command => 'splunk edit user admin -password changed -auth admin:changeme',
+            command => 'splunk edit user admin -password h@sb33nch@ng3d -auth admin:changeme',
             user    => $::splunk::splunk_user,
             group   => $::splunk::splunk_group,
             cwd     => $::splunk::install_path,
@@ -380,7 +380,7 @@ file_line { 'splunk-status':
             }
 
             exec { 'bootstrap_cluster':
-              command => "splunk bootstrap shcluster-captain -servers_list \"${servers_list}\" -auth admin:changed",
+              command => "splunk bootstrap shcluster-captain -servers_list \"${servers_list}\" -auth admin:h@sb33nch@ng3d",
               path    => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
               cwd     => $::splunk::install_path,
               user    => $::splunk::splunk_user,
