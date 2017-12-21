@@ -394,7 +394,7 @@ file_line { 'splunk-status':
             cwd         => $splunkdir,
             user        => $splunk_user,
             group       => $splunk_group,
-            require     => [ File["${splunk_local}/server.d"], File["${splunk_home}/.bashrc.custom"] ]
+            require     => [ File["${splunk_local}/server.d"], File["${splunk_home}/.bashrc.custom"], Service['splunk'] ]
           }
 
           exec { 'join_cluster':
