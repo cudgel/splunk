@@ -104,7 +104,8 @@ export PATH
         $new_install = true
       }
 
-      $newsource   = "${sourcepart}-${current_version}-${splunkos}-${splunkarch}.${splunkext}"
+      $newsource   = "${sourcepart}-${new_version}-${splunkos}-${splunkarch}.${splunkext}"
+
       splunk::fetch{ 'sourcefile':
         splunk_bundle => $newsource,
         type          => $type,
