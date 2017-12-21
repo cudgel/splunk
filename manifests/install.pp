@@ -23,7 +23,7 @@ class splunk::install($type=$type)
 {
   # splunk user home dir from fact
   $splunk_home       = $::splunk::splunk_home
-  $install_path      = $::spunk::instal
+  $install_path      = $::spunk::install_path
   # where splunk is installed
   $splunkdir         = $::splunk::splunkdir
   $splunk_local      = "${splunkdir}/etc/system/local"
