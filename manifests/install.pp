@@ -392,14 +392,15 @@ file_line { 'splunk-status':
           }
 
           exec { 'join_cluster':
-            command => "splunk init shcluster-config -auth admin:changed -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} -secret ${symmkey} -shcluster_label ${shcluster_label} && splunk restart",
-            path    => "${::splunk::splunkdir}/bin:/bin:/usr/bin:",
-            timeout => 600,
-            cwd     => $::splunk::install_path,
-            user    => $::splunk::splunk_user,
-            group   => $::splunk::splunk_group,
-            require => [ Exec['test_for_splunk'], Exec['changedAdminPass_do'] ],
-            notify  => Exec['changedAdminPass_undo']
+            command     => "splunk init shcluster-config -auth admin:changed -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} -secret ${symmkey} -shcluster_label ${shcluster_label} && splunk restart",
+            path        => "${::splunk::splunkdir}/bin:/bin:/usr/bin:",
+            cwd         => $::splunk::install_path,
+            environment => "SPLUNK_HOME=${::splunk::splunkdir}",
+            timeout     => 600,
+            user        => $::splunk::splunk_user,
+            group       => $::splunk::splunk_group,
+            require     => [ Exec['test_for_splunk'], Exec['changedAdminPass_do'] ],
+            notify      => Exec['changedAdminPass_undo']
           }
 
           if $is_captain == true {
@@ -420,10 +421,11 @@ file_line { 'splunk-status':
 
           exec { 'changedAdminPass_undo':
             command     => 'splunk edit user admin -password changme -auth admin:changed',
+            path        => "${::splunk::splunkdir}/bin:/bin:/usr/bin:",
+            cwd         => $::splunk::install_path,
+            environment => "SPLUNK_HOME=${::splunk::splunkdir}",
             user        => $::splunk::splunk_user,
             group       => $::splunk::splunk_group,
-            cwd         => $::splunk::install_path,
-            path        => "${::splunk::splunkdir}/bin:/bin:/usr/bin:",
             require     => [ Exec['test_for_splunk'], Exec['changedAdminPass_do'] ],
             refreshonly => true
           }
