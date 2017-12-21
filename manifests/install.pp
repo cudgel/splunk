@@ -405,13 +405,14 @@ file_line { 'splunk-status':
           # }
 
           exec { 'join_cluster':
-            command => "splunk init shcluster-config -auth admin:changme -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} -secret ${symmkey} -shcluster_label ${shcluster_label} && splunk restart",
-            path    => "${splunkdir}/bin:/bin:/usr/bin:",
-            cwd     => $splunkdir,
-            timeout => 600,
-            user    => $splunk_user,
-            group   => $splunk_group,
-            require => Exec['test_for_splunk']
+            command     => "splunk init shcluster-config -auth admin:changme -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} -secret ${symmkey} -shcluster_label ${shcluster_label} && splunk restart",
+            environment => "SPLUNK_HOME=${splunkdir}",
+            path        => "${splunkdir}/bin:/bin:/usr/bin:",
+            cwd         => $splunkdir,
+            timeout     => 600,
+            user        => $splunk_user,
+            group       => $splunk_group,
+            require     => [ Exec['test_for_splunk'], Exec['test_for_service'] ]
           }
 
           if $is_captain == true {
@@ -420,12 +421,13 @@ file_line { 'splunk-status':
             }
 
             exec { 'bootstrap_cluster':
-              command => "splunk bootstrap shcluster-captain -servers_list \"${servers_list}\" -auth admin:changme",
-              path    => "${splunkdir}/bin:/bin:/usr/bin:",
-              cwd     => $splunkdir,
-              user    => $splunk_user,
-              group   => $splunk_group,
-              require => Exec['test_for_splunk']
+              command     => "splunk bootstrap shcluster-captain -servers_list \"${servers_list}\" -auth admin:changme",
+              environment => "SPLUNK_HOME=${splunkdir}",
+              path        => "${splunkdir}/bin:/bin:/usr/bin:",
+              cwd         => $splunkdir,
+              user        => $splunk_user,
+              group       => $splunk_group,
+              require     => [ Exec['test_for_splunk'], Exec['test_for_service'] ]
             }
           }
 
