@@ -1,0 +1,30 @@
+<%
+  fqdn = scope['::fqdn']
+  id = scope['::splunk::params::shcluster_id']
+  confdeploy = scope['::splunk::params::search_deploy']
+  shcluster_mode = scope['::splunk::params::shcluster_mode']
+  shcluster_label = scope['::splunk::params::shcluster_label']
+  symmkey = scope['::splunk::params::symmkey']
+  preferred_captain = scope['::splunk::params::preferred_captain']
+  adhoc_searchhead = scope['::splunk::params::adhoc_searchhead']
+%>
+<% if shcluster_mode == 'peer' %>
+[shclustering]
+disabled = false
+<% if id != nil -%>
+id = <%= id %>
+<% end -%>
+conf_deploy_fetch_url = https://<%= confdeploy %>
+conf_replication_include.mobile_access = true
+conf_replication_include.mobile_access_users = true
+conf_replication_include.mobile_access_settings = true
+mgmt_uri = https://<%= fqdn %>:8089
+pass4SymmKey = <%= symmkey %>
+shcluster_label = <%= shcluster_label %>
+adhoc_searchhead = <%= adhoc_searchhead %>
+preferred_captain = <%= preferred_captain %>
+<% elsif shcluster_mode == 'deployer' -%>
+[shclustering]
+shcluster_label = <%= shcluster_label %>
+<% end %>
+

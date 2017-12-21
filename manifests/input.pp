@@ -25,7 +25,7 @@ define splunk::input(
   if $content != undef {
     $mycontent = $content
   } else {
-    $mycontent = template("${module_name}/input.erb")
+    $mycontent = template("${module_name}/inputs.d/input.erb")
     if $inputtype == 'monitor' {
       splunk::acl { $title:
         target   => $target,

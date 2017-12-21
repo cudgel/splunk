@@ -61,10 +61,10 @@ class splunk::install($type=$type)
   }
 
   $bashrc = "
-  SPLUNK_HOME = ${::splunkdir}
-  export SPLUNK_HOME
-  PATH= \$SPLUNK_HOME/bin:\$PATH
-  export \$PATH
+SPLUNK_HOME=${splunkdir}
+export SPLUNK_HOME
+PATH=\$SPLUNK_HOME/bin:\$PATH
+export PATH
   "
 
   file { "${splunk_home}/.bashrc.custom":
@@ -267,7 +267,7 @@ file_line { 'splunk-status':
     owner   => $::splunk::splunk_user,
     group   => $::splunk::splunk_group,
     require => File["${::splunk::local_path}/inputs.d"],
-    content => template("${module_name}/default_inputs.erb")
+    content => template("${module_name}/inputs.d/default_inputs.erb")
   }
 
   if $type != 'forwarder' {
@@ -284,7 +284,7 @@ file_line { 'splunk-status':
       file { "${::splunk::local_path}/outputs.d/000_default":
         owner   => $::splunk::splunk_user,
         group   => $::splunk::splunk_group,
-        content => template("${module_name}/outputs.erb"),
+        content => template("${module_name}/outputs.d/outputs.erb"),
         require => File["${::splunk::local_path}/outputs.d"],
         notify  => Exec['update-outputs']
       }
@@ -305,16 +305,16 @@ file_line { 'splunk-status':
     file { "${::splunk::local_path}/server.d/000_header":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_group,
-      require => File["${::splunk::local_path}/server.d"],
       content => '# DO NOT EDIT -- Managed by Puppet',
+      require => File["${::splunk::local_path}/server.d"],
       notify  => Exec['update-server']
     }
 
     file { "${::splunk::local_path}/server.d/001_license":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_group,
-      require => File["${::splunk::local_path}/server.d"],
-      content => template("${module_name}/license.erb")
+      content => template("${module_name}/server.d/license.erb"),
+      require => File["${::splunk::local_path}/server.d"]
     }
 
     file { "${::splunk::local_path}/server.d/999_ixclustering":
@@ -328,24 +328,24 @@ file_line { 'splunk-status':
     file { "${::splunk::local_path}/server.d/997_ixclustering":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_group,
+      content => template("${module_name}/server.d/ixclustering.erb"),
       require => File["${::splunk::local_path}/server.d"],
-      content => template("${module_name}/ixclustering.erb"),
       notify  => Exec['update-server']
     }
 
     file { "${::splunk::local_path}/server.d/998_ssl":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_group,
+      content => template("${module_name}/server.d/ssl_server.erb"),
       require => File["${::splunk::local_path}/server.d"],
-      content => template("${module_name}/ssl_server.erb"),
       notify  => Exec['update-server']
     }
 
     file { "${::splunk::local_path}/server.d/999_default":
       owner   => $::splunk::splunk_user,
       group   => $::splunk::splunk_group,
+      content => template("${module_name}/server.d/default_server.erb"),
       require => File["${::splunk::local_path}/server.d"],
-      content => template("${module_name}/default_server.erb"),
       notify  => Exec['update-server']
     }
 
@@ -363,7 +363,7 @@ file_line { 'splunk-status':
       file { "${::splunk::local_path}/inputs.d/999_splunktcp":
         owner   => $::splunk::splunk_user,
         group   => $::splunk::splunk_group,
-        content => template("${module_name}/splunktcp.erb"),
+        content => template("${module_name}/inputs.d/splunktcp.erb"),
         require => File["${::splunk::local_path}/inputs.d"],
         notify  => Exec['update-inputs']
       }
@@ -371,8 +371,8 @@ file_line { 'splunk-status':
       file { "${::splunk::local_path}/server.d/995_replication":
         owner   => $::splunk::splunk_user,
         group   => $::splunk::splunk_group,
+        content => template("${module_name}/server.d/replication.erb"),
         require => File["${::splunk::local_path}/server.d"],
-        content => template("${module_name}/replication.erb"),
         notify  => Exec['update-server']
       }
 
@@ -424,6 +424,7 @@ file_line { 'splunk-status':
             group       => $::splunk::splunk_group,
             cwd         => $::splunk::install_path,
             path        => "${::splunk::splunkdir}/bin:/bin:/usr/bin:",
+            require     => [ Exec['test_for_splunk'], Exec['changedAdminPass_do'] ],
             refreshonly => true
           }
 
@@ -431,16 +432,20 @@ file_line { 'splunk-status':
       }
 
       if $::osfamily == 'RedHat' {
-
         # support PDF Report Server
         package { [
           'xorg-x11-server-Xvfb',
           'liberation-mono-fonts',
           'liberation-sans-fonts',
           'liberation-serif-fonts' ]:
-          ensure => installed,
+          ensure => installed
         }
-
+      } elsif $::osfamily == 'Debian' {
+        package { [
+          'xvfb',
+          'fonts-liberation' ]:
+          ensure => installed
+        }
       }
 
       file { "${::splunk::local_path}/default-mode.conf":
@@ -483,7 +488,7 @@ file_line { 'splunk-status':
           owner   => $::splunk::splunk_user,
           group   => $::splunk::splunk_group,
           require => File["${::splunk::local_path}/server.d"],
-          content => template("${module_name}/shclustering.erb"),
+          content => template("${module_name}/server.d/shclustering.erb"),
           notify  => Exec['update-server']
         }
 
@@ -491,7 +496,7 @@ file_line { 'splunk-status':
           owner   => $::splunk::splunk_user,
           group   => $::splunk::splunk_group,
           require => File["${::splunk::local_path}/server.d"],
-          content => template("${module_name}/replication.erb"),
+          content => template("${module_name}/server.d/replication.erb"),
           notify  => Exec['update-server']
         }
       } else {
