@@ -392,8 +392,6 @@ file_line { 'splunk-status':
             environment => "SPLUNK_HOME=${splunkdir}",
             path        => "${splunkdir}/bin:/bin:/usr/bin:",
             cwd         => $splunkdir,
-            user        => $splunk_user,
-            group       => $splunk_group,
             require     => [ File["${splunk_local}/server.d"], File["${splunk_home}/.bashrc.custom"], Service['splunk'] ]
           }
 
@@ -429,8 +427,6 @@ file_line { 'splunk-status':
             environment => "SPLUNK_HOME=${splunkdir}",
             path        => "${splunkdir}/bin:/bin:/usr/bin:",
             cwd         => $splunkdir,
-            user        => $splunk_user,
-            group       => $splunk_group,
             require     => [ Exec['test_for_splunk'], Exec['changedAdminPass_do'] ],
             refreshonly => true
           }
