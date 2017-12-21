@@ -222,10 +222,10 @@ file_line { 'splunk-status':
 
   if $privkey != 'privkey.pem' {
     file { "${splunkdir}/etc/auth/splunkweb/${privkey}":
+      source  => "puppet:///splunk_files/auth/splunkweb/${privkey}",
       owner   => $splunk_user,
       group   => $splunk_group,
       mode    => '0640',
-      source  => "puppet:///splunk_files/auth/splunkweb/${privkey}",
       notify  => Service[splunk],
       require => Exec['test_for_splunk']
     }
@@ -233,10 +233,10 @@ file_line { 'splunk-status':
 
   if $servercert != 'server.pem' {
     file { "${splunkdir}/etc/auth/${servercert}":
+      source  => "puppet:///splunk_files/auth/${servercert}",
       owner   => $splunk_user,
       group   => $splunk_group,
       mode    => '0640',
-      source  => "puppet:///splunk_files/auth/${servercert}",
       notify  => Service[splunk],
       require => Exec['test_for_splunk']
     }
@@ -244,10 +244,10 @@ file_line { 'splunk-status':
 
   if $webcert != 'cert.pem' {
     file { "${splunkdir}/etc/auth/splunkweb/${webcert}":
+      source  => "puppet:///splunk_files/auth/splunkweb/${webcert}",
       owner   => $splunk_user,
       group   => $splunk_group,
       mode    => '0640',
-      source  => "puppet:///splunk_files/auth/splunkweb/${webcert}",
       notify  => Service[splunk],
       require => Exec['test_for_splunk']
     }
@@ -259,10 +259,10 @@ file_line { 'splunk-status':
     }
 
     file { "${splunkdir}/etc/auth/splunk.secret":
+      source  => 'puppet:///splunk_files/splunk.secret',
       owner   => $splunk_user,
       group   => $splunk_group,
       mode    => '0640',
-      source  => 'puppet:///splunk_files/splunk.secret',
       notify  => Service[splunk],
       require => Exec['test_for_splunk']
     }
@@ -277,10 +277,10 @@ file_line { 'splunk-status':
   }
 
   file { "${splunk_local}/inputs.d/000_default":
+    content => template("${module_name}/inputs.d/default_inputs.erb"),
     owner   => $splunk_user,
     group   => $splunk_group,
-    require => File["${splunk_local}/inputs.d"],
-    content => template("${module_name}/inputs.d/default_inputs.erb")
+    require => File["${splunk_local}/inputs.d"]
   }
 
   if $type != 'forwarder' {
@@ -295,9 +295,9 @@ file_line { 'splunk-status':
       }
 
       file { "${splunk_local}/outputs.d/000_default":
+        content => template("${module_name}/outputs.d/outputs.erb"),
         owner   => $splunk_user,
         group   => $splunk_group,
-        content => template("${module_name}/outputs.d/outputs.erb"),
         require => File["${splunk_local}/outputs.d"],
         notify  => Exec['update-outputs']
       }
@@ -316,75 +316,67 @@ file_line { 'splunk-status':
     }
 
     file { "${splunk_local}/server.d/000_header":
+      content => '# DO NOT EDIT -- Managed by Puppet',
       owner   => $splunk_user,
       group   => $splunk_group,
-      content => '# DO NOT EDIT -- Managed by Puppet',
       require => File["${splunk_local}/server.d"],
       notify  => Exec['update-server']
     }
 
     file { "${splunk_local}/server.d/001_license":
+      content => template("${module_name}/server.d/license.erb"),
       owner   => $splunk_user,
       group   => $splunk_group,
-      content => template("${module_name}/server.d/license.erb"),
       require => File["${splunk_local}/server.d"]
     }
 
-    file { "${splunk_local}/server.d/999_ixclustering":
-      ensure => absent
-    }
-
-    file { "${splunk_local}/server.d/998_ixclustering":
-      ensure => absent
-    }
-
     file { "${splunk_local}/server.d/997_ixclustering":
+      content => template("${module_name}/server.d/ixclustering.erb"),
       owner   => $splunk_user,
       group   => $splunk_group,
-      content => template("${module_name}/server.d/ixclustering.erb"),
       require => File["${splunk_local}/server.d"],
       notify  => Exec['update-server']
     }
 
     file { "${splunk_local}/server.d/998_ssl":
+      content => template("${module_name}/server.d/ssl_server.erb"),
       owner   => $splunk_user,
       group   => $splunk_group,
-      content => template("${module_name}/server.d/ssl_server.erb"),
       require => File["${splunk_local}/server.d"],
       notify  => Exec['update-server']
     }
 
     file { "${splunk_local}/server.d/999_default":
+      content => template("${module_name}/server.d/default_server.erb"),
       owner   => $splunk_user,
       group   => $splunk_group,
-      content => template("${module_name}/server.d/default_server.erb"),
       require => File["${splunk_local}/server.d"],
       notify  => Exec['update-server']
     }
 
     file { "${splunk_local}/web.conf":
+      content => template("${module_name}/web.conf.erb"),
+      alias   => 'splunk-web',
       owner   => $splunk_user,
       group   => $splunk_user,
-      content => template("${module_name}/web.conf.erb"),
-      notify  => Service[splunk],
-      alias   => 'splunk-web',
-      require => Exec['test_for_splunk']
+      require => Exec['test_for_splunk'],
+      notify  => Service[splunk]
     }
 
     if $type == 'indexer' {
 
       file { "${splunk_local}/inputs.d/999_splunktcp":
+        content => template("${module_name}/inputs.d/splunktcp.erb"),
         owner   => $splunk_user,
         group   => $splunk_group,
-        content => template("${module_name}/inputs.d/splunktcp.erb"),
         require => File["${splunk_local}/inputs.d"],
         notify  => Exec['update-inputs']
       }
 
       file { "${splunk_local}/server.d/995_replication":
+        content => template("${module_name}/server.d/replication.erb"),
         owner   => $splunk_user,
         group   => $splunk_group,
-        content => template("${module_name}/server.d/replication.erb"),
         require => File["${splunk_local}/server.d"],
         notify  => Exec['update-server']
       }
@@ -396,24 +388,24 @@ file_line { 'splunk-status':
       if $shcluster_mode == 'peer' {
         unless $shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/ {
           exec { 'changedAdminPass_do':
-            command => 'splunk edit user admin -password changed -auth admin:changeme',
-            user    => $splunk_user,
-            group   => $splunk_group,
-            cwd     => $splunkdir,
-            path    => "${splunkdir}/bin:/bin:/usr/bin:",
-            require => [ File["${splunk_local}/server.d"], File["${splunk_home}/.bashrc.custom"] ]
+            command     => 'splunk edit user admin -password changed -auth admin:changeme',
+            environment => "SPLUNK_HOME=${splunkdir}",
+            path        => "${splunkdir}/bin:/bin:/usr/bin:",
+            cwd         => $splunkdir,
+            user        => $splunk_user,
+            group       => $splunk_group,
+            require     => [ File["${splunk_local}/server.d"], File["${splunk_home}/.bashrc.custom"] ]
           }
 
           exec { 'join_cluster':
-            command     => "splunk init shcluster-config -auth admin:changed -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} -secret ${symmkey} -shcluster_label ${shcluster_label} && splunk restart",
-            path        => "${splunkdir}/bin:/bin:/usr/bin:",
-            cwd         => $splunkdir,
-            environment => "SPLUNK_HOME=${splunkdir}",
-            timeout     => 600,
-            user        => $splunk_user,
-            group       => $splunk_group,
-            require     => [ Exec['test_for_splunk'], Exec['changedAdminPass_do'] ],
-            notify      => Exec['changedAdminPass_undo']
+            command => "splunk init shcluster-config -auth admin:changed -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} -secret ${symmkey} -shcluster_label ${shcluster_label} && splunk restart",
+            path    => "${splunkdir}/bin:/bin:/usr/bin:",
+            cwd     => $splunkdir,
+            timeout => 600,
+            user    => $splunk_user,
+            group   => $splunk_group,
+            require => [ Exec['test_for_splunk'], Exec['changedAdminPass_do'] ],
+            notify  => Exec['changedAdminPass_undo']
           }
 
           if $is_captain == true {
@@ -434,9 +426,9 @@ file_line { 'splunk-status':
 
           exec { 'changedAdminPass_undo':
             command     => 'splunk edit user admin -password changme -auth admin:changed',
+            environment => "SPLUNK_HOME=${splunkdir}",
             path        => "${splunkdir}/bin:/bin:/usr/bin:",
             cwd         => $splunkdir,
-            environment => "SPLUNK_HOME=${splunkdir}",
             user        => $splunk_user,
             group       => $splunk_group,
             require     => [ Exec['test_for_splunk'], Exec['changedAdminPass_do'] ],
@@ -464,35 +456,35 @@ file_line { 'splunk-status':
       }
 
       file { "${splunk_local}/default-mode.conf":
+        alias   => 'splunk-mode',
+        content => template("${module_name}/default-mode.conf.erb"),
         owner   => $splunk_user,
         group   => $splunk_user,
-        content => template("${module_name}/default-mode.conf.erb"),
         notify  => Service[splunk],
-        alias   => 'splunk-mode',
         require => Exec['test_for_splunk']
       }
 
       file { "${splunk_local}/alert_actions.conf":
+        alias   => 'alert-actions',
+        content => template("${module_name}/alert_actions.conf.erb"),
         owner   => $splunk_user,
         group   => $splunk_user,
-        content => template("${module_name}/alert_actions.conf.erb"),
         notify  => Service[splunk],
-        alias   => 'alert-actions',
         require => Exec['test_for_splunk']
       }
 
       file { "${splunk_local}/ui-prefs.conf":
+        content => template("${module_name}/ui-prefs.conf.erb"),
         owner   => $splunk_user,
         group   => $splunk_user,
-        content => template("${module_name}/ui-prefs.conf.erb"),
         notify  => Service['splunk'],
         require => Exec['test_for_splunk']
       }
 
       file { "${splunk_local}/limits.conf":
+        content => template("${module_name}/limits.conf.erb"),
         owner   => $splunk_user,
         group   => $splunk_user,
-        content => template("${module_name}/limits.conf.erb"),
         notify  => Service[splunk],
         require => Exec['test_for_splunk']
       }
@@ -500,18 +492,18 @@ file_line { 'splunk-status':
       if ($shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/) or ($shcluster_mode == 'deployer') {
         # if clustering has already been set up, manage configs
         file { "${splunk_local}/server.d/996_shclustering":
+          content => template("${module_name}/server.d/shclustering.erb"),
           owner   => $splunk_user,
           group   => $splunk_group,
           require => File["${splunk_local}/server.d"],
-          content => template("${module_name}/server.d/shclustering.erb"),
           notify  => Exec['update-server']
         }
 
         file { "${splunk_local}/server.d/995_replication":
+          content => template("${module_name}/server.d/replication.erb"),
           owner   => $splunk_user,
           group   => $splunk_group,
           require => File["${splunk_local}/server.d"],
-          content => template("${module_name}/server.d/replication.erb"),
           notify  => Exec['update-server']
         }
       } else {
