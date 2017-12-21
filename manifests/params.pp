@@ -48,6 +48,8 @@ class splunk::params
   $shcluster_label      = hiera('splunk::params::shcluster_label', undef)
   $server_site          = hiera('splunk::params::server_site', 'default')
   $is_captain           = hiera('splunk::params::is_captain', false)
+  $preferred_captain       = hiera('splunk::params::preferred_captain', false)
+  $adhoc_searchhead                = hiera('splunk::params::adhoc_searchhead', false)
   $shcluster_members    = hiera_array('splunk::params::shcluster_members', undef)
   # license
   $license_master       = hiera('splunk::params::license_master', undef)

@@ -5,6 +5,8 @@
   shcluster_mode = scope['::splunk::params::shcluster_mode']
   shcluster_label = scope['::splunk::params::shcluster_label']
   symmkey = scope['::splunk::params::symmkey']
+  preferred_captain = scope['::splunk::params::preferred_captain']
+  adhoc_searchhead = scope['::splunk::params::adhoc_searchhead']
 %>
 <% if shcluster_mode == 'peer' %>
 [shclustering]
@@ -19,7 +21,10 @@ conf_replication_include.mobile_access_settings = true
 mgmt_uri = https://<%= fqdn %>:8089
 pass4SymmKey = <%= symmkey %>
 shcluster_label = <%= shcluster_label %>
+adhoc_searchhead = <%= adhoc_searchhead %>
+preferred_captain = <%= preferred_captain %>
 <% elsif shcluster_mode == 'deployer' -%>
 [shclustering]
 shcluster_label = <%= shcluster_label %>
 <% end %>
+
