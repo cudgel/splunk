@@ -172,43 +172,33 @@ export PATH
     unless  => "test -d ${splunkdir}/etc"
   }
 
-  exec { 'test_for_service':
-    command => "test -e ${splunkdir}/var/run/splunk/splunkd.pid",
-    path    => "${splunkdir}/bin:/bin:/usr/bin:",
-    cwd     => $install_path,
-    user    => $splunk_user,
-    group   => $splunk_group,
-    unless  => "test -e ${splunkdir}/var/run/splunk/splunkd.pid"
+  file_line { 'splunk-start':
+    path    => '/etc/init.d/splunk',
+    line    => "  su - ${splunk_user} -c \'\"${splunkdir}/bin/splunk\" start --no-prompt --answer-yes\'",
+    match   => "^\ \ \"${splunkdir}/bin/splunk\" start",
+    require => Exec['test_for_splunk']
   }
 
+  file_line { 'splunk-stop':
+    path    => '/etc/init.d/splunk',
+    line    => "  su - ${splunk_user} -c \'\"${splunkdir}/bin/splunk\" stop\'",
+    match   => "^\ \ \"${splunkdir}/bin/splunk\" stop",
+    require => Exec['test_for_splunk']
+  }
 
-file_line { 'splunk-start':
-  path    => '/etc/init.d/splunk',
-  line    => "  su - ${splunk_user} -c \'\"${splunkdir}/bin/splunk\" start --no-prompt --answer-yes\'",
-  match   => "^\ \ \"${splunkdir}/bin/splunk\" start",
-  require => Exec['test_for_splunk']
-}
+  file_line { 'splunk-restart':
+    path    => '/etc/init.d/splunk',
+    line    => "  su - ${splunk_user} -c \'\"${splunkdir}/bin/splunk\" restart\'",
+    match   => "^\ \ \"${splunkdir}/bin/splunk\" restart",
+    require => Exec['test_for_splunk']
+  }
 
-file_line { 'splunk-stop':
-  path    => '/etc/init.d/splunk',
-  line    => "  su - ${splunk_user} -c \'\"${splunkdir}/bin/splunk\" stop\'",
-  match   => "^\ \ \"${splunkdir}/bin/splunk\" stop",
-  require => Exec['test_for_splunk']
-}
-
-file_line { 'splunk-restart':
-  path    => '/etc/init.d/splunk',
-  line    => "  su - ${splunk_user} -c \'\"${splunkdir}/bin/splunk\" restart\'",
-  match   => "^\ \ \"${splunkdir}/bin/splunk\" restart",
-  require => Exec['test_for_splunk']
-}
-
-file_line { 'splunk-status':
-  path    => '/etc/init.d/splunk',
-  line    => "  su - ${splunk_user} -c \'\"${splunkdir}/bin/splunk\" status\'",
-  match   => "^\ \ \"${splunkdir}/bin/splunk\" status",
-  require => Exec['test_for_splunk']
-}
+  file_line { 'splunk-status':
+    path    => '/etc/init.d/splunk',
+    line    => "  su - ${splunk_user} -c \'\"${splunkdir}/bin/splunk\" status\'",
+    match   => "^\ \ \"${splunkdir}/bin/splunk\" status",
+    require => Exec['test_for_splunk']
+  }
 
   file { "${splunkdir}/etc/splunk-launch.conf":
     content => template("${module_name}/splunk-launch.conf.erb"),
@@ -395,7 +385,17 @@ file_line { 'splunk-status':
     if ($type == 'search') or ($type == 'standalone') {
 
       if $shcluster_mode == 'peer' {
+
         unless $shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/ {
+          exec { 'test_for_service':
+            command => "test -e ${splunkdir}/var/run/splunk/splunkd.pid",
+            path    => "${splunkdir}/bin:/bin:/usr/bin:",
+            cwd     => $install_path,
+            user    => $splunk_user,
+            group   => $splunk_group,
+            unless  => "test -e ${splunkdir}/var/run/splunk/splunkd.pid"
+          }
+
           # exec { 'changedAdminPass_do':
           #   command     => 'splunk edit user admin -password changed -auth admin:changeme',
           #   environment => "SPLUNK_HOME=${splunkdir}",
