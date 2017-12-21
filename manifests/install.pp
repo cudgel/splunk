@@ -172,6 +172,15 @@ export PATH
     unless  => "test -d ${splunkdir}/etc"
   }
 
+  exec { 'test_for_service':
+    command => "test -e ${splunkdir}/var/run/splunk/splunkd.pid",
+    path    => "${splunkdir}/bin:/bin:/usr/bin:",
+    cwd     => $install_path,
+    user    => $splunk_user,
+    group   => $splunk_group,
+    unless  => "test -e ${splunkdir}/var/run/splunk/splunkd.pid"
+  }
+
 
 file_line { 'splunk-start':
   path    => '/etc/init.d/splunk',
@@ -392,7 +401,7 @@ file_line { 'splunk-status':
             environment => "SPLUNK_HOME=${splunkdir}",
             path        => "${splunkdir}/bin:/bin:/usr/bin:",
             cwd         => $splunkdir,
-            require     => [ File["${splunk_local}/server.d"], File["${splunk_home}/.bashrc.custom"], Service['splunk'] ]
+            require     => [ File["${splunk_local}/server.d"], File["${splunk_home}/.bashrc.custom"], Exec['test_for_service'] ]
           }
 
           exec { 'join_cluster':
