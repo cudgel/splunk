@@ -66,13 +66,11 @@ class splunk($type='forwarder') {
     $sourcepart = 'splunk'
   }
 
-  $splunkdir    = "${install_path}/${sourcepart}"
+  $splunkdir     = "${install_path}/${sourcepart}"
   $capath        = "${splunkdir}/etc/auth"
   $local_path    = "${splunkdir}/etc/system/local"
   $splunkdb      = "${splunkdir}/var/lib/splunk"
-  $apppart       = "${sourcepart}-${new_version}-${splunkos}-${splunkarch}"
-  $splunk_bundle = "${sourcepart}-${new_version}-Linux-x86_64.tgz"
-  $manifest      = "${apppart}-manifest"
+  $manifest       = "${sourcepart}-${new_version}-${splunkos}-${splunkarch}-manifest"
 
   class { 'splunk::install': type => $type }-> class { 'splunk::service': }
   # configure deployment server for indexers and forwarders
