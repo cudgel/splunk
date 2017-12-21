@@ -3,7 +3,8 @@
 class splunk::service inherits ::splunk {
   service { 'splunk':
     ensure  => 'running',
+    alias   => 'splunk-service',
     enable  => true,
-    require => Class['::splunk::install']
+    require => File['/etc/init.d/splunk']
   }
 }
