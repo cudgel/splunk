@@ -391,6 +391,17 @@ file_line { 'splunk-status':
             require => [ File["${::splunk::local_path}/server.d"], File["${splunk_home}/.bashrc.custom"] ]
           }
 
+          exec { 'join_cluster':
+            command => "splunk init shcluster-config -auth admin:changed -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} -secret ${symmkey} -shcluster_label ${shcluster_label} && splunk restart",
+            path    => "${::splunk::splunkdir}/bin:/bin:/usr/bin:",
+            timeout => 600,
+            cwd     => $::splunk::install_path,
+            user    => $::splunk::splunk_user,
+            group   => $::splunk::splunk_group,
+            require => [ Exec['test_for_splunk'], Exec['changedAdminPass_do'] ],
+            notify  => Exec['changedAdminPass_undo']
+          }
+
           if $is_captain == true {
             $shcluster_members.each |String $member| {
               $servers_list = "${servers_list}.${member}:8089"
@@ -399,17 +410,6 @@ file_line { 'splunk-status':
             exec { 'bootstrap_cluster':
               command => "splunk bootstrap shcluster-captain -servers_list \"${servers_list}\" -auth admin:changed",
               path    => "${::splunk::splunkdir}/bin:/bin:/usr/bin:",
-              cwd     => $::splunk::install_path,
-              user    => $::splunk::splunk_user,
-              group   => $::splunk::splunk_group,
-              require => [ Exec['test_for_splunk'], Exec['changedAdminPass_do'] ],
-              notify  => Exec['changedAdminPass_undo']
-            }
-          } else {
-            exec { 'join_cluster':
-              command => "splunk init shcluster-config -auth admin:changed -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} -secret ${symmkey} -shcluster_label ${shcluster_label} && splunk restart",
-              path    => "${::splunk::splunkdir}/bin:/bin:/usr/bin:",
-              timeout => 600,
               cwd     => $::splunk::install_path,
               user    => $::splunk::splunk_user,
               group   => $::splunk::splunk_group,
