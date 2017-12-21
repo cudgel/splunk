@@ -42,8 +42,8 @@ class splunk::install($type=$type)
   $manifest          = $::splunk::manifest
   # splunk (web) or fileserver or a custom url
   $source            = $::splunk::params::source
-  $splunk_user       = $::splunk::user
-  $splunk_group      = $::splunk::group
+  $splunk_user       = $::splunk::splunk_user
+  $splunk_group      = $::splunk::splunk_group
   $my_perms          = "${::splunk_user}:${::splunk_group}"
   $cacert            = $::splunk::params::cacert
   $privkey           = $::splunk::params::privkey
