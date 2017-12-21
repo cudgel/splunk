@@ -396,23 +396,22 @@ file_line { 'splunk-status':
 
       if $shcluster_mode == 'peer' {
         unless $shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/ {
-          exec { 'changedAdminPass_do':
-            command     => 'splunk edit user admin -password changed -auth admin:changeme',
-            environment => "SPLUNK_HOME=${splunkdir}",
-            path        => "${splunkdir}/bin:/bin:/usr/bin:",
-            cwd         => $splunkdir,
-            require     => [ File["${splunk_local}/server.d"], File["${splunk_home}/.bashrc.custom"], Exec['test_for_service'] ]
-          }
+          # exec { 'changedAdminPass_do':
+          #   command     => 'splunk edit user admin -password changed -auth admin:changeme',
+          #   environment => "SPLUNK_HOME=${splunkdir}",
+          #   path        => "${splunkdir}/bin:/bin:/usr/bin:",
+          #   cwd         => $splunkdir,
+          #   require     => [ File["${splunk_local}/server.d"], File["${splunk_home}/.bashrc.custom"], Exec['test_for_service'] ]
+          # }
 
           exec { 'join_cluster':
-            command => "splunk init shcluster-config -auth admin:changed -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} -secret ${symmkey} -shcluster_label ${shcluster_label} && splunk restart",
+            command => "splunk init shcluster-config -auth admin:changme -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} -secret ${symmkey} -shcluster_label ${shcluster_label} && splunk restart",
             path    => "${splunkdir}/bin:/bin:/usr/bin:",
             cwd     => $splunkdir,
             timeout => 600,
             user    => $splunk_user,
             group   => $splunk_group,
-            require => [ Exec['test_for_splunk'], Exec['changedAdminPass_do'] ],
-            notify  => Exec['changedAdminPass_undo']
+            require => Exec['test_for_splunk']
           }
 
           if $is_captain == true {
@@ -421,24 +420,23 @@ file_line { 'splunk-status':
             }
 
             exec { 'bootstrap_cluster':
-              command => "splunk bootstrap shcluster-captain -servers_list \"${servers_list}\" -auth admin:changed",
+              command => "splunk bootstrap shcluster-captain -servers_list \"${servers_list}\" -auth admin:changme",
               path    => "${splunkdir}/bin:/bin:/usr/bin:",
               cwd     => $splunkdir,
               user    => $splunk_user,
               group   => $splunk_group,
-              require => [ Exec['test_for_splunk'], Exec['changedAdminPass_do'] ],
-              notify  => Exec['changedAdminPass_undo']
+              require => Exec['test_for_splunk']
             }
           }
 
-          exec { 'changedAdminPass_undo':
-            command     => 'splunk edit user admin -password changme -auth admin:changed',
-            environment => "SPLUNK_HOME=${splunkdir}",
-            path        => "${splunkdir}/bin:/bin:/usr/bin:",
-            cwd         => $splunkdir,
-            require     => [ Exec['test_for_splunk'], Exec['changedAdminPass_do'] ],
-            refreshonly => true
-          }
+          # exec { 'changedAdminPass_undo':
+          #   command     => 'splunk edit user admin -password changme -auth admin:changed',
+          #   environment => "SPLUNK_HOME=${splunkdir}",
+          #   path        => "${splunkdir}/bin:/bin:/usr/bin:",
+          #   cwd         => $splunkdir,
+          #   require     => [ Exec['test_for_splunk'], Exec['changedAdminPass_do'] ],
+          #   refreshonly => true
+          # }
 
         }
       }
