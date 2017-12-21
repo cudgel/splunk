@@ -23,6 +23,7 @@ class splunk::install($type=$type)
 {
   # splunk user home dir from fact
   $splunk_home       = $::splunk::splunk_home
+  $install_path      = $::spunk::instal
   # where splunk is installed
   $splunkdir         = $::splunk::splunkdir
   $splunk_local      = "${splunkdir}/etc/system/local"
@@ -97,7 +98,7 @@ export PATH
       if $current_version != undef {
         $oldsource = "${sourcepart}-${current_version}-${splunkos}-${splunkarch}.${splunkext}"
 
-        file { "${::splunk::install_path}/${oldsource}":
+        file { "${install_path}/${oldsource}":
           ensure => absent
         }
       } else {
@@ -119,11 +120,11 @@ export PATH
 
         command   => "${tarcmd} ${newsource}",
         path      => "${splunkdir}/bin:/bin:/usr/bin:",
-        cwd       => $splunkdir,
+        cwd       => $install_path,
         timeout   => 600,
         user      => $splunk_user,
         group     => $splunk_group,
-        subscribe => File["${splunkdir}/${newsource}"],
+        subscribe => File["${install_path}/${newsource}"],
         before    => Exec['test_for_splunk'],
         unless    => "test -e ${splunkdir}/${manifest}",
         onlyif    => "test -s ${newsource} \
@@ -165,7 +166,7 @@ export PATH
   exec { 'test_for_splunk':
     command => "test -d ${splunkdir}/etc",
     path    => "${splunkdir}/bin:/bin:/usr/bin:",
-    cwd     => $splunkdir,
+    cwd     => $install_path,
     user    => $splunk_user,
     group   => $splunk_group,
     unless  => "test -d ${splunkdir}/etc"
