@@ -387,22 +387,6 @@ export PATH
       if $shcluster_mode == 'peer' {
 
         unless $shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/ {
-          exec { 'test_for_service':
-            command => "test -e ${splunkdir}/var/run/splunk/splunkd.pid",
-            path    => "${splunkdir}/bin:/bin:/usr/bin:",
-            cwd     => $install_path,
-            user    => $splunk_user,
-            group   => $splunk_group,
-            unless  => "test -e ${splunkdir}/var/run/splunk/splunkd.pid"
-          }
-
-          # exec { 'changedAdminPass_do':
-          #   command     => 'splunk edit user admin -password changed -auth admin:changeme',
-          #   environment => "SPLUNK_HOME=${splunkdir}",
-          #   path        => "${splunkdir}/bin:/bin:/usr/bin:",
-          #   cwd         => $splunkdir,
-          #   require     => [ File["${splunk_local}/server.d"], File["${splunk_home}/.bashrc.custom"], Exec['test_for_service'] ]
-          # }
 
           exec { 'join_cluster':
             command     => "splunk init shcluster-config -auth admin:changme -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} -secret ${symmkey} -shcluster_label ${shcluster_label} && splunk restart",
@@ -412,7 +396,8 @@ export PATH
             timeout     => 600,
             user        => $splunk_user,
             group       => $splunk_group,
-            require     => [ Exec['test_for_splunk'], Exec['test_for_service'] ]
+            onlyif      => 'splunk status',
+            require     => Exec['test_for_splunk']
           }
 
           if $is_captain == true {
@@ -427,18 +412,10 @@ export PATH
               cwd         => $splunkdir,
               user        => $splunk_user,
               group       => $splunk_group,
-              require     => [ Exec['test_for_splunk'], Exec['test_for_service'] ]
+              onlyif      => 'splunk status',
+              require     => Exec['test_for_splunk']
             }
           }
-
-          # exec { 'changedAdminPass_undo':
-          #   command     => 'splunk edit user admin -password changme -auth admin:changed',
-          #   environment => "SPLUNK_HOME=${splunkdir}",
-          #   path        => "${splunkdir}/bin:/bin:/usr/bin:",
-          #   cwd         => $splunkdir,
-          #   require     => [ Exec['test_for_splunk'], Exec['changedAdminPass_do'] ],
-          #   refreshonly => true
-          # }
 
         }
       }
