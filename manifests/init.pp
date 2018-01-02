@@ -33,10 +33,11 @@
 #
 # Copyright 2017 Christopher Caldwell
 #
-class splunk($type='forwarder') {
+class splunk {
 
   include splunk::params
 
+  $type            = $::splunk::params::type
   $environment     = $::splunk::params::environment
   $maj_version     = $::splunk::params::version
   $release         = $::splunk::params::release
