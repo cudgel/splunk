@@ -37,7 +37,6 @@ class splunk($type='forwarder') {
 
   include splunk::params
 
-  $type            = $type
   $environment     = $::splunk::params::environment
   $version         = $::splunk::params::version
   $release         = $::splunk::params::release
