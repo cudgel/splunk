@@ -120,7 +120,7 @@ File["${local_path}/server.d/998_ssl"], File["${local_path}/server.d/999_default
 
   }
 
-  if $type == 'forwarder' and $environment == 'ci' {
-    class { 'splunk::test': }
-  }
+  # if $type == 'forwarder' and $environment == 'ci' {
+  #   class { 'splunk::test': }
+  # }
 }
