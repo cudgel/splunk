@@ -1,7 +1,8 @@
-Facter.add(:splunk_guid) do
-  guid = nil
-  guid = Facter::Util::Resolution.exec("grep guid /opt/splunk*/etc/instance.cfg | awk '{print $3}'")
+Facter.add(:splunk_home) do
+  home = nil
+  home = Facter::Util::Resolution.exec("getent passwd splunk | cut -d: -f6")
   setcode do
-    splunk_guid = guid
+    splunk_home = home
   end
 end
+

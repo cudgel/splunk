@@ -37,6 +37,7 @@ class splunk($type='forwarder') {
 
   include splunk::params
 
+  $environment     = $::splunk::params::environment
   $version         = $::splunk::params::version
   $release         = $::splunk::params::release
   $splunk_user     = $::splunk::params::splunk_user
@@ -52,6 +53,10 @@ class splunk($type='forwarder') {
   $splunkext       = $::splunk::params::splunkext
   $tar             = $::splunk::params::tar
   $tarcmd          = $::splunk::params::tarcmd
+
+  if $environment == 'ci' {
+   class { 'splunk::user': }
+  }
 
   # version to be installed
   if $release != undef {
@@ -113,5 +118,9 @@ File["${local_path}/server.d/998_ssl"], File["${local_path}/server.d/999_default
       notify      => Service[splunk]
     }
 
+  }
+
+  if $environment == 'ci' {
+   class { 'splunk::test': }
   }
 }
