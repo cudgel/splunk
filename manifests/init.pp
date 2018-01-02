@@ -38,7 +38,7 @@ class splunk($type='forwarder') {
   include splunk::params
 
   $environment     = $::splunk::params::environment
-  $version         = $::splunk::params::version
+  $maj_version     = $::splunk::params::version
   $release         = $::splunk::params::release
   $splunk_user     = $::splunk::params::splunk_user
   $splunk_group    = $::splunk::params::splunk_group
@@ -58,7 +58,7 @@ class splunk($type='forwarder') {
     class { 'splunk::user': }
   }
 
-  $new_version = "${version}-${release}"
+  $new_version = "${maj_version}-${release}"
 
   if $type == 'forwarder' {
     $sourcepart = 'splunkforwarder'
@@ -76,16 +76,8 @@ class splunk($type='forwarder') {
   # version-release, we cut the version from the string.
   $cut_version = regsubst($current_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
 
-  notify { 'cut version':
-    message => $cut_version
-  }
-
-  notify { 'version':
-    message => $version
-  }
-
-  if $version != $cut_version {
-    if versioncmp($version, $cut_version) > 0 {
+  if $maj_version != $cut_version {
+    if versioncmp($maj_version, $cut_version) > 0 {
       class { 'splunk::install': } -> class { 'splunk::config': } -> class { 'splunk::service': }
     }
   } else {
