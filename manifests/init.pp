@@ -55,7 +55,7 @@ class splunk($type='forwarder') {
   $tarcmd          = $::splunk::params::tarcmd
 
   if $environment == 'ci' {
-   class { 'splunk::user': }
+    class { 'splunk::user': }
   }
 
   # version to be installed
@@ -120,7 +120,7 @@ File["${local_path}/server.d/998_ssl"], File["${local_path}/server.d/999_default
 
   }
 
-  if $environment == 'ci' {
-   class { 'splunk::test': }
+  if $type == 'forwarder' and $environment == 'ci' {
+    class { 'splunk::test': }
   }
 }

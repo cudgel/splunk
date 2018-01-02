@@ -1,8 +1,6 @@
+# create inputs and apply acls on forwarders
+# for ci testing only
 class splunk::test {
-  $my_type = hiera('splunk::type', 'forwarder')
-
-  if $my_type != 'none' {
-    class { '::splunk': type => $my_type }
 
     # create OS, role, and host specific inputs
     $my_inputs = hiera_hash('splunk::inputs')
@@ -12,5 +10,4 @@ class splunk::test {
     # log access
     $my_acls = hiera_hash('splunk::acls')
     create_resources('splunk::acl', $my_acls)
-  }
 }
