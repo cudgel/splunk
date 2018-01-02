@@ -76,6 +76,14 @@ class splunk($type='forwarder') {
   # version-release, we cut the version from the string.
   $cut_version = regsubst($current_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
 
+  notify { 'cut version':
+    message => $cut_version
+  }
+
+  notify { 'version':
+    message => $version
+  }
+
   if $version != $cut_version {
     if versioncmp($version, $cut_version) > 0 {
       class { 'splunk::install': } -> class { 'splunk::config': } -> class { 'splunk::service': }
