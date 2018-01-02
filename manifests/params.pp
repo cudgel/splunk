@@ -9,8 +9,8 @@ class splunk::params
   $splunk_group         = hiera('splunk::params::splunk_group', 'splunk')
   $splunk_user          = hiera('splunk::params::splunk_user', 'splunk')
   $source               = hiera('splunk::params::source', 'splunk')
-  $version              = hiera('splunk::params::version', undef)
-  $release              = hiera('splunk::params::release', undef)
+  $version              = hiera('splunk::params::version')
+  $release              = hiera('splunk::params::release')
   $tcpout               = hiera('splunk::params::tcpout', undef)
   $email                = hiera('splunk::params::email', 'your Splunk administrator')
   # outputs
