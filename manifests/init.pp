@@ -44,8 +44,6 @@ class splunk {
   $splunk_user     = $::splunk::params::splunk_user
   $splunk_group    = $::splunk::params::splunk_group
   $install_path    = $::splunk::params::install_path
-  # currently installed version from fact
-  $current_version = $::splunk_version
   # cluster id from initialized cluster
   $shcluster_id    = $::splunk_shcluster_id
   $serviceurl      = $::splunk::params::serviceurl
@@ -73,9 +71,14 @@ class splunk {
   $splunkdb      = "${splunkdir}/var/lib/splunk"
   $manifest       = "${sourcepart}-${new_version}-${splunkos}-${splunkarch}-manifest"
 
+  # currently installed version from fact
+  $current_version = $::splunk_version
+  $cut_version = regsubst($current_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
   # because the legacy fact does not represent splunk version as
   # version-release, we cut the version from the string.
-  $cut_version = regsubst($current_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
+
+  notify { $maj_version: }
+  notify { $cut_version: }
 
   if $maj_version != $cut_version {
     if versioncmp($maj_version, $cut_version) > 0 {
