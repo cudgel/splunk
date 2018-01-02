@@ -37,6 +37,7 @@ class splunk($type='forwarder') {
 
   include splunk::params
 
+  $type            = $type
   $environment     = $::splunk::params::environment
   $version         = $::splunk::params::version
   $release         = $::splunk::params::release
@@ -58,12 +59,7 @@ class splunk($type='forwarder') {
     class { 'splunk::user': }
   }
 
-  # version to be installed
-  if $release != undef {
-    $new_version = "${version}-${release}"
-  } else {
-    $new_version = $version
-  }
+  $new_version = "${version}-${release}"
 
   if $type == 'forwarder' {
     $sourcepart = 'splunkforwarder'
@@ -77,7 +73,18 @@ class splunk($type='forwarder') {
   $splunkdb      = "${splunkdir}/var/lib/splunk"
   $manifest       = "${sourcepart}-${new_version}-${splunkos}-${splunkarch}-manifest"
 
-  class { 'splunk::install': type => $type }-> class { 'splunk::service': }
+  # because the legacy fact does not represent splunk version as
+  # version-release, we cut the version from the string.
+  $cut_version = regsubst($current_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
+
+  if $version != $cut_version {
+    if versioncmp($version, $cut_version) > 0 {
+      class { 'splunk::install': } -> class { 'splunk::config': } -> class { 'splunk::service': }
+    }
+  } else {
+    class { 'splunk::config': } -> class { 'splunk::service': }
+  }
+
   # configure deployment server for indexers and forwarders
   if $type == 'forwarder' or $type == 'heavyforwarder' {
     class { 'splunk::deployment': }
