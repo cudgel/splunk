@@ -38,7 +38,7 @@ class splunk {
   include splunk::params
 
   $type            = $::splunk::params::type
-  $environment     = $::splunk::params::environment
+  $splunk_env      = $::splunk::params::splunk_env
   $maj_version     = $::splunk::params::version
   $release         = $::splunk::params::release
   $splunk_user     = $::splunk::params::splunk_user
@@ -53,9 +53,9 @@ class splunk {
   $tar             = $::splunk::params::tar
   $tarcmd          = $::splunk::params::tarcmd
 
-  if $environment == 'ci' {
-    class { 'splunk::user': }
-  }
+  # if $splunk_env == 'ci' {
+  #   class { 'splunk::user': }
+  # }
 
   $new_version = "${maj_version}-${release}"
 
@@ -130,7 +130,7 @@ File["${local_path}/server.d/998_ssl"], File["${local_path}/server.d/999_default
 
   }
 
-  # if $type == 'forwarder' and $environment == 'ci' {
+  # if $type == 'forwarder' and $splunk_env == 'ci' {
   #   class { 'splunk::test': }
   # }
 }
