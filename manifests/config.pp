@@ -63,7 +63,6 @@ export PATH
   file { "${splunk_home}/.bashrc.custom":
     owner   => $splunk_user,
     group   => $splunk_group,
-    require => User[$splunk_user],
     content => $bashrc
   }
 
