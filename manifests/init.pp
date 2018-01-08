@@ -77,9 +77,6 @@ class splunk {
   # because the legacy fact does not represent splunk version as
   # version-release, we cut the version from the string.
 
-  notify { $maj_version: }
-  notify { $cut_version: }
-
   if $maj_version != $cut_version {
     if versioncmp($maj_version, $cut_version) > 0 {
       class { 'splunk::install': } -> class { 'splunk::config': } -> class { 'splunk::service': }
