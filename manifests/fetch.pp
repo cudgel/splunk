@@ -40,7 +40,7 @@ define splunk::fetch(
       cwd     => $::splunk::install_path,
       timeout => 600,
       creates => "${::splunk::install_path}/${splunk_bundle}",
-      onlyif  => 'wget --server-response https://www.splunk.com 2>&1'
+      onlyif  => 'wget --server-response https://www.splunk.com -O /dev/null 2>&1'
     }
 
     file{ "${::splunk::install_path}/${splunk_bundle}":
