@@ -33,18 +33,17 @@
 #
 # Copyright 2017 Christopher Caldwell
 #
-class splunk($type='forwarder') {
+class splunk {
 
   include splunk::params
 
-  $environment     = $::splunk::params::environment
-  $version         = $::splunk::params::version
+  $type            = $::splunk::params::type
+  $splunk_env      = $::splunk::params::splunk_env
+  $maj_version     = $::splunk::params::version
   $release         = $::splunk::params::release
   $splunk_user     = $::splunk::params::splunk_user
   $splunk_group    = $::splunk::params::splunk_group
   $install_path    = $::splunk::params::install_path
-  # currently installed version from fact
-  $current_version = $::splunk_version
   # cluster id from initialized cluster
   $shcluster_id    = $::splunk_shcluster_id
   $serviceurl      = $::splunk::params::serviceurl
@@ -54,16 +53,11 @@ class splunk($type='forwarder') {
   $tar             = $::splunk::params::tar
   $tarcmd          = $::splunk::params::tarcmd
 
-  if $environment == 'ci' {
-    class { 'splunk::user': }
-  }
+  # if $splunk_env == 'ci' {
+  #   class { 'splunk::user': }
+  # }
 
-  # version to be installed
-  if $release != undef {
-    $new_version = "${version}-${release}"
-  } else {
-    $new_version = $version
-  }
+  $new_version = "${maj_version}-${release}"
 
   if $type == 'forwarder' {
     $sourcepart = 'splunkforwarder'
@@ -77,7 +71,23 @@ class splunk($type='forwarder') {
   $splunkdb      = "${splunkdir}/var/lib/splunk"
   $manifest       = "${sourcepart}-${new_version}-${splunkos}-${splunkarch}-manifest"
 
-  class { 'splunk::install': type => $type }-> class { 'splunk::service': }
+  # currently installed version from fact
+  $current_version = $::splunk_version
+  $cut_version = regsubst($current_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
+  # because the legacy fact does not represent splunk version as
+  # version-release, we cut the version from the string.
+
+  notify { $maj_version: }
+  notify { $cut_version: }
+
+  if $maj_version != $cut_version {
+    if versioncmp($maj_version, $cut_version) > 0 {
+      class { 'splunk::install': } -> class { 'splunk::config': } -> class { 'splunk::service': }
+    }
+  } else {
+    class { 'splunk::config': } -> class { 'splunk::service': }
+  }
+
   # configure deployment server for indexers and forwarders
   if $type == 'forwarder' or $type == 'heavyforwarder' {
     class { 'splunk::deployment': }
@@ -120,7 +130,7 @@ File["${local_path}/server.d/998_ssl"], File["${local_path}/server.d/999_default
 
   }
 
-  # if $type == 'forwarder' and $environment == 'ci' {
+  # if $type == 'forwarder' and $splunk_env == 'ci' {
   #   class { 'splunk::test': }
   # }
 }

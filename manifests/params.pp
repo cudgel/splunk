@@ -3,13 +3,14 @@
 class splunk::params
 {
   # general
-  $environment          = hiera('splunk::params::environment', undef)
+  $splunk_env           = hiera('splunk::params::splunk_env', undef)
+  $type                 = hiera('splunk::type', 'forwarder')
   $install_path         = hiera('splunk::params::install_path', '/opt')
   $splunk_group         = hiera('splunk::params::splunk_group', 'splunk')
   $splunk_user          = hiera('splunk::params::splunk_user', 'splunk')
   $source               = hiera('splunk::params::source', 'splunk')
-  $version              = hiera('splunk::params::version', undef)
-  $release              = hiera('splunk::params::release', undef)
+  $version              = hiera('splunk::params::version')
+  $release              = hiera('splunk::params::release')
   $tcpout               = hiera('splunk::params::tcpout', undef)
   $email                = hiera('splunk::params::email', 'your Splunk administrator')
   # outputs
@@ -18,7 +19,7 @@ class splunk::params
   $forcetimebasedautolb = hiera('splunk::params::forcetimebasedautolb', true)
   # ssl
   $sslv3                = hiera('splunk::params::sslv3', false)
-  $sslversions          = hiera('splunk::params::sslversions', 'tls1.1')
+  $sslversions          = hiera('splunk::params::sslversions', 'tls1.2')
   $sslverify            = hiera('splunk::params::sslverify', false)
   $sslclientcert        = hiera('splunk::params::sslclientcert', false)
   $sslclientcompression = hiera('splunk::params::sslclientcompression', false)
@@ -26,7 +27,10 @@ class splunk::params
   $sslnegotiation       = hiera('splunk::params::sslnegotiation', false)
   $sslstsheader         = hiera('splunk::params::sslstsheader', true)
   $symmkey              = hiera('splunk::params::symmkey', undef)
-  $ecdhcurves           = hiera('splunk::params::ecdhcurves', undef)
+  $ciphersuite          = hiera('splunk::params::ciphersuite', 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-
+GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:AES256-GC
+M-SHA:AES256-SHA:AES128-GCM-SHA:AES128-SHA')
+  $ecdhcurves           = hiera('splunk::params::ecdhcurves', 'prime256v1, secp384r1, secp521r1')
   # splunkd
   $cacert               = hiera('splunk::params::cacert', 'cacert.pem')
   $servercert           = hiera('splunk::params::servercert', 'server.pem')
@@ -36,7 +40,6 @@ class splunk::params
   # splunkweb
   $privkey              = hiera('splunk::params::privkey', 'privkey.pem')
   $webcert              = hiera('splunk::params::webcert', 'cert.pem')
-  $ciphersuite          = hiera('splunk::params::ciphersuite', 'TLSv1.1:!eNULL:!aNULL')
   $webssl               = hiera('splunk::params::webssl', true)
   # clustering
   $repl_port            = hiera('splunk::params::repl_port', 'none')
