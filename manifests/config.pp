@@ -194,6 +194,14 @@ export PATH
     require => File["${splunk_local}/inputs.d"]
   }
 
+  file { "${splunk_local}/inputs.d/000_splunkssl":
+    content => template("${module_name}/inputs.d/ssl.erb"),
+    owner   => $splunk_user,
+    group   => $splunk_group,
+    require => File["${splunk_local}/inputs.d"],
+    notify  => Exec['update-inputs']
+  }
+
   if $type != 'forwarder' {
 
     if ($type != 'indexer') and ($type != 'standalone') {
