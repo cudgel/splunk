@@ -5,6 +5,7 @@ splunkdir = scope['::splunk::splunkdir']
 -%>
 [default]
 host = <%= scope['::hostname'] %>
+_meta = input_host::<%= scope['::hostname'] %>
 
 [monitor:/<%= splunkdir %>/var/log/splunk/*.log]
 index = _internal
