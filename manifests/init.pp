@@ -33,7 +33,7 @@
 #
 # Copyright 2017 Christopher Caldwell
 #
-class splunk {
+class splunk($type='forwarder') {
 
   include splunk::params
 
