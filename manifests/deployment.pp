@@ -29,6 +29,7 @@ class splunk::deployment
     ensure  => directory,
     owner   => $::splunk::splunk_user,
     group   => $::splunk::splunk_user,
+    mode    => '0750',
     recurse => true
   }
 
