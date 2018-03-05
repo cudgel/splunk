@@ -8,6 +8,7 @@ ttl = scope['::splunk::params::subsearch_ttl']
 dispatch_dir_warning_size = scope['::splunk::params::dispatch_size']
 max_searches = scope['::splunk::params::max_searches']
 max_queue = scope['::splunk::params::search_maxqueue']
+max_rawsize = scope['::splunk::params::max_rawsize_perchunk']
 -%>
 [search_info]
 max_infocsv_messages  = <%= maxinfocsv %>
@@ -24,6 +25,7 @@ dispatch_dir_warning_size = <%= dispatch_dir_warning_size %>
 <% end -%>
 max_searches_per_cpu = <%= max_searches %>
 result_queue_max_size = <%= max_queue %>
+max_rawsize_perchun = <%= max_rawsize %>
 
 [join]
 <% if maxtime != nil -%>subsearch_maxtime = <%= maxtime %><% end %>
