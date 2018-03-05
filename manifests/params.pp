@@ -4,7 +4,7 @@ class splunk::params
 {
   # general
   $splunk_env           = hiera('splunk::params::splunk_env', undef)
-  $type                 = hiera('splunk::type', 'forwarder')
+#  $type                 = hiera('splunk::type', 'forwarder')
   $install_path         = hiera('splunk::params::install_path', '/opt')
   $splunk_group         = hiera('splunk::params::splunk_group', 'splunk')
   $splunk_user          = hiera('splunk::params::splunk_user', 'splunk')

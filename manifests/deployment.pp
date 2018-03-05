@@ -29,7 +29,8 @@ class splunk::deployment
     ensure  => directory,
     owner   => $::splunk::splunk_user,
     group   => $::splunk::splunk_user,
-    recurse => true
+    mode    => '0750',
+    recurse => false
   }
 
   file { "${myappdir}/local":
