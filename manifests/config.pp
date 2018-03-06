@@ -179,7 +179,7 @@ export PATH
     }
   }
 
-  file { "${splunk_local}/etc/apps":
+  file { "${splunkdir}/etc/apps":
     ensure  => 'directory',
     mode    => '0750',
     owner   => $splunk_user,
@@ -187,7 +187,7 @@ export PATH
     require => Exec['test_for_splunk']
   }
 
-  file { $splunk_local:
+  file { $splunkdir:
     ensure  => 'directory',
     mode    => '0755',
     owner   => $splunk_user,
