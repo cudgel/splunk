@@ -75,6 +75,7 @@ M-SHA:AES256-SHA:AES128-GCM-SHA:AES128-SHA')
   $subsearch_maxout     = hiera('splunk::params::subsearch_maxout', 50000)
   $subsearch_maxtime    = hiera('splunk::params::subsearch_maxtime', 60)
   $subsearch_ttl        = hiera('splunk::params::subsearch_ttl', 300)
+  $max_rawsize_perchunk = hiera('splunk::params::max_rawsize_perchunk', 100000000)
   # inputs - true disables, false enables
   $splunknotcp          = hiera('splunk::params::splunknotcp', true)
   $splunknotcp_ssl      = hiera('splunk::params::splunknotcp_ssl', false)

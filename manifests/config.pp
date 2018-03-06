@@ -179,6 +179,22 @@ export PATH
     }
   }
 
+  file { "${splunk_local}/etc/apps":
+    ensure  => 'directory',
+    mode    => '0750',
+    owner   => $splunk_user,
+    group   => $splunk_group,
+    require => Exec['test_for_splunk']
+  }
+
+  file { $splunk_local:
+    ensure  => 'directory',
+    mode    => '0750',
+    owner   => $splunk_user,
+    group   => $splunk_group,
+    require => Exec['test_for_splunk']
+  }
+
   file { "${splunk_local}/inputs.d":
     ensure  => 'directory',
     mode    => '0750',
