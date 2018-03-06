@@ -189,7 +189,7 @@ export PATH
 
   file { $splunk_local:
     ensure  => 'directory',
-    mode    => '0750',
+    mode    => '0755',
     owner   => $splunk_user,
     group   => $splunk_group,
     require => Exec['test_for_splunk']
