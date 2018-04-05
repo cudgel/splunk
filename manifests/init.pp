@@ -103,7 +103,7 @@ class splunk($type='forwarder') {
 chown ${my_perms} ${my_input_c}",
     refreshonly => true,
     subscribe   => File["${local_path}/inputs.d/000_default"],
-    notify      => Service[splunk]
+    notify      => Service['splunk']
   }
 
   if $type != 'forwarder' {
@@ -112,7 +112,7 @@ chown ${my_perms} ${my_input_c}",
       command     => "/bin/cat ${my_output_d}/* > ${my_output_c}; \
   chown ${my_perms} ${my_output_c}",
       refreshonly => true,
-      notify      => Service[splunk]
+      notify      => Service['splunk']
     }
 
     exec { 'update-server':
@@ -121,7 +121,7 @@ chown ${my_perms} ${my_server_c}",
       refreshonly => true,
       subscribe   => [File["${local_path}/server.d/000_header"],
 File["${local_path}/server.d/998_ssl"], File["${local_path}/server.d/999_default"]],
-      notify      => Service[splunk]
+      notify      => Service['splunk']
     }
 
   }
