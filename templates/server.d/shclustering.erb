@@ -7,6 +7,7 @@
   symmkey = scope['::splunk::params::symmkey']
   preferred_captain = scope['::splunk::params::preferred_captain']
   adhoc_searchhead = scope['::splunk::params::adhoc_searchhead']
+  captain_is_adhoc = scope['::splunk::params::captain_is_adhoc']
 %>
 <% if shcluster_mode == 'peer' %>
 [shclustering]
@@ -22,6 +23,7 @@ mgmt_uri = https://<%= fqdn %>:8089
 pass4SymmKey = <%= symmkey %>
 shcluster_label = <%= shcluster_label %>
 adhoc_searchhead = <%= adhoc_searchhead %>
+captain_is_adhoc_searchhead = = <%= captain_is_adhoc %>
 preferred_captain = <%= preferred_captain %>
 <% elsif shcluster_mode == 'deployer' -%>
 [shclustering]

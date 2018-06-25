@@ -54,6 +54,7 @@ M-SHA:AES256-SHA:AES128-GCM-SHA:AES128-SHA')
   $is_captain           = hiera('splunk::params::is_captain', false)
   $preferred_captain    = hiera('splunk::params::preferred_captain', false)
   $adhoc_searchhead     = hiera('splunk::params::adhoc_searchhead', false)
+  $captain_is_adhoc     = hiera('splunk::params::captain_is_adhoc', false)
   $shcluster_members    = hiera('splunk::params::shcluster_members', undef)
   # license
   $license_master       = hiera('splunk::params::license_master', undef)
