@@ -29,7 +29,7 @@ define splunk::acl(
     # Set the $subject and $db to later verify that the subject exists.
     #
     $subject = $group
-    if ($type == 'file') or ($recurse != true) {
+    if ($type == 'file') {
       $perm = 'r--'
     } else {
       $perm = 'r-x'
