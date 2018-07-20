@@ -29,10 +29,18 @@ define splunk::acl(
     # Set the $subject and $db to later verify that the subject exists.
     #
     $subject = $group
-    if ($type == 'file') {
-      $perm = 'r--'
+    if $type == 'file' {
+      if $readonly == false {
+        $perm = 'rw-'
+      } else {
+        $perm = 'r--'
+      }
     } else {
-      $perm = 'r-x'
+      if $readonly == false {
+        $perm = 'rwx'
+      } else {
+        $perm = 'r-x'
+      }
     }
     $acl = "group:${group}:${perm}"
     $gacl = "group:${group}:r-x"
