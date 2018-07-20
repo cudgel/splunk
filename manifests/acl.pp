@@ -33,13 +33,13 @@ define splunk::acl(
       if $readonly == false {
         $perm = 'rw-'
       } else {
-      $perm = 'r--'
+        $perm = 'r--'
       }
     } else {
       if $readonly == false {
         $perm = 'rwx'
-    } else {
-      $perm = 'r-x'
+      } else {
+        $perm = 'r-x'
       }
     }
     $acl = "group:${group}:${perm}"
