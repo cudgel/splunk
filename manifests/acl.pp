@@ -25,11 +25,14 @@ define splunk::acl(
 
   if $::kernel == 'Linux' {
 
+    # returns 0 if the object is a file
+    $testdir = "test -d ${object}"
+
     # Calculate the ACE by combining $group, and $readonly.
     # Set the $subject and $db to later verify that the subject exists.
     #
     $subject = $group
-    if $type == 'file' {
+    if $type == 'file' or $testdir == false {
       if $readonly == false {
         $perm = 'rw-'
       } else {
@@ -55,10 +58,6 @@ define splunk::acl(
     $testacl = "df -P ${object} | tail -1 | awk '{print \$1}' \
 | fgrep -f - /proc/mounts | grep -q seclabel"
 
-    # returns 0 if the object is a file
-    $testdir = "test -d ${object}"
-
-    # Recursive ACLs can only be applied to a directory.
     # Non-recursive ACLs can be applied to anything.
     #
     if $recurse == true {
