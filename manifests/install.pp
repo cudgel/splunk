@@ -106,7 +106,8 @@ class splunk::install
     subscribe => Exec['unpackSplunk'],
     unless    => 'test -e /etc/init.d/splunk',
     creates   => '/etc/init.d/splunk',
-    require   => Exec['unpackSplunk']
+    require   => Exec['unpackSplunk'],
+    returns   => [0, 8]
   }
 
 }
