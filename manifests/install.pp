@@ -67,13 +67,20 @@ class splunk::install
 
   $stopcmd  = 'splunk stop'
   $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
-  $chowncmd = "chown -R ${splunk_user}:${splunk_group} ${splunkdir}"
+
+  file { $splunkdir:
+    ensure => directory,
+    owner  => $::splunk::splunk_user,
+    group  => $::splunk::splunk_group
+  }
 
   exec { 'unpackSplunk':
-    command   => "${tarcmd} ${newsource} && ${chowncmd}",
+    command   => "${tarcmd} ${newsource}",
     path      => "${splunkdir}/bin:/bin:/usr/bin:",
     cwd       => $install_path,
     timeout   => 600,
+    user      => $splunk_user,
+    group     => $splunk_group,
     subscribe => File["${install_path}/${newsource}"],
     before    => Exec['test_for_splunk'],
     unless    => "test -e ${splunkdir}/${manifest}",
