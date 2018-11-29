@@ -44,15 +44,6 @@ class splunk::config
   $shcluster_members = $::splunk::params::shcluster_members
   $symmkey           = $::splunk::params::symmkey
 
-  if $type != 'forwarder' {
-    file { $splunkdir:
-      ensure => directory,
-      owner  => $splunk_user,
-      group  => $splunk_group,
-      mode   => '0750'
-    }
-  }
-
   $bashrc = "
 SPLUNK_HOME=${splunkdir}
 export SPLUNK_HOME

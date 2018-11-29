@@ -69,7 +69,12 @@ class splunk::install
   $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
 
   exec { 'unpackSplunk':
+    ensure => directory,
+    owner  => $::splunk::splunk_user,
+    group  => $::splunk::splunk_group
+  }
 
+  exec { 'unpackSplunk':
     command   => "${tarcmd} ${newsource}",
     path      => "${splunkdir}/bin:/bin:/usr/bin:",
     cwd       => $install_path,
@@ -81,7 +86,8 @@ class splunk::install
     unless    => "test -e ${splunkdir}/${manifest}",
     onlyif    => "test -s ${newsource} \
     && test -d ${splunkdir}",
-    creates   => "${splunkdir}/${manifest}"
+    creates   => "${splunkdir}/${manifest}",
+    require   => File[$splunkdir]
   }
 
   exec { 'serviceStart':
@@ -94,11 +100,14 @@ class splunk::install
   }
 
   exec { 'installSplunkService':
-    command   => 'splunk enable boot-start',
+    command   => "splunk enable boot-start -user ${splunk_user}",
     path      => "${splunkdir}/bin:/bin:/usr/bin:",
+    cwd       => $splunkdir,
     subscribe => Exec['unpackSplunk'],
     unless    => 'test -e /etc/init.d/splunk',
-    creates   => '/etc/init.d/splunk'
+    creates   => '/etc/init.d/splunk',
+    require   => Exec['unpackSplunk'],
+    returns   => [0, 8]
   }
 
 }
