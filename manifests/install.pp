@@ -86,8 +86,7 @@ class splunk::install
     unless    => "test -e ${splunkdir}/${manifest}",
     onlyif    => "test -s ${newsource} \
     && test -d ${splunkdir}",
-    creates   => "${splunkdir}/${manifest}",
-    require   => File[$splunkdir]
+    creates   => "${splunkdir}/${manifest}"
   }
 
   exec { 'serviceStart':
