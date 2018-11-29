@@ -100,7 +100,7 @@ class splunk::install
   }
 
   exec { 'installSplunkService':
-    command   => 'splunk enable boot-start',
+    command   => "splunk enable boot-start -user ${splunk_user}",
     path      => "${splunkdir}/bin:/bin:/usr/bin:",
     subscribe => Exec['unpackSplunk'],
     unless    => 'test -e /etc/init.d/splunk',
