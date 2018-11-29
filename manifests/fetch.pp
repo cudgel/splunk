@@ -23,7 +23,8 @@ define splunk::fetch(
       owner  => $::splunk::splunk_user,
       group  => $::splunk::splunk_group,
       mode   => '0750',
-      source => "puppet:///splunk_files/${splunk_bundle}"
+      source => "puppet:///splunk_files/${splunk_bundle}",
+      notify => Exec['unpackSplunk']
     }
 
   } else {

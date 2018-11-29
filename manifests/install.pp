@@ -69,7 +69,6 @@ class splunk::install
   $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
 
   exec { 'unpackSplunk':
-
     command   => "${tarcmd} ${newsource}",
     path      => "${splunkdir}/bin:/bin:/usr/bin:",
     cwd       => $install_path,
