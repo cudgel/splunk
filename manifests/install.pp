@@ -68,10 +68,10 @@ class splunk::install
   $stopcmd  = 'splunk stop'
   $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
 
-  exec { 'unpackSplunk':
+  file { $splunkdir:
     ensure => directory,
-    owner  => $::splunk::splunk_user,
-    group  => $::splunk::splunk_group
+    owner  => $splunk_user,
+    group  => $splunk_group
   }
 
   exec { 'unpackSplunk':
@@ -86,8 +86,7 @@ class splunk::install
     unless    => "test -e ${splunkdir}/${manifest}",
     onlyif    => "test -s ${newsource} \
     && test -d ${splunkdir}",
-    creates   => "${splunkdir}/${manifest}",
-    require   => File[$splunkdir]
+    creates   => "${splunkdir}/${manifest}"
   }
 
   exec { 'serviceStart':
