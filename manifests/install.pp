@@ -70,8 +70,8 @@ class splunk::install
 
   file { $splunkdir:
     ensure => directory,
-    owner  => $::splunk::splunk_user,
-    group  => $::splunk::splunk_group
+    owner  => $splunk_user,
+    group  => $splunk_group
   }
 
   exec { 'unpackSplunk':
