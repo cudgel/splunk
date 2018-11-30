@@ -36,7 +36,6 @@ M-SHA:AES256-SHA:AES128-GCM-SHA:AES128-SHA')
   $servercert           = hiera('splunk::params::servercert', 'server.pem')
   $servercertpass       = hiera('splunk::params::servercertpass', 'password')
   $managesecret         = hiera('splunk::params::managesecret', false)
-  $adminpass            = hiera('splunk::params::adminpass', 'changeme')
   # splunkweb
   $privkey              = hiera('splunk::params::privkey', 'privkey.pem')
   $webcert              = hiera('splunk::params::webcert', 'cert.pem')

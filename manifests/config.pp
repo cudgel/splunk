@@ -32,7 +32,6 @@ class splunk::config
   $servercert        = $::splunk::params::servercert
   $webcert           = $::splunk::params::webcert
   $managesecret      = $::splunk::params::managesecret
-  $adminpass         = $::splunk::params::adminpass
   $id                = $::splunk::params::shcluster_id
   $confdeploy        = $::splunk::params::search_deploy
   $repl_port         = $::splunk::params::repl_port
@@ -55,15 +54,6 @@ export PATH
     owner   => $splunk_user,
     group   => $splunk_group,
     content => $bashrc
-  }
-
-  if ($type == 'forwarder') and ($adminpass != 'changeme')  {
-    exec { 'changeAdminPass':
-      command => "splunk edit user admin -password ${adminpass} -auth admin:changeme && touch ${splunkdir}/.admin_pass",
-      path    => "${splunkdir}/bin:/bin:/usr/bin:",
-      unless  => "test -e ${splunkdir}/.admin_pass",
-      creates => "${splunkdir}/.admin_pass"
-    }
   }
 
   exec { 'test_for_splunk':
