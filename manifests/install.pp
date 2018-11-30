@@ -98,6 +98,28 @@ class splunk::install
     refreshonly => true
   }
 
+  if $type != 'forwarder' and $type != 'heavyforwarder' {
+
+    file { "${splunk_local}/user-seed.conf":
+      content => template("${module_name}/user-seed.conf.erb"),
+      owner   => $splunk_user,
+      group   => $splunk_group,
+      require => Exec['unpackSplunk']
+    }
+
+    $restartcmd = 'splunk start'
+
+    exec { 'serviceRestart':
+      command     => "${stopcmd}; ${restartcmd}",
+      path        => "${splunkdir}/bin:/bin:/usr/bin:",
+      user        => $splunk_user,
+      group       => $splunk_group,
+      subscribe   => File["${splunk_local}/user-seed.conf"],
+      refreshonly => true
+    }
+
+  }
+
   exec { 'installSplunkService':
     command   => "splunk enable boot-start -user ${splunk_user}",
     path      => "${splunkdir}/bin:/bin:/usr/bin:",
