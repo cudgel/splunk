@@ -96,6 +96,9 @@ class splunk($type='forwarder') {
   $cut_version = regsubst($current_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
   # because the legacy fact does not represent splunk version as
   # version-release, we cut the version from the string.
+  if $cut_version == "" {
+    $cut_version = 0
+  }
 
   if $maj_version != $cut_version {
     if versioncmp($maj_version, $cut_version) > 0 {
