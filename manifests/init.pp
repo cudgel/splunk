@@ -44,11 +44,6 @@ class splunk($type='forwarder') {
   # cluster id from initialized cluster
   $shcluster_id    = $::splunk_shcluster_id
   $serviceurl      = $splunk::serviceurl
-  $splunkos        = $splunk::splunkos
-  $splunkarch      = $splunk::splunkarch
-  $splunkext       = $splunk::splunkext
-  $tar             = $splunk::tar
-  $tarcmd          = $splunk::tarcmd
 
   # if $splunk_env == 'ci' {
   #   class { 'splunk::user': }
@@ -96,7 +91,7 @@ class splunk($type='forwarder') {
   $cut_version = regsubst($current_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
   # because the legacy fact does not represent splunk version as
   # version-release, we cut the version from the string.
-  if $cut_version == "" {
+  if $cut_version == '' {
     $cut_version = 0
   }
 
