@@ -33,7 +33,73 @@
 #
 # Copyright 2017 Christopher Caldwell
 #
-class splunk($type='forwarder') {
+class splunk(
+  String $version,
+String $release,
+Optional[Array] $splunk_env,
+String $type,
+Boolean $adhoc_searchhead,
+Boolean $autolb,
+Integer $autolbfrequency,
+String $cacert,
+Boolean $captain_is_adhoc,
+String $ciphersuite,
+String $cluster_mode,
+Optional[Array] $clusters,
+Boolean $deployment_disable,
+Integer $deployment_interval,
+Optional[Array] $deployment_server,
+String $dispatch_earliest,
+String $dispatch_latest,
+Integer $dispatch_size,
+String $ecdhcurves,
+String $email,
+Boolean $forcetimebasedautolb,
+String $install_path,
+Boolean $is_captain,
+String $license_master_mode,
+Optional[Array] $license_master,
+Optional[Array] $licenses,
+Boolean $managesecret,
+Integer $max_rawsize_perchunk,
+Integer $max_searches,
+Boolean $preferred_captain,
+String $privkey,
+Integer $repl_count,
+String $repl_port,
+Boolean $scheduler_disable,
+Optional[Array] $search_deploy,
+Integer $search_maxinfocsv,
+Integer $search_maxqueue,
+String $server_site,
+String $servercert,
+String $servercertpass,
+Optional[Array] $serviceurl,
+Optional[Array] $shcluster_id,
+Optional[Array] $shcluster_label,
+Optional[Array] $shcluster_members,
+String $shcluster_mode,
+String $source,
+String $splunk_group,
+String $splunk_user,
+Boolean $splunknotcp_ssl,
+Boolean $splunknotcp,
+Boolean $sslclientcert,
+Boolean $sslclientcompression,
+Boolean $sslcompression,
+Boolean $sslnegotiation,
+Boolean $sslstsheader,
+Boolean $sslv3,
+Boolean $sslverify,
+String $sslversions,
+Integer $subsearch_maxout,
+Integer $subsearch_maxtime,
+Integer $subsearch_ttl,
+Optional[Array] $symmkey,
+Optional[Array] $tcpout,
+String $webcert,
+Boolean $webssl
+) {
 
   $shcluster_id    = $::splunk_shcluster_id
 
@@ -43,7 +109,7 @@ class splunk($type='forwarder') {
 
   $new_version = "${splunk::version}-${splunk::release}"
 
-  if $splunk::type == 'forwarder' {
+  if $type == 'forwarder' {
     $sourcepart = 'splunkforwarder'
   } else {
     $sourcepart = 'splunk'
@@ -84,8 +150,8 @@ class splunk($type='forwarder') {
   # because the legacy fact does not represent splunk version as
   # version-release, we cut the version from the string.
 
-  if $splunk::version != $cut_version {
-    if versioncmp($splunk::version, $cut_version) > 0 or $cut_version == '' {
+  if $version != $cut_version {
+    if versioncmp($version, $cut_version) > 0 or $cut_version == '' {
       class { 'splunk::install': } -> class { 'splunk::config': } -> class { 'splunk::service': }
     }
   } else {
@@ -93,7 +159,7 @@ class splunk($type='forwarder') {
   }
 
   # configure deployment server for indexers and forwarders
-  if $splunk::type == 'forwarder' or $splunk::type == 'heavyforwarder' {
+  if $type == 'forwarder' or $type == 'heavyforwarder' {
     class { 'splunk::deployment': }
   }
 
@@ -114,7 +180,7 @@ chown ${my_perms} ${my_input_c}",
     notify      => Service['splunk']
   }
 
-  if $splunk::type != 'forwarder' {
+  if $type != 'forwarder' {
 
     exec { 'update-outputs':
       command     => "/bin/cat ${my_output_d}/* > ${my_output_c}; \
