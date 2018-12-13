@@ -1,14 +1,14 @@
 # Puppet Name: <%= @title %>
 #
 <%
-maxinfocsv = scope['::splunk::params::search_maxinfocsv']
-maxout = scope['::splunk::params::subsearch_maxout']
-maxtime = scope['::splunk::params::subsearch_maxtime']
-ttl = scope['::splunk::params::subsearch_ttl']
-dispatch_dir_warning_size = scope['::splunk::params::dispatch_size']
-max_searches = scope['::splunk::params::max_searches']
-max_queue = scope['::splunk::params::search_maxqueue']
-max_rawsize = scope['::splunk::params::max_rawsize_perchunk']
+maxinfocsv = scope['::splunk::search_maxinfocsv']
+maxout = scope['::splunk::subsearch_maxout']
+maxtime = scope['::splunk::subsearch_maxtime']
+ttl = scope['::splunk::subsearch_ttl']
+dispatch_dir_warning_size = scope['::splunk::dispatch_size']
+max_searches = scope['::splunk::max_searches']
+max_queue = scope['::splunk::search_maxqueue']
+max_rawsize = scope['::splunk::max_rawsize_perchunk']
 -%>
 [search_info]
 max_infocsv_messages  = <%= maxinfocsv %>

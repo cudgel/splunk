@@ -35,22 +35,20 @@
 #
 class splunk($type='forwarder') {
 
-  include splunk::params
-
-  $splunk_env      = $::splunk::params::splunk_env
-  $maj_version     = $::splunk::params::version
-  $release         = $::splunk::params::release
-  $splunk_user     = $::splunk::params::splunk_user
-  $splunk_group    = $::splunk::params::splunk_group
-  $install_path    = $::splunk::params::install_path
+  $splunk_env      = $splunk::splunk_env
+  $maj_version     = $splunk::version
+  $release         = $splunk::release
+  $splunk_user     = $splunk::splunk_user
+  $splunk_group    = $splunk::splunk_group
+  $install_path    = $splunk::install_path
   # cluster id from initialized cluster
   $shcluster_id    = $::splunk_shcluster_id
-  $serviceurl      = $::splunk::params::serviceurl
-  $splunkos        = $::splunk::params::splunkos
-  $splunkarch      = $::splunk::params::splunkarch
-  $splunkext       = $::splunk::params::splunkext
-  $tar             = $::splunk::params::tar
-  $tarcmd          = $::splunk::params::tarcmd
+  $serviceurl      = $splunk::serviceurl
+  $splunkos        = $splunk::splunkos
+  $splunkarch      = $splunk::splunkarch
+  $splunkext       = $splunk::splunkext
+  $tar             = $splunk::tar
+  $tarcmd          = $splunk::tarcmd
 
   # if $splunk_env == 'ci' {
   #   class { 'splunk::user': }
@@ -69,6 +67,29 @@ class splunk($type='forwarder') {
   $local_path    = "${splunkdir}/etc/system/local"
   $splunkdb      = "${splunkdir}/var/lib/splunk"
   $manifest       = "${sourcepart}-${new_version}-${splunkos}-${splunkarch}-manifest"
+
+  if $::osfamily    == 'Solaris' {
+    $splunkos   = 'SunOS'
+    $splunkarch = $::architecture ? {
+      i86pc   => 'x86_64',
+      default => 'sparc'
+    }
+    $splunkext  = 'tar.Z'
+    $tar        = '/usr/sfw/bin/gtar'
+    $tarcmd     = "${tar} xZf"
+  } elsif $::kernel == 'Linux' {
+    $splunkos   = 'Linux'
+    $splunkarch = $::architecture ? {
+      x86_64  => 'x86_64',
+      amd64   => 'x86_64',
+      default => 'i686'
+    }
+    $splunkext  = 'tgz'
+    $tar        = '/bin/tar'
+    $tarcmd     = "${tar} xzf"
+  } else {
+    fail('Unsupported OS')
+  }
 
   # currently installed version from fact
   $current_version = $::splunk_version

@@ -1,10 +1,10 @@
 <%
-  servercertpass = scope['splunk::params::servercertpass']
-  servercert = scope['::splunk::params::servercert']
-  ciphersuite = scope['::splunk::params::ciphersuite']
-  ecdhcurves = scope['::splunk::params::ecdhcurves']
-  sslversions = scope['::splunk::params::sslversions']
-  sslclientcert = scope['::splunk::params::sslclientcert']
+  servercertpass = scope['splunk::servercertpass']
+  servercert = scope['::splunk::servercert']
+  ciphersuite = scope['::splunk::ciphersuite']
+  ecdhcurves = scope['::splunk::ecdhcurves']
+  sslversions = scope['::splunk::sslversions']
+  sslclientcert = scope['::splunk::sslclientcert']
 -%>
 
 [SSL]

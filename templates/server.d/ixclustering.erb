@@ -1,7 +1,7 @@
 <%
-  cluster_mode = scope['::splunk::params::cluster_mode']
-  ix_clusters  = scope['::splunk::params::clusters']
-  symmkey      = scope['::splunk::params::symmkey']
+  cluster_mode = scope['::splunk::cluster_mode']
+  ix_clusters  = scope['::splunk::clusters']
+  symmkey      = scope['::splunk::symmkey']
 -%>
 
 <% if cluster_mode != 'none' && cluster_mode !='standby' -%>

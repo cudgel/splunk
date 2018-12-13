@@ -2,13 +2,13 @@
 #
 <%
 splunkdir = scope['::splunk::splunkdir']
-enablesplunkwebssl = scope['::splunk::params::webssl']
-privkey = scope['::splunk::params::privkey']
-webcert = scope['::splunk::params::webcert']
-ciphersuite = scope['::splunk::params::ciphersuite']
-ecdhcurves = scope['::splunk::params::ecdhcurves']
-sslversions = scope['::splunk::params::sslversions']
-sslnegotiation = scope['::splunk::params::sslnegotiation']
+enablesplunkwebssl = scope['::splunk::webssl']
+privkey = scope['::splunk::privkey']
+webcert = scope['::splunk::webcert']
+ciphersuite = scope['::splunk::ciphersuite']
+ecdhcurves = scope['::splunk::ecdhcurves']
+sslversions = scope['::splunk::sslversions']
+sslnegotiation = scope['::splunk::sslnegotiation']
 -%>
 [settings]
 enableSplunkWebSSL = <%= enablesplunkwebssl %>

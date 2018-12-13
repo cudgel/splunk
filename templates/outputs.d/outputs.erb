@@ -1,18 +1,18 @@
 # Puppet Name: <%= @title %>
 #
 <%
-  indexers             = scope['::splunk::params::tcpout']
-  cacert               = scope['::splunk::params::cacert']
-  ciphersuite          = scope['::splunk::params::ciphersuite']
-  ecdhcurves           = scope['::splunk::params::ecdhcurves']
-  servercertpass       = scope['::splunk::params::servercertpass']
-  servercert           = scope['::splunk::params::servercert']
-  sslclientcompression = scope['::splunk::params::sslclientcompression']
-  sslverify            = scope['::splunk::params::sslverify']
-  sslversions          = scope['::splunk::params::sslversions']
-  autolb               = scope['splunk::params::autolb']
-  autolbfrequency      = scope['splunk::params::autolbfrequency']
-  forcetimebasedautolb = scope['splunk::params::forcetimebasedautolb']
+  indexers             = scope['::splunk::tcpout']
+  cacert               = scope['::splunk::cacert']
+  ciphersuite          = scope['::splunk::ciphersuite']
+  ecdhcurves           = scope['::splunk::ecdhcurves']
+  servercertpass       = scope['::splunk::servercertpass']
+  servercert           = scope['::splunk::servercert']
+  sslclientcompression = scope['::splunk::sslclientcompression']
+  sslverify            = scope['::splunk::sslverify']
+  sslversions          = scope['::splunk::sslversions']
+  autolb               = scope['splunk::autolb']
+  autolbfrequency      = scope['splunk::autolbfrequency']
+  forcetimebasedautolb = scope['splunk::forcetimebasedautolb']
 -%>
 [tcpout]
 indexAndForward = false
