@@ -35,29 +35,21 @@
 #
 class splunk($type='forwarder') {
 
-  $splunk_env      = $splunk::splunk_env
-  $maj_version     = $splunk::version
-  $release         = $splunk::release
-  $splunk_user     = $splunk::splunk_user
-  $splunk_group    = $splunk::splunk_group
-  $install_path    = $splunk::install_path
-  # cluster id from initialized cluster
   $shcluster_id    = $::splunk_shcluster_id
-  $serviceurl      = $splunk::serviceurl
 
   # if $splunk_env == 'ci' {
   #   class { 'splunk::user': }
   # }
 
-  $new_version = "${maj_version}-${release}"
+  $new_version = "${splunk::version}-${splunk::release}"
 
-  if $type == 'forwarder' {
+  if $splunk::type == 'forwarder' {
     $sourcepart = 'splunkforwarder'
   } else {
     $sourcepart = 'splunk'
   }
 
-  $splunkdir     = "${install_path}/${sourcepart}"
+  $splunkdir     = "${splunk::install_path}/${sourcepart}"
   $capath        = "${splunkdir}/etc/auth"
   $local_path    = "${splunkdir}/etc/system/local"
   $splunkdb      = "${splunkdir}/var/lib/splunk"
@@ -92,8 +84,8 @@ class splunk($type='forwarder') {
   # because the legacy fact does not represent splunk version as
   # version-release, we cut the version from the string.
 
-  if $maj_version != $cut_version {
-    if versioncmp($maj_version, $cut_version) > 0 or $cut_version == '' {
+  if $splunk::version != $cut_version {
+    if versioncmp($splunk::version, $cut_version) > 0 or $cut_version == '' {
       class { 'splunk::install': } -> class { 'splunk::config': } -> class { 'splunk::service': }
     }
   } else {
@@ -101,7 +93,7 @@ class splunk($type='forwarder') {
   }
 
   # configure deployment server for indexers and forwarders
-  if $type == 'forwarder' or $type == 'heavyforwarder' {
+  if $splunk::type == 'forwarder' or $splunk::type == 'heavyforwarder' {
     class { 'splunk::deployment': }
   }
 
@@ -112,7 +104,7 @@ class splunk($type='forwarder') {
   $my_server_d = "${local_path}/server.d/"
   $my_server_c = "${local_path}/server.conf"
 
-  $my_perms   = "${::splunk::splunk_user}:${::splunk::splunk_group}"
+  $my_perms   = "${splunk::splunk_user}:${splunk::splunk_group}"
 
   exec { 'update-inputs':
     command     => "/bin/cat ${my_input_d}/* > ${my_input_c}; \
@@ -122,7 +114,7 @@ chown ${my_perms} ${my_input_c}",
     notify      => Service['splunk']
   }
 
-  if $type != 'forwarder' {
+  if $splunk::type != 'forwarder' {
 
     exec { 'update-outputs':
       command     => "/bin/cat ${my_output_d}/* > ${my_output_c}; \
