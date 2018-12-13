@@ -5,7 +5,7 @@
 #
 define splunk::acl(
   $target   = '',
-  $group    = $::splunk::splunk_group,
+  $group    = $splunk::splunk_group,
   $type     = 'file',
   $recurse  = false,
   $readonly = true,

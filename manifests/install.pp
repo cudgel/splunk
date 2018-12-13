@@ -21,30 +21,30 @@
 #
 class splunk::install
 {
-  $type              = $::splunk::type
+  $type              = $splunk::type
   # splunk user home dir from fact
-  $splunk_home       = $::splunk::splunk_home
-  $install_path      = $::splunk::install_path
+  $splunk_home       = $splunk::splunk_home
+  $install_path      = $splunk::install_path
   # where splunk is installed
-  $splunkdir         = $::splunk::splunkdir
+  $splunkdir         = $splunk::splunkdir
   $splunk_local      = "${splunkdir}/etc/system/local"
   # splunk or splunkforwarder
-  $sourcepart        = $::splunk::sourcepart
+  $sourcepart        = $splunk::sourcepart
   # currently installed version from fact
-  $current_version   = $::splunk::current_version
+  $current_version   = $splunk::current_version
   # new verion from hiera
-  $new_version       = $::splunk::new_version
-  $splunkos          = $::splunk::splunkos
-  $splunkarch        = $::splunk::splunkarch
-  $splunkext         = $::splunk::splunkext
-  $tarcmd            = $::splunk::params::tarcmd
-  $manifest          = $::splunk::manifest
+  $new_version       = $splunk::new_version
+  $splunkos          = $splunk::splunkos
+  $splunkarch        = $splunk::splunkarch
+  $splunkext         = $splunk::splunkext
+  $tarcmd            = $splunk::tarcmd
+  $manifest          = $splunk::manifest
   # splunk (web) or fileserver or a custom url
-  $source            = $::splunk::params::source
-  $splunk_user       = $::splunk::splunk_user
-  $splunk_group      = $::splunk::splunk_group
+  $source            = $splunk::source
+  $splunk_user       = $splunk::splunk_user
+  $splunk_group      = $splunk::splunk_group
   $my_perms          = "${::splunk_user}:${::splunk_group}"
-  $adminpass         = $::splunk::params::adminpass
+  $adminpass         = $splunk::adminpass
 
 
   if $current_version != undef {
@@ -96,6 +96,28 @@ class splunk::install
     group       => $splunk_group,
     subscribe   => Exec['unpackSplunk'],
     refreshonly => true
+  }
+
+  if $type != 'forwarder' and $type != 'heavyforwarder' {
+
+    file { "${splunk_local}/user-seed.conf":
+      content => template("${module_name}/user-seed.conf.erb"),
+      owner   => $splunk_user,
+      group   => $splunk_group,
+      require => Exec['unpackSplunk']
+    }
+
+    $restartcmd = 'splunk start'
+
+    exec { 'serviceRestart':
+      command     => "${stopcmd}; ${restartcmd}",
+      path        => "${splunkdir}/bin:/bin:/usr/bin:",
+      user        => $splunk_user,
+      group       => $splunk_group,
+      subscribe   => File["${splunk_local}/user-seed.conf"],
+      refreshonly => true
+    }
+
   }
 
   exec { 'installSplunkService':

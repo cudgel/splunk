@@ -7,9 +7,9 @@ define splunk::fetch(
   $splunk_bundle,
   $source,
   $type,
-  $sourcepart = $::splunk::sourcepart,
-  $version    = $::splunk::version,
-  $release    = $::splunk::release) {
+  $sourcepart = $splunk::sourcepart,
+  $version    = $splunk::version,
+  $release    = $splunk::release) {
 
   if $type == 'forwarder' {
     $product = 'universalforwarder'
@@ -20,8 +20,8 @@ define splunk::fetch(
   if $source == 'fileserver' {
 
     file{ "${::splunk::install_path}/${splunk_bundle}":
-      owner  => $::splunk::splunk_user,
-      group  => $::splunk::splunk_group,
+      owner  => $splunk::splunk_user,
+      group  => $splunk::splunk_group,
       mode   => '0750',
       source => "puppet:///splunk_files/${splunk_bundle}",
       notify => Exec['unpackSplunk']
@@ -38,15 +38,15 @@ define splunk::fetch(
     exec{ "retrieve_${splunk_bundle}":
       command => "wget -O ${splunk_bundle} \'${wget_url}\'",
       path    => "${::splunk::splunkdir}/bin:/bin:/usr/bin:",
-      cwd     => $::splunk::install_path,
+      cwd     => $splunk::install_path,
       timeout => 600,
       creates => "${::splunk::install_path}/${splunk_bundle}",
       onlyif  => 'wget --server-response https://www.splunk.com -O /dev/null 2>&1'
     }
 
     file{ "${::splunk::install_path}/${splunk_bundle}":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_group,
+      owner   => $splunk::splunk_user,
+      group   => $splunk::splunk_group,
       mode    => '0750',
       require => Exec["retrieve_${splunk_bundle}"],
       notify  => Exec['unpackSplunk']

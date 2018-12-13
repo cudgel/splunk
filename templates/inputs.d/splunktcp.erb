@@ -1,12 +1,12 @@
 <%
-  servercertpass = scope['splunk::params::servercertpass']
-  servercert = scope['::splunk::params::servercert']
-  ciphersuite = scope['::splunk::params::ciphersuite']
-  ecdhcurves = scope['::splunk::params::ecdhcurves']
-  sslversions = scope['::splunk::params::sslversions']
-  sslclientcert = scope['::splunk::params::sslclientcert']
-  splunknotcp = scope['::splunk::params::splunknotcp']
-  splunknotcp_ssl = scope['::splunk::params::splunknotcp_ssl']
+  servercertpass = scope['splunk::servercertpass']
+  servercert = scope['::splunk::servercert']
+  ciphersuite = scope['::splunk::ciphersuite']
+  ecdhcurves = scope['::splunk::ecdhcurves']
+  sslversions = scope['::splunk::sslversions']
+  sslclientcert = scope['::splunk::sslclientcert']
+  splunknotcp = scope['::splunk::splunknotcp']
+  splunknotcp_ssl = scope['::splunk::splunknotcp_ssl']
 -%>
 
 [splunktcp://9997]

@@ -17,32 +17,31 @@
 #
 class splunk::config
 {
-  $type              = $::splunk::type
+  $type              = $splunk::type
   # splunk user home dir from fact
-  $splunk_home       = $::splunk::splunk_home
-  $install_path      = $::splunk::install_path
+  $splunk_home       = $splunk::splunk_home
+  $install_path      = $splunk::install_path
   # where splunk is installed
-  $splunkdir         = $::splunk::splunkdir
+  $splunkdir         = $splunk::splunkdir
   $splunk_local      = "${splunkdir}/etc/system/local"
-  $splunk_user       = $::splunk::splunk_user
-  $splunk_group      = $::splunk::splunk_group
-  $my_perms          = "${::splunk_user}:${::splunk_group}"
-  $cacert            = $::splunk::params::cacert
-  $privkey           = $::splunk::params::privkey
-  $servercert        = $::splunk::params::servercert
-  $webcert           = $::splunk::params::webcert
-  $managesecret      = $::splunk::params::managesecret
-  $adminpass         = $::splunk::params::adminpass
-  $id                = $::splunk::params::shcluster_id
-  $confdeploy        = $::splunk::params::search_deploy
-  $repl_port         = $::splunk::params::repl_port
-  $repl_count        = $::splunk::params::repl_count
-  $shcluster_id      = $::splunk::shcluster_id
-  $shcluster_mode    = $::splunk::params::shcluster_mode
-  $shcluster_label   = $::splunk::params::shcluster_label
-  $is_captain        = $::splunk::params::is_captain
-  $shcluster_members = $::splunk::params::shcluster_members
-  $symmkey           = $::splunk::params::symmkey
+  $splunk_user       = $splunk::splunk_user
+  $splunk_group      = $splunk::splunk_group
+  $my_perms          = "${splunk_user}:${splunk_group}"
+  $cacert            = $splunk::cacert
+  $privkey           = $splunk::privkey
+  $servercert        = $splunk::servercert
+  $webcert           = $splunk::webcert
+  $managesecret      = $splunk::managesecret
+  $id                = $splunk::shcluster_id
+  $confdeploy        = $splunk::search_deploy
+  $repl_port         = $splunk::repl_port
+  $repl_count        = $splunk::repl_count
+  $shcluster_id      = $splunk::shcluster_id
+  $shcluster_mode    = $splunk::shcluster_mode
+  $shcluster_label   = $splunk::shcluster_label
+  $is_captain        = $splunk::is_captain
+  $shcluster_members = $splunk::shcluster_members
+  $symmkey           = $splunk::symmkey
 
   $bashrc = "
 SPLUNK_HOME=${splunkdir}
@@ -55,15 +54,6 @@ export PATH
     owner   => $splunk_user,
     group   => $splunk_group,
     content => $bashrc
-  }
-
-  if ($type == 'forwarder') and ($adminpass != 'changeme')  {
-    exec { 'changeAdminPass':
-      command => "splunk edit user admin -password ${adminpass} -auth admin:changeme && touch ${splunkdir}/.admin_pass",
-      path    => "${splunkdir}/bin:/bin:/usr/bin:",
-      unless  => "test -e ${splunkdir}/.admin_pass",
-      creates => "${splunkdir}/.admin_pass"
-    }
   }
 
   exec { 'test_for_splunk':

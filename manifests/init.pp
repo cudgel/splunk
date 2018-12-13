@@ -33,30 +33,80 @@
 #
 # Copyright 2017 Christopher Caldwell
 #
-class splunk($type='forwarder') {
+class splunk(
+  String $version,
+String $release,
+Optional[String] $splunk_env,
+String $type,
+Boolean $adhoc_searchhead,
+Boolean $autolb,
+Integer $autolbfrequency,
+String $cacert,
+Boolean $captain_is_adhoc,
+String $ciphersuite,
+String $cluster_mode,
+Optional[Hash] $clusters,
+Boolean $deployment_disable,
+Integer $deployment_interval,
+Optional[String] $deployment_server,
+String $dispatch_earliest,
+String $dispatch_latest,
+Integer $dispatch_size,
+String $ecdhcurves,
+String $email,
+Boolean $forcetimebasedautolb,
+String $install_path,
+Boolean $is_captain,
+String $license_master_mode,
+Optional[String] $license_master,
+Optional[Hash] $licenses,
+Boolean $managesecret,
+Integer $max_rawsize_perchunk,
+Integer $max_searches,
+Boolean $preferred_captain,
+String $privkey,
+Integer $repl_count,
+String $repl_port,
+Boolean $scheduler_disable,
+Optional[String] $search_deploy,
+Integer $search_maxinfocsv,
+Integer $search_maxqueue,
+String $server_site,
+String $servercert,
+String $servercertpass,
+Optional[String] $serviceurl,
+Optional[String] $shcluster_label,
+Optional[Array] $shcluster_members,
+String $shcluster_mode,
+String $source,
+String $splunk_group,
+String $splunk_user,
+Boolean $splunknotcp_ssl,
+Boolean $splunknotcp,
+Boolean $sslclientcert,
+Boolean $sslclientcompression,
+Boolean $sslcompression,
+Boolean $sslnegotiation,
+Boolean $sslstsheader,
+Boolean $sslv3,
+Boolean $sslverify,
+String $sslversions,
+Integer $subsearch_maxout,
+Integer $subsearch_maxtime,
+Integer $subsearch_ttl,
+Optional[String] $symmkey,
+Optional[Hash] $tcpout,
+String $webcert,
+Boolean $webssl
+) {
 
-  include splunk::params
-
-  $splunk_env      = $::splunk::params::splunk_env
-  $maj_version     = $::splunk::params::version
-  $release         = $::splunk::params::release
-  $splunk_user     = $::splunk::params::splunk_user
-  $splunk_group    = $::splunk::params::splunk_group
-  $install_path    = $::splunk::params::install_path
-  # cluster id from initialized cluster
   $shcluster_id    = $::splunk_shcluster_id
-  $serviceurl      = $::splunk::params::serviceurl
-  $splunkos        = $::splunk::params::splunkos
-  $splunkarch      = $::splunk::params::splunkarch
-  $splunkext       = $::splunk::params::splunkext
-  $tar             = $::splunk::params::tar
-  $tarcmd          = $::splunk::params::tarcmd
 
   # if $splunk_env == 'ci' {
   #   class { 'splunk::user': }
   # }
 
-  $new_version = "${maj_version}-${release}"
+  $new_version = "${splunk::version}-${splunk::release}"
 
   if $type == 'forwarder' {
     $sourcepart = 'splunkforwarder'
@@ -64,11 +114,34 @@ class splunk($type='forwarder') {
     $sourcepart = 'splunk'
   }
 
-  $splunkdir     = "${install_path}/${sourcepart}"
+  $splunkdir     = "${splunk::install_path}/${sourcepart}"
   $capath        = "${splunkdir}/etc/auth"
   $local_path    = "${splunkdir}/etc/system/local"
   $splunkdb      = "${splunkdir}/var/lib/splunk"
   $manifest       = "${sourcepart}-${new_version}-${splunkos}-${splunkarch}-manifest"
+
+  if $::osfamily    == 'Solaris' {
+    $splunkos   = 'SunOS'
+    $splunkarch = $::architecture ? {
+      i86pc   => 'x86_64',
+      default => 'sparc'
+    }
+    $splunkext  = 'tar.Z'
+    $tar        = '/usr/sfw/bin/gtar'
+    $tarcmd     = "${tar} xZf"
+  } elsif $::kernel == 'Linux' {
+    $splunkos   = 'Linux'
+    $splunkarch = $::architecture ? {
+      x86_64  => 'x86_64',
+      amd64   => 'x86_64',
+      default => 'i686'
+    }
+    $splunkext  = 'tgz'
+    $tar        = '/bin/tar'
+    $tarcmd     = "${tar} xzf"
+  } else {
+    fail('Unsupported OS')
+  }
 
   # currently installed version from fact
   $current_version = $::splunk_version
@@ -76,8 +149,8 @@ class splunk($type='forwarder') {
   # because the legacy fact does not represent splunk version as
   # version-release, we cut the version from the string.
 
-  if $maj_version != $cut_version {
-    if versioncmp($maj_version, $cut_version) > 0 {
+  if $version != $cut_version {
+    if versioncmp($version, $cut_version) > 0 or $cut_version == '' {
       class { 'splunk::install': } -> class { 'splunk::config': } -> class { 'splunk::service': }
     }
   } else {
@@ -96,7 +169,7 @@ class splunk($type='forwarder') {
   $my_server_d = "${local_path}/server.d/"
   $my_server_c = "${local_path}/server.conf"
 
-  $my_perms   = "${::splunk::splunk_user}:${::splunk::splunk_group}"
+  $my_perms   = "${splunk::splunk_user}:${splunk::splunk_group}"
 
   exec { 'update-inputs':
     command     => "/bin/cat ${my_input_d}/* > ${my_input_c}; \
