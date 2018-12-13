@@ -3,82 +3,80 @@
 class splunk::params
 {
   # general
-  $splunk_env           = hiera('splunk::params::splunk_env', undef)
-#  $type                 = hiera('splunk::type', 'forwarder')
-  $install_path         = hiera('splunk::params::install_path', '/opt')
-  $splunk_group         = hiera('splunk::params::splunk_group', 'splunk')
-  $splunk_user          = hiera('splunk::params::splunk_user', 'splunk')
-  $source               = hiera('splunk::params::source', 'splunk')
-  $version              = hiera('splunk::params::version')
-  $release              = hiera('splunk::params::release')
-  $tcpout               = hiera('splunk::params::tcpout', undef)
-  $email                = hiera('splunk::params::email', 'your Splunk administrator')
+  $splunk_env           = $splunk::splunk_env
+  $type                 = $splunk::type
+  $install_path         = $splunk::install_path
+  $splunk_group         = $splunk::splunk_group
+  $splunk_user          = $splunk::splunk_user
+  $source               = $splunk::source
+  $version              = $splunk::version
+  $release              = $splunk::release
+  $tcpout               = $splunk::tcpout
+  $email                = $splunk::email
   # outputs
-  $autolb               = hiera('splunk::params::autolb', true)
-  $autolbfrequency      = hiera('splunk::params::autolbfrequency', 60)
-  $forcetimebasedautolb = hiera('splunk::params::forcetimebasedautolb', true)
+  $autolb               = $splunk::autolb
+  $autolbfrequency      = $splunk::autolbfrequency
+  $forcetimebasedautolb = $splunk::forcetimebasedautolb
   # ssl
-  $sslv3                = hiera('splunk::params::sslv3', false)
-  $sslversions          = hiera('splunk::params::sslversions', 'tls1.2')
-  $sslverify            = hiera('splunk::params::sslverify', false)
-  $sslclientcert        = hiera('splunk::params::sslclientcert', false)
-  $sslclientcompression = hiera('splunk::params::sslclientcompression', false)
-  $sslcompression       = hiera('splunk::params::sslcompression', false)
-  $sslnegotiation       = hiera('splunk::params::sslnegotiation', false)
-  $sslstsheader         = hiera('splunk::params::sslstsheader', true)
-  $symmkey              = hiera('splunk::params::symmkey', undef)
-  $ciphersuite          = hiera('splunk::params::ciphersuite', 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-
-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:AES256-GC
-M-SHA:AES256-SHA:AES128-GCM-SHA:AES128-SHA')
-  $ecdhcurves           = hiera('splunk::params::ecdhcurves', 'prime256v1, secp384r1, secp521r1')
+  $sslv3                = $splunk::sslv3
+  $sslversions          = $splunk::sslversions
+  $sslverify            = $splunk::sslverify
+  $sslclientcert        = $splunk::sslclientcert
+  $sslclientcompression = $splunk::sslclientcompression
+  $sslcompression       = $splunk::sslcompression
+  $sslnegotiation       = $splunk::sslnegotiation
+  $sslstsheader         = $splunk::sslstsheader
+  $symmkey              = $splunk::symmkey
+  $ciphersuite          = $splunk::ciphersuite
+  $ecdhcurves           = $splunk::ecdhcurves
   # splunkd
-  $cacert               = hiera('splunk::params::cacert', 'cacert.pem')
-  $servercert           = hiera('splunk::params::servercert', 'server.pem')
-  $servercertpass       = hiera('splunk::params::servercertpass', 'password')
-  $managesecret         = hiera('splunk::params::managesecret', false)
+  $cacert               = $splunk::cacert
+  $servercert           = $splunk::servercert
+  $servercertpass       = $splunk::servercertpass
+  $managesecret         = $splunk::managesecret
   # splunkweb
-  $privkey              = hiera('splunk::params::privkey', 'privkey.pem')
-  $webcert              = hiera('splunk::params::webcert', 'cert.pem')
-  $webssl               = hiera('splunk::params::webssl', true)
+  $privkey              = $splunk::privkey
+  $webcert              = $splunk::webcert
+  $webssl               = $splunk::webssl
   # clustering
-  $repl_port            = hiera('splunk::params::repl_port', 'none')
-  $repl_count           = hiera('splunk::params::repl_count', 3)
-  $clusters             = hiera('splunk::params::clusters', undef)
-  $cluster_mode         = hiera('splunk::params::cluster_mode', 'none')
-  $shcluster_id         = hiera('splunk::params::shcluster_id', undef)
-  $search_deploy        = hiera('splunk::params::search_deploy', undef)
-  $shcluster_mode       = hiera('splunk::params::shcluster_mode', 'none')
-  $shcluster_label      = hiera('splunk::params::shcluster_label', undef)
-  $server_site          = hiera('splunk::params::server_site', 'default')
-  $is_captain           = hiera('splunk::params::is_captain', false)
-  $preferred_captain    = hiera('splunk::params::preferred_captain', false)
-  $adhoc_searchhead     = hiera('splunk::params::adhoc_searchhead', false)
-  $captain_is_adhoc     = hiera('splunk::params::captain_is_adhoc', false)
-  $shcluster_members    = hiera('splunk::params::shcluster_members', undef)
+  $repl_port            = $splunk::repl_port
+  $repl_count           = $splunk::repl_count
+  $clusters             = $splunk::clusters
+  $cluster_mode         = $splunk::cluster_mode
+  $shcluster_id         = $splunk::shcluster_id
+  $search_deploy        = $splunk::search_deploy
+  $shcluster_mode       = $splunk::shcluster_mode
+  $shcluster_label      = $splunk::shcluster_label
+  $server_site          = $splunk::server_site
+  $is_captain           = $splunk::is_captain
+  $preferred_captain    = $splunk::preferred_captain
+  $adhoc_searchhead     = $splunk::adhoc_searchhead
+  $captain_is_adhoc     = $splunk::captain_is_adhoc
+  $shcluster_members    = $splunk::shcluster_members
   # license
-  $license_master       = hiera('splunk::params::license_master', undef)
-  $license_master_mode  = hiera('splunk::params::license_master_mode', 'slave')
-  $licenses             = hiera('splunk::params::licenses', undef)
+  $license_master       = $splunk::license_master
+  $license_master_mode  = $splunk::license_master_mode
+  $licenses             = $splunk::licenses
   # deployment
-  $deployment_disable   = hiera('splunk::params::deployment_disable', false)
-  $deployment_interval  = hiera('splunk::params::deployment_interval', 30)
-  $deployment_server    = hiera('splunk::params::deployment_server', undef)
+  $deployment_disable   = $splunk::deployment_disable
+  $deployment_interval  = $splunk::deployment_interval
+  $deployment_server    = $splunk::deployment_server
   # search
-  $dispatch_earliest    = hiera('splunk::params::dispatch_earliest', '-60m@m')
-  $dispatch_latest      = hiera('splunk::params::dispatch_latest', 'now')
-  $dispatch_size        = hiera('splunk::params::dispatch_size', 5000)
-  $max_searches         = hiera('splunk::params::max_searches', 1)
-  $scheduler_disable    = hiera('splunk::params::scheduler_disable', false)
-  $serviceurl           = hiera('splunk::params::serviceurl', undef)
-  $search_maxinfocsv    = hiera('splunk::params::search_maxinfocsv', 20)
-  $search_maxqueue      = hiera('splunk::params::search_maxqueue', 100)
-  $subsearch_maxout     = hiera('splunk::params::subsearch_maxout', 50000)
-  $subsearch_maxtime    = hiera('splunk::params::subsearch_maxtime', 60)
-  $subsearch_ttl        = hiera('splunk::params::subsearch_ttl', 300)
-  $max_rawsize_perchunk = hiera('splunk::params::max_rawsize_perchunk', 100000000)
+  $dispatch_earliest    = $splunk::dispatch_earliest
+  $dispatch_latest      = $splunk::dispatch_latest
+  $dispatch_size        = $splunk::dispatch_size
+  $max_searches         = $splunk::max_searches
+  $scheduler_disable    = $splunk::scheduler_disable
+  $serviceurl           = $splunk::serviceurl
+  $search_maxinfocsv    = $splunk::search_maxinfocsv
+  $search_maxqueue      = $splunk::search_maxqueue
+  $subsearch_maxout     = $splunk::subsearch_maxout
+  $subsearch_maxtime    = $splunk::subsearch_maxtime
+  $subsearch_ttl        = $splunk::subsearch_ttl
+  $max_rawsize_perchunk = $splunk::max_rawsize_perchunk
   # inputs - true disables, false enables
-  $splunknotcp          = hiera('splunk::params::splunknotcp', true)
-  $splunknotcp_ssl      = hiera('splunk::params::splunknotcp_ssl', false)
+  $splunknotcp          = $splunk::splunknotcp
+  $splunknotcp_ssl      = $splunk::splunknotcp_ssl
 
   if $::osfamily    == 'Solaris' {
     $splunkos   = 'SunOS'
