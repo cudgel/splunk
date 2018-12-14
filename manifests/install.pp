@@ -110,25 +110,13 @@ class splunk::install
   }
 
   if $type != 'forwarder' and $type != 'heavyforwarder' {
-
     file { "${splunk_local}/user-seed.conf":
       content => template("${module_name}/user-seed.conf.erb"),
       owner   => $splunk_user,
       group   => $splunk_group,
-      require => Exec['unpackSplunk']
+      require => Exec['unpackSplunk'],
+      notify  => Service[splunk],
     }
-
-    $restartcmd = 'splunk start'
-
-    exec { 'serviceRestart':
-      command     => "${stopcmd}; ${restartcmd}",
-      path        => "${splunkdir}/bin:/bin:/usr/bin:",
-      user        => $splunk_user,
-      group       => $splunk_group,
-      require     => File["${splunk_local}/user-seed.conf"],
-      refreshonly => true
-    }
-
   }
 
 }
