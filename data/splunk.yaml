@@ -31,7 +31,7 @@ splunk::max_searches: 1
 splunk::preferred_captain: false
 splunk::privkey: 'privkey.pem'
 splunk::repl_count: 3
-splunk::repl_port: 'none'
+splunk::repl_port: 8193
 splunk::scheduler_disable: false
 splunk::search_deploy: undef
 splunk::search_maxinfocsv: 20
