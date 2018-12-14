@@ -125,7 +125,7 @@ class splunk::install
       path        => "${splunkdir}/bin:/bin:/usr/bin:",
       user        => $splunk_user,
       group       => $splunk_group,
-      subscribe   => File["${splunk_local}/user-seed.conf"],
+      require     => File["${splunk_local}/user-seed.conf"],
       refreshonly => true
     }
 
