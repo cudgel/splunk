@@ -34,7 +34,7 @@
 # Copyright 2017 Christopher Caldwell
 #
 class splunk(
-  String $version,
+String $version,
 String $release,
 Optional[String] $splunk_env,
 String $type,

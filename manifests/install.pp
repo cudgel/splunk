@@ -98,6 +98,17 @@ class splunk::install
     refreshonly => true
   }
 
+  exec { 'installSplunkService':
+    command   => "splunk enable boot-start -user ${splunk_user}",
+    path      => "${splunkdir}/bin:/bin:/usr/bin:",
+    cwd       => $splunkdir,
+    subscribe => Exec['unpackSplunk'],
+    unless    => 'test -e /etc/init.d/splunk',
+    creates   => '/etc/init.d/splunk',
+    require   => Exec['unpackSplunk'],
+    returns   => [0, 8]
+  }
+
   if $type != 'forwarder' and $type != 'heavyforwarder' {
 
     file { "${splunk_local}/user-seed.conf":
@@ -118,17 +129,6 @@ class splunk::install
       refreshonly => true
     }
 
-  }
-
-  exec { 'installSplunkService':
-    command   => "splunk enable boot-start -user ${splunk_user}",
-    path      => "${splunkdir}/bin:/bin:/usr/bin:",
-    cwd       => $splunkdir,
-    subscribe => Exec['unpackSplunk'],
-    unless    => 'test -e /etc/init.d/splunk',
-    creates   => '/etc/init.d/splunk',
-    require   => Exec['unpackSplunk'],
-    returns   => [0, 8]
   }
 
 }
