@@ -69,9 +69,10 @@ class splunk::install
   $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
 
   file { $splunkdir:
-    ensure => directory,
-    owner  => $splunk_user,
-    group  => $splunk_group
+    ensure  => directory,
+    owner   => $splunk_user,
+    group   => $splunk_group,
+    require => User[$splunk_user]
   }
 
   exec { 'unpackSplunk':
