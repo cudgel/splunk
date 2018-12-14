@@ -109,14 +109,4 @@ class splunk::install
     returns   => [0, 8]
   }
 
-  if $type != 'forwarder' and $type != 'heavyforwarder' {
-    file { "${splunk_local}/user-seed.conf":
-      content => template("${module_name}/user-seed.conf.erb"),
-      owner   => $splunk_user,
-      group   => $splunk_group,
-      require => Exec['unpackSplunk'],
-      notify  => Service[splunk],
-    }
-  }
-
 }
