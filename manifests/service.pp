@@ -5,6 +5,9 @@ class splunk::service {
     ensure   => 'running',
     alias    => 'splunk-service',
     enable   => true,
-    provider => init
+    provider => $::osfamily ? {
+      'RedHat' => redhat,
+      default  => init
+    }
   }
 }
