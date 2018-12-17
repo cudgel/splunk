@@ -168,8 +168,7 @@ Boolean $webssl
   $my_output_c = "${local_path}/outputs.conf"
   $my_server_d = "${local_path}/server.d/"
   $my_server_c = "${local_path}/server.conf"
-
-  $my_perms   = "${splunk::splunk_user}:${splunk::splunk_group}"
+  $my_perms    = "${splunk::splunk_user}:${splunk::splunk_group}"
 
   exec { 'update-inputs':
     command     => "/bin/cat ${my_input_d}/* > ${my_input_c}; \
