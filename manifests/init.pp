@@ -79,9 +79,7 @@ Optional[String] $shcluster_label,
 Optional[Array] $shcluster_members,
 String $shcluster_mode,
 String $source,
-Optional[Hash] $splunk_acls,
 String $splunk_group,
-Optional[Hash] $splunk_inputs,
 String $splunk_user,
 Boolean $splunknotcp_ssl,
 Boolean $splunknotcp,
@@ -99,7 +97,9 @@ Integer $subsearch_ttl,
 Optional[String] $symmkey,
 Optional[Hash] $tcpout,
 String $webcert,
-Boolean $webssl
+Boolean $webssl,
+Optional[Hash] $acls,
+Optional[Hash] $inputs
 ) {
 
   if $type != 'none' {
