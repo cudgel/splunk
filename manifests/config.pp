@@ -42,6 +42,8 @@ class splunk::config
   $is_captain        = $splunk::is_captain
   $shcluster_members = $splunk::shcluster_members
   $symmkey           = $splunk::symmkey
+  $splunk_acls       = $splunk::acls
+  $splunk_inputs     = $splunk::inputs
 
   $bashrc = "
 SPLUNK_HOME=${splunkdir}
@@ -420,4 +422,10 @@ export PATH
     }
   }
 
+  if is_hash($splunk_inputs) and $splunk_inputs != undef {
+    create_resources('splunk::input', $splunk_inputs)
+  }
+  if is_hash($splunk_acls) and $splunk_acls != undef {
+    create_resources('splunk::acl', $splunk_acls)
+  }
 }

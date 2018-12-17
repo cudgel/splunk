@@ -1,13 +1,15 @@
-# manage Splunk service state
-#
 class splunk::service {
+
+if $::osfamily == 'Redhat' {
+  $my_provider = 'redhat'
+} else {
+  $my_provider = 'init'
+}
+
   service { 'splunk':
     ensure   => 'running',
     alias    => 'splunk-service',
     enable   => true,
-    provider => $::osfamily ? {
-      'RedHat' => redhat,
-      default  => init
-    }
+    provider => $my_provider
   }
 }
