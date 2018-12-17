@@ -2,7 +2,7 @@
 splunk::version: '7.2.1'
 splunk::release: 'be11b2c46e23'
 splunk::splunk_env: undef
-splunk::type: 'forwarder'
+splunk::type: 'none'
 splunk::adhoc_searchhead: false
 splunk::autolb: true
 splunk::autolbfrequency: 60

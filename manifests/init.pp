@@ -102,105 +102,108 @@ String $webcert,
 Boolean $webssl
 ) {
 
-  $shcluster_id    = $::splunk_shcluster_id
+  if $type != 'none' {
 
-  # if $splunk_env == 'ci' {
-  #   class { 'splunk::user': }
-  # }
+    # if $splunk_env == 'ci' {
+    #   class { 'splunk::user': }
+    # }
 
-  $new_version = "${splunk::version}-${splunk::release}"
+    $new_version = "${splunk::version}-${splunk::release}"
 
-  if $type == 'forwarder' {
-    $sourcepart = 'splunkforwarder'
-  } else {
-    $sourcepart = 'splunk'
-  }
-
-  $splunkdir     = "${splunk::install_path}/${sourcepart}"
-  $capath        = "${splunkdir}/etc/auth"
-  $local_path    = "${splunkdir}/etc/system/local"
-  $splunkdb      = "${splunkdir}/var/lib/splunk"
-  $manifest       = "${sourcepart}-${new_version}-${splunkos}-${splunkarch}-manifest"
-
-  if $::osfamily    == 'Solaris' {
-    $splunkos   = 'SunOS'
-    $splunkarch = $::architecture ? {
-      i86pc   => 'x86_64',
-      default => 'sparc'
+    if $type == 'forwarder' {
+      $sourcepart = 'splunkforwarder'
+    } else {
+      $sourcepart = 'splunk'
     }
-    $splunkext  = 'tar.Z'
-    $tar        = '/usr/sfw/bin/gtar'
-    $tarcmd     = "${tar} xZf"
-  } elsif $::kernel == 'Linux' {
-    $splunkos   = 'Linux'
-    $splunkarch = $::architecture ? {
-      x86_64  => 'x86_64',
-      amd64   => 'x86_64',
-      default => 'i686'
+
+    $splunkdir     = "${splunk::install_path}/${sourcepart}"
+    $capath        = "${splunkdir}/etc/auth"
+    $local_path    = "${splunkdir}/etc/system/local"
+    $splunkdb      = "${splunkdir}/var/lib/splunk"
+    $manifest       = "${sourcepart}-${new_version}-${splunkos}-${splunkarch}-manifest"
+
+    if $::osfamily    == 'Solaris' {
+      $splunkos   = 'SunOS'
+      $splunkarch = $::architecture ? {
+        i86pc   => 'x86_64',
+        default => 'sparc'
+      }
+      $splunkext  = 'tar.Z'
+      $tar        = '/usr/sfw/bin/gtar'
+      $tarcmd     = "${tar} xZf"
+    } elsif $::kernel == 'Linux' {
+      $splunkos   = 'Linux'
+      $splunkarch = $::architecture ? {
+        x86_64  => 'x86_64',
+        amd64   => 'x86_64',
+        default => 'i686'
+      }
+      $splunkext  = 'tgz'
+      $tar        = '/bin/tar'
+      $tarcmd     = "${tar} xzf"
+    } else {
+      fail('Unsupported OS')
     }
-    $splunkext  = 'tgz'
-    $tar        = '/bin/tar'
-    $tarcmd     = "${tar} xzf"
-  } else {
-    fail('Unsupported OS')
-  }
 
-  # currently installed version from fact
-  $current_version = $::splunk_version
-  $cut_version = regsubst($current_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
-  # because the legacy fact does not represent splunk version as
-  # version-release, we cut the version from the string.
+    $shcluster_id    = $::splunk_shcluster_id
 
-  if $version != $cut_version {
-    if versioncmp($version, $cut_version) > 0 or $cut_version == '' {
-      class { 'splunk::install': } -> class { 'splunk::config': } -> class { 'splunk::service': }
+    # currently installed version from fact
+    $current_version = $::splunk_version
+    $cut_version = regsubst($current_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
+    # because the legacy fact does not represent splunk version as
+    # version-release, we cut the version from the string.
+
+    if $version != $cut_version {
+      if versioncmp($version, $cut_version) > 0 or $cut_version == '' {
+        class { 'splunk::install': } -> class { 'splunk::config': } -> class { 'splunk::service': }
+      }
+    } else {
+      class { 'splunk::config': } -> class { 'splunk::service': }
     }
-  } else {
-    class { 'splunk::config': } -> class { 'splunk::service': }
-  }
 
-  # configure deployment server for indexers and forwarders
-  if $type == 'forwarder' or $type == 'heavyforwarder' {
-    class { 'splunk::deployment': }
-  }
+    # configure deployment server for indexers and forwarders
+    if $type == 'forwarder' or $type == 'heavyforwarder' {
+      class { 'splunk::deployment': }
+    }
 
-  $my_input_d  = "${local_path}/inputs.d/"
-  $my_input_c  = "${local_path}/inputs.conf"
-  $my_output_d = "${local_path}/outputs.d/"
-  $my_output_c = "${local_path}/outputs.conf"
-  $my_server_d = "${local_path}/server.d/"
-  $my_server_c = "${local_path}/server.conf"
-  $my_perms    = "${splunk::splunk_user}:${splunk::splunk_group}"
+    $my_input_d  = "${local_path}/inputs.d/"
+    $my_input_c  = "${local_path}/inputs.conf"
+    $my_output_d = "${local_path}/outputs.d/"
+    $my_output_c = "${local_path}/outputs.conf"
+    $my_server_d = "${local_path}/server.d/"
+    $my_server_c = "${local_path}/server.conf"
+    $my_perms    = "${splunk::splunk_user}:${splunk::splunk_group}"
 
-  exec { 'update-inputs':
-    command     => "/bin/cat ${my_input_d}/* > ${my_input_c}; \
-chown ${my_perms} ${my_input_c}",
-    refreshonly => true,
-    subscribe   => File["${local_path}/inputs.d/000_default"],
-    notify      => Service['splunk']
-  }
-
-  if $type != 'forwarder' {
-
-    exec { 'update-outputs':
-      command     => "/bin/cat ${my_output_d}/* > ${my_output_c}; \
-  chown ${my_perms} ${my_output_c}",
+    exec { 'update-inputs':
+      command     => "/bin/cat ${my_input_d}/* > ${my_input_c}; \
+  chown ${my_perms} ${my_input_c}",
       refreshonly => true,
+      subscribe   => File["${local_path}/inputs.d/000_default"],
       notify      => Service['splunk']
     }
 
-    exec { 'update-server':
-      command     => "/bin/cat ${my_server_d}/* > ${my_server_c}; \
-chown ${my_perms} ${my_server_c}",
-      refreshonly => true,
-      subscribe   => [File["${local_path}/server.d/000_header"],
-File["${local_path}/server.d/998_ssl"], File["${local_path}/server.d/999_default"]],
-      notify      => Service['splunk']
+    if $type != 'forwarder' {
+
+      exec { 'update-outputs':
+        command     => "/bin/cat ${my_output_d}/* > ${my_output_c}; \
+    chown ${my_perms} ${my_output_c}",
+        refreshonly => true,
+        notify      => Service['splunk']
+      }
+
+      exec { 'update-server':
+        command     => "/bin/cat ${my_server_d}/* > ${my_server_c}; \
+  chown ${my_perms} ${my_server_c}",
+        refreshonly => true,
+        subscribe   => [File["${local_path}/server.d/000_header"],
+  File["${local_path}/server.d/998_ssl"], File["${local_path}/server.d/999_default"]],
+        notify      => Service['splunk']
+      }
+
     }
 
+    # if $type == 'forwarder' and $splunk_env == 'ci' {
+    #   class { 'splunk::test': }
+    # }
   }
-
-  # if $type == 'forwarder' and $splunk_env == 'ci' {
-  #   class { 'splunk::test': }
-  # }
 }
