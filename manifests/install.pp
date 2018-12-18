@@ -53,7 +53,8 @@ class splunk::install
     exec { 'uninstallSplunkService':
       command => 'splunk disable boot-start',
       path    => "${my_cwd}/bin:/bin:/usr/bin:",
-      cwd     => $my_cwd
+      cwd     => $my_cwd,
+      returns => [0, 8]
     }
     exec { 'serviceStop':
       command     => $stopcmd,
