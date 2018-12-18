@@ -99,7 +99,7 @@ export PATH
     content => template("${module_name}/splunk-launch.conf.erb"),
     owner   => $splunk_user,
     group   => $splunk_group,
-    notify  => Service[splunk],
+    notify  => Service['splunk'],
     require => Exec['test_for_splunk']
   }
 
@@ -109,7 +109,7 @@ export PATH
       owner   => $splunk_user,
       group   => $splunk_group,
       mode    => '0640',
-      notify  => Service[splunk],
+      notify  => Service['splunk'],
       require => Exec['test_for_splunk']
     }
   }
@@ -120,7 +120,7 @@ export PATH
       owner   => $splunk_user,
       group   => $splunk_group,
       mode    => '0640',
-      notify  => Service[splunk],
+      notify  => Service['splunk'],
       require => Exec['test_for_splunk']
     }
   }
@@ -131,7 +131,7 @@ export PATH
       owner   => $splunk_user,
       group   => $splunk_group,
       mode    => '0640',
-      notify  => Service[splunk],
+      notify  => Service['splunk'],
       require => Exec['test_for_splunk']
     }
   }
@@ -142,7 +142,7 @@ export PATH
       owner   => $splunk_user,
       group   => $splunk_group,
       mode    => '0640',
-      notify  => Service[splunk],
+      notify  => Service['splunk'],
       require => Exec['test_for_splunk']
     }
   }
@@ -157,7 +157,7 @@ export PATH
       owner   => $splunk_user,
       group   => $splunk_group,
       mode    => '0640',
-      notify  => Service[splunk],
+      notify  => Service['splunk'],
       require => Exec['test_for_splunk']
     }
   }
@@ -278,7 +278,7 @@ export PATH
       owner   => $splunk_user,
       group   => $splunk_user,
       require => Exec['test_for_splunk'],
-      notify  => Service[splunk]
+      notify  => Service['splunk']
     }
 
     if $type == 'indexer' {
@@ -361,7 +361,7 @@ export PATH
         content => template("${module_name}/default-mode.conf.erb"),
         owner   => $splunk_user,
         group   => $splunk_user,
-        notify  => Service[splunk],
+        notify  => Service['splunk'],
         require => Exec['test_for_splunk']
       }
 
@@ -370,7 +370,7 @@ export PATH
         content => template("${module_name}/alert_actions.conf.erb"),
         owner   => $splunk_user,
         group   => $splunk_user,
-        notify  => Service[splunk],
+        notify  => Service['splunk'],
         require => Exec['test_for_splunk']
       }
 
@@ -386,7 +386,7 @@ export PATH
         content => template("${module_name}/limits.conf.erb"),
         owner   => $splunk_user,
         group   => $splunk_user,
-        notify  => Service[splunk],
+        notify  => Service['splunk'],
         require => Exec['test_for_splunk']
       }
 
