@@ -46,6 +46,7 @@ Boolean $captain_is_adhoc,
 String $ciphersuite,
 String $cluster_mode,
 Optional[Hash] $clusters,
+Boolean $create_user,
 Boolean $deployment_disable,
 Integer $deployment_interval,
 Optional[String] $deployment_server,
@@ -104,9 +105,9 @@ Optional[Hash] $inputs
 
   if $type != 'none' {
 
-    # if $splunk_env == 'ci' {
-    #   class { 'splunk::user': }
-    # }
+    if $splunk_env == 'ci' or $create_user == true {
+      class { 'splunk::user': }
+    }
 
     $new_version = "${splunk::version}-${splunk::release}"
 
@@ -202,8 +203,6 @@ Optional[Hash] $inputs
 
     }
 
-    # if $type == 'forwarder' and $splunk_env == 'ci' {
-    #   class { 'splunk::test': }
-    # }
   }
+
 }
