@@ -5,6 +5,11 @@ class splunk::user {
   $splunk_user       = $::splunk::splunk_user
   $splunk_group      = $::splunk::splunk_group
 
+  group { $splunk_group:
+    ensure => present,
+    name   => $splunk_group
+  }
+
   user { $splunk_user:
     ensure     => present,
     name       => $splunk_user,
