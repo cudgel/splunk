@@ -51,7 +51,7 @@ class splunk::install
   $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
 
   # clean up a splunk instance running out of the wrong directory for this role
-  if $my_cwd != $splunkdir {
+  if $my_cwd != $splunkdir and $my_cwd != '' {
 
     exec { 'uninstallSplunkService':
       command => 'splunk disable boot-start',
