@@ -21,6 +21,7 @@
 #
 class splunk::install
 {
+  $my_cwd            = $splunk::cwd
   $type              = $splunk::type
   # splunk user home dir from fact
   $splunk_home       = $splunk::splunk_home
@@ -67,6 +68,28 @@ class splunk::install
 
   $stopcmd  = 'splunk stop'
   $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
+
+  if $my_cwd != $splunkdir {
+
+    exec { 'uninstallSplunkService':
+      command => 'splunk disable boot-start',
+      path    => "${my_cwd}/bin:/bin:/usr/bin:",
+      cwd     => $my_cwd
+    }
+    exec { 'serviceStop':
+      command     => $stopcmd,
+      path        => "${my_cwd}/bin:/bin:/usr/bin:",
+      user        => $splunk_user,
+      group       => $splunk_group,
+      subscribe   => Exec['uninstallSplunkService'],
+      refreshonly => true
+    }
+
+    file { $::my_cwd:
+      ensure => absent
+    }
+
+  }
 
   file { $splunkdir:
     ensure  => directory,

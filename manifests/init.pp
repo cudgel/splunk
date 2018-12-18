@@ -148,6 +148,8 @@ Optional[Hash] $inputs
 
     $shcluster_id    = $::splunk_shcluster_id
 
+    $cwd = $::splunk_cwd
+
     # currently installed version from fact
     $current_version = $::splunk_version
     $cut_version = regsubst($current_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
