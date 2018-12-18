@@ -9,7 +9,6 @@ if $::osfamily == 'Redhat' {
   service { 'splunk':
     ensure   => 'running',
     alias    => 'splunk-service',
-    enable   => true,
     provider => $my_provider
   }
 }
