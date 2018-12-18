@@ -2,7 +2,7 @@
 splunk::version: '7.2.1'
 splunk::release: 'be11b2c46e23'
 splunk::splunk_env: undef
-splunk::type: 'forwarder'
+splunk::type: 'none'
 splunk::adhoc_searchhead: false
 splunk::autolb: true
 splunk::autolbfrequency: 60
@@ -11,6 +11,7 @@ splunk::captain_is_adhoc: false
 splunk::ciphersuite: 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:AES256-GCM-SHA:AES256-SHA:AES128-GCM-SHA:AES128-SHA'
 splunk::cluster_mode: 'none'
 splunk::clusters: {}
+splunk::create_user: false
 splunk::deployment_disable: false
 splunk::deployment_interval: 30
 splunk::deployment_server: undef
@@ -23,7 +24,7 @@ splunk::forcetimebasedautolb: true
 splunk::install_path: '/opt'
 splunk::is_captain: false
 splunk::license_master_mode: 'slave'
-splunk::license_master: undef
+splunk::license_master: 'none'
 splunk::licenses: {}
 splunk::managesecret: false
 splunk::max_rawsize_perchunk: 100000000
@@ -31,6 +32,7 @@ splunk::max_searches: 1
 splunk::preferred_captain: false
 splunk::privkey: 'privkey.pem'
 splunk::repl_count: 3
+splunk::repl_port: 8193
 splunk::scheduler_disable: false
 splunk::search_deploy: undef
 splunk::search_maxinfocsv: 20

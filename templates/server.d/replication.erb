@@ -1,8 +1,10 @@
 <%
   repl_port = scope['::splunk::repl_port']
+  cluster_mode = scope['::splunk::cluster_mode']
+  shcluster_mode = scope['::splunk::shcluster_mode']
 -%>
 
-<% if repl_port != 'none' -%>
+<% if repl_port != 'none' && (cluster_mode != 'none' || shcluster_mode != 'none') -%>
 
 # replication
 [replication_port://<%= repl_port %>]

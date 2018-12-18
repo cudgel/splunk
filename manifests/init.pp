@@ -46,6 +46,7 @@ Boolean $captain_is_adhoc,
 String $ciphersuite,
 String $cluster_mode,
 Optional[Hash] $clusters,
+Boolean $create_user,
 Boolean $deployment_disable,
 Integer $deployment_interval,
 Optional[String] $deployment_server,
@@ -97,14 +98,16 @@ Integer $subsearch_ttl,
 Optional[String] $symmkey,
 Optional[Hash] $tcpout,
 String $webcert,
-Boolean $webssl
+Boolean $webssl,
+Optional[Hash] $acls,
+Optional[Hash] $inputs
 ) {
 
-  $shcluster_id    = $::splunk_shcluster_id
+  if $type != 'none' {
 
-  # if $splunk_env == 'ci' {
-  #   class { 'splunk::user': }
-  # }
+    if $splunk_env == 'ci' or $create_user == true {
+      class { 'splunk::user': }
+    }
 
   $new_version = "${splunk::version}-${splunk::release}"
 
@@ -143,14 +146,18 @@ Boolean $webssl
     fail('Unsupported OS')
   }
 
+  $shcluster_id = $::splunk_shcluster_id
+
+  $cwd = $::splunk_cwd
+
   # currently installed version from fact
   $current_version = $::splunk_version
   $cut_version = regsubst($current_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
   # because the legacy fact does not represent splunk version as
   # version-release, we cut the version from the string.
 
-  if $version != $cut_version {
-    if versioncmp($version, $cut_version) > 0 or $cut_version == '' {
+  if $version != $cut_version or $cwd != $splunkdir {
+    if versioncmp($version, $cut_version) > 0 or $cut_version == '' or $cwd != $splunkdir {
       class { 'splunk::install': } -> class { 'splunk::config': } -> class { 'splunk::service': }
     }
   } else {
@@ -168,8 +175,7 @@ Boolean $webssl
   $my_output_c = "${local_path}/outputs.conf"
   $my_server_d = "${local_path}/server.d/"
   $my_server_c = "${local_path}/server.conf"
-
-  $my_perms   = "${splunk::splunk_user}:${splunk::splunk_group}"
+    $my_perms    = "${splunk::splunk_user}:${splunk::splunk_group}"
 
   exec { 'update-inputs':
     command     => "/bin/cat ${my_input_d}/* > ${my_input_c}; \
@@ -199,7 +205,6 @@ File["${local_path}/server.d/998_ssl"], File["${local_path}/server.d/999_default
 
   }
 
-  # if $type == 'forwarder' and $splunk_env == 'ci' {
-  #   class { 'splunk::test': }
-  # }
+  }
+
 }

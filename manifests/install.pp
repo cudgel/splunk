@@ -21,6 +21,7 @@
 #
 class splunk::install
 {
+  $my_cwd            = $splunk::cwd
   $type              = $splunk::type
   # splunk user home dir from fact
   $splunk_home       = $splunk::splunk_home
@@ -46,8 +47,36 @@ class splunk::install
   $my_perms          = "${::splunk_user}:${::splunk_group}"
   $adminpass         = $splunk::adminpass
 
+  $stopcmd  = 'splunk stop'
+  $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
 
-  if $current_version != undef {
+  # clean up a splunk instance running out of the wrong directory for this role
+  if $my_cwd != $splunkdir and $my_cwd != '' {
+
+    exec { 'uninstallSplunkService':
+      command => 'splunk disable boot-start',
+      path    => "${my_cwd}/bin:/bin:/usr/bin:",
+      cwd     => $my_cwd,
+      returns => [0, 8]
+    }
+
+    exec { 'serviceStop':
+      command   => $stopcmd,
+      path      => "${my_cwd}/bin:/bin:/usr/bin:",
+      user      => $splunk_user,
+      group     => $splunk_group,
+      subscribe => Exec['uninstallSplunkService'],
+      before    => File[$my_cwd]
+    }
+
+    file { $my_cwd:
+      ensure    => absent,
+      subscribe => Exec['serviceStop']
+    }
+
+  }
+
+  if $current_version != undef and $my_cwd == $splunkdir {
     $oldsource = "${sourcepart}-${current_version}-${splunkos}-${splunkarch}.${splunkext}"
 
     file { "${install_path}/${oldsource}":
@@ -65,13 +94,11 @@ class splunk::install
     source        => $source
   }
 
-  $stopcmd  = 'splunk stop'
-  $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
-
   file { $splunkdir:
-    ensure => directory,
-    owner  => $splunk_user,
-    group  => $splunk_group
+    ensure  => directory,
+    owner   => $splunk_user,
+    group   => $splunk_group,
+    require => User[$splunk_user]
   }
 
   exec { 'unpackSplunk':
@@ -96,28 +123,6 @@ class splunk::install
     group       => $splunk_group,
     subscribe   => Exec['unpackSplunk'],
     refreshonly => true
-  }
-
-  if $type != 'forwarder' and $type != 'heavyforwarder' {
-
-    file { "${splunk_local}/user-seed.conf":
-      content => template("${module_name}/user-seed.conf.erb"),
-      owner   => $splunk_user,
-      group   => $splunk_group,
-      require => Exec['unpackSplunk']
-    }
-
-    $restartcmd = 'splunk start'
-
-    exec { 'serviceRestart':
-      command     => "${stopcmd}; ${restartcmd}",
-      path        => "${splunkdir}/bin:/bin:/usr/bin:",
-      user        => $splunk_user,
-      group       => $splunk_group,
-      subscribe   => File["${splunk_local}/user-seed.conf"],
-      refreshonly => true
-    }
-
   }
 
   exec { 'installSplunkService':
