@@ -63,7 +63,7 @@ class splunk::install
       refreshonly => true
     }
 
-    file { $::my_cwd:
+    file { $my_cwd:
       ensure => absent
     }
 
