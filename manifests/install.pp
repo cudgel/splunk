@@ -47,28 +47,6 @@ class splunk::install
   $my_perms          = "${::splunk_user}:${::splunk_group}"
   $adminpass         = $splunk::adminpass
 
-
-  if $current_version != undef {
-    $oldsource = "${sourcepart}-${current_version}-${splunkos}-${splunkarch}.${splunkext}"
-
-    file { "${install_path}/${oldsource}":
-      ensure => absent
-    }
-  } else {
-    $new_install = true
-  }
-
-  $newsource   = "${sourcepart}-${new_version}-${splunkos}-${splunkarch}.${splunkext}"
-
-  splunk::fetch{ 'sourcefile':
-    splunk_bundle => $newsource,
-    type          => $type,
-    source        => $source
-  }
-
-  $stopcmd  = 'splunk stop'
-  $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
-
   if $my_cwd != $splunkdir {
 
     exec { 'uninstallSplunkService':
@@ -90,6 +68,27 @@ class splunk::install
     }
 
   }
+
+  if $current_version != undef {
+    $oldsource = "${sourcepart}-${current_version}-${splunkos}-${splunkarch}.${splunkext}"
+
+    file { "${install_path}/${oldsource}":
+      ensure => absent
+    }
+  } else {
+    $new_install = true
+  }
+
+  $newsource   = "${sourcepart}-${new_version}-${splunkos}-${splunkarch}.${splunkext}"
+
+  splunk::fetch{ 'sourcefile':
+    splunk_bundle => $newsource,
+    type          => $type,
+    source        => $source
+  }
+
+  $stopcmd  = 'splunk stop'
+  $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
 
   file { $splunkdir:
     ensure  => directory,
