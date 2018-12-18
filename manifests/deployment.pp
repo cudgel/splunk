@@ -46,7 +46,7 @@ class splunk::deployment
       owner   => $splunk::splunk_user,
       group   => $splunk::splunk_user,
       require => File["${myappdir}/local"],
-      notify  => Service[splunk]
+      notify  => Service['splunk']
     }
   }
 }
