@@ -59,17 +59,19 @@ class splunk::install
       cwd     => $my_cwd,
       returns => [0, 8]
     }
+
     exec { 'serviceStop':
-      command     => $stopcmd,
-      path        => "${my_cwd}/bin:/bin:/usr/bin:",
-      user        => $splunk_user,
-      group       => $splunk_group,
-      subscribe   => Exec['uninstallSplunkService'],
-      refreshonly => true
+      command   => $stopcmd,
+      path      => "${my_cwd}/bin:/bin:/usr/bin:",
+      user      => $splunk_user,
+      group     => $splunk_group,
+      subscribe => Exec['uninstallSplunkService'],
+      before    => File[$my_cwd]
     }
 
     file { $my_cwd:
-      ensure => absent
+      ensure    => absent,
+      subscribe => Exec['serviceStop']
     }
 
   }

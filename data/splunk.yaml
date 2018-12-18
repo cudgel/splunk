@@ -24,7 +24,7 @@ splunk::forcetimebasedautolb: true
 splunk::install_path: '/opt'
 splunk::is_captain: false
 splunk::license_master_mode: 'slave'
-splunk::license_master: undef
+splunk::license_master: 'none'
 splunk::licenses: {}
 splunk::managesecret: false
 splunk::max_rawsize_perchunk: 100000000

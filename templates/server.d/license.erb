@@ -26,7 +26,9 @@ stack_id = free
 
 [license]
 <% if license_master_mode == 'slave' -%>
+<% if license_master != 'none' -%>
 master_uri = https://<%= license_master %>
+<% end -%>
 <% else -%>
 active_group = Enterprise
 <% for lmpool in splunk_licenses -%>
