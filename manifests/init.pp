@@ -159,10 +159,8 @@ Optional[Hash] $tcpout = undef
   # because the legacy fact does not represent splunk version as
   # version-release, we cut the version from the string.
 
-  if $version != $cut_version or $cwd != $splunkdir {
-    if versioncmp($version, $cut_version) > 0 or $cut_version == '' or $cwd != $splunkdir {
+  if versioncmp($version, $cut_version) > 0 or $cut_version == '' or $cwd != $splunkdir {
       class { 'splunk::install': } -> class { 'splunk::config': } -> class { 'splunk::service': }
-    }
   } else {
     class { 'splunk::config': } -> class { 'splunk::service': }
   }
