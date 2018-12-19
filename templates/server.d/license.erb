@@ -31,6 +31,7 @@ master_uri = https://<%= license_master %>
 <% end -%>
 <% else -%>
 active_group = Enterprise
+<% if splunk_licenses != nil %>
 <% for lmpool in splunk_licenses -%>
 
 [lmpool:<%= lmpool['label'] %>]
@@ -39,4 +40,5 @@ stack_id = <%= lmpool['stack_id'] %>
 quota = <%= lmpool['quota'] %>
 slaves = <% lmpool['slaves'].each do |slave| -%><%= slave %><%= "," unless slave == lmpool['slaves'].last %><% end -%>
 <% end %>
+<% end -%>
 <% end -%>
