@@ -26,7 +26,6 @@ class splunk::config
   $splunk_local      = "${splunkdir}/etc/system/local"
   $splunk_user       = $splunk::splunk_user
   $splunk_group      = $splunk::splunk_group
-  $my_perms          = "${splunk_user}:${splunk_group}"
   $cacert            = $splunk::cacert
   $privkey           = $splunk::privkey
   $servercert        = $splunk::servercert
@@ -51,6 +50,9 @@ export SPLUNK_HOME
 PATH=\$SPLUNK_HOME/bin:\$PATH
 export PATH
   "
+
+  $my_perms = "${splunk_user}:${splunk_group}"
+
 
   file { "${splunk_home}/.bashrc.custom":
     owner   => $splunk_user,
