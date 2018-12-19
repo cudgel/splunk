@@ -26,7 +26,6 @@ class splunk::config
   $splunk_local      = "${splunkdir}/etc/system/local"
   $splunk_user       = $splunk::splunk_user
   $splunk_group      = $splunk::splunk_group
-  $my_perms          = "${splunk_user}:${splunk_group}"
   $cacert            = $splunk::cacert
   $privkey           = $splunk::privkey
   $servercert        = $splunk::servercert
@@ -51,6 +50,9 @@ export SPLUNK_HOME
 PATH=\$SPLUNK_HOME/bin:\$PATH
 export PATH
   "
+
+  $my_perms = "${splunk_user}:${splunk_group}"
+
 
   file { "${splunk_home}/.bashrc.custom":
     owner   => $splunk_user,
@@ -319,7 +321,7 @@ export PATH
             require     => Exec['test_for_splunk']
           }
 
-          if $is_captain == true and $shcluster_members != undef{
+          if $is_captain == true and $shcluster_members != undef {
             $shcluster_members.each |String $member| {
               $servers_list = "${servers_list}.${member}:8089"
             }
