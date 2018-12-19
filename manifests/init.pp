@@ -100,7 +100,7 @@ Optional[String] $splunk_env = undef,
 Optional[Tuple] $clusters = undef,
 Optional[Tuple] $licenses = undef,
 Optional[String] $shcluster_label = undef,
-Optional[Array] $shcluster_membersx = undef,
+Optional[Array] $shcluster_members = undef,
 
 ) {
 
@@ -147,8 +147,10 @@ Optional[Array] $shcluster_membersx = undef,
       fail('Unsupported OS')
     }
 
-  $shcluster_id = $::splunk_shcluster_id
+    # splunk search head cluster id (if a cluster member)
+    $shcluster_id = $::splunk_shcluster_id
 
+    # directory of any running splunk process
     $cwd = $::splunk_cwd
 
     # currently installed version from fact
