@@ -60,7 +60,7 @@ String $install_path,
 Boolean $is_captain,
 String $license_master_mode,
 Optional[String] $license_master,
-Optional[Hash] $licenses,
+Optional[Tuple] $licenses,
 Boolean $managesecret,
 Integer $max_rawsize_perchunk,
 Integer $max_searches,
@@ -146,7 +146,7 @@ Optional[Hash] $inputs
       fail('Unsupported OS')
     }
 
-    $shcluster_id    = $::splunk_shcluster_id
+  $shcluster_id = $::splunk_shcluster_id
 
     $cwd = $::splunk_cwd
 
