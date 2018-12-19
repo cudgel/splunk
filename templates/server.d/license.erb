@@ -1,7 +1,7 @@
 <%
   license_master = scope['::splunk::license_master']
   license_master_mode = scope['::splunk::license_master_mode']
-  splunk_licenses = scope['::splunk::licenses']
+  licenses = scope['::splunk::licenses']
 -%>
 
 # license manager
@@ -31,7 +31,8 @@ master_uri = https://<%= license_master %>
 <% end -%>
 <% else -%>
 active_group = Enterprise
-<% for lmpool in splunk_licenses -%>
+<% if licenses != nil %>
+<% for lmpool in licenses -%>
 
 [lmpool:<%= lmpool['label'] %>]
 description = <%= lmpool['description'] %>
@@ -39,4 +40,5 @@ stack_id = <%= lmpool['stack_id'] %>
 quota = <%= lmpool['quota'] %>
 slaves = <% lmpool['slaves'].each do |slave| -%><%= slave %><%= "," unless slave == lmpool['slaves'].last %><% end -%>
 <% end %>
+<% end -%>
 <% end -%>

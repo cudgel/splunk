@@ -319,7 +319,7 @@ export PATH
             require     => Exec['test_for_splunk']
           }
 
-          if $is_captain == true {
+          if $is_captain == true and $shcluster_members != undef {
             $shcluster_members.each |String $member| {
               $servers_list = "${servers_list}.${member}:8089"
             }
