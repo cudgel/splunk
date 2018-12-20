@@ -1,21 +1,21 @@
 # Puppet Name: <%= @title %>
 #
 <%
-splunkdir = scope['::splunk::splunkdir']
+dir = scope['::splunk::dir']
 -%>
 [default]
 host = <%= scope['::hostname'] %>
 _meta = input_host::<%= scope['::hostname'] %>
 
-[monitor:/<%= splunkdir %>/var/log/splunk/*.log]
+[monitor:/<%= dir %>/var/log/splunk/*.log]
 index = _internal
 _TCP_ROUTING = *
 # _whitelist = /(audit|license_audit|metrics|mongod|python|splunkd|splunkd_stderr|splunkd_stdout|splunklogger)\.log$
 
 [filter:blacklist:splunkvar]
-regex1 = ^<%= splunkdir %>/var
+regex1 = ^<%= dir %>/var
 
-[fschange:<%= splunkdir %>]
+[fschange:<%= dir %>]
 index = _audit
 disabled = false
 pollPeriod = 60

@@ -1,0 +1,2 @@
+---
+splunk::repl_port: 8192

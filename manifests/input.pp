@@ -5,8 +5,8 @@
 # if creating a file monitor, apply acl to the object as well
 #
 define splunk::input(
-  $splunkdir    = $splunk::splunkdir,
-  $local_path   = $splunk::local_path,
+  $dir    = $splunk::dir,
+  $local   = $splunk::local,
   $splunk_user  = $splunk::splunk_user,
   $splunk_group = $splunk::splunk_group,
   $disabled     = false,
@@ -36,12 +36,12 @@ define splunk::input(
     }
   }
 
-  file { "${local_path}/inputs.d/${title}":
+  file { "${local}/inputs.d/${title}":
     owner   => $splunk_user,
     group   => $splunk_group,
     mode    => '0440',
     content => $mycontent,
-    require => File["${local_path}/inputs.d"],
+    require => File["${local}/inputs.d"],
     notify  => Exec['update-inputs'],
   }
 

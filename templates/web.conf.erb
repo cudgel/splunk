@@ -1,7 +1,7 @@
 # Puppet Name: <%= @title %>
 #
 <%
-splunkdir = scope['::splunk::splunkdir']
+dir = scope['::splunk::dir']
 enablesplunkwebssl = scope['::splunk::webssl']
 privkey = scope['::splunk::privkey']
 webcert = scope['::splunk::webcert']

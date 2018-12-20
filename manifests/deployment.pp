@@ -21,7 +21,7 @@ class splunk::deployment
 {
 
   $deployment_server = $splunk::deployment_server
-  $splunkapps = "${::splunk::splunkdir}/etc/apps"
+  $splunkapps = "${::splunk::dir}/etc/apps"
   $myapp = 'deployclient'
   $myappdir = "${splunkapps}/${myapp}"
 
