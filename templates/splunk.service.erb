@@ -1,0 +1,25 @@
+<%
+version = scope['::splunk::version']
+dir = scope['::splunk::sourcepart']
+user = scope['::splunk::splunk_user']
+group = scope['::splunk::splunk_group']
+-%>
+[Unit]
+Description=Splunk Enterprise <%= version -%>
+After=network.target
+Wants=network.target
+
+[Service]
+Type=forking
+User=<%= user -%>
+Group=<%= group -%>
+LimitNOFILE=65536
+ExecStart=/opt/<%= dir -%>/bin/splunk start
+ExecStop=/opt/<%= dir -%>/bin/splunk stop
+ExecReload=/opt/<%= dir -%>/bin/splunk restart
+PIDFile=/opt/<%= dir -%>/var/run/splunk/splunkd.pid
+
+[Install]
+WantedBy=multi-user.target
+# If you want to use $(systemctl [start|stop|restart] splunk) instead of splunkd ...
+Alias=splunk.service
