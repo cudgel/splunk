@@ -140,7 +140,7 @@ Optional[Hash] $tcpout = undef
     # version-release, we cut the version from the string.
 
     if versioncmp($version, $cut_version) == 1 or $cut_version == '' or $cwd != $dir {
-      class { 'splunk::install': } -> class { 'splunk::config': }
+      class { 'splunk::install': } -> class { 'splunk::config': } -> class { 'splunk::service': }
     } else {
       if versioncmp($version, $cut_version) == -1 {
         info('Splunk is already at a higher version.')
