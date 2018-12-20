@@ -43,6 +43,7 @@ class splunk::config
   $symmkey           = $splunk::symmkey
   $splunk_acls       = $splunk::acls
   $splunk_inputs     = $splunk::inputs
+  $cluster_mode      = $splunk::cluster_mode
 
   $bashrc = "
 SPLUNK_HOME=${dir}
@@ -249,12 +250,14 @@ export PATH
       require => File["${local}/server.d"]
     }
 
-    file { "${local}/server.d/997_ixclustering":
-      content => template("${module_name}/server.d/ixclustering.erb"),
-      owner   => $splunk_user,
-      group   => $splunk_group,
-      require => File["${local}/server.d"],
-      notify  => Exec['update-server']
+    if $cluster_mode != 'none' {
+      file { "${local}/server.d/997_ixclustering":
+        content => template("${module_name}/server.d/ixclustering.erb"),
+        owner   => $splunk_user,
+        group   => $splunk_group,
+        require => File["${local}/server.d"],
+        notify  => Exec['update-server']
+      }
     }
 
     file { "${local}/server.d/998_ssl":
@@ -292,12 +295,14 @@ export PATH
         notify  => Exec['update-inputs']
       }
 
-      file { "${local}/server.d/995_replication":
-        content => template("${module_name}/server.d/replication.erb"),
-        owner   => $splunk_user,
-        group   => $splunk_group,
-        require => File["${local}/server.d"],
-        notify  => Exec['update-server']
+      if $cluster_mode != 'none' {
+        file { "${local}/server.d/995_replication":
+          content => template("${module_name}/server.d/replication.erb"),
+          owner   => $splunk_user,
+          group   => $splunk_group,
+          require => File["${local}/server.d"],
+          notify  => Exec['update-server']
+        }
       }
 
     }
@@ -409,7 +414,7 @@ export PATH
           notify  => Exec['update-server']
         }
       } else {
-        # remove any fragments from unconfigure shc member or standalone
+        # remove any fragments from unconfigured shc member or standalone
         file { "${local}/server.d/996_shclustering":
           ensure => absent,
           notify => Exec['update-server']
