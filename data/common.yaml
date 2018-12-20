@@ -34,7 +34,6 @@ splunk::search_maxqueue: 100
 splunk::server_site: 'default'
 splunk::servercert: 'server.pem'
 splunk::servercertpass: 'password'
-splunk::shcluster_mode: 'none'
 splunk::source: 'splunk'
 splunk::splunk_group: 'splunk'
 splunk::splunk_user: 'splunk'
