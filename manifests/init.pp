@@ -169,7 +169,7 @@ Optional[Hash] $tcpout = undef
     }
 
     # configure deployment server for indexers and forwarders
-    if $type == 'forwarder' or $type == 'heavyforwarder' {
+    if $type == 'forwarder' or $type == 'heavyforwarder' and $deployment_server != undef {
       class { 'splunk::deployment': }
     }
 
