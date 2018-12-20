@@ -1,5 +1,8 @@
 class splunk::service {
 
+  $dir             = $splunk::dir
+  $splunk_user     = $splunk::splunk_user
+
   if $facts['os']['family'] == 'RedHat' and Integer($facts['os']['release']['major']) >= 7  {
       file { '/etc/systemd/system/multi-user.target.wants/splunk.service':
         content => template("${module_name}/splunk.service.erb"),
@@ -9,6 +12,10 @@ class splunk::service {
   }
 
   service { 'splunk':
-    ensure   => 'running',
+    ensure  => 'running',
+    restart => "/usr/bin/sudo -u ${splunk_user} ${dir}/bin/splunk restart",
+    start   => "/usr/bin/sudo -u ${splunk_user} ${dir}/bin/splunk start",
+    stop    => "/usr/bin/sudo -u ${splunk_user} ${dir}/bin/splunk stop",
+    status  => "/usr/bin/sudo -u ${splunk_user} ${dir}/bin/splunk status",
   }
 }
