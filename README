@@ -10,23 +10,8 @@ If you choose to use a fileserver definition for your splunk tarbals, e.g.:
 
 the file server should be populated with the tarballs for the splunk components you want to manage and splunk::params::source should be set to 'fileserver'.
 
-The module depends on some basic hiera to supply global setttings and install a forwarder or stand-alone Splunk server.
 
-  splunk::params::deployment_server: string
-  splunk::params::email: string
-  splunk::params::license_master: string
-  splunk::params::search_deploy: string
-  splunk::params::serviceurl: string
-  splunk::params::source: 'splunk'
-  splunk::params::symmkey: string
-  splunk::params::version: '6.6.3'
-  splunk::params::release: 'e21ee54bc796'
-  splunk::params::tcpout: hash
-    group:string
-    cname: string
-    servers:array
-
-Sample node/role hiera data:
+Sample hiera for RedHat log files:
 
   splunk::inputs:
     'messages':
@@ -56,15 +41,6 @@ A sample manifest snippet:
 
   if $my_type != 'none' {
     class { '::splunk': type => $my_type }
-
-    # create OS, role, and host specific inputs
-    $my_inputs = hiera_hash('splunk::inputs')
-    create_resources('splunk::input', $my_inputs)
-
-    # set up any ACLs definied  at the OS, role or host for splunk group
-    # log access
-    $my_acls = hiera_hash('splunk::acls')
-    create_resources('splunk::acl', $my_acls)
   }
 
 License
