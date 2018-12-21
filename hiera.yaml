@@ -13,7 +13,7 @@ hierarchy:
   - name: "ec2 function"
     path: "ec2/%{facts.ec2_tags.application}-%{facts.ec2_tags.function}.yaml"
   - name: "type data"
-    path: "types/%{::type}.yaml"
+    path: "types/%{::splunk::type}.yaml"
   - name: 'splunk common'
     paths:
       - "%{facts.os.family}.yaml"
