@@ -2,6 +2,7 @@
 splunk::version: '7.2.1'
 splunk::release: 'be11b2c46e23'
 splunk::type: 'none'
+splunk::sourcepart: 'splunk'
 splunk::adhoc_searchhead: false
 splunk::autolb: true
 splunk::autolbfrequency: 60
@@ -27,15 +28,12 @@ splunk::max_rawsize_perchunk: 100000000
 splunk::max_searches: 1
 splunk::preferred_captain: false
 splunk::privkey: 'privkey.pem'
-splunk::repl_count: 3
-splunk::repl_port: 8193
 splunk::scheduler_disable: false
 splunk::search_maxinfocsv: 20
 splunk::search_maxqueue: 100
 splunk::server_site: 'default'
 splunk::servercert: 'server.pem'
 splunk::servercertpass: 'password'
-splunk::shcluster_mode: 'none'
 splunk::source: 'splunk'
 splunk::splunk_group: 'splunk'
 splunk::splunk_user: 'splunk'

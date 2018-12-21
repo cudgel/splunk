@@ -21,37 +21,37 @@
 #
 class splunk::install
 {
-  $my_cwd            = $splunk::cwd
-  $type              = $splunk::type
+  $my_cwd          = $splunk::cwd
+  $type            = $splunk::type
   # splunk user home dir from fact
-  $splunk_home       = $splunk::splunk_home
-  $install_path      = $splunk::install_path
+  $splunk_home     = $splunk::splunk_home
+  $install_path    = $splunk::install_path
   # where splunk is installed
-  $splunkdir         = $splunk::splunkdir
-  $splunk_local      = "${splunkdir}/etc/system/local"
+  $dir             = $splunk::dir
+  $local           = $splunk::local
   # splunk or splunkforwarder
-  $sourcepart        = $splunk::sourcepart
+  $sourcepart      = $splunk::sourcepart
   # currently installed version from fact
-  $current_version   = $splunk::current_version
+  $current_version = $splunk::current_version
   # new verion from hiera
-  $new_version       = $splunk::new_version
-  $splunkos          = $splunk::splunkos
-  $splunkarch        = $splunk::splunkarch
-  $splunkext         = $splunk::splunkext
-  $tarcmd            = $splunk::tarcmd
-  $manifest          = $splunk::manifest
+  $new_version     = $splunk::new_version
+  $os              = $splunk::os
+  $arch            = $splunk::arch
+  $ext             = $splunk::ext
+  $tarcmd          = $splunk::tarcmd
+  $manifest        = $splunk::manifest
   # splunk (web) or fileserver or a custom url
-  $source            = $splunk::source
-  $splunk_user       = $splunk::splunk_user
-  $splunk_group      = $splunk::splunk_group
-  $my_perms          = "${::splunk_user}:${::splunk_group}"
-  $adminpass         = $splunk::adminpass
+  $source          = $splunk::source
+  $splunk_user     = $splunk::splunk_user
+  $splunk_group    = $splunk::splunk_group
+  $perms           = $splunk::perms
+  $adminpass       = $splunk::adminpass
 
   $stopcmd  = 'splunk stop'
   $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
 
   # clean up a splunk instance running out of the wrong directory for this role
-  if $my_cwd != $splunkdir and $my_cwd != '' {
+  if $my_cwd != $dir and $my_cwd != '' {
 
     exec { 'uninstallSplunkService':
       command => 'splunk disable boot-start',
@@ -66,7 +66,8 @@ class splunk::install
       user      => $splunk_user,
       group     => $splunk_group,
       subscribe => Exec['uninstallSplunkService'],
-      before    => File[$my_cwd]
+      before    => File[$my_cwd],
+      timeout   => 600
     }
 
     file { $my_cwd:
@@ -76,17 +77,15 @@ class splunk::install
 
   }
 
-  if $current_version != undef and $my_cwd == $splunkdir {
-    $oldsource = "${sourcepart}-${current_version}-${splunkos}-${splunkarch}.${splunkext}"
+  if $current_version != undef and $my_cwd == $dir {
+    $oldsource = "${sourcepart}-${current_version}-${os}-${arch}.${ext}"
 
     file { "${install_path}/${oldsource}":
       ensure => absent
     }
-  } else {
-    $new_install = true
   }
 
-  $newsource   = "${sourcepart}-${new_version}-${splunkos}-${splunkarch}.${splunkext}"
+  $newsource   = "${sourcepart}-${new_version}-${os}-${arch}.${ext}"
 
   splunk::fetch{ 'sourcefile':
     splunk_bundle => $newsource,
@@ -94,7 +93,7 @@ class splunk::install
     source        => $source
   }
 
-  file { $splunkdir:
+  file { $dir:
     ensure  => directory,
     owner   => $splunk_user,
     group   => $splunk_group,
@@ -103,22 +102,22 @@ class splunk::install
 
   exec { 'unpackSplunk':
     command   => "${tarcmd} ${newsource}",
-    path      => "${splunkdir}/bin:/bin:/usr/bin:",
+    path      => "${dir}/bin:/bin:/usr/bin:",
     cwd       => $install_path,
     timeout   => 600,
     user      => $splunk_user,
     group     => $splunk_group,
     subscribe => File["${install_path}/${newsource}"],
     before    => Exec['test_for_splunk'],
-    unless    => "test -e ${splunkdir}/${manifest}",
+    unless    => "test -e ${dir}/${manifest}",
     onlyif    => "test -s ${newsource} \
-    && test -d ${splunkdir}",
-    creates   => "${splunkdir}/${manifest}"
+    && test -d ${dir}",
+    creates   => "${dir}/${manifest}"
   }
 
   exec { 'serviceStart':
     command     => "${stopcmd}; ${startcmd}",
-    path        => "${splunkdir}/bin:/bin:/usr/bin:",
+    path        => "${dir}/bin:/bin:/usr/bin:",
     user        => $splunk_user,
     group       => $splunk_group,
     subscribe   => Exec['unpackSplunk'],
@@ -127,8 +126,8 @@ class splunk::install
 
   exec { 'installSplunkService':
     command   => "splunk enable boot-start -user ${splunk_user}",
-    path      => "${splunkdir}/bin:/bin:/usr/bin:",
-    cwd       => $splunkdir,
+    path      => "${dir}/bin:/bin:/usr/bin:",
+    cwd       => $dir,
     subscribe => Exec['unpackSplunk'],
     unless    => 'test -e /etc/init.d/splunk',
     creates   => '/etc/init.d/splunk',
