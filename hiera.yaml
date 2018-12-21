@@ -10,8 +10,6 @@ hierarchy:
     path: "nodes/%{facts.hostname}.yaml"
   - name: "environment"
     path: "environments/%{facts.r10k_environment}.yaml"
-  - name: "ec2 function"
-    path: "ec2/%{facts.application}/%{facts.function}.yaml"
   - name: "role data"
     path: "roles/%{::role}.yaml"
   - name: 'splunk common'
