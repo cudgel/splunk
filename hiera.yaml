@@ -11,11 +11,11 @@ hierarchy:
   - name: "environment"
     path: "environments/%{facts.r10k_environment}.yaml"
   - name: "ec2 function"
-    path: "ec2/%{facts.ec2_tags.application}-%{facts.ec2_tags.function}.yaml"
-  - name: "type data"
-    path: "types/%{::splunk::type}.yaml"
+    path: "ec2/%{facts.application}/%{facts.function}.yaml"
+  - name: "role data"
+    path: "roles/%{::role}.yaml"
   - name: 'splunk common'
     paths:
-      - "%{facts.os.family}.yaml"
+      - "%{facts.kernel}.yaml"
       - 'common.yaml'
 
