@@ -7,13 +7,15 @@ defaults:
 
 hierarchy:
   - name: "per-node data"
-    path: "nodes/%{::hostname}.yaml"
+    path: "nodes/%{facts.hostname}.yaml"
   - name: "environment"
-    path: "environments/%{::r10k_environment}.yaml"
+    path: "environments/%{facts.r10k_environment}.yaml"
+  - name: "ec2 function"
+    path: "ec2/%{facts.ec2_tags.application}-%{facts.ec2_tags.function}.yaml"
   - name: "role data"
     path: "roles/%{::role}.yaml"
   - name: 'splunk common'
     paths:
-      - "%{::osfamily}.yaml"
+      - "%{facts.os.family}.yaml"
       - 'common.yaml'
 
