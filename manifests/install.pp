@@ -93,12 +93,15 @@ class splunk::install
     source        => $source
   }
 
-  file { $dir:
-    ensure  => directory,
-    owner   => $splunk_user,
-    group   => $splunk_group,
-    require => User[$splunk_user]
+  if $splunk_home != $dir {
+    file { $dir:
+      ensure  => directory,
+      owner   => $splunk_user,
+      group   => $splunk_group,
+      require => User[$splunk_user]
+    }
   }
+
 
   exec { 'unpackSplunk':
     command   => "${tarcmd} ${newsource}",
