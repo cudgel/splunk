@@ -8,7 +8,7 @@ class splunk::service {
         content => template("${module_name}/splunk.service.erb"),
         owner   => 'root',
         group   => 'root'
-}
+      }
   }
 
   service { 'splunk':
