@@ -1,4 +1,0 @@
----
-splunk::ext: 'tgz'
-splunk::os: 'Linux'
-splunk::tarcmd: '/bin/tar xzf'
