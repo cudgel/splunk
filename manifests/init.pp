@@ -37,7 +37,6 @@ class splunk(
 String $version,
 String $release,
 String $type,
-String $sourcepart,
 Boolean $adhoc_searchhead,
 Boolean $autolb,
 Integer $autolbfrequency,
@@ -120,6 +119,11 @@ Optional[Hash] $tcpout = undef
       amd64   => 'x86_64',
       default => 'i686'
     }
+    if $type == 'forwarder' {
+      $sourcepart = 'splunkforwarder'
+    } else {
+      $sourcepart = 'splunk'
+    }
 
     $dir      = "${install_path}/${sourcepart}"
     $capath   = "${dir}/etc/auth"
@@ -129,6 +133,9 @@ Optional[Hash] $tcpout = undef
 
     # splunk search head cluster id (if a cluster member)
     $shcluster_id = $::splunk_shcluster_id
+
+    # splunk user home dir from fact
+    $home = $::splunk::splunk_home
 
     # directory of any running splunk process
     $cwd = $::splunk_cwd
@@ -148,7 +155,7 @@ Optional[Hash] $tcpout = undef
       class { 'splunk::config': } -> class { 'splunk::service': }
     }
 
-    # configure deployment server for indexers and forwarders
+  # configure deployment server for indexers and forwarders
     if $type == 'forwarder' or $type == 'heavyforwarder' and $deployment_server != undef {
       class { 'splunk::deployment': }
     }
@@ -159,7 +166,7 @@ Optional[Hash] $tcpout = undef
 
     exec { 'update-inputs':
       command     => "/bin/cat ${my_input_d}/* > ${my_input_c}; \
-        chown ${perms} ${my_input_c}",
+          chown ${perms} ${my_input_c}",
       refreshonly => true,
       subscribe   => File["${local}/inputs.d/000_default"],
       notify      => Service['splunk']
@@ -173,7 +180,7 @@ Optional[Hash] $tcpout = undef
 
         exec { 'update-outputs':
           command     => "/bin/cat ${my_output_d}/* > ${my_output_c}; \
-            chown ${perms} ${my_output_c}",
+                chown ${perms} ${my_output_c}",
           refreshonly => true,
           notify      => Service['splunk']
         }
@@ -184,13 +191,13 @@ Optional[Hash] $tcpout = undef
 
       exec { 'update-server':
         command     => "/bin/cat ${my_server_d}/* > ${my_server_c}; \
-          chown ${perms} ${my_server_c}",
+            chown ${perms} ${my_server_c}",
         refreshonly => true,
         subscribe   => [
-          File["${local}/server.d/000_header"],
-          File["${local}/server.d/998_ssl"],
-          File["${local}/server.d/999_default"]
-        ],
+            File["${local}/server.d/000_header"],
+            File["${local}/server.d/998_ssl"],
+            File["${local}/server.d/999_default"]
+          ],
         notify      => Service['splunk']
       }
 
