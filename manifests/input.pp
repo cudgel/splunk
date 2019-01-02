@@ -5,8 +5,8 @@
 # if creating a file monitor, apply acl to the object as well
 #
 define splunk::input(
-  $dir    = $splunk::dir,
-  $local   = $splunk::local,
+  $dir          = $splunk::dir,
+  $local        = $splunk::local,
   $splunk_user  = $splunk::splunk_user,
   $splunk_group = $splunk::splunk_group,
   $disabled     = false,
