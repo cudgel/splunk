@@ -23,10 +23,10 @@ class splunk::install
 {
   $my_cwd          = $splunk::cwd
   $type            = $splunk::type
-  # splunk user home dir from fact
-  $splunk_home     = $splunk::splunk_home
+  # splunk user home
+  $home            = $splunk::home
   $install_path    = $splunk::install_path
-  # where splunk is installed
+  # splunk install directory
   $dir             = $splunk::dir
   $local           = $splunk::local
   # splunk or splunkforwarder
@@ -51,7 +51,7 @@ class splunk::install
   $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
 
   # clean up a splunk instance running out of the wrong directory for this role
-  if $my_cwd != $dir and $my_cwd != '' {
+  if $my_cwd != $dir and $my_cwd != '' and $home != $my_cwd {
 
     exec { 'uninstallSplunkService':
       command => 'splunk disable boot-start',
@@ -70,11 +70,9 @@ class splunk::install
       timeout   => 600
     }
 
-    if $splunk_home != $my_cwd {
       file { $my_cwd:
         ensure    => absent,
         subscribe => Exec['serviceStop']
-      }
     }
 
   }
@@ -95,7 +93,7 @@ class splunk::install
     source        => $source
   }
 
-  if $splunk_home != $dir {
+  if $home != $dir {
     file { $dir:
       ensure  => directory,
       owner   => $splunk_user,
