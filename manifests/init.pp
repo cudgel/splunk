@@ -135,7 +135,7 @@ Optional[Hash] $tcpout = undef
   $shcluster_id = $::splunk_shcluster_id
 
   # splunk user home dir from fact
-  $home     = $::splunk::splunk_home
+  $home = $::splunk::splunk_home
 
   # directory of any running splunk process
   $cwd = $::splunk_cwd

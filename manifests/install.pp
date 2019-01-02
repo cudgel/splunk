@@ -23,10 +23,10 @@ class splunk::install
 {
   $my_cwd          = $splunk::cwd
   $type            = $splunk::type
-  # splunk user home dir from fact
+  # splunk user home
   $home            = $splunk::home
   $install_path    = $splunk::install_path
-  # where splunk is installed
+  # splunk install directory
   $dir             = $splunk::dir
   $local           = $splunk::local
   # splunk or splunkforwarder
