@@ -37,7 +37,6 @@ class splunk(
   String $version,
 String $release,
 String $type,
-String $sourcepart,
 Boolean $adhoc_searchhead,
 Boolean $autolb,
 Integer $autolbfrequency,
@@ -119,7 +118,12 @@ Optional[Hash] $tcpout = undef
       x86_64  => 'x86_64',
       amd64   => 'x86_64',
       default => 'i686'
-  }
+    }
+    if $type == 'forwarder' {
+      $sourcepart = 'splunkforwarder'
+    } else {
+      $sourcepart = 'splunk'
+    }
 
     $dir      = "${install_path}/${sourcepart}"
     $capath   = "${dir}/etc/auth"

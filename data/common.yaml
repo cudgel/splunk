@@ -2,7 +2,6 @@
 splunk::version: '7.2.1'
 splunk::release: 'be11b2c46e23'
 splunk::type: 'none'
-splunk::sourcepart: 'splunk'
 splunk::adhoc_searchhead: false
 splunk::autolb: true
 splunk::autolbfrequency: 60
