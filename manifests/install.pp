@@ -70,9 +70,11 @@ class splunk::install
       timeout   => 600
     }
 
-    file { $my_cwd:
-      ensure    => absent,
-      subscribe => Exec['serviceStop']
+    if $splunk_home != $my_cwd {
+      file { $my_cwd:
+        ensure    => absent,
+        subscribe => Exec['serviceStop']
+      }
     }
 
   }
