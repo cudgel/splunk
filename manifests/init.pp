@@ -174,7 +174,8 @@ Optional[Hash] $tcpout = undef
 
     if $type != 'forwarder' {
 
-      if $type != 'indexer'{
+      if $type != 'indexer' and is_hash($tcpout) {
+
         $my_output_d = "${local}/outputs.d/"
         $my_output_c = "${local}/outputs.conf"
 
