@@ -44,6 +44,7 @@ class splunk::config
   $splunk_acls       = $splunk::acls
   $splunk_inputs     = $splunk::inputs
   $cluster_mode      = $splunk::cluster_mode
+  $tcpout            = $splunk::tcpout
 
   $bashrc = "
 SPLUNK_HOME=${dir}
@@ -203,7 +204,7 @@ export PATH
     notify  => Exec['update-inputs']
   }
 
-  if $type != 'forwarder' {
+  if $type != 'forwarder' and is_hash($tcpout) {
 
     if ($type != 'indexer') and ($type != 'standalone') {
       file { "${local}/outputs.d":
