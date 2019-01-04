@@ -71,8 +71,7 @@ class splunk::install
     }
 
       file { $my_cwd:
-        ensure    => absent,
-        subscribe => Exec['serviceStop']
+        ensure    => absent
     }
 
   }
