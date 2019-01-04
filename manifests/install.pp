@@ -61,13 +61,11 @@ class splunk::install
     }
 
     exec { 'serviceStop':
-      command   => $stopcmd,
-      path      => "${my_cwd}/bin:/bin:/usr/bin:",
-      user      => $splunk_user,
-      group     => $splunk_group,
-      subscribe => Exec['uninstallSplunkService'],
-      before    => File[$my_cwd],
-      timeout   => 600
+      command => $stopcmd,
+      path    => "${my_cwd}/bin:/bin:/usr/bin:",
+      user    => $splunk_user,
+      group   => $splunk_group,
+      timeout => 600
     }
 
       file { $my_cwd:
