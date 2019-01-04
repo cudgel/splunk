@@ -69,7 +69,9 @@ class splunk::install
     }
 
       file { $my_cwd:
-        ensure    => absent
+        ensure => absent,
+        force  => true,
+        backup => false
     }
 
   }
