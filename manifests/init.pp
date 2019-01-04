@@ -90,7 +90,6 @@ String $webcert,
 Boolean $webssl,
 Optional[Hash] $acls = undef,
 Optional[Hash] $inputs = undef,
-Optional[String] $splunk_env = undef,
 Optional[Tuple] $clusters = undef,
 Optional[String] $deployment_server = undef,
 Optional[String] $license_master,
@@ -108,7 +107,7 @@ Optional[Hash] $tcpout = undef
 
   if $type != 'none' {
 
-    if $splunk_env == 'ci' or $create_user == true {
+    if $::r10k_environment == 'ci' or $create_user == true {
       class { 'splunk::user': }
     }
 
