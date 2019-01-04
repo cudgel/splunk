@@ -73,6 +73,12 @@ class splunk::install
         force  => true,
         backup => false
     }
+    $sourcepart = basename($my_cwd)
+    $wrongsource = "${sourcepart}-${current_version}-${os}-${arch}.${ext}"
+
+    file { "${install_path}/${wrongsource}":
+      ensure => absent
+    }
 
   }
 
