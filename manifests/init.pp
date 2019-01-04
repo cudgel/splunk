@@ -88,12 +88,11 @@ Integer $subsearch_ttl,
 String $tarcmd,
 String $webcert,
 Boolean $webssl,
+Optional[String] $license_master,
 Optional[Hash] $acls = undef,
 Optional[Hash] $inputs = undef,
-Optional[String] $splunk_env = undef,
 Optional[Tuple] $clusters = undef,
 Optional[String] $deployment_server = undef,
-Optional[String] $license_master,
 Optional[Tuple] $licenses = undef,
 Optional[Integer] $repl_count = undef,
 Optional[Integer] $repl_port = undef,
@@ -108,7 +107,7 @@ Optional[Hash] $tcpout = undef
 
   if $type != 'none' {
 
-    if $splunk_env == 'ci' or $create_user == true {
+    if $::r10k_environment == 'ci' or $create_user == true {
       class { 'splunk::user': }
     }
 
@@ -174,7 +173,8 @@ Optional[Hash] $tcpout = undef
 
   if $type != 'forwarder' {
 
-      if $type != 'indexer'{
+      if $type != 'indexer' and is_hash($tcpout) {
+
         $my_output_d = "${local}/outputs.d/"
         $my_output_c = "${local}/outputs.conf"
 

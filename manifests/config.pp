@@ -44,6 +44,7 @@ class splunk::config
   $splunk_acls       = $splunk::acls
   $splunk_inputs     = $splunk::inputs
   $cluster_mode      = $splunk::cluster_mode
+  $tcpout            = $splunk::tcpout
 
   $bashrc = "
 SPLUNK_HOME=${dir}
@@ -205,7 +206,7 @@ export PATH
 
   if $type != 'forwarder' {
 
-    if ($type != 'indexer') and ($type != 'standalone') {
+    if ($type != 'indexer') and ($type != 'standalone')  and is_hash($tcpout) {
       file { "${local}/outputs.d":
         ensure  => 'directory',
         mode    => '0750',
