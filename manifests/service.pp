@@ -1,3 +1,19 @@
+# == Class: splunk::service
+#
+# This class manages service state.
+#
+# === Examples
+#
+#  class { 'splunk::service': }
+#
+# === Authors
+#
+# Christopher Caldwell <caldwell@gwu.edu>
+#
+# === Copyright
+#
+# Copyright 2017 Christopher Caldwell
+#
 class splunk::service {
 
   $dir             = $splunk::dir

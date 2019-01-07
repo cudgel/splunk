@@ -23,7 +23,7 @@
 #
 # === Examples
 #
-#  class { splunk: type => 'forwarder' }
+#  class { splunk: }
 #
 # === Authors
 #

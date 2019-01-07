@@ -5,7 +5,7 @@
 #
 # === Examples
 #
-#  class { splunk::config: type => 'forwarder' }
+#  class { 'splunk::config': }
 #
 # === Authors
 #
