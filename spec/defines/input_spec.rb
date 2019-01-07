@@ -11,8 +11,8 @@ describe 'splunk::input' do
           'major' => '6',
           'minor' => '10',
           'full'  => '6.10',
-        }
-      }
+        },
+      },
     }
   end
 
@@ -22,14 +22,14 @@ describe 'splunk::input' do
       title: 'authlog',
       target: '/var/log/authlog',
       version: '7.2.1',
-      release: 'be11b2c46e23'
+      release: 'be11b2c46e23',
     }
   end
 
   let :pre_condition do
-      [
-        'include ::splunk'
-      ]
+    [
+      'include ::splunk',
+    ]
   end
 
   it { is_expected.to contain_class('splunk::config') }

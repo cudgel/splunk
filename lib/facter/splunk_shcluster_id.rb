@@ -1,7 +1,4 @@
 Facter.add(:splunk_shcluster_id) do
-  id = nil
-  id = Facter::Util::Resolution.exec("grep -e \"^id\" /opt/splunk/etc/system/local/server.conf | cut -d'=' -f2 | tr -d '[:space:]'")
-  setcode do
-    splunk_shcluster_id = id
-  end
+  splunk_shcluster_id = Facter::Util::Resolution.exec("grep -e \"^id\" /opt/splunk/etc/system/local/server.conf | cut -d'=' -f2 | tr -d '[:space:]'")
+  splunk_shcluster_id
 end

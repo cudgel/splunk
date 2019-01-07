@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'splunk::acl' do
   let(:environment) { 'ci' }
 
- let(:facts) do
+  let(:facts) do
     {
       'os' => {
         'family'  => 'RedHat',
@@ -11,14 +11,14 @@ describe 'splunk::acl' do
           'major' => '6',
           'minor' => '10',
           'full'  => '6.10',
-        }
-      }
+        },
+      },
     }
   end
 
   let :default_params do
     {
-      type: 'forwarder'
+      type: 'forwarder',
     }
   end
 
