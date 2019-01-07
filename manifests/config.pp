@@ -5,7 +5,7 @@
 #
 # === Examples
 #
-#  class { splunk::config: type => 'forwarder' }
+#  class { 'splunk::config': }
 #
 # === Authors
 #
@@ -73,28 +73,28 @@ export PATH
   file_line { 'splunk-start':
     path    => '/etc/init.d/splunk',
     line    => "  su - ${splunk_user} -c \'\"${dir}/bin/splunk\" start --no-prompt --answer-yes\'",
-    match   => "^\ \ \"${dir}/bin/splunk\" start",
+    match   => "^\s\s\"${dir}/bin/splunk\" start",
     require => Exec['test_for_splunk']
   }
 
   file_line { 'splunk-stop':
     path    => '/etc/init.d/splunk',
     line    => "  su - ${splunk_user} -c \'\"${dir}/bin/splunk\" stop\'",
-    match   => "^\ \ \"${dir}/bin/splunk\" stop",
+    match   => "^\s\s\"${dir}/bin/splunk\" stop",
     require => Exec['test_for_splunk']
   }
 
   file_line { 'splunk-restart':
     path    => '/etc/init.d/splunk',
     line    => "  su - ${splunk_user} -c \'\"${dir}/bin/splunk\" restart\'",
-    match   => "^\ \ \"${dir}/bin/splunk\" restart",
+    match   => "^\s\s\"${dir}/bin/splunk\" restart",
     require => Exec['test_for_splunk']
   }
 
   file_line { 'splunk-status':
     path    => '/etc/init.d/splunk',
     line    => "  su - ${splunk_user} -c \'\"${dir}/bin/splunk\" status\'",
-    match   => "^\ \ \"${dir}/bin/splunk\" status",
+    match   => "^\s\s\"${dir}/bin/splunk\" status",
     require => Exec['test_for_splunk']
   }
 

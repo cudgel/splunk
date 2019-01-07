@@ -6,3 +6,4 @@ Rakefile
 Gemfile
 .bundle
 Gemfile.lock
+vendor
