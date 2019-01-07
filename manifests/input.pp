@@ -13,7 +13,7 @@ define splunk::input(
   $target       = '',
   $inputtype    = 'monitor',
   $sourcetype   = 'auto',
-  $index        = '',
+  $index        = 'default',
   $cache        = true,
   $size         = '1',
   $options      = [],

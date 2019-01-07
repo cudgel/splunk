@@ -52,11 +52,11 @@ class splunk::install
 
   # clean up a splunk instance running out of the wrong directory for this role
   if $my_cwd != $dir and $my_cwd != '' and $home != $my_cwd {
+    info("Splunk running out of wrong directory. Should be ${dir}, is ${my_cwd}.")
 
     exec { 'uninstallSplunkService':
       command => 'splunk disable boot-start',
       path    => "${my_cwd}/bin:/bin:/usr/bin:",
-      cwd     => $my_cwd,
       returns => [0, 8]
     }
 
@@ -69,9 +69,16 @@ class splunk::install
     }
 
     file { $my_cwd:
-        ensure => absent,
-        force  => true,
-        backup => false
+      ensure => absent,
+      force  => true,
+      backup => false
+    }
+    $wsourcepart = basename($my_cwd)
+    $wrongsource = "${wsourcepart}-${current_version}-${os}-${arch}.${ext}"
+
+    file { "${install_path}/${wrongsource}":
+      ensure => absent,
+      backup => false
     }
 
   }

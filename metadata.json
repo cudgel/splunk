@@ -41,7 +41,9 @@
       ]
     }
   ],
-  "requirements": [],
+  "requirements": [
+
+  ],
   "tags": [
     "splunk",
     "cluster"
