@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'splunk::input' do
@@ -32,5 +34,4 @@ describe 'splunk::input' do
     ]
   end
 
-  it { is_expected.to contain_class('splunk::config') }
 end

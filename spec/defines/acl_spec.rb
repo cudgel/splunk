@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'splunk::acl' do
@@ -22,5 +24,4 @@ describe 'splunk::acl' do
     }
   end
 
-  it { is_expected.to contain_class('splunk::config') }
 end
