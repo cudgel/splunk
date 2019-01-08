@@ -99,7 +99,7 @@ class splunk::install
     source        => $source
   }
 
-  if $home != $dir {
+  if $home != $dir  and $home != '' {
     file { $dir:
       ensure  => directory,
       owner   => $splunk_user,
