@@ -99,7 +99,7 @@ class splunk::install
     source        => $source
   }
 
-  if $dir != 'splunk' {
+  if $dir == '/opt/splunk' {
     file { $dir:
       ensure  => directory,
       owner   => $splunk_user,
