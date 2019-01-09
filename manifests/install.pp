@@ -114,6 +114,8 @@ class splunk::install
 
   exec { 'splunkDir':
     command   => "chown -R ${splunk_user}:${splunk_group} ${dir}",
+    path      => "${dir}/bin:/bin:/usr/bin:",
+    cwd       => $install_path,
     subscribe => Exec['unpackSplunk'],
     onlyif    => "test -d ${dir}"
   }
