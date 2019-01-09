@@ -18,8 +18,6 @@
 class splunk::config
 {
   $type              = $splunk::type
-  # splunk user home dir from fact
-  $splunk_home       = $splunk::splunk_home
   $install_path      = $splunk::install_path
   # where splunk is installed
   $dir               = $splunk::dir
@@ -46,14 +44,15 @@ class splunk::config
   $cluster_mode      = $splunk::cluster_mode
   $tcpout            = $splunk::tcpout
 
+  $splunk_home = $splunk_home
+  $perms = "${splunk_user}:${splunk_group}"
+
   $bashrc = "
 SPLUNK_HOME=${dir}
 export SPLUNK_HOME
 PATH=\$SPLUNK_HOME/bin:\$PATH
 export PATH
   "
-
-  $perms = "${splunk_user}:${splunk_group}"
 
   file { "${splunk_home}/.bashrc.custom":
     owner   => $splunk_user,
@@ -346,7 +345,7 @@ export PATH
         }
       }
 
-      if $::osfamily == 'RedHat' {
+      if $osfamily == 'RedHat' {
         # support PDF Report Server
         package { [
           'xorg-x11-server-Xvfb',
@@ -355,7 +354,7 @@ export PATH
           'liberation-serif-fonts' ]:
           ensure => installed
         }
-      } elsif $::osfamily == 'Debian' {
+      } elsif $osfamily == 'Debian' {
         package { [
           'xvfb',
           'fonts-liberation' ]:

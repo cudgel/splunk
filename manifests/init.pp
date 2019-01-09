@@ -102,18 +102,18 @@ Optional[String] $shcluster_label = undef,
 Optional[String] $shcluster_mode = undef,
 Optional[Array] $shcluster_members = undef,
 Optional[String] $symmkey = undef,
-Optional[Hash] $tcpout = undef
+Optional[Hash] $tcpout = undef,
 ) {
 
   if $type != 'none' {
 
-    if $::r10k_environment == 'ci' or $create_user == true {
+    if $environment == 'ci' or $create_user == true {
       class { 'splunk::user': }
     }
 
     $new_version = "${version}-${release}"
 
-    $arch = $::architecture ? {
+    $arch = $architecture ? {
       x86_64  => 'x86_64',
       amd64   => 'x86_64',
       default => 'i686'
@@ -131,16 +131,16 @@ Optional[Hash] $tcpout = undef
     $manifest = "${sourcepart}-${new_version}-${os}-${arch}-manifest"
 
     # splunk search head cluster id (if a cluster member)
-    $shcluster_id = $::splunk_shcluster_id
+    $shcluster_id = $splunk_shcluster_id
 
     # splunk user home dir from fact
-    $home = $::splunk::splunk_home
+    $home = $splunk_home
 
     # directory of any running splunk process
-    $cwd = $::splunk_cwd
+    $cwd = $splunk_cwd
 
     # currently installed version from fact
-    $current_version = $::splunk_version
+    $current_version = $splunk_version
     $cut_version = regsubst($current_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
     # because the legacy fact does not represent splunk version as
     # version-release, we cut the version from the string.
@@ -159,7 +159,8 @@ Optional[Hash] $tcpout = undef
       class { 'splunk::deployment': }
     }
 
-    $perms    = "${splunk::splunk_user}:${splunk::splunk_group}"
+    $perms = "${splunk_user}:${splunk_group}"
+
     $my_input_d  = "${local}/inputs.d/"
     $my_input_c  = "${local}/inputs.conf"
 

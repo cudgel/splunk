@@ -2,8 +2,8 @@
 # manage your real accounts properly
 class splunk::user {
 
-  $splunk_user       = $::splunk::splunk_user
-  $splunk_group      = $::splunk::splunk_group
+  $splunk_user       = $splunk::splunk_user
+  $splunk_group      = $splunk::splunk_group
 
   group { $splunk_group:
     ensure => present,

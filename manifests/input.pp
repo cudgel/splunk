@@ -5,22 +5,23 @@
 # if creating a file monitor, apply acl to the object as well
 #
 define splunk::input(
-  $dir          = $splunk::dir,
-  $local        = $splunk::local,
-  $splunk_user  = $splunk::splunk_user,
-  $splunk_group = $splunk::splunk_group,
-  $disabled     = false,
-  $target       = '',
-  $inputtype    = 'monitor',
-  $sourcetype   = 'auto',
-  $index        = 'default',
-  $cache        = true,
-  $size         = '1',
-  $options      = [],
-  $recurse      = false,
-  $content      = undef
+  String $target,
+  Optional[String] $dir        = $splunk::dir,
+  Optional[String] $user       = $splunk::splunk_user,
+  Optional[String] $group      = $splunk::splunk_group,
+  Optional[Boolean] $disabled  = false,
+  Optional[String] $inputtype  = 'monitor',
+  Optional[String] $sourcetype = 'auto',
+  Optional[String] $index      = 'default',
+  Optional[Boolean] $cache     = true,
+  Optional[Integer] $size      = 1,
+  Optional[Hash] $options      = undef,
+  Optional[Boolean] $recurse   = false,
+  Optional[String] $content    = undef
   )
 {
+
+  $local    = "${dir}/etc/system/local"
 
   if $content != undef {
     $mycontent = $content
@@ -29,7 +30,7 @@ define splunk::input(
     if $inputtype == 'monitor' {
       splunk::acl { $title:
         target   => $target,
-        group    => $splunk_group,
+        group    => $group,
         recurse  => $recurse,
         readonly => true
       }
@@ -37,11 +38,10 @@ define splunk::input(
   }
 
   file { "${local}/inputs.d/${title}":
-    owner   => $splunk_user,
-    group   => $splunk_group,
+    owner   => $user,
+    group   => $group,
     mode    => '0440',
     content => $mycontent,
-    require => File["${local}/inputs.d"],
     notify  => Exec['update-inputs'],
   }
 

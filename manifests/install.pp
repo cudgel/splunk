@@ -44,8 +44,8 @@ class splunk::install
   $source          = $splunk::source
   $splunk_user     = $splunk::splunk_user
   $splunk_group    = $splunk::splunk_group
-  $perms           = $splunk::perms
-  $adminpass       = $splunk::adminpass
+
+  $perms = "${splunk_user}:${splunk_group}"
 
   $stopcmd  = 'splunk stop'
   $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'

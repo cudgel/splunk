@@ -3,33 +3,49 @@
 require 'spec_helper'
 
 describe 'splunk::input' do
-  let(:pre_condition) { 'include splunk' }
-  let(:environment) { 'ci' }
   let(:title) { 'authlog' }
   let(:node) { 'test.ci' }
   let(:facts) do
     {
-      'role'         => 'splunk_forwarder',
-      'architecture' => 'x86_64',
-      'kernel'       => 'Linux',
-      'os'           => {
-        'family'  => 'RedHat',
-        'release' => {
+      'splunk_cwd'          => '',
+      'splunk_guid'         => '',
+      'splunk_home'         => '/home/splunk',
+      'splunk_shcluster_id' => '',
+      'splunk_version'      => '',
+      'environment'         => 'ci',
+      'kernel'              => 'Linux',
+      'architecture'        => 'x86_64',
+      'package_provider'    => 'yum',
+      'service_provider'    => 'redhat',
+      'os'                  => {
+        'architecture' => 'x86_64',
+        'distro' => {
+          'id'      => 'CentOS',
+          'release' => {
+            'full'  => '6.10',
+            'major' => '6',
+            'minor' => '10',
+          },
+        },
+        'family'   => 'RedHat',
+        'name'     => 'CentOS',
+        'release'  => {
+          'full'  => '6.10',
           'major' => '6',
+          'minor' => '10',
         },
       },
     }
   end
-  let :default_params do
+  let(:params) do
     {
-      title: 'authlog',
-      target: '/var/log/authlog',
-      version: '7.2.1',
-      release: 'be11b2c46e23',
+      'target' => '/var/log/authlog',
+      'dir'   => '/opt/splunkforwarder',
+      'user'  => 'splunk',
+      'group' => 'splunk',
     }
   end
+  let(:pre_condition) { "class { splunk: type => 'forwarder' }" }
 
-  context 'with default options' do
-    it { is_expected.to compile.with_all_deps }
-  end
+  it { is_expected.to contain_file('/opt/splunkforwarder/etc/system/local/inputs.d/authlog') }
 end

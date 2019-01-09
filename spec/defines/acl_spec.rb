@@ -3,16 +3,20 @@
 require 'spec_helper'
 
 describe 'splunk::acl' do
-  let(:pre_condition) { 'include splunk' }
-  let(:environment) { 'ci' }
-  let(:title) { 'authlog' }
+  let(:title) { '/var/log/authlog' }
   let(:node) { 'test.ci' }
   let(:facts) do
     {
-      'role'         => 'splunk_forwarder',
-      'architecture' => 'x86_64',
-      'kernel'       => 'Linux',
-      'os'           => {
+      'role'                => 'splunk_forwarder',
+      'splunk_cwd'          => '',
+      'splunk_guid'         => '',
+      'splunk_home'         => '/home/splunk',
+      'splunk_shcluster_id' => '',
+      'splunk_version'      => '',
+      'environment'         => 'ci',
+      'architecture'        => 'x86_64',
+      'kernel'              => 'Linux',
+      'os'                  => {
         'family'  => 'RedHat',
         'release' => {
           'major' => '6',
@@ -20,14 +24,11 @@ describe 'splunk::acl' do
       },
     }
   end
-  let :default_params do
+  let(:params) do
     {
-      title: 'authlog',
-      target: '/var/log/authlog',
+      'group' => 'splunk',
     }
   end
 
-  context 'with default options' do
-    it { is_expected.to compile.with_all_deps }
-  end
+  it { is_expected.to compile }
 end
