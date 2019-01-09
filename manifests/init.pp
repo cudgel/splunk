@@ -107,13 +107,13 @@ Optional[Hash] $tcpout = undef
 
   if $type != 'none' {
 
-    if $::r10k_environment == 'ci' or $create_user == true {
+    if $environment == 'ci' or $create_user == true {
       class { 'splunk::user': }
     }
 
     $new_version = "${version}-${release}"
 
-    $arch = $::architecture ? {
+    $arch = $architecture ? {
       x86_64  => 'x86_64',
       amd64   => 'x86_64',
       default => 'i686'
@@ -131,77 +131,78 @@ Optional[Hash] $tcpout = undef
     $manifest = "${sourcepart}-${new_version}-${os}-${arch}-manifest"
 
     # splunk search head cluster id (if a cluster member)
-  $shcluster_id = $::splunk_shcluster_id
+    $shcluster_id = $splunk_shcluster_id
 
-  # splunk user home dir from fact
-  $home = $::splunk::splunk_home
+    # splunk user home dir from fact
+    $home = $splunk_home
 
-  # directory of any running splunk process
-  $cwd = $::splunk_cwd
+    # directory of any running splunk process
+    $cwd = $splunk_cwd
 
-  # currently installed version from fact
-  $current_version = $::splunk_version
-  $cut_version = regsubst($current_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
-  # because the legacy fact does not represent splunk version as
-  # version-release, we cut the version from the string.
+    # currently installed version from fact
+    $current_version = $splunk_version
+    $cut_version = regsubst($current_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
+    # because the legacy fact does not represent splunk version as
+    # version-release, we cut the version from the string.
 
     if versioncmp($version, $cut_version) == 1 or $cut_version == '' or $cwd != $dir {
       class { 'splunk::install': } -> class { 'splunk::config': } -> class { 'splunk::service': }
-  } else {
+    } else {
       if versioncmp($version, $cut_version) == -1 {
         info('Splunk is already at a higher version.')
       }
-    class { 'splunk::config': } -> class { 'splunk::service': }
-  }
+      class { 'splunk::config': } -> class { 'splunk::service': }
+    }
 
   # configure deployment server for indexers and forwarders
     if $type == 'forwarder' or $type == 'heavyforwarder' and $deployment_server != undef {
-    class { 'splunk::deployment': }
-  }
+      class { 'splunk::deployment': }
+    }
 
-    $perms    = "${splunk::splunk_user}:${splunk::splunk_group}"
+    $perms = "${splunk_user}:${splunk_group}"
+
     $my_input_d  = "${local}/inputs.d/"
     $my_input_c  = "${local}/inputs.conf"
 
-  exec { 'update-inputs':
-    command     => "/bin/cat ${my_input_d}/* > ${my_input_c}; \
-        chown ${perms} ${my_input_c}",
-    refreshonly => true,
-    subscribe   => File["${local}/inputs.d/000_default"],
-    notify      => Service['splunk']
-  }
+    exec { 'update-inputs':
+      command     => "/bin/cat ${my_input_d}/* > ${my_input_c}; \
+          chown ${perms} ${my_input_c}",
+      refreshonly => true,
+      subscribe   => File["${local}/inputs.d/000_default"],
+      notify      => Service['splunk']
+    }
 
-  if $type != 'forwarder' {
+    if $type != 'forwarder' {
 
       if $type != 'indexer' and is_hash($tcpout) {
 
         $my_output_d = "${local}/outputs.d/"
         $my_output_c = "${local}/outputs.conf"
 
-    exec { 'update-outputs':
-      command     => "/bin/cat ${my_output_d}/* > ${my_output_c}; \
+        exec { 'update-outputs':
+          command     => "/bin/cat ${my_output_d}/* > ${my_output_c}; \
             chown ${perms} ${my_output_c}",
-      refreshonly => true,
-      notify      => Service['splunk']
-    }
+          refreshonly => true,
+          notify      => Service['splunk']
+        }
       }
 
       $my_server_d = "${local}/server.d/"
       $my_server_c = "${local}/server.conf"
 
-    exec { 'update-server':
-      command     => "/bin/cat ${my_server_d}/* > ${my_server_c}; \
+      exec { 'update-server':
+        command     => "/bin/cat ${my_server_d}/* > ${my_server_c}; \
           chown ${perms} ${my_server_c}",
-      refreshonly => true,
-      subscribe   => [
+        refreshonly => true,
+        subscribe   => [
           File["${local}/server.d/000_header"],
           File["${local}/server.d/998_ssl"],
           File["${local}/server.d/999_default"]
         ],
-      notify      => Service['splunk']
-    }
+        notify      => Service['splunk']
+      }
 
-  }
+    }
 
   }
 

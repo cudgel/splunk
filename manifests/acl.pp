@@ -4,17 +4,17 @@
 # optionally set acls on parent paths
 #
 define splunk::acl(
-  $target   = '',
-  $group    = $splunk::splunk_group,
-  $type     = 'file',
-  $recurse  = false,
-  $readonly = true,
-  $parents  = false
+  Optional[String] $target    = undef,
+  Optional[String] $group     = $splunk::user,
+  Optional[String] $type      = 'file',
+  Optional[Boolean] $recurse  = false,
+  Optional[Boolean] $readonly = true,
+  Optional[Boolean] $parents  = false
 ) {
 
   # Validate parameters
   #
-  if $target == '' {
+  if $target != undef {
       $object = $title
   } else {
       $object = $target
@@ -23,7 +23,7 @@ define splunk::acl(
       fail('variable "recurse" must be either true or false')
   }
 
-  if $::kernel == 'Linux' {
+  if $kernel == 'Linux' {
 
     # returns 0 if the object is a file
     $testdir = "test -d ${object}"

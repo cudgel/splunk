@@ -8,6 +8,6 @@ persistentQueueSize = <%= @size -%>GB
 <% end -%>
 index = <%= @index %>
 <% if @sourcetype != 'auto' then %>sourcetype = <%= @sourcetype %><% end %>
-<% @options.each do |op| -%>
+<% if @options != nil -%><% @options.each do |op| -%>
 <%= op %>
-<% end %>
+<% end %><% end -%>
