@@ -166,7 +166,6 @@ export PATH
 
   file { "${dir}/etc/apps":
     ensure  => 'directory',
-    mode    => '0770',
     owner   => $splunk_user,
     group   => $splunk_group,
     require => Exec['test_for_splunk']
@@ -174,7 +173,6 @@ export PATH
 
   file { $local:
     ensure  => 'directory',
-    mode    => '0750',
     owner   => $splunk_user,
     group   => $splunk_group,
     require => Exec['test_for_splunk']
