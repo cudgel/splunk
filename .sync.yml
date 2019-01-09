@@ -3,8 +3,11 @@
   required:
     - 'appveyor.yml'
     - '.travis.yml'
-.rsync:
-  required:
-    - '--color'
-    - '--format documentation'
 
+Rakefile:
+  requires:
+    - puppetlabs_spec_helper/rake_tasks
+    - puppet-syntax/tasks/puppet-syntax
+  default_disabled_lint_checks:
+    - 'disable_variable_scope'
+    - 'documentation'
