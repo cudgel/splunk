@@ -102,7 +102,7 @@ Optional[String] $shcluster_label = undef,
 Optional[String] $shcluster_mode = undef,
 Optional[Array] $shcluster_members = undef,
 Optional[String] $symmkey = undef,
-Optional[Hash] $tcpout = undef,
+Optional[Hash] $tcpout = undef
 ) {
 
   if $type != 'none' {

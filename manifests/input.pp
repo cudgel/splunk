@@ -42,6 +42,7 @@ define splunk::input(
     group   => $group,
     mode    => '0440',
     content => $mycontent,
+    require => File["${local}/inputs.d"],
     notify  => Exec['update-inputs'],
   }
 
