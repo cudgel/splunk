@@ -107,8 +107,7 @@ class splunk::install
     subscribe => File["${install_path}/${newsource}"],
     before    => Exec['test_for_splunk'],
     unless    => "test -e ${dir}/${manifest}",
-    onlyif    => "test -s ${newsource} \
-    && test -d ${dir}",
+    onlyif    => "test -s ${newsource}",
     creates   => "${dir}/${manifest}"
   }
 
