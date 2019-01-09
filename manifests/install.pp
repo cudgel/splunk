@@ -99,23 +99,11 @@ class splunk::install
     source        => $source
   }
 
-  if $home != $dir {
-    file { $dir:
-      ensure  => directory,
-      owner   => $splunk_user,
-      group   => $splunk_group,
-      require => User[$splunk_user]
-    }
-  }
-
-
   exec { 'unpackSplunk':
     command   => "${tarcmd} ${newsource}",
     path      => "${dir}/bin:/bin:/usr/bin:",
     cwd       => $install_path,
     timeout   => 600,
-    user      => $splunk_user,
-    group     => $splunk_group,
     subscribe => File["${install_path}/${newsource}"],
     before    => Exec['test_for_splunk'],
     unless    => "test -e ${dir}/${manifest}",
@@ -124,12 +112,18 @@ class splunk::install
     creates   => "${dir}/${manifest}"
   }
 
+  exec { 'splunkDir':
+    command   => "chown -R ${splunk_user}:${splunk_group} ${dir}",
+    subscribe => Exec['unpackSplunk'],
+    onlyif    => "test -d ${dir}"
+  }
+
   exec { 'serviceStart':
     command     => "${stopcmd}; ${startcmd}",
     path        => "${dir}/bin:/bin:/usr/bin:",
     user        => $splunk_user,
     group       => $splunk_group,
-    subscribe   => Exec['unpackSplunk'],
+    subscribe   => Exec['splunkDir'],
     refreshonly => true
   }
 
