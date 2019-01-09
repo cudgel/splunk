@@ -1,0 +1,10 @@
+---
+.gitignore:
+  required:
+    - 'appveyor.yml'
+    - '.travis.yml'
+.rsync:
+  required:
+    - '--color'
+    - '--format documentation'
+
