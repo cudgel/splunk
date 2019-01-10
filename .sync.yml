@@ -3,12 +3,13 @@
   required:
     - 'appveyor.yml'
     - '.travis.yml'
-
 Rakefile:
   requires:
+    - puppet-lint/tasks/puppet-lint
     - puppetlabs_spec_helper/rake_tasks
-    - puppet-syntax/tasks/puppet-syntax
-  default_disabled_lint_checks:
-    - 'disable_variable_scope'
-    - 'documentation'
-    - 'disable_puppet_url_without_modules'
+    - metadata-json-lint/rake_task
+    - rspec_junit_formatter
+    - puppet_pot_generator/rake_tasks
+    - PuppetLint.configuration.send('disable_variable_scope')
+    - PuppetLint.configuration.send('documentation')
+    - PuppetLint.configuration.send('disable_puppet_url_without_modules')
