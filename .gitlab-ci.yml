@@ -1,7 +1,6 @@
 ---
 stages:
-  - test_2.4.1
-  - test_2.1.9
+  - test_["2.4.4", {"puppet_version"=>"~> 5.5.5"}]
 
 before_script:
   - bundle -v
@@ -12,55 +11,27 @@ before_script:
   - bundle -v
   - bundle install --without system_tests
 
-rubocop-2.4.1:
-  stage: test_2.4.1
-  image: ruby:2.4.1
+rubocop-["2.4.4", {"puppet_version"=>"~> 5.5.5"}]:
+  stage: test_["2.4.4", {"puppet_version"=>"~> 5.5.5"}]
+  image: ruby:["2.4.4", {"puppet_version"=>"~> 5.5.5"}]
   script:
     - bundle exec rake rubocop
 
-syntax-2.4.1:
-  stage: test_2.4.1
-  image: ruby:2.4.1
+syntax-["2.4.4", {"puppet_version"=>"~> 5.5.5"}]:
+  stage: test_["2.4.4", {"puppet_version"=>"~> 5.5.5"}]
+  image: ruby:["2.4.4", {"puppet_version"=>"~> 5.5.5"}]
   script:
     - bundle exec rake syntax lint
 
-metadata-2.4.1:
-  stage: test_2.4.1
-  image: ruby:2.4.1
+metadata-["2.4.4", {"puppet_version"=>"~> 5.5.5"}]:
+  stage: test_["2.4.4", {"puppet_version"=>"~> 5.5.5"}]
+  image: ruby:["2.4.4", {"puppet_version"=>"~> 5.5.5"}]
   script:
     - bundle exec rake metadata_lint
 
-rspec-puppet-2.4.1:
-  stage: test_2.4.1
-  image: ruby:2.4.1
-  variables:
-    PUPPET_GEM_VERSION: ~> 4.0
-    CHECK: spec
-  script:
-    - bundle update
-    - bundle exec rake $CHECK
-
-rubocop-2.1.9:
-  stage: test_2.1.9
-  image: ruby:2.1.9
-  script:
-    - bundle exec rake rubocop
-
-syntax-2.1.9:
-  stage: test_2.1.9
-  image: ruby:2.1.9
-  script:
-    - bundle exec rake syntax lint
-
-metadata-2.1.9:
-  stage: test_2.1.9
-  image: ruby:2.1.9
-  script:
-    - bundle exec rake metadata_lint
-
-rspec-puppet-2.1.9:
-  stage: test_2.1.9
-  image: ruby:2.1.9
+rspec-puppet-["2.4.4", {"puppet_version"=>"~> 5.5.5"}]:
+  stage: test_["2.4.4", {"puppet_version"=>"~> 5.5.5"}]
+  image: ruby:["2.4.4", {"puppet_version"=>"~> 5.5.5"}]
   variables:
     PUPPET_GEM_VERSION: ~> 4.0
     CHECK: spec

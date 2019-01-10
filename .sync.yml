@@ -6,6 +6,13 @@ appveyor.yml:
   required:
     - 'appveyor.yml'
     - '.travis.yml'
+    - 'update_report.txt'
+
+.gitlab-ci.yml:
+  override: true
+  ruby_versions:
+    '2.4.4':
+      puppet_version: "~> 5.5.5"
 
 Rakefile:
   requires:
