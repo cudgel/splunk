@@ -1,5 +1,7 @@
 ---
 stages:
+  - syntax
+  - unit
 
 cache:
   paths:
