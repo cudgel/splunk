@@ -1,7 +1,5 @@
 ---
 stages:
-  - syntax
-  - unit
 
 cache:
   paths:
@@ -10,7 +8,7 @@ cache:
 before_script:
   - bundle -v
   - rm Gemfile.lock || true
-  - gem update --system
+  - gem update --system || true
   - gem --version
   - bundle -v
   - bundle install --without system_tests --path vendor/bundle --jobs $(nproc)
