@@ -1,4 +1,6 @@
 ---
+appveyor.yml:
+  delete: true
 .gitignore:
   required:
     - 'appveyor.yml'
@@ -10,6 +12,7 @@ Rakefile:
     - metadata-json-lint/rake_task
     - rspec_junit_formatter
     - puppet_pot_generator/rake_tasks
+  extras:
     - PuppetLint.configuration.send('disable_variable_scope')
     - PuppetLint.configuration.send('documentation')
     - PuppetLint.configuration.send('disable_puppet_url_without_modules')
