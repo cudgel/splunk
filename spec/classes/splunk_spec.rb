@@ -47,7 +47,8 @@ describe 'splunk' do
   context 'with type=> forwarder' do
     let(:params) do
       {
-        'type' => 'forwarder',
+        'type'              => 'forwarder',
+        'deployment_server' => 'https://splunkds.io:8089',
       }
     end
 
@@ -58,6 +59,8 @@ describe 'splunk' do
     it { is_expected.to contain_class('splunk::config') }
     it { is_expected.to contain_class('splunk::service') }
     it { is_expected.to contain_service('splunk') }
+    it { is_expected.to contain_class('splunk::deployment') }
+
   end
 
   context 'with type=> heavyforwarder' do
