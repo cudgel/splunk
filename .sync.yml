@@ -11,8 +11,8 @@ appveyor.yml:
 .gitlab-ci.yml:
   override: true
   ruby_versions:
-    '2.4.4':
-      puppet_version: "~> 5.5.5"
+    '2.4.1':
+      puppet_version: "~> 5.0.0"
 
 Rakefile:
   requires:
