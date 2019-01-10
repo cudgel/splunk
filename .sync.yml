@@ -1,19 +1,9 @@
 ---
-appveyor.yml:
-  delete: true
-
 .gitignore:
   required:
     - 'appveyor.yml'
     - '.travis.yml'
     - 'update_report.txt'
-
-.gitlab-ci.yml:
-  override: true
-  ruby_versions:
-    '2.4.1':
-      puppet_version: "~> 5.0.0"
-
 Rakefile:
   requires:
     - puppetlabs_spec_helper/rake_tasks
@@ -26,3 +16,14 @@ Rakefile:
     - disable_variable_scope
     - documentation
     - disable_puppet_url_without_modules
+appveyor.yml:
+  override: true
+  delete: true
+.gitlab-ci.yml:
+  override: true
+  unmanaged: true
+.gitlab-ci.yml:
+  override: true
+  ruby_versions:
+    '2.4.4':
+      puppet_version: "~> 5.0"
