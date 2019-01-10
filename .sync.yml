@@ -19,11 +19,6 @@ Rakefile:
 appveyor.yml:
   override: true
   delete: true
-.gitlab-ci.yml:
+.gitdlab-ci.yml:
   override: true
   unmanaged: true
-.gitlab-ci.yml:
-  override: true
-  ruby_versions:
-    '2.4.1':
-      puppet_version: "~> 5.0"
