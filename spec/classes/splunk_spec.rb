@@ -60,7 +60,6 @@ describe 'splunk' do
     it { is_expected.to contain_class('splunk::service') }
     it { is_expected.to contain_service('splunk') }
     it { is_expected.to contain_class('splunk::deployment') }
-
   end
 
   context 'with type=> heavyforwarder' do
