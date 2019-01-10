@@ -11,3 +11,4 @@ Rakefile:
   default_disabled_lint_checks:
     - 'disable_variable_scope'
     - 'documentation'
+    - 'disable_puppet_url_without_modules'
