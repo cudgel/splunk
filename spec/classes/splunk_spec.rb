@@ -54,8 +54,10 @@ describe 'splunk' do
     it { is_expected.to compile.with_all_deps }
     it { is_expected.to contain_class('splunk') }
     it { is_expected.to contain_class('splunk::install') }
+    it { is_expected.to contain_file('/opt/splunkforwarder-7.2.1-be11b2c46e23-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
     it { is_expected.to contain_class('splunk::config') }
     it { is_expected.to contain_class('splunk::service') }
+    it { is_expected.to contain_service('splunk') }
   end
 
   context 'with type=> heavyforwarder' do
