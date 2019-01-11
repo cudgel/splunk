@@ -64,10 +64,10 @@ describe 'splunk' do
 
   context 'universal forwarder upgrade' do
     let(:facts) do
-      super().merge({
+      super().merge(
         'splunk_version' => '7.2.1-be11b2c46e23',
         'splunk_cwd'     => '/opt/splunkforwarder',
-      })
+      )
     end
     let(:params) do
       {
