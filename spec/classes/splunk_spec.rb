@@ -101,7 +101,7 @@ describe 'splunk' do
         'cluster_mode'      => 'slave',
         'clusters'          => [
           {
-            'label'          => 'splunkidx',
+            'label'          => 'SPL-IDX',
             'access_logging' => 1,
             'build_load'     => 5,
             'multisite'      => true,
@@ -111,7 +111,7 @@ describe 'splunk' do
             ],
             'repl_factor'   => 'origin:2,total:3',
             'search_factor' => 'origin:1,total:2',
-            'uri'           => 'splunkidx-cm.test:8089',
+            'uri'           => 'splunk-cm.test:8089',
           },
         ],
       }
@@ -133,7 +133,23 @@ describe 'splunk' do
   context 'search head' do
     let(:params) do
       {
-        'type' => 'search',
+        'type'              => 'search',
+        'repl_port'         => 8192,
+        'cluster_mode'      => 'searchhead',
+        'preferred_captain' => true,
+        'captain_is_adhoc'  => false,
+        'shcluster_mode'    => 'peer',
+        'shcluster_label'   => 'SPL-SRCH',
+        'clusters'          => [
+          {
+            'label'     => 'SPL-IDX',
+            'multisite' => true,
+            'sites'     => [
+              'site1'
+            ],
+            'uri' => 'splunk-cm.test:8089',
+          },
+        ],
       }
     end
 
