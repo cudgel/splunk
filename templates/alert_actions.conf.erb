@@ -7,10 +7,12 @@ from = scope['::fqdn']
 [email]
 inline = 1
 mailserver = localhost
-<% if hostname != :undef -%>
+<% if hostname != nil -%>
 hostname = <%= hostname %>
 <% else -%>
 hostname = <%= from %>
 <% end -%>
 from = splunk@<%= from %>
-command = $action.email.preprocess_results{default=""}$ | sendemail "server=$action.email.mailserver{default=localhost}$" "use_ssl=$action.email.use_ssl{default=false}$" "use_tls=$action.email.use_tls{default=false}$" "to=$action.email.to$" "cc=$action.email.cc$" "bcc=$action.email.bcc$" "from=$action.email.from{default=splunk@localhost}$" "subject=$action.email.subject{recurse=yes}$" "format=$action.email.format{default=csv}$" "sssummary=Saved Search [$name$]: $counttype$($results.count$)" "sslink=$results.url$" "ssquery=$search$" "ssname=$name$" "ssdesc=$description$" "inline=$action.email.inline{default=False}$" "sendresults=$action.email.sendresults{default=False}$" "sendpdf=$action.email.sendpdf{default=False}$" "pdfview=$action.email.pdfview$" "searchid=$search_id$" "width_sort_columns=$action.email.width_sort_columns$" "graceful=$graceful{default=True}$" maxinputs="$action.email.maxresults{default=10000}$" maxtime="$action.email.maxtime{default=5m}$"
+footer.text = If you believe you've received this email in error, please contact <%= scope['::splunk::email'] -%>.\
+\
+splunk > the engine for machine data

@@ -23,7 +23,7 @@
 #
 # === Examples
 #
-#  class { splunk: type => 'forwarder' }
+#  class { splunk: }
 #
 # === Authors
 #
@@ -31,76 +31,177 @@
 #
 # === Copyright
 #
-# Copyright 2014 Your name here, unless otherwise noted.
+# Copyright 2017 Christopher Caldwell
 #
-class splunk($type='forwarder') {
+class splunk(
+  String $version,
+String $release,
+String $type,
+Boolean $adhoc_searchhead,
+Boolean $autolb,
+Integer $autolbfrequency,
+String $cacert,
+Boolean $captain_is_adhoc,
+String $ciphersuite,
+String $cluster_mode,
+Boolean $create_user,
+Boolean $deployment_disable,
+Integer $deployment_interval,
+String $dispatch_earliest,
+String $dispatch_latest,
+Integer $dispatch_size,
+String $ecdhcurves,
+String $email,
+String $ext,
+Boolean $forcetimebasedautolb,
+String $install_path,
+Boolean $is_captain,
+String $license_master_mode,
+Boolean $managesecret,
+Integer $max_rawsize_perchunk,
+Integer $max_searches,
+String $os,
+Boolean $preferred_captain,
+String $privkey,
+Boolean $scheduler_disable,
+Integer $search_maxinfocsv,
+Integer $search_maxqueue,
+String $server_site,
+String $servercert,
+String $servercertpass,
+String $source,
+String $splunk_group,
+String $splunk_user,
+Boolean $splunknotcp_ssl,
+Boolean $splunknotcp,
+Boolean $sslclientcert,
+Boolean $sslclientcompression,
+Boolean $sslcompression,
+Boolean $sslnegotiation,
+Boolean $sslstsheader,
+Boolean $sslv3,
+Boolean $sslverify,
+String $sslversions,
+Integer $subsearch_maxout,
+Integer $subsearch_maxtime,
+Integer $subsearch_ttl,
+String $tarcmd,
+String $webcert,
+Boolean $webssl,
+Optional[String] $license_master,
+Optional[Hash] $acls = undef,
+Optional[Hash] $inputs = undef,
+Optional[Tuple] $clusters = undef,
+Optional[String] $deployment_server = undef,
+Optional[Tuple] $licenses = undef,
+Optional[Integer] $repl_count = undef,
+Optional[Integer] $repl_port = undef,
+Optional[String] $search_deploy = undef,
+Optional[String] $serviceurl = undef,
+Optional[String] $shcluster_label = undef,
+Optional[String] $shcluster_mode = undef,
+Optional[Array] $shcluster_members = undef,
+Optional[String] $symmkey = undef,
+Optional[Hash] $tcpout = undef
+) {
 
-  include splunk::params
+  if $type != 'none' {
 
-  $version         = $::splunk::params::version
-  $splunk_user     = $::splunk::params::splunk_user
-  $splunk_group    = $::splunk::params::splunk_group
-  $install_path    = $::splunk::params::install_path
-  $current_version = $::splunk_version
-  $serviceurl      = $::splunk::params::serviceurl
-  $splunkos        = $::splunk::params::splunkos
-  $splunkarch      = $::splunk::params::splunkarch
-  $splunkext       = $::splunk::params::splunkext
-  $tar             = $::splunk::params::tar
-  $tarcmd          = $::splunk::params::tarcmd
+    if $environment == 'ci' or $create_user == true {
+      class { 'splunk::user': }
+    }
 
-  if $type == 'forwarder' or $type == 'mserver' {
-    $sourcepart = 'splunkforwarder'
-  } else {
-    $sourcepart = 'splunk'
-  }
+    $new_version = "${version}-${release}"
 
-  $splunkhome    = "${install_path}/${sourcepart}"
-  $local_path    = "${splunkhome}/etc/system/local"
-  $splunkdb      = "${splunkhome}/var/lib/splunk"
-  $apppart       = "${sourcepart}-${version}-${splunkos}-${splunkarch}"
-  $splunksource  = "${apppart}.${splunkext}"
-  $manifest      = "${apppart}-manifest"
+    $arch = $architecture ? {
+      x86_64  => 'x86_64',
+      amd64   => 'x86_64',
+      default => 'i686'
+    }
+    if $type == 'forwarder' {
+      $sourcepart = 'splunkforwarder'
+    } else {
+      $sourcepart = 'splunk'
+    }
 
-  class { 'splunk::install': type => $type }->
-  class { 'splunk::service': }
+    $dir      = "${install_path}/${sourcepart}"
+    $capath   = "${dir}/etc/auth"
+    $local    = "${dir}/etc/system/local"
+    $splunkdb = "${dir}/var/lib/splunk"
+    $manifest = "${sourcepart}-${new_version}-${os}-${arch}-manifest"
+
+    # splunk search head cluster id (if a cluster member)
+    $shcluster_id = $splunk_shcluster_id
+
+    # splunk user home dir from fact
+    $home = $splunk_home
+
+    # directory of any running splunk process
+    $cwd = $splunk_cwd
+
+    # currently installed version from fact
+    $current_version = $splunk_version
+    $cut_version = regsubst($current_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
+    # because the legacy fact does not represent splunk version as
+    # version-release, we cut the version from the string.
+
+    if versioncmp($version, $cut_version) == 1 or $cut_version == '' or $cwd != $dir {
+      class { 'splunk::install': } -> class { 'splunk::config': } -> class { 'splunk::service': }
+    } else {
+      if versioncmp($version, $cut_version) == -1 {
+        info('Splunk is already at a higher version.')
+      }
+      class { 'splunk::config': } -> class { 'splunk::service': }
+    }
+
   # configure deployment server for indexers and forwarders
-  if $type == 'forwarder' or $type == 'heavyforwarder' {
-    class { 'splunk::deployment': }
-  }
+    if $type == 'forwarder' or $type == 'heavyforwarder' and $deployment_server != undef {
+      class { 'splunk::deployment': }
+    }
 
-  $my_input_d  = "${local_path}/inputs.d/"
-  $my_input_c  = "${local_path}/inputs.conf"
-  $my_output_d = "${local_path}/outputs.d/"
-  $my_output_c = "${local_path}/outputs.conf"
-  $my_server_d = "${local_path}/server.d/"
-  $my_server_c = "${local_path}/server.conf"
+    $perms = "${splunk_user}:${splunk_group}"
 
-  $my_perms   = "${::splunk::splunk_user}:${::splunk::splunk_group}"
+    $my_input_d  = "${local}/inputs.d/"
+    $my_input_c  = "${local}/inputs.conf"
 
-  exec { 'update-inputs':
-    command     => "/bin/cat ${my_input_d}/* > ${my_input_c}; \
-chown ${my_perms} ${my_input_c}",
-    refreshonly => true,
-    subscribe   => File["${local_path}/inputs.d/000_default"],
-    notify      => Service[splunk]
-  }
+    exec { 'update-inputs':
+      command     => "/bin/cat ${my_input_d}/* > ${my_input_c}; \
+          chown ${perms} ${my_input_c}",
+      refreshonly => true,
+      subscribe   => File["${local}/inputs.d/000_default"],
+      notify      => Service['splunk']
+    }
 
-  if $type != 'forwarder' {
+    if $type != 'forwarder' {
 
-  exec { 'update-outputs':
-    command     => "/bin/cat ${my_output_d}/* > ${my_output_c}; \
-chown ${my_perms} ${my_output_c}",
-    refreshonly => true,
-    notify      => Service[splunk]
-  }
+      if $type != 'indexer' and is_hash($tcpout) {
 
-  exec { 'update-server':
-    command     => "/bin/cat ${my_server_d}/* > ${my_server_c}; \
-chown ${my_perms} ${my_server_c}",
-    refreshonly => true,
-      subscribe => [File["${local_path}/server.d/000_header"], File["${local_path}/server.d/998_ssl"], File["${local_path}/server.d/999_default"]],
-    notify      => Service[splunk]
+        $my_output_d = "${local}/outputs.d/"
+        $my_output_c = "${local}/outputs.conf"
+
+        exec { 'update-outputs':
+          command     => "/bin/cat ${my_output_d}/* > ${my_output_c}; \
+            chown ${perms} ${my_output_c}",
+          refreshonly => true,
+          notify      => Service['splunk']
+        }
+      }
+
+      $my_server_d = "${local}/server.d/"
+      $my_server_c = "${local}/server.conf"
+
+      exec { 'update-server':
+        command     => "/bin/cat ${my_server_d}/* > ${my_server_c}; \
+          chown ${perms} ${my_server_c}",
+        refreshonly => true,
+        subscribe   => [
+          File["${local}/server.d/000_header"],
+          File["${local}/server.d/998_ssl"],
+          File["${local}/server.d/999_default"]
+        ],
+        notify      => Service['splunk']
+      }
+
     }
 
   }

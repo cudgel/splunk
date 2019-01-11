@@ -1,91 +1,47 @@
 Splunk
 
-This Splunk module supports deploying n-tier Splunk environments (forwarder, indexer, and search head roles) as well as the Spunk Mobile Server. It is does not create the user or group, leaving that up to your implementation. It supports running as root or a dedicated account. By default it assumes running as user/group splunk/splunk and will apply ACLs to grant access to log files specified in the hiera hash splunk::inputs. If the node has a splunk role of indexer it will create indexes based on the hiera hash splunk::indexes.
+This Splunk module supports deploying complex Splunk environments (forwarder, indexer, and search head roles, clustering, etc). It is does not create the user or group, leaving that up to your implementation. It does require the user and group to exist prior to the application being installed, so chaining your resources is a good idea. It supports running as root or a dedicated account. By default it assumes running as user/group splunk/splunk and will apply ACLs to grant access to log files specified in the hiera hash splunk::inputs. If the node has a splunk role of indexer it will create indexes based on the hiera hash splunk::indexes.
 
-It requires a fileserver definition, e.g.:
+If you choose to use a fileserver definition for your splunk tarbals, e.g.:
 
-[splunk]
-  path /etc/puppetlabs/puppet/files/splunk
-  allow *
+  [splunk]
+    path /etc/puppetlabs/puppet/files/splunk
+    allow *
 
-The file server should be populated with the tarballs for the splunk components you want to manage.
+the file server should be populated with the tarballs for the splunk components you want to manage and splunk::params::source should be set to 'fileserver'.
 
-# ls -1 /etc/puppetlabs/puppet/files/splunk
-mserver-linux-release-2.0.0.tgz
-splunk-6.1.6-249101-Linux-x86_64.tgz
-splunk-6.2.1-245427-Linux-x86_64.tgz
-splunkforwarder-6.1.6-249101-Linux-x86_64.tgz
-splunkforwarder-6.2.1-245427-Linux-x86_64.tgz
 
-It depends on hiera to supply global setttings.
+Sample hiera for RedHat log files:
 
-splunk::params::cipherSuite: 'TLSv1.1'
-splunk::params::coldpath: '/srv/coldDB'
-splunk::params::deployment_disable: false
-splunk::params::deployment_interval: 20
-splunk::params::deployment_server: 'splunkdep1.localdomain:8089'
-splunk::params::dispatch_earliest: '-60m@m'
-splunk::params::dispatch_latest: 'now'
-splunk::params::frozenTime: 7776000
-# load balanced service
-splunk::params::indexers: 'splunkidx1.localdomain:9997'
-splunk::params::maxcoldlargeMB: 600000
-splunk::params::maxcoldsmallMB: 120000
-splunk::params::maxwarmlargeMB: 300000
-splunk::params::maxwarmsmallMB: 60000
-splunk::params::mserver: '2.0.0'
-splunk::params::dispatch_size: 6000
-splunk::params::scheduler_disable: false
-# load balanced service
-splunk::params::serviceurl: 'https://splunk.localdomain'
-splunk::params::splunk_group: 'splunk'
-splunk::params::splunk_user: 'splunk'
-splunk::params::sslVersions: 'tls'
-splunk::params::subsearch_maxout: 15000
-splunk::params::subsearch_maxtime: 600
-splunk::params::subsearch_ttl: 1200
-splunk::params::tcpssl: true
-splunk::params::version: '6.1.6-249101'
-splunk::params::warmpath: '/opt/splunk/var/lib/splunk'
-splunk::params::webSSL: true
-
-Sample node/role hiera data:
-
-splunk::inputs:
-  'messages':
-    target: '/var/log/messages'
-    index: 'main'
-    sourcetype: 'linux_messages_syslog'
-  'secure':
-    target: '/var/log/secure'
-    index: 'main'
-    sourcetype: 'linux_secure'
-  'maillog':
-    target: '/var/log/maillog'
-    index: 'main'
-    sourcetype: 'syslog'
-  'spooler':
-    target: '/var/log/spooler'
-    index: 'main'
-    sourcetype: 'syslog'
-  'cron':
-    target: '/var/log/cron'
-    index: 'main'
-    sourcetype: 'syslog'
+  splunk::inputs:
+    'messages':
+      target: '/var/log/messages'
+      index: 'main'
+      sourcetype: 'linux_messages_syslog'
+    'secure':
+      target: '/var/log/secure'
+      index: 'main'
+      sourcetype: 'linux_secure'
+    'maillog':
+      target: '/var/log/maillog'
+      index: 'main'
+      sourcetype: 'syslog'
+    'spooler':
+      target: '/var/log/spooler'
+      index: 'main'
+      sourcetype: 'syslog'
+    'cron':
+      target: '/var/log/cron'
+      index: 'main'
+      sourcetype: 'syslog'
 
 A sample manifest snippet:
 
   $my_type = hiera('splunk::type', 'forwarder')
 
-  # create indexes if the host is an indexer
-  if $my_type == 'indexer' {
-    $my_indexes = hiera_hash('splunk::indexes')
-    create_resources('splunk::index', $my_indexes)
+  if $my_type != 'none' {
+    class { '::splunk': type => $my_type }
   }
-
-  # create OS, role, and host specific inputs
-  $my_inputs = hiera_hash('splunk::inputs')
-  create_resources('splunk::input', $my_inputs)
 
 License
 -------

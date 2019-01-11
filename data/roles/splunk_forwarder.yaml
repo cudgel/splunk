@@ -1,0 +1,3 @@
+---
+splunk::type: 'forwarder'
+splunk::sourcepart: 'splunkforwarder'

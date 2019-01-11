@@ -1,0 +1,35 @@
+<%
+  cacert = scope['::splunk::cacert']
+  ecdhcurves = scope['::splunk::ecdhcurves']
+  servercertpass = scope['::splunk::servercertpass']
+  servercert = scope['::splunk::servercert']
+  ciphersuite = scope['::splunk::ciphersuite']
+  sslclientcompression = scope['::splunk::sslclientcompression']
+  sslcompression = scope['::splunk::sslcompression']
+  sslversions = scope['::splunk::sslversions']
+  sslverify = scope['::splunk::sslverify']
+  sslclientcert = scope['::splunk::sslclientcert']
+  sslnegotiation = scope['::splunk::sslnegotiation']
+  sslstsheader = scope['::splunk::sslstsheader']
+-%>
+
+[sslConfig]
+allowSslCompression = <%= sslcompression %>
+allowSslRenegotiation = <%= sslnegotiation %>
+caPath = $SPLUNK_HOME/etc/auth
+caCertFile = <%= cacert %>
+cipherSuite = <%= ciphersuite %>
+<% if ecdhcurves != nil -%>
+ecdhCurves = <%= ecdhcurves %>
+<% end -%>
+enableSplunkdSSL = true
+requireClientCert = <%= sslclientcert %>
+sendStrictTransportSecurityHeader = <%= sslstsheader %>
+serverCert = $SPLUNK_HOME/etc/auth/<%= servercert %>
+sslPassword = <%= servercertpass %>
+sslVerifyServerCert = <%= sslverify %>
+sslVersions = <%= sslversions %>
+sslVersionsForClient = <%= sslversions %>
+useClientSSLCompression = <%= sslclientcompression %>
+useSplunkdClientSSLCompression = <%= sslclientcompression %>
+certCreateScript = $SPLUNK_HOME/bin/splunk, createssl, server-cert, 2048

@@ -1,0 +1,8 @@
+# Puppet Name: <%= @title %>
+#
+<%
+password = scope['::splunk::password_hash']
+-%>
+[user_info]
+USERNAME = admin
+PASSWORD = <%= password %>

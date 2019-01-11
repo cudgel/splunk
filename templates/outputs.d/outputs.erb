@@ -1,0 +1,35 @@
+# Puppet Name: <%= @title %>
+#
+<%
+  indexers             = scope['::splunk::tcpout']
+  cacert               = scope['::splunk::cacert']
+  ciphersuite          = scope['::splunk::ciphersuite']
+  ecdhcurves           = scope['::splunk::ecdhcurves']
+  servercertpass       = scope['::splunk::servercertpass']
+  servercert           = scope['::splunk::servercert']
+  sslclientcompression = scope['::splunk::sslclientcompression']
+  sslverify            = scope['::splunk::sslverify']
+  sslversions          = scope['::splunk::sslversions']
+  autolb               = scope['splunk::autolb']
+  autolbfrequency      = scope['splunk::autolbfrequency']
+  forcetimebasedautolb = scope['splunk::forcetimebasedautolb']
+-%>
+[tcpout]
+indexAndForward = false
+defaultGroup = <%= indexers['group'] %>
+
+[tcpout:<%= indexers['group'] %>]
+autoLBFrequency = <%= autolbfrequency %>
+cipherSuite = <%= ciphersuite %>
+<% if ecdhcurves != nil -%>
+ecdhCurves = <%= ecdhcurves %>
+<% end -%>
+clientCert = $SPLUNK_HOME/etc/auth/<%= servercert %>
+disabled = false
+forceTimebasedAutoLB = <%= forcetimebasedautolb %>
+server = <% indexers['servers'].each do |server| %><%= server %><%= "," unless server == indexers['servers'].last %><% end %>
+sslCommonNameToCheck = <%= indexers['cname'] %>
+sslPassword = <%= servercertpass %>
+sslVerifyServerCert = <%= sslverify %>
+sslVersions = <%= sslversions %>
+useClientSSLCompression = <%= sslclientcompression %>

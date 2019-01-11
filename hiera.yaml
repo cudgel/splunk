@@ -1,0 +1,19 @@
+---
+version: 5
+
+defaults:
+  datadir: 'data'
+  data_hash: 'yaml_data'
+
+hierarchy:
+  - name: "per-node data"
+    path: "nodes/%{facts.hostname}.yaml"
+  - name: "environment"
+    path: "environments/%{facts.r10k_environment}.yaml"
+  - name: "role data"
+    path: "roles/%{::role}.yaml"
+  - name: 'splunk common'
+    paths:
+      - "%{facts.kernel}.yaml"
+      - 'common.yaml'
+

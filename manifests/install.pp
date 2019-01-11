@@ -1,297 +1,142 @@
-class splunk::install($type=$type)
+# == Class: splunk::install
+#
+# This class maintains the installation of Splunk, installing a new Splunk
+# instance or upgrading an existing one. Currently it tries to fetch the
+# specified version of either splunk or splunkforwarder (depending on the
+# type of install) from splunk.com or a hiera-defined server.
+# Manages system/local config files, certificates (if defined in hiera and
+# served via puppet fileserver), and service installation.
+#
+# === Examples
+#
+#  class { splunk::install }
+#
+# === Authors
+#
+# Christopher Caldwell <author@domain.com>
+#
+# === Copyright
+#
+# Copyright 2017 Christopher Caldwell
+#
+class splunk::install
 {
-  $sourcepart      = $::splunk::sourcepart
-  $current_version = $::splunk::current_version
-  $new_version     = $::splunk::version
-  $splunkos        = $::splunk::splunkos
-  $splunkarch      = $::splunk::splunkarch
-  $my_perms        = "${::splunk::splunk_user}:${::splunk::splunk_group}"
+  $my_cwd          = $splunk::cwd
+  $type            = $splunk::type
+  # splunk user home
+  $home            = $splunk::home
+  $install_path    = $splunk::install_path
+  # splunk install directory
+  $dir             = $splunk::dir
+  $local           = $splunk::local
+  # splunk or splunkforwarder
+  $sourcepart      = $splunk::sourcepart
+  # currently installed version from fact
+  $current_version = $splunk::current_version
+  # new verion from hiera
+  $new_version     = $splunk::new_version
+  $os              = $splunk::os
+  $arch            = $splunk::arch
+  $ext             = $splunk::ext
+  $tarcmd          = $splunk::tarcmd
+  $manifest        = $splunk::manifest
+  # splunk (web) or fileserver or a custom url
+  $source          = $splunk::source
+  $splunk_user     = $splunk::splunk_user
+  $splunk_group    = $splunk::splunk_group
 
-  # begin version change
-  if $new_version != $current_version {
+  $perms = "${splunk_user}:${splunk_group}"
 
-    if $current_version != undef {
-      $apppart   = "${sourcepart}-${current_version}-${splunkos}-${splunkarch}"
-      $oldsource = "${apppart}.${::splunk::splunkext}"
+  $stopcmd  = 'splunk stop'
+  $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
 
-      file { "${::splunk::install_path}/${oldsource}":
-        ensure => absent
-      }
+  # clean up a splunk instance running out of the wrong directory for this role
+  if $my_cwd != $dir and $my_cwd != '' and $home != $my_cwd {
+    info("Splunk running out of wrong directory. Should be ${dir}, is ${my_cwd}.")
+
+    exec { 'uninstallSplunkService':
+      command => 'splunk disable boot-start',
+      path    => "${my_cwd}/bin:/bin:/usr/bin:",
+      returns => [0, 8]
     }
 
-    file { "${::splunk::install_path}/${::splunk::splunksource}":
-      owner  => $::splunk::splunk_user,
-      group  => $::splunk::splunk_group,
-      mode   => '0640',
-      source => "puppet:///splunk_files/${::splunk::splunksource}",
-      notify => Exec['unpackSplunk']
+    exec { 'serviceStop':
+      command => $stopcmd,
+      path    => "${my_cwd}/bin:/bin:/usr/bin:",
+      user    => $splunk_user,
+      group   => $splunk_group,
+      timeout => 600
     }
 
-    exec { 'unpackSplunk':
-      command   => "${::splunk::params::tarcmd} ${::splunk::splunksource}; \
-chown -RL ${my_perms} ${::splunk::splunkhome}",
-      path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
-      cwd       => $::splunk::install_path,
-      subscribe => File["${::splunk::install_path}/${::splunk::splunksource}"],
-      timeout   => 600,
-      unless    => "test -e ${::splunk::splunkhome}/${::splunk::manifest}",
-      creates   => "${::splunk::splunkhome}/${::splunk::manifest}"
+    file { $my_cwd:
+      ensure => absent,
+      force  => true,
+      backup => false
+    }
+    $wsourcepart = basename($my_cwd)
+    $wrongsource = "${wsourcepart}-${current_version}-${os}-${arch}.${ext}"
+
+    file { "${install_path}/${wrongsource}":
+      ensure => absent,
+      backup => false
     }
 
-    exec { 'firstStart':
-      command     => 'splunk stop; \
-splunk --accept-license --answer-yes --no-prompt start',
-      path        => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
-      subscribe   => Exec['unpackSplunk'],
-      refreshonly => true,
-      user        => $::splunk::splunk_user,
-      group       => $::splunk::splunk_group
-    }
-
-    exec { 'installSplunkService':
-      command   => 'splunk enable boot-start',
-      path      => "${::splunk::splunkhome}/bin:/bin:/usr/bin:",
-      subscribe => Exec['unpackSplunk'],
-      unless    => 'test -e /etc/init.d/splunk',
-      creates   => '/etc/init.d/splunk'
-    }
-
-  } # end new version
-
-  file { "${::splunk::splunkhome}/etc/splunk-launch.conf":
-    owner   => $::splunk::splunk_user,
-    group   => $::splunk::splunk_group,
-    content => template("${module_name}/splunk-launch.conf.erb"),
-    notify  => Service[splunk]
   }
 
-  if $::splunk::params::caCertPath != 'cacert.pem' {
-    file { "${::splunk::splunkhome}/etc/auth/${::splunk::params::caCertPath}":
-      owner  => $::splunk::splunk_user,
-      group  => $::splunk::splunk_group,
-      mode   => '0640',
-      source => "puppet:///splunk_files/auth/${::splunk::params::caCertPath}",
-      notify => Service[splunk]
-    }
-  }
+  if $current_version != undef and $my_cwd == $dir {
+    $oldsource = "${sourcepart}-${current_version}-${os}-${arch}.${ext}"
 
-  if $::splunk::params::privKeyPath != 'privkey.pem' {
-    file { "${::splunk::splunkhome}/etc/auth/splunkweb/${::splunk::params::privKeyPath}":
-      owner  => $::splunk::splunk_user,
-      group  => $::splunk::splunk_group,
-      mode   => '0640',
-      source => "puppet:///splunk_files/auth/splunkweb/${::splunk::params::privKeyPath}",
-      notify => Service[splunk]
-    }
-  }
-
-  if $::splunk::params::serverCertPath != 'server.pem' {
-    file { "${::splunk::splunkhome}/etc/auth/${::splunk::params::serverCertPath}":
-      owner  => $::splunk::splunk_user,
-      group  => $::splunk::splunk_group,
-      mode   => '0640',
-      source => "puppet:///splunk_files/auth/${::splunk::params::serverCertPath}",
-      notify => Service[splunk]
-    }
-  }
-
-  if $::splunk::params::webCertPath != 'cert.pem' {
-    file { "${::splunk::splunkhome}/etc/auth/splunkweb/${::splunk::params::webCertPath}":
-      owner  => $::splunk::splunk_user,
-      group  => $::splunk::splunk_group,
-      mode   => '0640',
-      source => "puppet:///splunk_files/auth/splunkweb/${::splunk::params::webCertPath}",
-      notify => Service[splunk]
-    }
-  }
-
-  file { "${::splunk::local_path}/inputs.d":
-    ensure => 'directory',
-    mode   => '0750',
-    owner  => $::splunk::splunk_user,
-    group  => $::splunk::splunk_group,
-  }
-
-  file { "${::splunk::local_path}/inputs.d/000_default":
-    owner   => $::splunk::splunk_user,
-    group   => $::splunk::splunk_group,
-    require => File["${::splunk::local_path}/inputs.d"],
-    content => template("${module_name}/default_inputs.erb")
-  }
-
-  if $type != 'forwarder' {
-
-    if $type != 'indexer' {
-      file { "${::splunk::local_path}/outputs.d":
-        ensure => 'directory',
-        mode   => '0750',
-        owner  => $::splunk::splunk_user,
-        group  => $::splunk::splunk_group,
-      }
-
-      file { "${::splunk::local_path}/outputs.d/000_default":
-        owner   => $::splunk::splunk_user,
-        group   => $::splunk::splunk_group,
-        content => template("${module_name}/outputs.erb"),
-        require => File["${::splunk::local_path}/outputs.d"],
-        notify  => Exec['update-outputs']
-      }
-    }
-
-    file { "${::splunk::local_path}/server.d":
-      ensure => 'directory',
-      mode   => '0750',
-      owner  => $::splunk::splunk_user,
-      group  => $::splunk::splunk_group,
-    }
-
-    file { "${::splunk::local_path}/server.d/000_default":
+    file { "${install_path}/${oldsource}":
       ensure => absent
     }
+  }
 
-    file { "${::splunk::local_path}/server.d/000_header":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_group,
-      require => File["${::splunk::local_path}/server.d"],
-      content => '# DO NOT EDIT -- Managed by Puppet',
-      notify  => Exec['update-server']
-    }
+  $newsource   = "${sourcepart}-${new_version}-${os}-${arch}.${ext}"
 
-    file { "${::splunk::local_path}/server.d/001_license":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_group,
-      require => File["${::splunk::local_path}/server.d"],
-      content => template("${module_name}/license.erb")
-    }
+  splunk::fetch{ 'sourcefile':
+    splunk_bundle => $newsource,
+    type          => $type,
+    source        => $source
+  }
 
-    file { "${::splunk::local_path}/server.d/999_ixclustering":
-      ensure => absent
-    }
+  exec { 'unpackSplunk':
+    command   => "${tarcmd} ${newsource}",
+    path      => "${dir}/bin:/bin:/usr/bin:",
+    cwd       => $install_path,
+    timeout   => 600,
+    subscribe => File["${install_path}/${newsource}"],
+    before    => Exec['test_for_splunk'],
+    unless    => "test -e ${dir}/${manifest}",
+    onlyif    => "test -s ${newsource}",
+    creates   => "${dir}/${manifest}"
+  }
 
-    file { "${::splunk::local_path}/server.d/998_ixclustering":
-      ensure => absent
-    }
+  exec { 'splunkDir':
+    command   => "chown -R ${splunk_user}:${splunk_group} ${dir}",
+    path      => "${dir}/bin:/bin:/usr/bin:",
+    cwd       => $install_path,
+    subscribe => Exec['unpackSplunk'],
+    onlyif    => "test -d ${dir}"
+  }
 
-    file { "${::splunk::local_path}/server.d/997_ixclustering":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_group,
-      require => File["${::splunk::local_path}/server.d"],
-      content => template("${module_name}/ixclustering.erb"),
-      notify  => Exec['update-server']
-    }
+  exec { 'serviceStart':
+    command     => "${stopcmd}; ${startcmd}",
+    path        => "${dir}/bin:/bin:/usr/bin:",
+    user        => $splunk_user,
+    group       => $splunk_group,
+    subscribe   => Exec['splunkDir'],
+    refreshonly => true
+  }
 
-    file { "${::splunk::local_path}/server.d/998_ssl":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_group,
-      require => File["${::splunk::local_path}/server.d"],
-      content => template("${module_name}/ssl_server.erb"),
-      notify  => Exec['update-server']
-    }
-
-    file { "${::splunk::local_path}/server.d/999_default":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_group,
-      require => File["${::splunk::local_path}/server.d"],
-      content => template("${module_name}/default_server.erb"),
-      notify  => Exec['update-server']
-    }
-
-    file { "${::splunk::local_path}/web.conf":
-      owner   => $::splunk::splunk_user,
-      group   => $::splunk::splunk_user,
-      content => template("${module_name}/web.conf.erb"),
-      notify  => Service[splunk],
-      alias   => 'splunk-web'
-    }
-
-    if $type == 'indexer' {
-
-      file { "${::splunk::local_path}/inputs.d/999_splunktcp":
-        owner   => $::splunk::splunk_user,
-        group   => $::splunk::splunk_group,
-        content => template("${module_name}/splunktcp.erb"),
-        notify  => Exec['update-inputs']
-      }
-
-      file { "${::splunk::local_path}/server.d/995_replication":
-        owner   => $::splunk::splunk_user,
-        group   => $::splunk::splunk_group,
-        require => File["${::splunk::local_path}/server.d"],
-        content => template("${module_name}/replication.erb"),
-        notify  => Exec['update-server']
-      }
-
-    }
-
-    if $type == 'search' {
-
-      if $::osfamily == 'RedHat' {
-
-        # support PDF Report Server
-        package { [
-          'xorg-x11-server-Xvfb',
-          'liberation-mono-fonts',
-          'liberation-sans-fonts',
-          'liberation-serif-fonts' ]:
-          ensure => installed,
-        }
-
-      }
-
-      file { "${::splunk::local_path}/default-mode.conf":
-        owner   => $::splunk::splunk_user,
-        group   => $::splunk::splunk_user,
-        content => template("${module_name}/default-mode.conf.erb"),
-        notify  => Service[splunk],
-        alias   => 'splunk-mode'
-      }
-
-      file { "${::splunk::local_path}/alert_actions.conf":
-        owner   => $::splunk::splunk_user,
-        group   => $::splunk::splunk_user,
-        content => template("${module_name}/alert_actions.conf.erb"),
-        notify  => Service[splunk],
-        alias   => 'alert-actions'
-      }
-
-      file { "${::splunk::local_path}/ui-prefs.conf":
-        owner   => $::splunk::splunk_user,
-        group   => $::splunk::splunk_user,
-        content => template("${module_name}/ui-prefs.conf.erb"),
-        notify  => Service['splunk']
-      }
-
-      file { "${::splunk::local_path}/limits.conf":
-        owner   => $::splunk::splunk_user,
-        group   => $::splunk::splunk_user,
-        content => template("${module_name}/limits.conf.erb"),
-        notify  => Service[splunk]
-      }
-
-      file { "${::splunk::local_path}/server.d/998_shclustering":
-        ensure => absent
-      }
-
-      file { "${::splunk::local_path}/server.d/997_shclustering":
-        ensure => absent
-      }
-
-      file { "${::splunk::local_path}/server.d/996_shclustering":
-        owner   => $::splunk::splunk_user,
-        group   => $::splunk::splunk_group,
-        require => File["${::splunk::local_path}/server.d"],
-        content => template("${module_name}/shclustering.erb"),
-        notify  => Exec['update-server']
-      }
-
-      file { "${::splunk::local_path}/server.d/995_replication":
-        owner   => $::splunk::splunk_user,
-        group   => $::splunk::splunk_group,
-        require => File["${::splunk::local_path}/server.d"],
-        content => template("${module_name}/replication.erb"),
-        notify  => Exec['update-server']
-      }
-    }
+  exec { 'installSplunkService':
+    command   => "splunk enable boot-start -user ${splunk_user}",
+    path      => "${dir}/bin:/bin:/usr/bin:",
+    cwd       => $dir,
+    subscribe => Exec['unpackSplunk'],
+    unless    => 'test -e /etc/init.d/splunk',
+    creates   => '/etc/init.d/splunk',
+    require   => Exec['unpackSplunk'],
+    returns   => [0, 8]
   }
 
 }

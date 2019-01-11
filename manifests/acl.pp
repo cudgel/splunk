@@ -1,49 +1,67 @@
+# splunk::acl()
+#
+# ensures that the Splunk user can read the file inputs defined
+# optionally set acls on parent paths
+#
 define splunk::acl(
-  $target='',
-  $group=$::splunk::splunk_group,
-  $recurse=false,
-  $readonly=true
+  Optional[String] $target    = undef,
+  Optional[String] $group     = $splunk::user,
+  Optional[String] $type      = 'file',
+  Optional[Boolean] $recurse  = false,
+  Optional[Boolean] $readonly = true,
+  Optional[Boolean] $parents  = false
 ) {
 
   # Validate parameters
   #
-  if $target == '' {
+  if $target != undef {
       $object = $title
   } else {
       $object = $target
-  }
-  if $readonly != true and $readonly != false {
-      fail('variable "readonly" must be either true or false')
   }
   if $recurse != true and $recurse != false {
       fail('variable "recurse" must be either true or false')
   }
 
+  if $kernel == 'Linux' {
 
-  if $::osfamily == 'RedHat' {
+    # returns 0 if the object is a file
+    $testdir = "test -d ${object}"
 
     # Calculate the ACE by combining $group, and $readonly.
     # Set the $subject and $db to later verify that the subject exists.
     #
     $subject = $group
-    if $readonly == true {
-      $perm = 'r-x'
+    if $type == 'file' or $testdir == false {
+      if $readonly == false {
+        $perm = 'rw-'
+      } else {
+        $perm = 'r--'
+      }
     } else {
-      $perm = 'rwx'
+      if $readonly == false {
+        $perm = 'rwx'
+      } else {
+        $perm = 'r-x'
+      }
     }
     $acl = "group:${group}:${perm}"
+    $gacl = "group:${group}:r-x"
 
     # test if the ACL is to be applied to an nfs mount
     # (extended posix ACLs cannot be set from the nfs client)
-    $testnfs = "df -P ${object} | tail -1 | awk '{print \$1}' |
-fgrep -f - /proc/mounts | grep -q nfs"
+    # returns 0 if object is on nfs mount
+    $testnfs = "df -P ${object} | tail -1 | awk '{print \$1}' \
+| fgrep -f - /proc/mounts | grep -q nfs"
 
-    # Recursive ACLs can only be applied to a directory.
+    # returns 0 if the mount containing the object suports ACLs
+    $testacl = "df -P ${object} | tail -1 | awk '{print \$1}' \
+| fgrep -f - /proc/mounts | grep -q seclabel"
+
     # Non-recursive ACLs can be applied to anything.
     #
     if $recurse == true {
-      $setfacl   = "setfacl -R -m ${acl} ${object} &&
-setfacl -d -R -m ${acl} ${object}"
+      $setfacl   = "setfacl -R -m ${acl} ${object} && setfacl -d -R -m ${acl} ${object}"
     } else {
       $setfacl   = "setfacl -m ${acl} ${object}"
     }
@@ -54,8 +72,8 @@ setfacl -d -R -m ${acl} ${object}"
     exec { "setfacl_${title}":
       path    => '/bin:/usr/bin',
       command => $setfacl,
-      unless  => "${testnfs} || getfacl ${object} 2>/dev/null |
-egrep -q '${acl}'",
+      onlyif  => $testacl,
+      unless  => "getfacl ${object} 2>/dev/null | egrep -q '${acl}'",
       timeout => '0'
     }
 
@@ -64,50 +82,37 @@ egrep -q '${acl}'",
     exec { "set_effective_rights_mask_${title}":
       path    => '/bin:/usr/bin',
       command => "setfacl -R -m mask:${perm},default:mask:${perm} ${object}",
-      unless  => "${testnfs} || getfacl ${object} 2>/dev/null |
-egrep -q '^mask::r-x' ",
+      onlyif  => "${testacl} && ${testdir}",
+      unless  => "getfacl ${object} 2>/dev/null | egrep -q '^mask::r-x' ",
       timeout => '0'
     }
 
-  } # end redhat
+    if $parents == true {
+      $directories = split($object, '/')
 
-  if $::osfamily == 'Solaris' {
+      $directories.each |$index, $directory| {
+        $calculated_dir = inline_template("<%= @directories[0, @index + 1].join('/') %>")
+        $full_path = "/${calculated_dir}"
+        if (! defined(File[$full_path]) and $full_path != '/') {
+          exec { "setfacl_${directory}":
+            path    => '/bin:/usr/bin',
+            command => "setfacl -m ${gacl} ${full_path}",
+            onlyif  => "${testacl} && ${testdir}",
+            unless  => "getfacl ${full_path} 2>/dev/null | egrep -q '${gacl}'",
+            timeout => '0'
+          }
 
-    # Calculate the ACE by combining $group, and $readonly.
-    # Set the $subject and $db to later verify that the subject exists.
-    #
-    $subject = $group
-    if $readonly == true {
-      $acl = "group:${group}:rxaRcs"
-    } else {
-      $acl = "group:${group}:rwxpcCosRrWaAdD"
-    }
-    $acl_subject = "group:${group}"
-    $db = 'group'
-
-    # Recursive ACLs can only be applied to a directory.
-    # Non-recursive ACLs can be applied to anything.
-    #
-    if $recurse == true {
-      $predicate = "test -d ${object}"
-      $setfacl   = "find ${object} -type d
--exec chmod A+${acl}:fd:allow '{}' \\; &&
-find ${object} -type f -exec chmod A+${acl}:allow '{}' \\; "
-    } else {
-        $predicate = '/bin/true'
-        $setfacl   = "chmod A+${acl}:allow ${object}"
+          exec { "set_effective_rights_mask_${directory}":
+            path    => '/bin:/usr/bin',
+            command => "setfacl -m mask:r-x,default:mask:r-x ${full_path}",
+            onlyif  => "${testacl} && ${testdir}",
+            unless  => "getfacl ${full_path} 2>/dev/null | egrep -q '^mask::r-x' ",
+            timeout => '0'
+          }
+        }
+      }
     }
 
-    exec { "chmod_${title}":
-        command => "${predicate} &&
-getent ${db} ${subject} &&
-${setfacl}",
-        path    => '/bin:/sbin:/usr/bin:/usr/sbin',
-        unless  => "ls -dv ${object} |
-egrep '[0-9]:${acl_subject}' >/dev/null",
-        timeout => '0',
-    }
-
-  } # end solaris
+  } # end linux
 
 }

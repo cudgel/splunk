@@ -1,0 +1,12 @@
+<%
+  symmkey     = scope['::splunk::symmkey']
+  cluster_mode = scope['::splunk::cluster_mode']
+  server_site = scope['::splunk::server_site']
+-%>
+
+[general]
+serverName = <%= scope['::hostname'] %>
+pass4SymmKey = <%= symmkey %>
+<% if cluster_mode == 'master' || cluster_mode == 'slave' -%>
+site = <%= server_site %>
+<% end -%>

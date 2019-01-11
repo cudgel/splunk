@@ -1,0 +1,18 @@
+<%
+  servercertpass = scope['splunk::servercertpass']
+  servercert = scope['::splunk::servercert']
+  ciphersuite = scope['::splunk::ciphersuite']
+  ecdhcurves = scope['::splunk::ecdhcurves']
+  sslversions = scope['::splunk::sslversions']
+  sslclientcert = scope['::splunk::sslclientcert']
+-%>
+
+[SSL]
+sslPassword = <%= servercertpass %>
+cipherSuite = <%= ciphersuite %>
+<% if ecdhcurves != nil -%>
+ecdhCurves = <%= ecdhcurves %>
+<% end -%>
+requireClientCert = <%= sslclientcert %>
+serverCert = $SPLUNK_HOME/etc/auth/<%= servercert %>
+sslVersions = <%= sslversions %>

@@ -1,16 +1,22 @@
 # Puppet Name: <%= @title %>
 #
 <%
-enableSplunkWebSSL = scope['::splunk::params::webSSL']
-privKeyPath = scope['::splunk::params::privKeyPath']
-webCertPath = scope['::splunk::params::webCertPath']
-cipherSuite = scope['::splunk::params::cipherSuite']
-sslVersions = scope['::splunk::params::sslVersions']
+dir = scope['::splunk::dir']
+enablesplunkwebssl = scope['::splunk::webssl']
+privkey = scope['::splunk::privkey']
+webcert = scope['::splunk::webcert']
+ciphersuite = scope['::splunk::ciphersuite']
+ecdhcurves = scope['::splunk::ecdhcurves']
+sslversions = scope['::splunk::sslversions']
+sslnegotiation = scope['::splunk::sslnegotiation']
 -%>
 [settings]
-enableSplunkWebSSL = <%= enableSplunkWebSSL %>
-allowSslRenegotiation = false
-privKeyPath = etc/auth/splunkweb/<%= privKeyPath %>
-caCertPath = etc/auth/splunkweb/<%= webCertPath %>
-cipherSuite = <%= cipherSuite %>
-sslVersions = <%= sslVersions %>
+enableSplunkWebSSL = <%= enablesplunkwebssl %>
+allowSslRenegotiation = <%= sslnegotiation %>
+privKeyPath = etc/auth/splunkweb/<%= privkey %>
+serverCert = etc/auth/splunkweb/<%= webcert %>
+cipherSuite = <%= ciphersuite %>
+<% if ecdhcurves != nil -%>
+ecdhCurves = <%= ecdhcurves %>
+<% end -%>
+sslVersions = <%= sslversions %>
