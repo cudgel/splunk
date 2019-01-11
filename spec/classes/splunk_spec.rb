@@ -183,7 +183,12 @@ describe 'splunk' do
     it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
   end
 
-  context 'search cluster peer with index cluster' do
+  context 'search cluster peer (configured) with index cluster' do
+    let(:facts) do
+      super().merge(
+        'splunk_shcluster_id' => 'idorie7U-C47d-z3rV-4xyN-biebu5Ji6eeB',
+      )
+    end
     let(:params) do
       {
         'type'              => 'search',
@@ -211,6 +216,9 @@ describe 'splunk' do
     it { is_expected.to contain_class('splunk::install') }
     it { is_expected.to contain_file('/opt/splunk-7.2.1-be11b2c46e23-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
     it { is_expected.to contain_class('splunk::config') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/server.d/995_replication') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/server.d/996_shclustering') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/server.d/997_ixclustering') }
     it { is_expected.to contain_class('splunk::service') }
     it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
   end
