@@ -18,4 +18,6 @@ Rakefile:
     - disable_puppet_url_without_modules
 appveyor.yml:
   delete: true
+.gitlab-ci.yml:
+  unmanaged: true
 
