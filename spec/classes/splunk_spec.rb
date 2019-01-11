@@ -62,6 +62,32 @@ describe 'splunk' do
     it { is_expected.to contain_class('splunk::deployment') }
   end
 
+  context 'universal forwarder upgrade' do
+    let(:facts) do
+      super().merge({
+        'splunk_version' => '7.2.1-be11b2c46e23',
+        'splunk_cwd'     => '/opt/splunkforwarder',
+      })
+    end
+    let(:params) do
+      {
+        'type'    => 'forwarder',
+        'version' => '7.2.3',
+        'release' => '06d57c595b80',
+      }
+    end
+
+    it { is_expected.to compile.with_all_deps }
+    it { is_expected.to contain_class('splunk') }
+    it { is_expected.to contain_class('splunk::install') }
+    it { is_expected.to contain_file('/opt/splunkforwarder-7.2.1-be11b2c46e23-Linux-x86_64.tgz').with('ensure' => 'absent') }
+    it { is_expected.to contain_file('/opt/splunkforwarder-7.2.3-06d57c595b80-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
+    it { is_expected.to contain_class('splunk::config') }
+    it { is_expected.to contain_class('splunk::service') }
+    it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
+    it { is_expected.to contain_class('splunk::deployment') }
+  end
+
   context 'heavy forwarder with deployment server' do
     let(:params) do
       {
