@@ -183,6 +183,7 @@ Optional[Hash] $tcpout = undef
           command     => "/bin/cat ${my_output_d}/* > ${my_output_c}; \
                 chown ${perms} ${my_output_c}",
           refreshonly => true,
+          creates     => "${local}/outputs.conf",
           notify      => Service['splunk']
         }
       }

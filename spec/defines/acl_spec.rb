@@ -4,7 +4,7 @@ require 'spec_helper'
 
 describe 'splunk::acl' do
   let(:title) { '/var/log/authlog' }
-  let(:node) { 'test.ci' }
+  let(:node) { 'splunk.test' }
   let(:facts) do
     {
       'role'                => 'splunk_forwarder',

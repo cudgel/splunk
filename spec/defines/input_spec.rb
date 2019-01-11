@@ -4,7 +4,7 @@ require 'spec_helper'
 
 describe 'splunk::input' do
   let(:title) { 'authlog' }
-  let(:node) { 'test.ci' }
+  let(:node) { 'splunk.test' }
   let(:facts) do
     {
       'splunk_cwd'          => '',

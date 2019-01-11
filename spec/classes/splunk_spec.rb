@@ -4,7 +4,7 @@ require 'spec_helper'
 
 describe 'splunk' do
   let(:title) { 'splunk' }
-  let(:node) { 'test.ci' }
+  let(:node) { 'splunk.test' }
   let(:facts) do
     {
       'splunk_cwd'          => '',
@@ -48,7 +48,7 @@ describe 'splunk' do
     let(:params) do
       {
         'type'              => 'forwarder',
-        'deployment_server' => 'https://splunkds.io:8089',
+        'deployment_server' => 'https://splunkds.test:8089',
       }
     end
 
@@ -65,21 +65,67 @@ describe 'splunk' do
   context 'with type=> heavyforwarder' do
     let(:params) do
       {
-        'type' => 'heavyforwarder',
+        'type'              => 'heavyforwarder',
+        'deployment_server' => 'https://splunkds.test:8089',
+        'tcpout' => {
+          'group'   => 'splunkidx',
+          'cname'   => 'splunkidx.test',
+          'servers' => [
+            'splunkidx1:9998',
+            'splunkidx2:9998',
+            'splunkidx3:9998',
+          ],
+        },
       }
     end
 
-    it { is_expected.to compile }
+    it { is_expected.to compile.with_all_deps }
+    it { is_expected.to contain_class('splunk') }
+    it { is_expected.to contain_class('splunk::install') }
+    it { is_expected.to contain_file('/opt/splunk-7.2.1-be11b2c46e23-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
+    it { is_expected.to contain_class('splunk::config') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/outputs.d/000_default') }
+    it { is_expected.to contain_class('splunk::service') }
+    it { is_expected.to contain_service('splunk') }
+    it { is_expected.to contain_class('splunk::deployment') }
   end
 
   context 'with type=> indexer' do
     let(:params) do
       {
-        'type' => 'indexer',
+        'type'              => 'indexer',
+        'deployment_server' => 'https://splunkds.test:8089',
+        'license_master'    => 'splunklm.test:8089',
+        'server_site'       => 'site1',
+        'symmkey'           => 'bei6cah0yees0UW3ce3thoht1kaex2az',
+        'repl_port'         => 8193,
+        'cluster_mode'      => 'slave',
+        'clusters'          => [
+          {
+            'label'          => 'splunkidx',
+            'access_logging' => 1,
+            'build_load'     => 5,
+            'multisite'      => true,
+            'sites'          => [
+              'site1',
+              'site2',
+            ],
+            'repl_factor'   => 'origin:2,total:3',
+            'search_factor' => 'origin:1,total:2',
+            'uri'           => 'splunkidx-cm.test:8089',
+          },
+        ],
       }
     end
 
-    it { is_expected.to compile }
+    it { is_expected.to compile.with_all_deps }
+    it { is_expected.to contain_class('splunk') }
+    it { is_expected.to contain_class('splunk::install') }
+    it { is_expected.to contain_file('/opt/splunk-7.2.1-be11b2c46e23-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
+    it { is_expected.to contain_class('splunk::config') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/inputs.d/999_splunktcp') }
+    it { is_expected.to contain_class('splunk::service') }
+    it { is_expected.to contain_service('splunk') }
   end
 
   context 'with type=> search' do
