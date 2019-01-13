@@ -19,7 +19,6 @@ class splunk::config
 {
   $type              = $splunk::type
   $install_path      = $splunk::install_path
-  # where splunk is installed
   $dir               = $splunk::dir
   $local             = $splunk::local
   $splunk_user       = $splunk::splunk_user
@@ -43,6 +42,7 @@ class splunk::config
   $splunk_inputs     = $splunk::inputs
   $cluster_mode      = $splunk::cluster_mode
   $tcpout            = $splunk::tcpout
+  $deployment_server = $splunk::deployment_server
 
   $splunk_home = $splunk_home
   $perms = "${splunk_user}:${splunk_group}"
@@ -201,7 +201,7 @@ export PATH
     notify  => Exec['update-inputs']
   }
 
-  if $type != 'forwarder' {
+  if $type != 'forwarder' or $deployment_server == undef  {
 
     if ($type != 'indexer') and ($type != 'standalone')  and is_hash($tcpout) {
       file { "${local}/outputs.d":

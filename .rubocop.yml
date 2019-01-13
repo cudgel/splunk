@@ -18,7 +18,7 @@ AllCops:
   - "**/Guardfile"
 Metrics/LineLength:
   Description: People have wide screens, use them.
-  Max: 200
+  Max: 250
 GetText/DecorateString:
   Description: We don't want to decorate test output.
   Exclude:

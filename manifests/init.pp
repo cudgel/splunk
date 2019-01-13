@@ -172,7 +172,7 @@ Optional[Hash] $tcpout = undef
       notify      => Service['splunk']
     }
 
-    if $type != 'forwarder' {
+    if $type != 'forwarder' or $deployment_server == undef {
 
       if $type != 'indexer' and is_hash($tcpout) {
 
