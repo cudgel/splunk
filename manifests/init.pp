@@ -34,7 +34,7 @@
 # Copyright 2017 Christopher Caldwell
 #
 class splunk(
-  String $version,
+String $version,
 String $release,
 String $type,
 Boolean $adhoc_searchhead,
@@ -172,7 +172,7 @@ Optional[Hash] $tcpout = undef
       notify      => Service['splunk']
     }
 
-    if $type != 'forwarder' {
+    if $type != 'forwarder' or $deployment_server == undef {
 
       if $type != 'indexer' and is_hash($tcpout) {
 
@@ -181,8 +181,9 @@ Optional[Hash] $tcpout = undef
 
         exec { 'update-outputs':
           command     => "/bin/cat ${my_output_d}/* > ${my_output_c}; \
-            chown ${perms} ${my_output_c}",
+                chown ${perms} ${my_output_c}",
           refreshonly => true,
+          creates     => "${local}/outputs.conf",
           notify      => Service['splunk']
         }
       }
@@ -192,13 +193,13 @@ Optional[Hash] $tcpout = undef
 
       exec { 'update-server':
         command     => "/bin/cat ${my_server_d}/* > ${my_server_c}; \
-          chown ${perms} ${my_server_c}",
+            chown ${perms} ${my_server_c}",
         refreshonly => true,
         subscribe   => [
-          File["${local}/server.d/000_header"],
-          File["${local}/server.d/998_ssl"],
-          File["${local}/server.d/999_default"]
-        ],
+            File["${local}/server.d/000_header"],
+            File["${local}/server.d/998_ssl"],
+            File["${local}/server.d/999_default"]
+          ],
         notify      => Service['splunk']
       }
 

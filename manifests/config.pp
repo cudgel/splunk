@@ -19,7 +19,6 @@ class splunk::config
 {
   $type              = $splunk::type
   $install_path      = $splunk::install_path
-  # where splunk is installed
   $dir               = $splunk::dir
   $local             = $splunk::local
   $splunk_user       = $splunk::splunk_user
@@ -43,6 +42,7 @@ class splunk::config
   $splunk_inputs     = $splunk::inputs
   $cluster_mode      = $splunk::cluster_mode
   $tcpout            = $splunk::tcpout
+  $deployment_server = $splunk::deployment_server
 
   $splunk_home = $splunk_home
   $perms = "${splunk_user}:${splunk_group}"
@@ -72,28 +72,28 @@ export PATH
   file_line { 'splunk-start':
     path    => '/etc/init.d/splunk',
     line    => "  su - ${splunk_user} -c \'\"${dir}/bin/splunk\" start --no-prompt --answer-yes\'",
-    match   => "^\ \ \"${dir}/bin/splunk\" start",
+    match   => "^\s\s\"${dir}/bin/splunk\" start",
     require => Exec['test_for_splunk']
   }
 
   file_line { 'splunk-stop':
     path    => '/etc/init.d/splunk',
     line    => "  su - ${splunk_user} -c \'\"${dir}/bin/splunk\" stop\'",
-    match   => "^\ \ \"${dir}/bin/splunk\" stop",
+    match   => "^\s\s\"${dir}/bin/splunk\" stop",
     require => Exec['test_for_splunk']
   }
 
   file_line { 'splunk-restart':
     path    => '/etc/init.d/splunk',
     line    => "  su - ${splunk_user} -c \'\"${dir}/bin/splunk\" restart\'",
-    match   => "^\ \ \"${dir}/bin/splunk\" restart",
+    match   => "^\s\s\"${dir}/bin/splunk\" restart",
     require => Exec['test_for_splunk']
   }
 
   file_line { 'splunk-status':
     path    => '/etc/init.d/splunk',
     line    => "  su - ${splunk_user} -c \'\"${dir}/bin/splunk\" status\'",
-    match   => "^\ \ \"${dir}/bin/splunk\" status",
+    match   => "^\s\s\"${dir}/bin/splunk\" status",
     require => Exec['test_for_splunk']
   }
 
@@ -166,7 +166,6 @@ export PATH
 
   file { "${dir}/etc/apps":
     ensure  => 'directory',
-    mode    => '0770',
     owner   => $splunk_user,
     group   => $splunk_group,
     require => Exec['test_for_splunk']
@@ -174,7 +173,6 @@ export PATH
 
   file { $local:
     ensure  => 'directory',
-    mode    => '0750',
     owner   => $splunk_user,
     group   => $splunk_group,
     require => Exec['test_for_splunk']
@@ -203,7 +201,7 @@ export PATH
     notify  => Exec['update-inputs']
   }
 
-  if $type != 'forwarder' {
+  if $type != 'forwarder' or $deployment_server == undef  {
 
     if ($type != 'indexer') and ($type != 'standalone')  and is_hash($tcpout) {
       file { "${local}/outputs.d":
@@ -252,12 +250,12 @@ export PATH
 
     if $cluster_mode != 'none' {
       file { "${local}/server.d/997_ixclustering":
-      content => template("${module_name}/server.d/ixclustering.erb"),
-      owner   => $splunk_user,
-      group   => $splunk_group,
-      require => File["${local}/server.d"],
-      notify  => Exec['update-server']
-    }
+        content => template("${module_name}/server.d/ixclustering.erb"),
+        owner   => $splunk_user,
+        group   => $splunk_group,
+        require => File["${local}/server.d"],
+        notify  => Exec['update-server']
+      }
     }
 
     file { "${local}/server.d/998_ssl":
@@ -297,12 +295,12 @@ export PATH
 
       if $cluster_mode != 'none' {
         file { "${local}/server.d/995_replication":
-        content => template("${module_name}/server.d/replication.erb"),
-        owner   => $splunk_user,
-        group   => $splunk_group,
-        require => File["${local}/server.d"],
-        notify  => Exec['update-server']
-      }
+          content => template("${module_name}/server.d/replication.erb"),
+          owner   => $splunk_user,
+          group   => $splunk_group,
+          require => File["${local}/server.d"],
+          notify  => Exec['update-server']
+        }
       }
 
     }
