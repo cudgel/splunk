@@ -4,6 +4,8 @@
     - 'appveyor.yml'
     - '.travis.yml'
     - 'update_report.txt'
+    - 'Gemfile.lock'
+    - 'Rakefile.old'
 Rakefile:
   requires:
     - puppetlabs_spec_helper/rake_tasks
@@ -22,3 +24,8 @@ appveyor.yml:
   delete: true
 .gitlab-ci.yml:
   unmanaged: true
+.rubocop.yml:
+  default_configs: &default_configs
+    Metrics/LineLength:
+      Description: People have wide screens, use them.
+      Max: 220
