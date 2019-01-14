@@ -235,7 +235,7 @@ describe 'splunk' do
             'uri' => 'splunk-cm.test:8089',
           },
         ],
-        'tcpout'      => {
+        'tcpout' => {
           'group'   => 'splunkidx',
           'cname'   => 'splunkidx.test',
           'servers' => [
@@ -295,7 +295,7 @@ describe 'splunk' do
             'uri' => 'splunk-cm.test:8089',
           },
         ],
-        'tcpout'      => {
+        'tcpout' => {
           'group'   => 'splunkidx',
           'cname'   => 'splunkidx.test',
           'servers' => [
