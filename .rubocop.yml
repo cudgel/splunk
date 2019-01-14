@@ -19,7 +19,7 @@ AllCops:
 Metrics/LineLength:
   Description: People have wide screens, use them.
   Max: 220
-2etText/DecorateString:
+GetText/DecorateString:
   Description: We don't want to decorate test output.
   Exclude:
   - spec/*
