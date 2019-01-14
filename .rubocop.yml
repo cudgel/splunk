@@ -2,7 +2,7 @@
 require: rubocop-rspec
 AllCops:
   DisplayCopNames: true
-  TargetRubyVersion: '2.4'
+  TargetRubyVersion: '2.1'
   Include:
   - "./**/*.rb"
   Exclude:
@@ -18,7 +18,7 @@ AllCops:
   - "**/Guardfile"
 Metrics/LineLength:
   Description: People have wide screens, use them.
-  Max: 250
+  Max: 220
 GetText/DecorateString:
   Description: We don't want to decorate test output.
   Exclude:
