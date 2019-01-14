@@ -1,0 +1,57 @@
+{
+  "name": "cudgel-splunk",
+  "version": "1.2.0",
+  "author": "Christopher Caldwell",
+  "summary": "Splunk Deployment App",
+  "license": "Apache-2.0",
+  "source": "https://github.com/cudgel/splunk",
+  "project_page": "https://github.com/cudgel/splunk",
+  "dependencies": [
+    {
+      "name": "puppetlabs/stdlib",
+      "version_requirement": ">= 4.0.0 < 5.0.0"
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "8",
+        "9"
+      ]
+    },
+    {
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [
+        "16.04"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": ">= 4.10.0 < 7.0.0"
+    }
+  ],
+  "tags": [
+    "splunk",
+    "cluster"
+  ],
+  "pdk-version": "1.8.0",
+  "template-url": "https://github.com/puppetlabs/pdk-templates",
+  "template-ref": "tags/1.8.0-0-g0d9da00"
+}
