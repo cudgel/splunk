@@ -78,6 +78,7 @@ describe 'splunk' do
     it { is_expected.to contain_class('splunk::service') }
     it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
     it { is_expected.to contain_class('splunk::deployment') }
+    it { is_expected.to have_exec_resource_count(9) }
   end
 
   context 'universal forwarder with deployment server' do
@@ -108,6 +109,7 @@ describe 'splunk' do
     it { is_expected.to contain_file('/opt/splunkforwarder/etc/apps/deployclient/local/deploymentclient.conf').that_requires('File[/opt/splunkforwarder/etc/apps/deployclient/local]').that_notifies('Service[splunk]') }
     it { is_expected.to contain_class('splunk::service') }
     it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
+    it { is_expected.to have_exec_resource_count(7) }
   end
 
   context 'universal forwarder upgrade' do
@@ -133,6 +135,7 @@ describe 'splunk' do
     it { is_expected.to contain_class('splunk::config') }
     it { is_expected.to contain_class('splunk::service') }
     it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
+    it { is_expected.to have_exec_resource_count(8) }
   end
 
   context 'heavy forwarder with deployment server' do
