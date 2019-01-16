@@ -44,11 +44,19 @@ class splunk::install
   $source          = $splunk::source
   $splunk_user     = $splunk::splunk_user
   $splunk_group    = $splunk::splunk_group
+  $admin_pass      = $splunk::admin_pass
 
   $perms = "${splunk_user}:${splunk_group}"
 
   $stopcmd  = 'splunk stop'
-  $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
+
+  if $admin_pass != undef {
+    $seed = " --seed-passwd ${admin_pass}"
+  } else {
+    $seed = ''
+  }
+  $startcmd = "splunk start --accept-license --answer-yes --no-prompt${seed}"
+
 
   # clean up a splunk instance running out of the wrong directory for this role
   if $my_cwd != $dir and $my_cwd != '' and $home != $my_cwd {

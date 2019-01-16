@@ -175,7 +175,6 @@ describe 'splunk' do
         'create_user'       => true,
         'license_master'    => 'splunklm.test:8089',
         'server_site'       => 'site1',
-        'symmkey'           => 'bei6cah0yees0UW3ce3thoht1kaex2az',
         'repl_port'         => 8193,
         'cluster_mode'      => 'slave',
         'clusters'          => [
@@ -273,7 +272,7 @@ describe 'splunk' do
   context 'search cluster peer (configured) with index cluster' do
     let(:facts) do
       super().merge(
-        'splunk_shcluster_id' => 'idorie7U-C47d-z3rV-4xyN-biebu5Ji6eeB',
+        'splunk_shcluster_id' => '5054d4a8-19a5-11e9-8800-acbc32b372d1',
       )
     end
     let(:params) do
