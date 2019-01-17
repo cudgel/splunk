@@ -2,6 +2,7 @@
 splunk::version: '7.2.1'
 splunk::release: 'be11b2c46e23'
 splunk::type: 'none'
+splunk::admin_pass: 'changeme'
 splunk::adhoc_searchhead: false
 splunk::autolb: true
 splunk::autolbfrequency: 60
@@ -46,6 +47,7 @@ splunk::sslstsheader: true
 splunk::sslv3: false
 splunk::sslverify: false
 splunk::sslversions: 'tls1.2'
+splunk::symmkey: 'password'
 splunk::subsearch_maxout: 50000
 splunk::subsearch_maxtime: 60
 splunk::subsearch_ttl: 300
