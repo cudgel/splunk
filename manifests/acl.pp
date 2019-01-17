@@ -5,7 +5,7 @@
 #
 define splunk::acl(
   Optional[String] $target    = undef,
-  Optional[String] $group     = $splunk::user,
+  Optional[String] $group     = $splunk::splunk_user,
   Optional[String] $type      = 'file',
   Optional[Boolean] $recurse  = false,
   Optional[Boolean] $readonly = true,
