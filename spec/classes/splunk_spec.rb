@@ -175,7 +175,6 @@ describe 'splunk' do
         'create_user'       => true,
         'license_master'    => 'splunklm.test:8089',
         'server_site'       => 'site1',
-        'symmkey'           => 'bei6cah0yees0UW3ce3thoht1kaex2az',
         'repl_port'         => 8193,
         'cluster_mode'      => 'slave',
         'clusters'          => [
