@@ -21,6 +21,7 @@
 #
 class splunk::install
 {
+  $action          = $splunk::action
   $my_cwd          = $splunk::cwd
   $type            = $splunk::type
   # splunk user home
@@ -58,9 +59,8 @@ class splunk::install
   $startcmd = "splunk start --accept-license --answer-yes --no-prompt${seed}"
 
 
-  # clean up a splunk instance running out of the wrong directory for this role
-  if $my_cwd != $dir and $my_cwd != undef and $home != $my_cwd {
-    info("Splunk running out of wrong directory. Should be ${dir}, is ${my_cwd}.")
+  # clean up a splunk instance running out of the wrong directory for the type
+  if $action == 'change' {
 
     exec { 'uninstallSplunkService':
       command => 'splunk disable boot-start',
@@ -82,16 +82,18 @@ class splunk::install
       backup => false
     }
     $wsourcepart = basename($my_cwd)
-    $wrongsource = "${wsourcepart}-${current_version}-${os}-${arch}.${ext}"
+    if $current_version != undef {
+      $wrongsource = "${wsourcepart}-${current_version}-${os}-${arch}.${ext}"
 
-    file { "${install_path}/${wrongsource}":
-      ensure => absent,
-      backup => false
+      file { "${install_path}/${wrongsource}":
+        ensure => absent,
+        backup => false
+      }
     }
 
   }
 
-  if $current_version != undef and $my_cwd == $dir {
+  if $action == 'upgrade' {
     $oldsource = "${sourcepart}-${current_version}-${os}-${arch}.${ext}"
 
     file { "${install_path}/${oldsource}":

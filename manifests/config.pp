@@ -54,10 +54,12 @@ PATH=\$SPLUNK_HOME/bin:\$PATH
 export PATH
   "
 
-  file { "${splunk_home}/.bashrc.custom":
-    owner   => $splunk_user,
-    group   => $splunk_group,
-    content => $bashrc
+  if $splunk_home != undef {
+    file { "${splunk_home}/.bashrc.custom":
+      owner   => $splunk_user,
+      group   => $splunk_group,
+      content => $bashrc
+    }
   }
 
   exec { 'test_for_splunk':
@@ -394,7 +396,7 @@ export PATH
         require => Exec['test_for_splunk']
       }
 
-      if ($shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/) or ($shcluster_mode == 'deployer') {
+      if $shcluster_id != undef and ($shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/) or ($shcluster_mode == 'deployer') {
         # if clustering has already been set up, manage configs
         file { "${local}/server.d/996_shclustering":
           content => template("${module_name}/server.d/shclustering.erb"),

@@ -132,27 +132,59 @@ Optional[Hash] $tcpout = undef
     $manifest = "${sourcepart}-${new_version}-${os}-${arch}-manifest"
 
     # splunk search head cluster id (if a cluster member)
-    $shcluster_id = $splunk_shcluster_id
+    if defined('$splunk_shcluster_id') {
+      $shcluster_id = $splunk_shcluster_id
+    } else {
+      $shcluster_id = undef
+    }
 
     # splunk user home dir from fact
-    $home = $splunk_home
+    if defined('$splunk_cwd') {
+      $home = $splunk_home
+    } else {
+      $home = undef
+    }
 
     # directory of any running splunk process
-    $cwd = $splunk_cwd
+    if defined('$splunk_cwd') {
+      $cwd = $splunk_cwd
+    } else {
+      $cwd = undef
+    }
 
     # currently installed version from fact
-    $current_version = $splunk_version
-    $cut_version = regsubst($current_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
-    # because the legacy fact does not represent splunk version as
-    # version-release, we cut the version from the string.
-
-    if versioncmp($version, $cut_version) == 1 or $cut_version == '' or $cwd != $dir {
-      class { 'splunk::install': } -> class { 'splunk::config': } -> class { 'splunk::service': }
-    } else {
-      if versioncmp($version, $cut_version) == -1 {
-        info('Splunk is already at a higher version.')
+    if defined('$splunk_version') {
+      $current_version = $splunk_version
+      # because the legacy fact does not represent splunk version as
+      # version-release, we cut the version from the string.
+      $cut_version = regsubst($current_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
+      $v = versioncmp($version, $cut_version)
+      if $cwd == $dir {
+        if $v == 1 {
+          $action = 'upgrade'
+        } elsif $v == -1 {
+          info('Not downgrading. Splunk is already at a higher version.')
+          $action = 'config'
+        } else {
+          $action = 'config'
+        }
       }
+      # do not change if no previous splunk install
+      # do not change if splunk is running out of the splunk users home
+      if $cwd != undef and $cwd != $dir and $home != $cwd {
+        $action = 'change'
+      }
+    } else {
+      $action = 'install'
+      $current_version = undef
+    }
+
+    if $action == 'install' or $action == 'upgrade' or $action == 'change' {
+      class { 'splunk::install': } -> class { 'splunk::config': } -> class { 'splunk::service': }
+    } elsif $action == 'config' {
       class { 'splunk::config': } -> class { 'splunk::service': }
+    } else {
+      info('Unhandled action.')
     }
 
   # configure deployment server for indexers and forwarders
