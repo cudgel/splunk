@@ -21,6 +21,7 @@
 #
 class splunk::install
 {
+  $action          = $splunk::action
   $my_cwd          = $splunk::cwd
   $type            = $splunk::type
   # splunk user home
@@ -44,15 +45,22 @@ class splunk::install
   $source          = $splunk::source
   $splunk_user     = $splunk::splunk_user
   $splunk_group    = $splunk::splunk_group
+  $admin_pass      = $splunk::admin_pass
 
   $perms = "${splunk_user}:${splunk_group}"
 
   $stopcmd  = 'splunk stop'
-  $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
 
-  # clean up a splunk instance running out of the wrong directory for this role
-  if $my_cwd != $dir and $my_cwd != '' and $home != $my_cwd {
-    info("Splunk running out of wrong directory. Should be ${dir}, is ${my_cwd}.")
+  if $admin_pass != undef and ($my_cwd == undef or $my_cwd != $dir) {
+    $seed = " --seed-passwd ${admin_pass}"
+  } else {
+    $seed = ''
+  }
+  $startcmd = "splunk start --accept-license --answer-yes --no-prompt${seed}"
+
+
+  # clean up a splunk instance running out of the wrong directory for the type
+  if $action == 'change' {
 
     exec { 'uninstallSplunkService':
       command => 'splunk disable boot-start',
@@ -68,22 +76,27 @@ class splunk::install
       timeout => 600
     }
 
-    file { $my_cwd:
-      ensure => absent,
-      force  => true,
-      backup => false
+    if $my_cwd =~ /\/\w+\/.*/ {
+      file { $my_cwd:
+        ensure => absent,
+        force  => true,
+        backup => false
+      }
     }
-    $wsourcepart = basename($my_cwd)
-    $wrongsource = "${wsourcepart}-${current_version}-${os}-${arch}.${ext}"
 
-    file { "${install_path}/${wrongsource}":
-      ensure => absent,
-      backup => false
+    $wsourcepart = basename($my_cwd)
+    if $current_version != undef {
+      $wrongsource = "${wsourcepart}-${current_version}-${os}-${arch}.${ext}"
+
+      file { "${install_path}/${wrongsource}":
+        ensure => absent,
+        backup => false
+      }
     }
 
   }
 
-  if $current_version != undef and $my_cwd == $dir {
+  if $action == 'upgrade' {
     $oldsource = "${sourcepart}-${current_version}-${os}-${arch}.${ext}"
 
     file { "${install_path}/${oldsource}":

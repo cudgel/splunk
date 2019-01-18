@@ -6,14 +6,15 @@ defaults:
   data_hash: 'yaml_data'
 
 hierarchy:
-  - name: "per-node data"
+  - name: 'per-node data'
     path: "nodes/%{facts.hostname}.yaml"
-  - name: "environment"
+  - name: 'environment'
     path: "environments/%{facts.r10k_environment}.yaml"
-  - name: "role data"
+  - name: 'role data'
     path: "roles/%{::role}.yaml"
   - name: 'splunk common'
     paths:
+      - "%{::osfamily}.yaml"
       - "%{facts.kernel}.yaml"
       - 'common.yaml'
 

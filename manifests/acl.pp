@@ -3,9 +3,11 @@
 # ensures that the Splunk user can read the file inputs defined
 # optionally set acls on parent paths
 #
+# not optimal, but I could not find another solution on the puppet forge
+#
 define splunk::acl(
   Optional[String] $target    = undef,
-  Optional[String] $group     = $splunk::user,
+  Optional[String] $group     = $splunk::splunk_user,
   Optional[String] $type      = 'file',
   Optional[Boolean] $recurse  = false,
   Optional[Boolean] $readonly = true,

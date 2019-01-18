@@ -7,11 +7,7 @@ describe 'splunk' do
   let(:node) { 'splunk.test' }
   let(:facts) do
     {
-      'splunk_cwd'          => '',
-      'splunk_guid'         => '',
       'splunk_home'         => '/home/splunk',
-      'splunk_shcluster_id' => '',
-      'splunk_version'      => '',
       'environment'         => 'ci',
       'kernel'              => 'Linux',
       'architecture'        => 'x86_64',
@@ -138,6 +134,52 @@ describe 'splunk' do
     it { is_expected.to have_exec_resource_count(8) }
   end
 
+  context 'universal forwarder attempted downgrade' do
+    let(:facts) do
+      super().merge(
+        'splunk_version' => '7.2.3-06d57c595b80',
+        'splunk_cwd'     => '/opt/splunkforwarder',
+      )
+    end
+    let(:params) do
+      {
+        'type'    => 'forwarder',
+        'version' => '7.2.1',
+        'release' => 'be11b2c46e23',
+      }
+    end
+
+    it { is_expected.to compile.with_all_deps }
+    it { is_expected.to contain_class('splunk') }
+    it { is_expected.to contain_class('splunk::config') }
+    it { is_expected.to contain_class('splunk::service') }
+    it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
+    it { is_expected.to have_exec_resource_count(3) }
+  end
+
+  context 'universal forwarder already installed' do
+    let(:facts) do
+      super().merge(
+        'splunk_version' => '7.2.1-be11b2c46e23',
+        'splunk_cwd'     => '/opt/splunkforwarder',
+      )
+    end
+    let(:params) do
+      {
+        'type'    => 'forwarder',
+        'version' => '7.2.1',
+        'release' => 'be11b2c46e23',
+      }
+    end
+
+    it { is_expected.to compile.with_all_deps }
+    it { is_expected.to contain_class('splunk') }
+    it { is_expected.to contain_class('splunk::config') }
+    it { is_expected.to contain_class('splunk::service') }
+    it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
+    it { is_expected.to have_exec_resource_count(3) }
+  end
+
   context 'heavy forwarder with deployment server' do
     let(:params) do
       {
@@ -175,7 +217,6 @@ describe 'splunk' do
         'create_user'       => true,
         'license_master'    => 'splunklm.test:8089',
         'server_site'       => 'site1',
-        'symmkey'           => 'bei6cah0yees0UW3ce3thoht1kaex2az',
         'repl_port'         => 8193,
         'cluster_mode'      => 'slave',
         'clusters'          => [
@@ -273,7 +314,7 @@ describe 'splunk' do
   context 'search cluster peer (configured) with index cluster' do
     let(:facts) do
       super().merge(
-        'splunk_shcluster_id' => 'idorie7U-C47d-z3rV-4xyN-biebu5Ji6eeB',
+        'splunk_shcluster_id' => '5054d4a8-19a5-11e9-8800-acbc32b372d1',
       )
     end
     let(:params) do

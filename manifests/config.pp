@@ -20,6 +20,8 @@ class splunk::config
   $type              = $splunk::type
   $install_path      = $splunk::install_path
   $dir               = $splunk::dir
+  $confdir           = $splunk::confdir
+  $confpath          = $splunk::confpath
   $local             = $splunk::local
   $splunk_user       = $splunk::splunk_user
   $splunk_group      = $splunk::splunk_group
@@ -43,6 +45,7 @@ class splunk::config
   $cluster_mode      = $splunk::cluster_mode
   $tcpout            = $splunk::tcpout
   $deployment_server = $splunk::deployment_server
+  $packages          = $splunk::packages
 
   $splunk_home = $splunk_home
   $perms = "${splunk_user}:${splunk_group}"
@@ -54,10 +57,12 @@ PATH=\$SPLUNK_HOME/bin:\$PATH
 export PATH
   "
 
-  file { "${splunk_home}/.bashrc.custom":
-    owner   => $splunk_user,
-    group   => $splunk_group,
-    content => $bashrc
+  if $splunk_home != undef {
+    file { "${splunk_home}/.bashrc.custom":
+      owner   => $splunk_user,
+      group   => $splunk_group,
+      content => $bashrc
+    }
   }
 
   exec { 'test_for_splunk':
