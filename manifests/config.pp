@@ -20,6 +20,8 @@ class splunk::config
   $type              = $splunk::type
   $install_path      = $splunk::install_path
   $dir               = $splunk::dir
+  $confdir           = $splunk::confdir
+  $confpath          = $splunk::confpath
   $local             = $splunk::local
   $splunk_user       = $splunk::splunk_user
   $splunk_group      = $splunk::splunk_group
@@ -171,6 +173,15 @@ export PATH
     owner   => $splunk_user,
     group   => $splunk_group,
     require => Exec['test_for_splunk']
+  }
+
+  if $confpath == 'app' {
+    file { "$(dir}/etc/apps/__puppet_conf":
+      ensure  => 'directory',
+      owner   => $splunk_user,
+      group   => $splunk_group,
+      require => Exec['test_for_splunk']
+    }
   }
 
   file { $local:

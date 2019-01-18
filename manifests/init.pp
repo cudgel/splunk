@@ -44,6 +44,7 @@ String $cacert,
 Boolean $captain_is_adhoc,
 String $ciphersuite,
 String $cluster_mode,
+String $confdir,
 Boolean $create_user,
 Boolean $deployment_disable,
 Integer $deployment_interval,
@@ -127,7 +128,12 @@ Optional[Hash] $tcpout = undef
 
     $dir      = "${install_path}/${sourcepart}"
     $capath   = "${dir}/etc/auth"
-    $local    = "${dir}/etc/system/local"
+    $confpath = $confdir ? {
+      'system' => 'etc/system',
+      'app'    => 'etc/apps/__puppet_conf',
+      default  => 'etc/system'
+    }
+    $local    = "${dir}/${confpath}/local"
     $splunkdb = "${dir}/var/lib/splunk"
     $manifest = "${sourcepart}-${new_version}-${os}-${arch}-manifest"
 
