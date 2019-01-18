@@ -81,6 +81,7 @@ class splunk::install
       force  => true,
       backup => false
     }
+
     $wsourcepart = basename($my_cwd)
     if $current_version != undef {
       $wrongsource = "${wsourcepart}-${current_version}-${os}-${arch}.${ext}"

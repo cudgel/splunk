@@ -175,6 +175,7 @@ Optional[Hash] $tcpout = undef
             $action = 'config'
           }
         } elsif $dir != $cwd and $home != $cwd {
+          notice('Changing splunk install directory.')
           # splunk type changed
           # do not change if no previous splunk install
           # do not change if splunk is running out of the splunk users home
