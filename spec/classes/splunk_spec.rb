@@ -7,11 +7,7 @@ describe 'splunk' do
   let(:node) { 'splunk.test' }
   let(:facts) do
     {
-      'splunk_cwd'          => '',
-      'splunk_guid'         => '',
       'splunk_home'         => '/home/splunk',
-      'splunk_shcluster_id' => '',
-      'splunk_version'      => '',
       'environment'         => 'ci',
       'kernel'              => 'Linux',
       'architecture'        => 'x86_64',
@@ -136,6 +132,52 @@ describe 'splunk' do
     it { is_expected.to contain_class('splunk::service') }
     it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
     it { is_expected.to have_exec_resource_count(8) }
+  end
+
+  context 'universal forwarder attempted downgrade' do
+    let(:facts) do
+      super().merge(
+        'splunk_version' => '7.2.3-06d57c595b80',
+        'splunk_cwd'     => '/opt/splunkforwarder',
+      )
+    end
+    let(:params) do
+      {
+        'type'    => 'forwarder',
+        'version' => '7.2.1',
+        'release' => 'be11b2c46e23',
+      }
+    end
+
+    it { is_expected.to compile.with_all_deps }
+    it { is_expected.to contain_class('splunk') }
+    it { is_expected.to contain_class('splunk::config') }
+    it { is_expected.to contain_class('splunk::service') }
+    it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
+    it { is_expected.to have_exec_resource_count(3) }
+  end
+
+  context 'universal forwarder already installed' do
+    let(:facts) do
+      super().merge(
+        'splunk_version' => '7.2.1-be11b2c46e23',
+        'splunk_cwd'     => '/opt/splunkforwarder',
+      )
+    end
+    let(:params) do
+      {
+        'type'    => 'forwarder',
+        'version' => '7.2.1',
+        'release' => 'be11b2c46e23',
+      }
+    end
+
+    it { is_expected.to compile.with_all_deps }
+    it { is_expected.to contain_class('splunk') }
+    it { is_expected.to contain_class('splunk::config') }
+    it { is_expected.to contain_class('splunk::service') }
+    it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
+    it { is_expected.to have_exec_resource_count(3) }
   end
 
   context 'heavy forwarder with deployment server' do

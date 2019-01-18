@@ -7,11 +7,7 @@ describe 'splunk::input' do
   let(:node) { 'splunk.test' }
   let(:facts) do
     {
-      'splunk_cwd'          => '',
-      'splunk_guid'         => '',
       'splunk_home'         => '/home/splunk',
-      'splunk_shcluster_id' => '',
-      'splunk_version'      => '',
       'environment'         => 'ci',
       'kernel'              => 'Linux',
       'architecture'        => 'x86_64',

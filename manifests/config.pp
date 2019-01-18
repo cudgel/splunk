@@ -20,6 +20,8 @@ class splunk::config
   $type              = $splunk::type
   $install_path      = $splunk::install_path
   $dir               = $splunk::dir
+  $confdir           = $splunk::confdir
+  $confpath          = $splunk::confpath
   $local             = $splunk::local
   $splunk_user       = $splunk::splunk_user
   $splunk_group      = $splunk::splunk_group
@@ -54,10 +56,12 @@ PATH=\$SPLUNK_HOME/bin:\$PATH
 export PATH
   "
 
-  file { "${splunk_home}/.bashrc.custom":
-    owner   => $splunk_user,
-    group   => $splunk_group,
-    content => $bashrc
+  if $splunk_home != undef {
+    file { "${splunk_home}/.bashrc.custom":
+      owner   => $splunk_user,
+      group   => $splunk_group,
+      content => $bashrc
+    }
   }
 
   exec { 'test_for_splunk':
@@ -171,6 +175,15 @@ export PATH
     require => Exec['test_for_splunk']
   }
 
+  if $confpath == 'app' {
+    file { "$(dir}/etc/apps/__puppet_conf":
+      ensure  => 'directory',
+      owner   => $splunk_user,
+      group   => $splunk_group,
+      require => Exec['test_for_splunk']
+    }
+  }
+
   file { $local:
     ensure  => 'directory',
     owner   => $splunk_user,
@@ -190,7 +203,8 @@ export PATH
     content => template("${module_name}/inputs.d/default_inputs.erb"),
     owner   => $splunk_user,
     group   => $splunk_group,
-    require => File["${local}/inputs.d"]
+    require => File["${local}/inputs.d"],
+    notify  => Exec['update-inputs']
   }
 
   file { "${local}/inputs.d/000_splunkssl":
@@ -394,7 +408,7 @@ export PATH
         require => Exec['test_for_splunk']
       }
 
-      if ($shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/) or ($shcluster_mode == 'deployer') {
+      if $shcluster_id != undef and ($shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/) or ($shcluster_mode == 'deployer') {
         # if clustering has already been set up, manage configs
         file { "${local}/server.d/996_shclustering":
           content => template("${module_name}/server.d/shclustering.erb"),

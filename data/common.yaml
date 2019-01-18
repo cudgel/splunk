@@ -10,6 +10,7 @@ splunk::cacert: 'cacert.pem'
 splunk::captain_is_adhoc: false
 splunk::ciphersuite: 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:AES256-GCM-SHA:AES256-SHA:AES128-GCM-SHA:AES128-SHA'
 splunk::cluster_mode: 'none'
+splunk::confdir: 'system'
 splunk::create_user: false
 splunk::deployment_disable: false
 splunk::deployment_interval: 30
