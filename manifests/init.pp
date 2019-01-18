@@ -155,30 +155,35 @@ Optional[Hash] $tcpout = undef
     }
 
     # splunk is currently installed - get version from fact
-    if defined('$splunk_version') and $splunk_version != undef {
+    if defined('$splunk_version') and is_string('$splunk_version') {
       $current_version = $splunk_version
       # because the legacy fact does not represent splunk version as
       # version-release, we cut the version from the string.
       $cut_version = regsubst($current_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
       $v = versioncmp($version, $cut_version)
-      # splunk is running from the directory expected for the type
-      if $cwd == $dir {
-        if $v == 1 {
-          $action = 'upgrade'
-        } elsif $v == -1 {
-          # current version is higher than the one puppet wants to install
-          info('Not downgrading. Splunk is already at a higher version.')
-          $action = 'config'
+      if $cwd != undef {
+        # splunk is running from the directory expected for the type
+        if $cwd == $dir {
+          if $v == 1 {
+            $action = 'upgrade'
+          } elsif $v == -1 {
+            # current version is higher than the one puppet wants to install
+            info('Not downgrading. Splunk is already at a higher version.')
+            $action = 'config'
+          } else {
+            # version matches - just do config tasks
+            $action = 'config'
+          }
+        } elsif $dir != $cwd and $home != $cwd {
+          # splunk type changed
+          # do not change if no previous splunk install
+          # do not change if splunk is running out of the splunk users home
+          $action = 'change'
         } else {
-          # version matches - just do config tasks
-          $action = 'config'
+          notice('Unhandled splunk_version')
         }
-      } elsif $cwd != undef and $dir != $cwd and $home != $cwd {
-        # splunk type changed
-        # do not change if no previous splunk install
-        # do not change if splunk is running out of the splunk users home
-        $action = 'change'
       }
+
     } else {
       # no installed version of splunk from fact
       $action = 'install'
