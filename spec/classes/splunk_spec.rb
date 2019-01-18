@@ -157,7 +157,7 @@ describe 'splunk' do
     it { is_expected.to have_exec_resource_count(3) }
   end
 
-    context 'universal forwarder already installed' do
+  context 'universal forwarder already installed' do
     let(:facts) do
       super().merge(
         'splunk_version' => '7.2.1-be11b2c46e23',
