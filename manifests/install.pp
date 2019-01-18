@@ -59,7 +59,7 @@ class splunk::install
 
 
   # clean up a splunk instance running out of the wrong directory for this role
-  if $my_cwd != $dir and $my_cwd != '' and $home != $my_cwd {
+  if $my_cwd != $dir and $my_cwd != undef and $home != $my_cwd {
     info("Splunk running out of wrong directory. Should be ${dir}, is ${my_cwd}.")
 
     exec { 'uninstallSplunkService':
