@@ -1,6 +1,6 @@
 {
   "name": "cudgel-splunk",
-  "version": "1.2.0",
+  "version": "1.4.0",
   "author": "Christopher Caldwell",
   "summary": "Splunk Deployment App",
   "license": "Apache-2.0",
