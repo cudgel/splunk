@@ -1,7 +1,9 @@
 # splunk::fetch()
 #
 # retrieves the specified splunk or splunkforwarder package directly from
-# Splunk instead of from puppet fileserver if no
+# Splunk instead of from puppet fileserver if defined
+#
+# I highly recommend cacheing the images locally and pushing them from a Puppet fileserver
 #
 define splunk::fetch(
   $splunk_bundle,

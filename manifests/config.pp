@@ -45,6 +45,7 @@ class splunk::config
   $cluster_mode      = $splunk::cluster_mode
   $tcpout            = $splunk::tcpout
   $deployment_server = $splunk::deployment_server
+  $packages          = $splunk::packages
 
   $splunk_home = $splunk_home
   $perms = "${splunk_user}:${splunk_group}"
@@ -357,21 +358,8 @@ export PATH
         }
       }
 
-      if $osfamily == 'RedHat' {
-        # support PDF Report Server
-        package { [
-          'xorg-x11-server-Xvfb',
-          'liberation-mono-fonts',
-          'liberation-sans-fonts',
-          'liberation-serif-fonts' ]:
-          ensure => installed
-        }
-      } elsif $osfamily == 'Debian' {
-        package { [
-          'xvfb',
-          'fonts-liberation' ]:
-          ensure => installed
-        }
+      package { $packages:
+        ensure => installed
       }
 
       file { "${local}/default-mode.conf":

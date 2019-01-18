@@ -1,1 +1,2 @@
 gem "hiera-eyaml"
+gem 'rspec-hiera-puppet'
