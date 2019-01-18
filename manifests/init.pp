@@ -133,14 +133,14 @@ Optional[Hash] $tcpout = undef
 
     # fact containing splunk search head cluster id (if a cluster member)
     # once defined, we add it to our generated files so it is not lost
-    if defined('$splunk_shcluster_id') {
+    if defined('$splunk_shcluster_id') and is_string('$splunk_shcluster_id') {
       $shcluster_id = $splunk_shcluster_id
     } else {
       $shcluster_id = undef
     }
 
     # splunk user home dir from fact
-    if defined('$splunk_cwd') {
+    if defined('$splunk_cwd') and is_string('$splunk_home') {
       $home = $splunk_home
     } else {
       $home = undef
@@ -148,14 +148,14 @@ Optional[Hash] $tcpout = undef
 
     # fact showing directory of any running splunk process
     # should match $dir for the type
-    if defined('$splunk_cwd') {
+    if defined('$splunk_cwd') and is_string('$splunk_cwd') {
       $cwd = $splunk_cwd
     } else {
       $cwd = undef
     }
 
     # splunk is currently installed - get version from fact
-    if defined('$splunk_version') and is_string('$splunk_version') {
+    if defined('$splunk_version') and $splunk_version =~ /^(\d+\.\d+\.\d+)-.*/ {
       $current_version = $splunk_version
       # because the legacy fact does not represent splunk version as
       # version-release, we cut the version from the string.
@@ -184,7 +184,6 @@ Optional[Hash] $tcpout = undef
           notice('Unhandled splunk_version')
         }
       }
-
     } else {
       # no installed version of splunk from fact
       $action = 'install'
