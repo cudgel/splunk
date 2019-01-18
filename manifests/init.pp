@@ -185,54 +185,51 @@ Optional[Hash] $tcpout = undef
       class { 'splunk::config': } -> class { 'splunk::service': }
     } else {
       notice('Unhandled action.')
+      $action = 'none'
     }
 
-  # configure deployment server for indexers and forwarders
-    if $type == 'forwarder' or $type == 'heavyforwarder' and $deployment_server != undef {
-      class { 'splunk::deployment': }
-    }
-
-    $perms = "${splunk_user}:${splunk_group}"
-
-    $my_input_d  = "${local}/inputs.d/"
-    $my_input_c  = "${local}/inputs.conf"
-
-    exec { 'update-inputs':
-      command     => "/bin/cat ${my_input_d}/* > ${my_input_c}; \
-          chown ${perms} ${my_input_c}",
-      refreshonly => true,
-      requires    => Service['splunk'],
-      notify      => Service['splunk']
-    }
-
-    if $type != 'forwarder' or $deployment_server == undef {
-
-      if $type != 'indexer' and is_hash($tcpout) {
-
-        $my_output_d = "${local}/outputs.d/"
-        $my_output_c = "${local}/outputs.conf"
-
-        exec { 'update-outputs':
-          command     => "/bin/cat ${my_output_d}/* > ${my_output_c}; \
-                chown ${perms} ${my_output_c}",
-          refreshonly => true,
-          creates     => "${local}/outputs.conf",
-          notify      => Service['splunk']
-        }
+    if $action != 'none' {
+      # configure deployment server for indexers and forwarders
+      if $type == 'forwarder' or $type == 'heavyforwarder' and $deployment_server != undef {
+        class { 'splunk::deployment': }
       }
 
-      $my_server_d = "${local}/server.d/"
-      $my_server_c = "${local}/server.conf"
+      $perms = "${splunk_user}:${splunk_group}"
 
-      exec { 'update-server':
-        command     => "/bin/cat ${my_server_d}/* > ${my_server_c}; \
-            chown ${perms} ${my_server_c}",
+      $my_input_d  = "${local}/inputs.d/"
+      $my_input_c  = "${local}/inputs.conf"
+
+      exec { 'update-inputs':
+        command     => "/bin/cat ${my_input_d}/* > ${my_input_c}; \
+            chown ${perms} ${my_input_c}",
         refreshonly => true,
         notify      => Service['splunk']
       }
 
+      if $type != 'forwarder' or $deployment_server == undef {
+        if $type != 'indexer' and is_hash($tcpout) {
+          $my_output_d = "${local}/outputs.d/"
+          $my_output_c = "${local}/outputs.conf"
+
+          exec { 'update-outputs':
+            command     => "/bin/cat ${my_output_d}/* > ${my_output_c}; \
+                  chown ${perms} ${my_output_c}",
+            refreshonly => true,
+            creates     => "${local}/outputs.conf",
+            notify      => Service['splunk']
+          }
+        }
+
+        $my_server_d = "${local}/server.d/"
+        $my_server_c = "${local}/server.conf"
+
+        exec { 'update-server':
+          command     => "/bin/cat ${my_server_d}/* > ${my_server_c}; \
+              chown ${perms} ${my_server_c}",
+          refreshonly => true,
+          notify      => Service['splunk']
+        }
+      }
     }
-
   }
-
 }
