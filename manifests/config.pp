@@ -192,7 +192,8 @@ export PATH
     content => template("${module_name}/inputs.d/default_inputs.erb"),
     owner   => $splunk_user,
     group   => $splunk_group,
-    require => File["${local}/inputs.d"]
+    require => File["${local}/inputs.d"],
+    notify  => Exec['update-inputs']
   }
 
   file { "${local}/inputs.d/000_splunkssl":

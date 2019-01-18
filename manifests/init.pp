@@ -201,7 +201,6 @@ Optional[Hash] $tcpout = undef
       command     => "/bin/cat ${my_input_d}/* > ${my_input_c}; \
           chown ${perms} ${my_input_c}",
       refreshonly => true,
-      subscribe   => File["${local}/inputs.d/000_default"],
       notify      => Service['splunk']
     }
 
@@ -228,11 +227,6 @@ Optional[Hash] $tcpout = undef
         command     => "/bin/cat ${my_server_d}/* > ${my_server_c}; \
             chown ${perms} ${my_server_c}",
         refreshonly => true,
-        subscribe   => [
-            File["${local}/server.d/000_header"],
-            File["${local}/server.d/998_ssl"],
-            File["${local}/server.d/999_default"]
-          ],
         notify      => Service['splunk']
       }
 
