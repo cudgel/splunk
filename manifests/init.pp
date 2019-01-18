@@ -184,7 +184,7 @@ Optional[Hash] $tcpout = undef
     } elsif $action == 'config' {
       class { 'splunk::config': } -> class { 'splunk::service': }
     } else {
-      info('Unhandled action.')
+      notice('Unhandled action.')
     }
 
   # configure deployment server for indexers and forwarders

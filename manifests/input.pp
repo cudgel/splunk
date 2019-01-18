@@ -46,5 +46,4 @@ define splunk::input(
     notify  => Exec['update-inputs']
   }
 
-
 }
