@@ -76,10 +76,12 @@ class splunk::install
       timeout => 600
     }
 
-    file { $my_cwd:
-      ensure => absent,
-      force  => true,
-      backup => false
+    if $my_cwd =~ /\/\w+\/.*/ {
+      file { $my_cwd:
+        ensure => absent,
+        force  => true,
+        backup => false
+      }
     }
 
     $wsourcepart = basename($my_cwd)
