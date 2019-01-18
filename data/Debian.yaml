@@ -1,0 +1,4 @@
+---
+splunk::packages:
+  - xvfb
+  - fonts-liberation
