@@ -201,6 +201,7 @@ Optional[Hash] $tcpout = undef
       command     => "/bin/cat ${my_input_d}/* > ${my_input_c}; \
           chown ${perms} ${my_input_c}",
       refreshonly => true,
+      requires    => Service['splunk'],
       notify      => Service['splunk']
     }
 
