@@ -14,6 +14,7 @@ hierarchy:
     path: "roles/%{::role}.yaml"
   - name: 'splunk common'
     paths:
+      - "%{::osfamily}.yaml"
       - "%{facts.kernel}.yaml"
       - 'common.yaml'
 

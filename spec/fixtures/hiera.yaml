@@ -1,0 +1,15 @@
+---
+version: 5
+hierarchy:
+  - name: "ec2 application-function"
+    path: "ec2/%{::ec2_tag_application}/%{::ec2_tag_function}.yaml"
+  - name: "role data"
+    path: "roles/%{::role}.yaml"
+  - name: "generic hiera data"
+    paths:
+      - "%{::osfamily}.yaml"
+      - "uids.yaml"
+      - "common.yaml"
+defaults:
+  datadir: data
+  data_hash: yaml_data
