@@ -5,7 +5,7 @@
 # if creating a file monitor, apply acl to the object as well
 #
 define splunk::input(
-  String $target,
+  Optional[String] $target    = undef,
   Optional[String] $dir        = $splunk::dir,
   Optional[String] $user       = $splunk::splunk_user,
   Optional[String] $group      = $splunk::splunk_group,
@@ -23,16 +23,21 @@ define splunk::input(
 
   $local    = "${dir}/etc/system/local"
 
+  # Validate parameters
+  #
+  if $target == undef {
+    $target = $title
+  }
+
   if $content != undef {
     $mycontent = $content
   } else {
     $mycontent = template("${module_name}/inputs.d/input.erb")
     if $inputtype == 'monitor' {
       splunk::acl { $title:
-        target   => $target,
-        group    => $group,
-        recurse  => $recurse,
-        readonly => true
+        target  => $target,
+        group   => $group,
+        recurse => $recurse
       }
     }
   }
