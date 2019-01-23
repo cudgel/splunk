@@ -11,12 +11,14 @@
 #   allow *
 #
 define splunk::fetch(
-  $splunk_bundle,
-  $source,
-  $type,
-  $sourcepart = $splunk::sourcepart,
-  $version    = $splunk::version,
-  $release    = $splunk::release) {
+  String $splunk_bundle,
+  String $source,
+  String $type
+) {
+
+  $sourcepart = $splunk::sourcepart
+  $version    = $splunk::version
+  $release    = $splunk::release
 
   if $type == 'forwarder' {
     $product = 'universalforwarder'
@@ -27,8 +29,8 @@ define splunk::fetch(
   if $source == 'fileserver' {
 
     file{ "${::splunk::install_path}/${splunk_bundle}":
-      owner  => $splunk::splunk_user,
-      group  => $splunk::splunk_group,
+      owner  => $splunk::user,
+      group  => $splunk::group,
       mode   => '0750',
       source => "puppet:///splunk_files/${splunk_bundle}",
       notify => Exec['unpackSplunk']
@@ -52,8 +54,8 @@ define splunk::fetch(
     }
 
     file{ "${::splunk::install_path}/${splunk_bundle}":
-      owner   => $splunk::splunk_user,
-      group   => $splunk::splunk_group,
+      owner   => $splunk::user,
+      group   => $splunk::group,
       mode    => '0750',
       require => Exec["retrieve_${splunk_bundle}"],
       notify  => Exec['unpackSplunk']

@@ -7,8 +7,8 @@
 define splunk::input(
   Optional[String] $target    = undef,
   Optional[String] $dir        = $splunk::dir,
-  Optional[String] $user       = $splunk::splunk_user,
-  Optional[String] $group      = $splunk::splunk_group,
+  Optional[String] $user       = $splunk::user,
+  Optional[String] $group      = $splunk::group,
   Optional[Boolean] $disabled  = false,
   Optional[String] $inputtype  = 'monitor',
   Optional[String] $sourcetype = 'auto',
@@ -18,8 +18,7 @@ define splunk::input(
   Optional[Hash] $options      = undef,
   Optional[Boolean] $recurse   = false,
   Optional[String] $content    = undef
-  )
-{
+) {
 
   $local    = "${dir}/etc/system/local"
 

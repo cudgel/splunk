@@ -2,19 +2,19 @@
 # manage your real accounts properly
 class splunk::user {
 
-  $splunk_user       = $splunk::splunk_user
-  $splunk_group      = $splunk::splunk_group
+  $user  = $splunk::user
+  $group = $splunk::group
 
-  group { $splunk_group:
+  group { $group:
     ensure => present,
-    name   => $splunk_group
+    name   => $group
   }
 
-  user { $splunk_user:
+  user { $user:
     ensure     => present,
-    name       => $splunk_user,
+    name       => $user,
     comment    => 'Splunk service account',
     managehome => true,
-    gid        => $splunk_group
+    gid        => $group
   }
 }

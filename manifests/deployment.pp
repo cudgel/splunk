@@ -27,24 +27,24 @@ class splunk::deployment
 
   file { $myappdir:
     ensure  => directory,
-    owner   => $splunk::splunk_user,
-    group   => $splunk::splunk_user,
+    owner   => $splunk::user,
+    group   => $splunk::user,
     mode    => '0750',
     recurse => false
   }
 
   file { "${myappdir}/local":
     ensure  => directory,
-    owner   => $splunk::splunk_user,
-    group   => $splunk::splunk_user,
+    owner   => $splunk::user,
+    group   => $splunk::user,
     require => File[$myappdir]
   }
 
   if $deployment_server {
     file { "${myappdir}/local/deploymentclient.conf":
       content => template("${module_name}/deploymentclient.conf.erb"),
-      owner   => $splunk::splunk_user,
-      group   => $splunk::splunk_user,
+      owner   => $splunk::user,
+      group   => $splunk::user,
       require => File["${myappdir}/local"],
       notify  => Service['splunk']
     }

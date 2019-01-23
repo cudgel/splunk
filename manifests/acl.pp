@@ -7,7 +7,7 @@
 #
 define splunk::acl(
   Optional[String] $target    = undef,
-  Optional[String] $group     = $splunk::splunk_user,
+  Optional[String] $group     = $splunk::user,
   Optional[String] $type      = 'file',
   Optional[Boolean] $recurse  = false,
   Optional[Boolean] $parents  = false
@@ -24,7 +24,7 @@ define splunk::acl(
       fail('variable "recurse" must be either true or false')
   }
 
-  if $kernel == 'Linux' {
+  if $facts['kernel'] == 'Linux' {
 
     # returns 0 if the object is a file
     $testdir = "test -d ${object}"
