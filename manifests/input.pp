@@ -15,7 +15,7 @@ define splunk::input(
   Optional[String] $index      = 'default',
   Optional[Boolean] $cache     = true,
   Optional[Integer] $size      = 1,
-  Optional[Hash] $options      = undef,
+  Optional[Array] $options      = undef,
   Optional[Boolean] $recurse   = false,
   Optional[String] $content    = undef
 ) {
