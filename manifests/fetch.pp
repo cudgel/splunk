@@ -3,7 +3,12 @@
 # retrieves the specified splunk or splunkforwarder package directly from
 # Splunk instead of from puppet fileserver if defined
 #
-# I highly recommend cacheing the images locally and pushing them from a Puppet fileserver
+# I highly recommend cacheing the images locally and pushing them from a Puppet
+# fileserver. The code below expects a configuration similar to this:
+#
+# [splunk_files]
+#   path /etc/puppetlabs/puppet/files/splunk_files
+#   allow *
 #
 define splunk::fetch(
   $splunk_bundle,
