@@ -3,15 +3,22 @@
 # retrieves the specified splunk or splunkforwarder package directly from
 # Splunk instead of from puppet fileserver if defined
 #
-# I highly recommend cacheing the images locally and pushing them from a Puppet fileserver
+# I highly recommend cacheing the images locally and pushing them from a Puppet
+# fileserver. The code below expects a configuration similar to this:
+#
+# [splunk_files]
+#   path /etc/puppetlabs/puppet/files/splunk_files
+#   allow *
 #
 define splunk::fetch(
-  $splunk_bundle,
-  $source,
-  $type,
-  $sourcepart = $splunk::sourcepart,
-  $version    = $splunk::version,
-  $release    = $splunk::release) {
+  String $splunk_bundle,
+  String $source,
+  String $type
+) {
+
+  $sourcepart = $splunk::sourcepart
+  $version    = $splunk::version
+  $release    = $splunk::release
 
   if $type == 'forwarder' {
     $product = 'universalforwarder'
@@ -22,8 +29,8 @@ define splunk::fetch(
   if $source == 'fileserver' {
 
     file{ "${::splunk::install_path}/${splunk_bundle}":
-      owner  => $splunk::splunk_user,
-      group  => $splunk::splunk_group,
+      owner  => $splunk::user,
+      group  => $splunk::group,
       mode   => '0750',
       source => "puppet:///splunk_files/${splunk_bundle}",
       notify => Exec['unpackSplunk']
@@ -47,8 +54,8 @@ define splunk::fetch(
     }
 
     file{ "${::splunk::install_path}/${splunk_bundle}":
-      owner   => $splunk::splunk_user,
-      group   => $splunk::splunk_group,
+      owner   => $splunk::user,
+      group   => $splunk::group,
       mode    => '0750',
       require => Exec["retrieve_${splunk_bundle}"],
       notify  => Exec['unpackSplunk']

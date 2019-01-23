@@ -9,11 +9,11 @@
 #
 # === Examples
 #
-#  class { splunk::install }
+#  This class is not called directly
 #
 # === Authors
 #
-# Christopher Caldwell <author@domain.com>
+# Christopher Caldwell <caldwell@gwu.edu>
 #
 # === Copyright
 #
@@ -43,11 +43,11 @@ class splunk::install
   $manifest        = $splunk::manifest
   # splunk (web) or fileserver or a custom url
   $source          = $splunk::source
-  $splunk_user     = $splunk::splunk_user
-  $splunk_group    = $splunk::splunk_group
+  $user            = $splunk::user
+  $group           = $splunk::group
   $admin_pass      = $splunk::admin_pass
 
-  $perms = "${splunk_user}:${splunk_group}"
+  $perms = "${user}:${group}"
 
   $stopcmd  = 'splunk stop'
 
@@ -71,8 +71,8 @@ class splunk::install
     exec { 'serviceStop':
       command => $stopcmd,
       path    => "${my_cwd}/bin:/bin:/usr/bin:",
-      user    => $splunk_user,
-      group   => $splunk_group,
+      user    => $user,
+      group   => $group,
       timeout => 600
     }
 
@@ -125,7 +125,7 @@ class splunk::install
   }
 
   exec { 'splunkDir':
-    command   => "chown -R ${splunk_user}:${splunk_group} ${dir}",
+    command   => "chown -R ${user}:${group} ${dir}",
     path      => "${dir}/bin:/bin:/usr/bin:",
     cwd       => $install_path,
     subscribe => Exec['unpackSplunk'],
@@ -135,14 +135,14 @@ class splunk::install
   exec { 'serviceStart':
     command     => "${stopcmd}; ${startcmd}",
     path        => "${dir}/bin:/bin:/usr/bin:",
-    user        => $splunk_user,
-    group       => $splunk_group,
+    user        => $user,
+    group       => $group,
     subscribe   => Exec['splunkDir'],
     refreshonly => true
   }
 
   exec { 'installSplunkService':
-    command   => "splunk enable boot-start -user ${splunk_user}",
+    command   => "splunk enable boot-start -user ${user}",
     path      => "${dir}/bin:/bin:/usr/bin:",
     cwd       => $dir,
     subscribe => Exec['unpackSplunk'],

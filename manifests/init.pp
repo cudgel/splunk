@@ -27,7 +27,7 @@
 #
 # === Authors
 #
-# Christopher Caldwell <author@domain.com>
+# Christopher Caldwell <caldwell@gwu.edu>
 #
 # === Copyright
 #
@@ -71,8 +71,8 @@ String $server_site,
 String $servercert,
 String $servercertpass,
 String $source,
-String $splunk_group,
-String $splunk_user,
+String $group,
+String $user,
 Boolean $splunknotcp_ssl,
 Boolean $splunknotcp,
 Boolean $sslclientcert,
@@ -116,7 +116,7 @@ Optional[Hash] $tcpout = undef
 
     $new_version = "${version}-${release}"
 
-    $arch = $architecture ? {
+    $arch = $facts['architecture'] ? {
       x86_64  => 'x86_64',
       amd64   => 'x86_64',
       default => 'i686'
@@ -214,7 +214,7 @@ Optional[Hash] $tcpout = undef
         class { 'splunk::deployment': }
       }
 
-      $perms = "${splunk_user}:${splunk_group}"
+      $perms = "${user}:${group}"
 
       $my_input_d  = "${local}/inputs.d/"
       $my_input_c  = "${local}/inputs.conf"

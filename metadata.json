@@ -6,6 +6,7 @@
   "license": "Apache-2.0",
   "source": "https://github.com/cudgel/splunk",
   "project_page": "https://github.com/cudgel/splunk",
+  "issues_url": "https://github.com/cudgel/splunk/issues",
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",

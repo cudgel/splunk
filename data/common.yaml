@@ -36,8 +36,8 @@ splunk::server_site: 'default'
 splunk::servercert: 'server.pem'
 splunk::servercertpass: 'password'
 splunk::source: 'splunk'
-splunk::splunk_group: 'splunk'
-splunk::splunk_user: 'splunk'
+splunk::group: 'splunk'
+splunk::user: 'splunk'
 splunk::splunknotcp_ssl: false
 splunk::splunknotcp: true
 splunk::sslclientcert: false
