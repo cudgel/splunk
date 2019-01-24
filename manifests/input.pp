@@ -28,16 +28,16 @@ define splunk::input(
     $target = $title
   }
 
-  if $content != undef {
-    $mycontent = $content
-  } else {
-    $mycontent = template("${module_name}/inputs.d/input.erb")
+  if $content == undef {
+    $body = template("${module_name}/inputs.d/input.erb")
     if $inputtype == 'monitor' {
       splunk::acl { $title:
         target  => $target,
         group   => $group,
         recurse => $recurse
       }
+    } else {
+      $body = $content
     }
   }
 
@@ -45,7 +45,7 @@ define splunk::input(
     owner   => $user,
     group   => $group,
     mode    => '0440',
-    content => $mycontent,
+    content => $body,
     require => File["${local}/inputs.d"],
     notify  => Exec['update-inputs']
   }

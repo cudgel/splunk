@@ -73,7 +73,6 @@ describe 'splunk' do
     it { is_expected.to contain_file('/opt/splunkforwarder/etc/system/local/outputs.d/000_default').that_requires('File[/opt/splunkforwarder/etc/system/local/outputs.d]').that_notifies('Exec[update-outputs]') }
     it { is_expected.to contain_class('splunk::service') }
     it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
-    it { is_expected.to contain_class('splunk::deployment') }
     it { is_expected.to have_exec_resource_count(9) }
   end
 
