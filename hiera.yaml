@@ -11,10 +11,11 @@ hierarchy:
   - name: 'environment'
     path: "environments/%{facts.r10k_environment}.yaml"
   - name: 'role data'
-    path: "roles/%{::role}.yaml"
+    path: "roles/%{facts.role}.yaml"
   - name: 'splunk common'
     paths:
-      - "%{::osfamily}.yaml"
-      - "%{facts.kernel}.yaml"
+      - "os/%{facts.os.family}/%{facts.os.name}.yaml"
+      - "os/%{facts.os.family}/common.yaml"
+      - "os/%{facts.kernel}.yaml"
       - 'common.yaml'
 

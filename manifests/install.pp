@@ -21,31 +21,31 @@
 #
 class splunk::install
 {
-  $action          = $splunk::action
-  $my_cwd          = $splunk::cwd
-  $type            = $splunk::type
+  $action       = $splunk::action
+  $my_cwd       = $splunk::cwd
+  $type         = $splunk::type
   # splunk user home
-  $home            = $splunk::home
-  $install_path    = $splunk::install_path
+  $home         = $splunk::home
+  $install_path = $splunk::install_path
   # splunk install directory
-  $dir             = $splunk::dir
-  $local           = $splunk::local
+  $dir          = $splunk::dir
+  $local        = $splunk::local
   # splunk or splunkforwarder
-  $sourcepart      = $splunk::sourcepart
+  $sourcepart   = $splunk::sourcepart
   # currently installed version from fact
-  $current_version = $splunk::current_version
+  $cur_version  = $splunk::cur_version
   # new verion from hiera
-  $new_version     = $splunk::new_version
-  $os              = $splunk::os
-  $arch            = $splunk::arch
-  $ext             = $splunk::ext
-  $tarcmd          = $splunk::tarcmd
-  $manifest        = $splunk::manifest
+  $new_version  = $splunk::new_version
+  $os           = $splunk::os
+  $arch         = $splunk::arch
+  $ext          = $splunk::ext
+  $tarcmd       = $splunk::tarcmd
+  $manifest     = $splunk::manifest
   # splunk (web) or fileserver or a custom url
-  $source          = $splunk::source
-  $user            = $splunk::user
-  $group           = $splunk::group
-  $admin_pass      = $splunk::admin_pass
+  $source       = $splunk::source
+  $user         = $splunk::user
+  $group        = $splunk::group
+  $admin_pass   = $splunk::admin_pass
 
   $perms = "${user}:${group}"
 
@@ -85,8 +85,8 @@ class splunk::install
     }
 
     $wsourcepart = basename($my_cwd)
-    if $current_version != undef {
-      $wrongsource = "${wsourcepart}-${current_version}-${os}-${arch}.${ext}"
+    if $cur_version != undef {
+      $wrongsource = "${wsourcepart}-${cur_version}-${os}-${arch}.${ext}"
 
       file { "${install_path}/${wrongsource}":
         ensure => absent,
@@ -97,7 +97,7 @@ class splunk::install
   }
 
   if $action == 'upgrade' {
-    $oldsource = "${sourcepart}-${current_version}-${os}-${arch}.${ext}"
+    $oldsource = "${sourcepart}-${cur_version}-${os}-${arch}.${ext}"
 
     file { "${install_path}/${oldsource}":
       ensure => absent

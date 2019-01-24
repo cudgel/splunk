@@ -343,8 +343,11 @@ export PATH
               $servers_list = "${servers_list}.${member}:8089"
             }
 
+            $bootstrap_cmd = "splunk bootstrap shcluster-captain \
+                -servers_list \"${servers_list}\" -auth admin:changme"
+
             exec { 'bootstrap_cluster':
-              command     => "splunk bootstrap shcluster-captain -servers_list \"${servers_list}\" -auth admin:changme",
+              command     => $bootstrap_cmd,
               environment => "SPLUNK_HOME=${dir}",
               path        => "${dir}/bin:/bin:/usr/bin:",
               cwd         => $dir,
@@ -396,7 +399,7 @@ export PATH
         require => Exec['test_for_splunk']
       }
 
-      if $shcluster_id != undef and ($shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/) or ($shcluster_mode == 'deployer') {
+      if $shcluster_id != undef or $shcluster_mode == 'deployer' {
         # if clustering has already been set up, manage configs
         file { "${local}/server.d/996_shclustering":
           content => template("${module_name}/server.d/shclustering.erb"),

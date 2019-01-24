@@ -147,7 +147,7 @@ Optional[Hash] $tcpout = undef
     }
 
     # splunk user home dir from fact
-    if defined('$splunk_cwd') and is_string('$splunk_home') {
+    if defined('$splunk_home') and is_string('$splunk_home') {
       $home = $splunk_home
     } else {
       $home = undef
@@ -163,11 +163,11 @@ Optional[Hash] $tcpout = undef
 
     # splunk is currently installed - get version from fact
     if defined('$splunk_version') and $splunk_version =~ /^\d+\.\d+\.\d+-.*/ {
-      $current_version = $splunk_version
+      $cur_version = $splunk_version
       # because the legacy fact does not represent splunk version as
       # version-release, we cut the version from the string.
-      $cut_version = regsubst($current_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
-      $vdiff = versioncmp($version, $cut_version)
+      $vtemp = regsubst($cur_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
+      $vdiff = versioncmp($version, $vtemp)
       if $cwd =~ /\/\w+\/.*/ {
         # splunk is running from the directory expected for the type
         if $cwd == $dir {
@@ -196,13 +196,16 @@ Optional[Hash] $tcpout = undef
       # no installed version of splunk from fact
       info('Unhandled splunk_version')
       $action = 'install'
-      $current_version = undef
+      $cur_version = undef
     }
 
     if $action == 'install' or $action == 'upgrade' or $action == 'change' {
-      class { 'splunk::install': } -> class { 'splunk::config': } -> class { 'splunk::service': }
+      class { 'splunk::install': }
+      -> class { 'splunk::config': }
+      -> class { 'splunk::service': }
     } elsif $action == 'config' {
-      class { 'splunk::config': } -> class { 'splunk::service': }
+      class { 'splunk::config': }
+      -> class { 'splunk::service': }
     } else {
       notice('Unhandled action.')
       $action = 'none'
@@ -210,43 +213,57 @@ Optional[Hash] $tcpout = undef
 
     if $action != 'none' {
       # configure deployment server for indexers and forwarders
-      if $type == 'forwarder' or $type == 'heavyforwarder' and $deployment_server != undef {
+      if $type =~ /^(heavy)?forwarder/ and $deployment_server != undef {
         class { 'splunk::deployment': }
       }
 
       $perms = "${user}:${group}"
 
-      $my_input_d  = "${local}/inputs.d/"
-      $my_input_c  = "${local}/inputs.conf"
+      $inputs_dir  = "${local}/inputs.d/"
+      $inputs_conf  = "${local}/inputs.conf"
+      $inputs_cmd = "/bin/cat ${inputs_dir}/* > ${inputs_conf}; \
+          chown ${perms} ${inputs_conf}"
 
       exec { 'update-inputs':
-        command     => "/bin/cat ${my_input_d}/* > ${my_input_c}; \
-            chown ${perms} ${my_input_c}",
+        command     => $inputs_cmd,
         refreshonly => true,
+        user        => $user,
+        group       => $group,
+        umask       => '027',
+        creates     => $inputs_conf,
         notify      => Service['splunk']
       }
 
       if $type != 'forwarder' or $deployment_server == undef {
         if $type != 'indexer' and is_hash($tcpout) {
-          $my_output_d = "${local}/outputs.d/"
-          $my_output_c = "${local}/outputs.conf"
+          $outputs_dir = "${local}/outputs.d/"
+          $outputs_conf = "${local}/outputs.conf"
+          $outputs_cmd = "/bin/cat ${outputs_dir}/* > ${outputs_conf}; \
+              chown ${perms} ${outputs_conf}"
 
           exec { 'update-outputs':
-            command     => "/bin/cat ${my_output_d}/* > ${my_output_c}; \
-                  chown ${perms} ${my_output_c}",
+            command     => $outputs_cmd,
             refreshonly => true,
-            creates     => "${local}/outputs.conf",
+            user        => $user,
+            group       => $group,
+            umask       => '027',
+            creates     => $outputs_conf,
             notify      => Service['splunk']
           }
         }
 
-        $my_server_d = "${local}/server.d/"
-        $my_server_c = "${local}/server.conf"
+        $server_dir = "${local}/server.d/"
+        $server_conf = "${local}/server.conf"
+        $server_cmd = "/bin/cat ${server_dir}/* > ${server_conf}; \
+            chown ${perms} ${server_conf}"
 
         exec { 'update-server':
-          command     => "/bin/cat ${my_server_d}/* > ${my_server_c}; \
-              chown ${perms} ${my_server_c}",
+          command     => $server_cmd,
           refreshonly => true,
+          user        => $user,
+          group       => $group,
+          umask       => '027',
+          creates     => $server_conf,
           notify      => Service['splunk']
         }
       }
