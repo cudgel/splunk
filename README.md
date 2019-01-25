@@ -1,17 +1,33 @@
-Splunk
+# splunk
+
+#### Table of Contents
+
+1. [Overview](#overview)
+2. [Module Description](#module-description)
+4. [Usage](#usage)
+6. [Limitations](#limitations)
+
+<a id="overview"></a>
+## Overview
 
 This Splunk module supports deploying complex Splunk environments (forwarder, indexer, and search head roles, clustering, etc). It is does not create the user or group, leaving that up to your implementation. It does require the user and group to exist prior to the application being installed, so chaining your resources is a good idea. It supports running as root or a dedicated account. By default it assumes running as user/group splunk/splunk and will apply ACLs to grant access to log files specified in the hiera hash splunk::inputs. If the node has a splunk role of indexer it will create indexes based on the hiera hash splunk::indexes.
 
 If you choose to use a fileserver definition (you should) for your splunk tarballs, e.g.:
 
+```
   [splunk]
     path /etc/puppetlabs/puppet/files/splunk
     allow *
+```
 
 the file server should be populated with the tarballs for the splunk components you want to manage and splunk::params::source should be set to 'fileserver'.
 
-Sample hiera for RedHat log files:
+<a id="usage"></a>
+## Usage
 
+Sample hiera for RedHat log files. See the class tests for other examples.
+
+```
   splunk::inputs:
     'messages':
       target: '/var/log/messages'
@@ -33,14 +49,10 @@ Sample hiera for RedHat log files:
       target: '/var/log/cron'
       index: 'main'
       sourcetype: 'syslog'
+```
 
-A sample manifest snippet:
-
-  $my_type = hiera('splunk::type', 'forwarder')
-
-  if $my_type != 'none' {
-    class { '::splunk': type => $my_type }
-  }
+<a id="limitations"></a>
+## Limitations
 
 License
 -------
