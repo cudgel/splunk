@@ -54,6 +54,8 @@ Sample hiera for RedHat log files. See the class tests for other examples.
 <a id="limitations"></a>
 ## Limitations
 
+The module has only been tested on RHEL and Debian derivatives. The support for clustering is a work-in-progress - the nodes will be depoyed and Splunk will enforce an existing cluster config, but dynamically creating a new cluster is not yet functional.
+
 License
 -------
 
