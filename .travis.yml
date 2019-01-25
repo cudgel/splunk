@@ -35,7 +35,7 @@ matrix:
 
 branches:
   only:
-    - test
+    - master
     - /^v\d/
 notifications:
   email: false
