@@ -1,4 +1,0 @@
----
-splunk::repl_port: 8192
-splunk::shcluster_mode: 'none'
-splunk::type: 'search'

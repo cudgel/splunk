@@ -9,11 +9,11 @@
 #
 # === Examples
 #
-#  class { splunk::install }
+#  This class is not called directly
 #
 # === Authors
 #
-# Christopher Caldwell <author@domain.com>
+# Christopher Caldwell <caldwell@gwu.edu>
 #
 # === Copyright
 #
@@ -21,33 +21,33 @@
 #
 class splunk::install
 {
-  $action          = $splunk::action
-  $my_cwd          = $splunk::cwd
-  $type            = $splunk::type
+  $action       = $splunk::action
+  $my_cwd       = $splunk::cwd
+  $type         = $splunk::type
   # splunk user home
-  $home            = $splunk::home
-  $install_path    = $splunk::install_path
+  $home         = $splunk::home
+  $install_path = $splunk::install_path
   # splunk install directory
-  $dir             = $splunk::dir
-  $local           = $splunk::local
+  $dir          = $splunk::dir
+  $local        = $splunk::local
   # splunk or splunkforwarder
-  $sourcepart      = $splunk::sourcepart
+  $sourcepart   = $splunk::sourcepart
   # currently installed version from fact
-  $current_version = $splunk::current_version
+  $cur_version  = $splunk::cur_version
   # new verion from hiera
-  $new_version     = $splunk::new_version
-  $os              = $splunk::os
-  $arch            = $splunk::arch
-  $ext             = $splunk::ext
-  $tarcmd          = $splunk::tarcmd
-  $manifest        = $splunk::manifest
+  $new_version  = $splunk::new_version
+  $os           = $splunk::os
+  $arch         = $splunk::arch
+  $ext          = $splunk::ext
+  $tarcmd       = $splunk::tarcmd
+  $manifest     = $splunk::manifest
   # splunk (web) or fileserver or a custom url
-  $source          = $splunk::source
-  $splunk_user     = $splunk::splunk_user
-  $splunk_group    = $splunk::splunk_group
-  $admin_pass      = $splunk::admin_pass
+  $source       = $splunk::source
+  $user         = $splunk::user
+  $group        = $splunk::group
+  $admin_pass   = $splunk::admin_pass
 
-  $perms = "${splunk_user}:${splunk_group}"
+  $perms = "${user}:${group}"
 
   $stopcmd  = 'splunk stop'
 
@@ -71,8 +71,8 @@ class splunk::install
     exec { 'serviceStop':
       command => $stopcmd,
       path    => "${my_cwd}/bin:/bin:/usr/bin:",
-      user    => $splunk_user,
-      group   => $splunk_group,
+      user    => $user,
+      group   => $group,
       timeout => 600
     }
 
@@ -85,8 +85,8 @@ class splunk::install
     }
 
     $wsourcepart = basename($my_cwd)
-    if $current_version != undef {
-      $wrongsource = "${wsourcepart}-${current_version}-${os}-${arch}.${ext}"
+    if $cur_version != undef {
+      $wrongsource = "${wsourcepart}-${cur_version}-${os}-${arch}.${ext}"
 
       file { "${install_path}/${wrongsource}":
         ensure => absent,
@@ -97,7 +97,7 @@ class splunk::install
   }
 
   if $action == 'upgrade' {
-    $oldsource = "${sourcepart}-${current_version}-${os}-${arch}.${ext}"
+    $oldsource = "${sourcepart}-${cur_version}-${os}-${arch}.${ext}"
 
     file { "${install_path}/${oldsource}":
       ensure => absent
@@ -125,7 +125,7 @@ class splunk::install
   }
 
   exec { 'splunkDir':
-    command   => "chown -R ${splunk_user}:${splunk_group} ${dir}",
+    command   => "chown -R ${user}:${group} ${dir}",
     path      => "${dir}/bin:/bin:/usr/bin:",
     cwd       => $install_path,
     subscribe => Exec['unpackSplunk'],
@@ -135,14 +135,14 @@ class splunk::install
   exec { 'serviceStart':
     command     => "${stopcmd}; ${startcmd}",
     path        => "${dir}/bin:/bin:/usr/bin:",
-    user        => $splunk_user,
-    group       => $splunk_group,
+    user        => $user,
+    group       => $group,
     subscribe   => Exec['splunkDir'],
     refreshonly => true
   }
 
   exec { 'installSplunkService':
-    command   => "splunk enable boot-start -user ${splunk_user}",
+    command   => "splunk enable boot-start -user ${user}",
     path      => "${dir}/bin:/bin:/usr/bin:",
     cwd       => $dir,
     subscribe => Exec['unpackSplunk'],

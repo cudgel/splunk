@@ -7,25 +7,24 @@
 #
 define splunk::acl(
   Optional[String] $target    = undef,
-  Optional[String] $group     = $splunk::splunk_user,
+  Optional[String] $group     = $splunk::user,
   Optional[String] $type      = 'file',
   Optional[Boolean] $recurse  = false,
-  Optional[Boolean] $readonly = true,
   Optional[Boolean] $parents  = false
 ) {
 
   # Validate parameters
   #
-  if $target != undef {
-      $object = $title
+  if $target == undef {
+    $object = $title
   } else {
-      $object = $target
+    $object = $target
   }
   if $recurse != true and $recurse != false {
       fail('variable "recurse" must be either true or false')
   }
 
-  if $kernel == 'Linux' {
+  if $facts['kernel'] == 'Linux' {
 
     # returns 0 if the object is a file
     $testdir = "test -d ${object}"
@@ -34,27 +33,13 @@ define splunk::acl(
     # Set the $subject and $db to later verify that the subject exists.
     #
     $subject = $group
-    if $type == 'file' or $testdir == false {
-      if $readonly == false {
-        $perm = 'rw-'
-      } else {
-        $perm = 'r--'
-      }
+    if $type == 'file' {
+      $perm = 'r--'
     } else {
-      if $readonly == false {
-        $perm = 'rwx'
-      } else {
-        $perm = 'r-x'
-      }
+      $perm = 'r-x'
     }
     $acl = "group:${group}:${perm}"
     $gacl = "group:${group}:r-x"
-
-    # test if the ACL is to be applied to an nfs mount
-    # (extended posix ACLs cannot be set from the nfs client)
-    # returns 0 if object is on nfs mount
-    $testnfs = "df -P ${object} | tail -1 | awk '{print \$1}' \
-| fgrep -f - /proc/mounts | grep -q nfs"
 
     # returns 0 if the mount containing the object suports ACLs
     $testacl = "df -P ${object} | tail -1 | awk '{print \$1}' \
@@ -115,6 +100,6 @@ define splunk::acl(
       }
     }
 
-  } # end linux
+  }
 
 }

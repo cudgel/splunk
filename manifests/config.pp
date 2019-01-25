@@ -23,8 +23,8 @@ class splunk::config
   $confdir           = $splunk::confdir
   $confpath          = $splunk::confpath
   $local             = $splunk::local
-  $splunk_user       = $splunk::splunk_user
-  $splunk_group      = $splunk::splunk_group
+  $user              = $splunk::user
+  $group             = $splunk::group
   $cacert            = $splunk::cacert
   $privkey           = $splunk::privkey
   $servercert        = $splunk::servercert
@@ -48,7 +48,7 @@ class splunk::config
   $packages          = $splunk::packages
 
   $splunk_home = $splunk_home
-  $perms = "${splunk_user}:${splunk_group}"
+  $perms = "${user}:${group}"
 
   $bashrc = "
 SPLUNK_HOME=${dir}
@@ -59,8 +59,8 @@ export PATH
 
   if $splunk_home != undef {
     file { "${splunk_home}/.bashrc.custom":
-      owner   => $splunk_user,
-      group   => $splunk_group,
+      owner   => $user,
+      group   => $group,
       content => $bashrc
     }
   }
@@ -69,43 +69,43 @@ export PATH
     command => "test -d ${dir}/etc",
     path    => "${dir}/bin:/bin:/usr/bin:",
     cwd     => $install_path,
-    user    => $splunk_user,
-    group   => $splunk_group,
+    user    => $user,
+    group   => $group,
     unless  => "test -d ${dir}/etc"
   }
 
   file_line { 'splunk-start':
     path    => '/etc/init.d/splunk',
-    line    => "  su - ${splunk_user} -c \'\"${dir}/bin/splunk\" start --no-prompt --answer-yes\'",
+    line    => "  su - ${user} -c \'\"${dir}/bin/splunk\" start --no-prompt --answer-yes\'",
     match   => "^\s\s\"${dir}/bin/splunk\" start",
     require => Exec['test_for_splunk']
   }
 
   file_line { 'splunk-stop':
     path    => '/etc/init.d/splunk',
-    line    => "  su - ${splunk_user} -c \'\"${dir}/bin/splunk\" stop\'",
+    line    => "  su - ${user} -c \'\"${dir}/bin/splunk\" stop\'",
     match   => "^\s\s\"${dir}/bin/splunk\" stop",
     require => Exec['test_for_splunk']
   }
 
   file_line { 'splunk-restart':
     path    => '/etc/init.d/splunk',
-    line    => "  su - ${splunk_user} -c \'\"${dir}/bin/splunk\" restart\'",
+    line    => "  su - ${user} -c \'\"${dir}/bin/splunk\" restart\'",
     match   => "^\s\s\"${dir}/bin/splunk\" restart",
     require => Exec['test_for_splunk']
   }
 
   file_line { 'splunk-status':
     path    => '/etc/init.d/splunk',
-    line    => "  su - ${splunk_user} -c \'\"${dir}/bin/splunk\" status\'",
+    line    => "  su - ${user} -c \'\"${dir}/bin/splunk\" status\'",
     match   => "^\s\s\"${dir}/bin/splunk\" status",
     require => Exec['test_for_splunk']
   }
 
   file { "${dir}/etc/splunk-launch.conf":
     content => template("${module_name}/splunk-launch.conf.erb"),
-    owner   => $splunk_user,
-    group   => $splunk_group,
+    owner   => $user,
+    group   => $group,
     notify  => Service['splunk'],
     require => Exec['test_for_splunk']
   }
@@ -113,8 +113,8 @@ export PATH
   if $cacert != 'cacert.pem' {
     file { "${dir}/etc/auth/${cacert}":
       source  => "puppet:///splunk_files/auth/${cacert}",
-      owner   => $splunk_user,
-      group   => $splunk_group,
+      owner   => $user,
+      group   => $group,
       mode    => '0640',
       notify  => Service['splunk'],
       require => Exec['test_for_splunk']
@@ -124,8 +124,8 @@ export PATH
   if $privkey != 'privkey.pem' {
     file { "${dir}/etc/auth/splunkweb/${privkey}":
       source  => "puppet:///splunk_files/auth/splunkweb/${privkey}",
-      owner   => $splunk_user,
-      group   => $splunk_group,
+      owner   => $user,
+      group   => $group,
       mode    => '0640',
       notify  => Service['splunk'],
       require => Exec['test_for_splunk']
@@ -135,8 +135,8 @@ export PATH
   if $servercert != 'server.pem' {
     file { "${dir}/etc/auth/${servercert}":
       source  => "puppet:///splunk_files/auth/${servercert}",
-      owner   => $splunk_user,
-      group   => $splunk_group,
+      owner   => $user,
+      group   => $group,
       mode    => '0640',
       notify  => Service['splunk'],
       require => Exec['test_for_splunk']
@@ -146,8 +146,8 @@ export PATH
   if $webcert != 'cert.pem' {
     file { "${dir}/etc/auth/splunkweb/${webcert}":
       source  => "puppet:///splunk_files/auth/splunkweb/${webcert}",
-      owner   => $splunk_user,
-      group   => $splunk_group,
+      owner   => $user,
+      group   => $group,
       mode    => '0640',
       notify  => Service['splunk'],
       require => Exec['test_for_splunk']
@@ -161,8 +161,8 @@ export PATH
 
     file { "${dir}/etc/auth/splunk.secret":
       source  => 'puppet:///splunk_files/splunk.secret',
-      owner   => $splunk_user,
-      group   => $splunk_group,
+      owner   => $user,
+      group   => $group,
       mode    => '0640',
       notify  => Service['splunk'],
       require => Exec['test_for_splunk']
@@ -171,47 +171,47 @@ export PATH
 
   file { "${dir}/etc/apps":
     ensure  => 'directory',
-    owner   => $splunk_user,
-    group   => $splunk_group,
+    owner   => $user,
+    group   => $group,
     require => Exec['test_for_splunk']
   }
 
   if $confpath == 'app' {
     file { "$(dir}/etc/apps/__puppet_conf":
       ensure  => 'directory',
-      owner   => $splunk_user,
-      group   => $splunk_group,
+      owner   => $user,
+      group   => $group,
       require => Exec['test_for_splunk']
     }
   }
 
   file { $local:
     ensure  => 'directory',
-    owner   => $splunk_user,
-    group   => $splunk_group,
+    owner   => $user,
+    group   => $group,
     require => Exec['test_for_splunk']
   }
 
   file { "${local}/inputs.d":
     ensure  => 'directory',
     mode    => '0750',
-    owner   => $splunk_user,
-    group   => $splunk_group,
+    owner   => $user,
+    group   => $group,
     require => Exec['test_for_splunk']
   }
 
   file { "${local}/inputs.d/000_default":
     content => template("${module_name}/inputs.d/default_inputs.erb"),
-    owner   => $splunk_user,
-    group   => $splunk_group,
+    owner   => $user,
+    group   => $group,
     require => File["${local}/inputs.d"],
     notify  => Exec['update-inputs']
   }
 
   file { "${local}/inputs.d/000_splunkssl":
     content => template("${module_name}/inputs.d/ssl.erb"),
-    owner   => $splunk_user,
-    group   => $splunk_group,
+    owner   => $user,
+    group   => $group,
     require => File["${local}/inputs.d"],
     notify  => Exec['update-inputs']
   }
@@ -222,15 +222,15 @@ export PATH
       file { "${local}/outputs.d":
         ensure  => 'directory',
         mode    => '0750',
-        owner   => $splunk_user,
-        group   => $splunk_group,
+        owner   => $user,
+        group   => $group,
         require => Exec['test_for_splunk']
       }
 
       file { "${local}/outputs.d/000_default":
         content => template("${module_name}/outputs.d/outputs.erb"),
-        owner   => $splunk_user,
-        group   => $splunk_group,
+        owner   => $user,
+        group   => $group,
         require => File["${local}/outputs.d"],
         notify  => Exec['update-outputs']
       }
@@ -239,8 +239,8 @@ export PATH
     file { "${local}/server.d":
       ensure  => 'directory',
       mode    => '0750',
-      owner   => $splunk_user,
-      group   => $splunk_group,
+      owner   => $user,
+      group   => $group,
       require => Exec['test_for_splunk']
     }
 
@@ -250,24 +250,24 @@ export PATH
 
     file { "${local}/server.d/000_header":
       content => '# DO NOT EDIT -- Managed by Puppet',
-      owner   => $splunk_user,
-      group   => $splunk_group,
+      owner   => $user,
+      group   => $group,
       require => File["${local}/server.d"],
       notify  => Exec['update-server']
     }
 
     file { "${local}/server.d/001_license":
       content => template("${module_name}/server.d/license.erb"),
-      owner   => $splunk_user,
-      group   => $splunk_group,
+      owner   => $user,
+      group   => $group,
       require => File["${local}/server.d"]
     }
 
     if $cluster_mode != 'none' {
       file { "${local}/server.d/997_ixclustering":
         content => template("${module_name}/server.d/ixclustering.erb"),
-        owner   => $splunk_user,
-        group   => $splunk_group,
+        owner   => $user,
+        group   => $group,
         require => File["${local}/server.d"],
         notify  => Exec['update-server']
       }
@@ -275,16 +275,16 @@ export PATH
 
     file { "${local}/server.d/998_ssl":
       content => template("${module_name}/server.d/ssl_server.erb"),
-      owner   => $splunk_user,
-      group   => $splunk_group,
+      owner   => $user,
+      group   => $group,
       require => File["${local}/server.d"],
       notify  => Exec['update-server']
     }
 
     file { "${local}/server.d/999_default":
       content => template("${module_name}/server.d/default_server.erb"),
-      owner   => $splunk_user,
-      group   => $splunk_group,
+      owner   => $user,
+      group   => $group,
       require => File["${local}/server.d"],
       notify  => Exec['update-server']
     }
@@ -292,8 +292,8 @@ export PATH
     file { "${local}/web.conf":
       content => template("${module_name}/web.conf.erb"),
       alias   => 'splunk-web',
-      owner   => $splunk_user,
-      group   => $splunk_user,
+      owner   => $user,
+      group   => $user,
       require => Exec['test_for_splunk'],
       notify  => Service['splunk']
     }
@@ -302,8 +302,8 @@ export PATH
 
       file { "${local}/inputs.d/999_splunktcp":
         content => template("${module_name}/inputs.d/splunktcp.erb"),
-        owner   => $splunk_user,
-        group   => $splunk_group,
+        owner   => $user,
+        group   => $group,
         require => File["${local}/inputs.d"],
         notify  => Exec['update-inputs']
       }
@@ -311,8 +311,8 @@ export PATH
       if $cluster_mode != 'none' {
         file { "${local}/server.d/995_replication":
           content => template("${module_name}/server.d/replication.erb"),
-          owner   => $splunk_user,
-          group   => $splunk_group,
+          owner   => $user,
+          group   => $group,
           require => File["${local}/server.d"],
           notify  => Exec['update-server']
         }
@@ -332,8 +332,8 @@ export PATH
             path        => "${dir}/bin:/bin:/usr/bin:",
             cwd         => $dir,
             timeout     => 600,
-            user        => $splunk_user,
-            group       => $splunk_group,
+            user        => $user,
+            group       => $group,
             onlyif      => 'splunk status',
             require     => Exec['test_for_splunk']
           }
@@ -343,13 +343,16 @@ export PATH
               $servers_list = "${servers_list}.${member}:8089"
             }
 
+            $bootstrap_cmd = "splunk bootstrap shcluster-captain \
+                -servers_list \"${servers_list}\" -auth admin:changme"
+
             exec { 'bootstrap_cluster':
-              command     => "splunk bootstrap shcluster-captain -servers_list \"${servers_list}\" -auth admin:changme",
+              command     => $bootstrap_cmd,
               environment => "SPLUNK_HOME=${dir}",
               path        => "${dir}/bin:/bin:/usr/bin:",
               cwd         => $dir,
-              user        => $splunk_user,
-              group       => $splunk_group,
+              user        => $user,
+              group       => $group,
               onlyif      => 'splunk status',
               require     => Exec['test_for_splunk']
             }
@@ -365,8 +368,8 @@ export PATH
       file { "${local}/default-mode.conf":
         alias   => 'splunk-mode',
         content => template("${module_name}/default-mode.conf.erb"),
-        owner   => $splunk_user,
-        group   => $splunk_user,
+        owner   => $user,
+        group   => $user,
         notify  => Service['splunk'],
         require => Exec['test_for_splunk']
       }
@@ -374,42 +377,42 @@ export PATH
       file { "${local}/alert_actions.conf":
         alias   => 'alert-actions',
         content => template("${module_name}/alert_actions.conf.erb"),
-        owner   => $splunk_user,
-        group   => $splunk_user,
+        owner   => $user,
+        group   => $user,
         notify  => Service['splunk'],
         require => Exec['test_for_splunk']
       }
 
       file { "${local}/ui-prefs.conf":
         content => template("${module_name}/ui-prefs.conf.erb"),
-        owner   => $splunk_user,
-        group   => $splunk_user,
+        owner   => $user,
+        group   => $user,
         notify  => Service['splunk'],
         require => Exec['test_for_splunk']
       }
 
       file { "${local}/limits.conf":
         content => template("${module_name}/limits.conf.erb"),
-        owner   => $splunk_user,
-        group   => $splunk_user,
+        owner   => $user,
+        group   => $user,
         notify  => Service['splunk'],
         require => Exec['test_for_splunk']
       }
 
-      if $shcluster_id != undef and ($shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/) or ($shcluster_mode == 'deployer') {
+      if $shcluster_id != undef or $shcluster_mode == 'deployer' {
         # if clustering has already been set up, manage configs
         file { "${local}/server.d/996_shclustering":
           content => template("${module_name}/server.d/shclustering.erb"),
-          owner   => $splunk_user,
-          group   => $splunk_group,
+          owner   => $user,
+          group   => $group,
           require => File["${local}/server.d"],
           notify  => Exec['update-server']
         }
 
         file { "${local}/server.d/995_replication":
           content => template("${module_name}/server.d/replication.erb"),
-          owner   => $splunk_user,
-          group   => $splunk_group,
+          owner   => $user,
+          group   => $group,
           require => File["${local}/server.d"],
           notify  => Exec['update-server']
         }

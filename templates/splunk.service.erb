@@ -1,8 +1,8 @@
 <%
 version = scope['::splunk::version']
 dir = scope['::splunk::sourcepart']
-user = scope['::splunk::splunk_user']
-group = scope['::splunk::splunk_group']
+user = scope['::splunk::user']
+group = scope['::splunk::group']
 -%>
 [Unit]
 Description=Splunk Enterprise <%= version -%>
