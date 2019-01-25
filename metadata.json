@@ -49,8 +49,7 @@
     }
   ],
   "tags": [
-    "splunk",
-    "cluster"
+    "splunk"
   ],
   "pdk-version": "1.8.0",
   "template-url": "https://github.com/puppetlabs/pdk-templates",

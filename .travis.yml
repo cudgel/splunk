@@ -10,7 +10,6 @@ before_install:
   - gem update bundler
   - gem --version
   - bundle -v
-  - bundle install --without system_tests --path vendor/bundle --jobs $(nproc)
 script:
   - 'bundle exec rake $CHECK'
 bundler_args: --without system_tests
