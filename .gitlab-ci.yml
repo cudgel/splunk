@@ -1,4 +1,9 @@
 ---
+job:
+  only:
+    - master
+    - /^v\d/
+
 stages:
   - syntax
   - unit
@@ -15,6 +20,14 @@ before_script:
   - bundle -v
   - bundle install --without system_tests --path vendor/bundle --jobs $(nproc)
 
+syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop-Ruby 2.4.4-Puppet ~> 6.1:
+  stage: syntax
+  image: ruby:2.4.4
+  script:
+    - bundle exec rake syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop
+  variables:
+    PUPPET_GEM_VERSION: '~> 6.1'
+
 parallel_spec-Ruby 2.4.4-Puppet ~> 4.0:
   stage: unit
   image: ruby:2.4.4
@@ -24,14 +37,6 @@ parallel_spec-Ruby 2.4.4-Puppet ~> 4.0:
     - splunk
   variables:
     PUPPET_GEM_VERSION: '~> 4.10.11'
-
-syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop-Ruby 2.4.4-Puppet ~> 6.1:
-  stage: syntax
-  image: ruby:2.4.4
-  script:
-    - bundle exec rake syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop
-  variables:
-    PUPPET_GEM_VERSION: '~> 6.1'
 
 parallel_spec-Ruby 2.4.4-Puppet ~> 5.5:
   stage: unit
