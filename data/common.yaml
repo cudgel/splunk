@@ -29,6 +29,8 @@ splunk::max_rawsize_perchunk: 100000000
 splunk::max_searches: 1
 splunk::preferred_captain: false
 splunk::privkey: 'privkey.pem'
+splunk::repl_port: 8192
+splunk::repl_count: 3
 splunk::scheduler_disable: false
 splunk::search_maxinfocsv: 20
 splunk::search_maxqueue: 100
@@ -38,6 +40,7 @@ splunk::servercertpass: 'password'
 splunk::source: 'splunk'
 splunk::group: 'splunk'
 splunk::user: 'splunk'
+splunk::shcluster_mode: 'none'
 splunk::splunknotcp_ssl: false
 splunk::splunknotcp: true
 splunk::sslclientcert: false
