@@ -14,7 +14,7 @@ script:
   - 'bundle exec rake $CHECK'
 bundler_args: --without system_tests
 rvm:
-  - 2.4.r4
+  - 2.4.1
 env:
   - PUPPET_GEM_VERSION="~> 5.0" CHECK=spec
 matrix:
