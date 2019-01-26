@@ -1,7 +1,0 @@
-{
-  "puppet_task_version": 1,
-  "supports_noop": false,
-  "description": "A short description of this task",
-  "parameters": {
-  }
-}
