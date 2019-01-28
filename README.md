@@ -49,12 +49,34 @@ splunk::version: 7.2.x
 splunk::release: ca04e0f28ae3
 ```
 
-Typically I would define outputs and cluster sites based on a fact like datacenter, but the examples below show it in a node context.
+Typically I would define outputs and cluster sites based on a fact like datacenter, but the examples below show it in a node context. 
+
+The app can install certificates from a Puppet file server if any of the default cert names are overridden in hiera. If you supply a new web server cert you must also supply the cert password.
+
+Use hiera-eyaml to protect secrets in your control repo, like the server cert password. 
+
+```
+splunk::servercertpass: >
+    ENC[PKCS7,MIIBeQYJKoZIhvcNAQcDoIIBajCCAWYCAQAxggEhMIIBHQIBADAFMAACAQEw
+    DQYJKoZIhvcNAQEBBQAEggEAVty92SXg30srYUJaM6YxF9NWPYC3RnkqKWWt
+    08xK5822JhbbqeOCFsz+DJ34EGeJY5UJ7VRCnJjFyWANGl79PsFaCQ/36BkG
+    LyWx5BSFRbqP75L6SHm4/bETWre3IN4GCj9rEU08ejqFIayhmGbZ+oPZH8RW
+    AvtdesxepNvNgRFjI3sQOAwMo8mGTxokLzQ05mmpi+yVBpre4i3t07Wfh2Od
+    SobPPDI/lr8izHYXBmqpyQuPUgPgKr9hN3pRR6BzYCpVvEfpR6T1t0dh6WZG
+    zR7ATolZqbAU9tduLYiu3nIZ7X+7j9c2ksCXSaqPX4dDLi3nOpD4CS4f2aF/
+    b0n6IzA8BgkqhkiG9w0BBwEwHQYJYIZIAWUDBAEqBBAULtw3VN2+8goqyOMa
+    Hn0pgBAKWUW3IYF42XuuivjTfZlN]
+```
 
 <a id="types"></a>
 ### Splunk Server Types
 
-A Splunk Universal forwarder, Puppet manages the outputs:
+####
+
+Below are some examples of various Splunk types. 
+
+
+#####A Splunk Universal forwarder, Puppet manages the outputs:
 
 ```
 splunk::type: 'forwarder'
@@ -68,27 +90,25 @@ splunk::tcpout:
 
 ```
 
-A Splunk Universal forwarder with deployment server:
+#####A Splunk Universal forwarder with deployment server:
 
 ```
 splunk::type: 'forwarder'
 splunk::deployment_server: 'https://ds.example.com:8089'
 ```
 
-A Splunk heavy forwarder with deployment server:
+#####A Splunk heavy forwarder with deployment server:
 
 ```
 splunk::type: 'heavyforwarder'
 splunk::deployment_server: 'https://ds.example.com:8089'
 ```
 
-Indexer cluster master:
+#####Indexer cluster master:
 
 ```
-splunk::type: 'indexer'
-splunk::cluster_mode: 'master'
 splunk::clusters:
-  - label: 'IDX'
+  - label: 'IDX-MS'
     access_logging: 1
     build_load: 5
     multisite: true
@@ -97,42 +117,47 @@ splunk::clusters:
       - site2
     repl_factor: 'origin:2,total:3'
     search_factor: 'origin:1,total:2'
-    uri: 'idx-master.example.com:8089'
-splunk::server_site: 'site2'
-```
-
-Indexer cluster member:
-
-```
-splunk::type: 'indexer'
-splunk::repl_port: 8192
-splunk::cluster_mode: 'slave'
-splunk::clusters:
-  - label: 'IDX'
-    access_logging: 1
-    build_load: 5
-    multisite: true
-    sites:
-      - site1
-      - site2
-    repl_factor: 'origin:2,total:3'
-    search_factor: 'origin:1,total:2'
-    uri: 'idx-master.example.com:8089'
+    uri: 'ixc.example.com:8089'
 splunk::server_site: 'site1'
+splunk::privkey: 'ixc_web.key'
+splunk::servercert: 'ixc_splunkd.cert'
+splunk::webcert: 'ixc_web.cert'
 ```
 
-Search head with indexer-cluster for search peers:
+#####Indexer cluster member:
+
+```
+splunk::type: 'indexer'
+splunk::cluster_mode: 'slave'
+splunk::repl_port: 8193
+splunk::clusters:
+  - label: 'IDX-MS'
+    access_logging: 1
+    build_load: 5
+    multisite: true
+    sites:
+      - site1
+      - site2
+    repl_factor: 'origin:2,total:3'
+    search_factor: 'origin:1,total:2'
+    uri: 'ixc.example.com:8089'
+splunk::server_site: 'site1'
+splunk::privkey: 'ixsite1_web.key'
+splunk::servercert: 'ixsite1_splunkd.cert'
+splunk::webcert: 'ixsite1_web.cert'
+```
+
+#####Search head with indexer-cluster for search peers:
 
 ```
 splunk::type: 'search'
 splunk::repl_port: 8192
 splunk::clusters:
-  - label: 'IDX'
+  - label: 'IDX-MS'
     multisite: true
     sites:
       - site1
-      - site2
-    uri: 'idx-master.example.com:8089'
+    uri: 'ixc.example.com:8089'
 splunk::server_site: 'site1'
 splunk::tcpout:
   group: 'site1'
@@ -141,6 +166,31 @@ splunk::tcpout:
     - 'idx1.example.com:9998'
     - 'idx2.example.com:9998'
     - 'idx3.example.com:9998'
+```
+
+#####Splunk search cluster member, multiple indexer clusters:
+
+```
+splunk::type: 'search'
+splunk::repl_port: 8192
+splunk::shcluster_id: 'dae3f0c5-230a-11e9-9c70-4a0003e77c50'
+splunk::shcluster_mode: 'peer'
+splunk::shcluster_label: 'SHC'
+splunk::clusters:
+  - label: 'IDX-MS'
+    multisite: true
+    sites:
+      - site1
+    uri: 'ixc.example.com:8089'
+  - label: 'IDX-SS'
+    multisite: false`
+    sites:
+      - default
+    uri: 'ixc.cloud.example.com:8089'
+splunk::privkey: 'srchsite1_web.key'
+splunk::servercert: 'srchsite1_splunkd.cert'
+splunk::webcert: 'srchsite1_web.cert'
+
 ```
 
 <a id="inputs"></a>
