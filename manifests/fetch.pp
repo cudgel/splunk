@@ -27,7 +27,7 @@ define splunk::fetch(
   }
 
   if $source == 'fileserver' {
-
+    # lint:ignore:puppet_url_without_modules
     file{ "${::splunk::install_path}/${splunk_bundle}":
       owner  => $splunk::user,
       group  => $splunk::group,
@@ -35,6 +35,7 @@ define splunk::fetch(
       source => "puppet:///splunk_files/${splunk_bundle}",
       notify => Exec['unpackSplunk']
     }
+    # lint:endignore
 
   } else {
 
