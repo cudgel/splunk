@@ -42,7 +42,7 @@ define splunk::acl(
     $gacl = "group:${group}:r-x"
 
     # returns 0 if the mount containing the object suports ACLs
-    $testacl = "df -P ${object} | tail -1 | awk '{print \$1}' \
+    $testacl = "which getfacl && df -P ${object} | tail -1 | awk '{print \$1}' \
 | fgrep -f - /proc/mounts | grep -q seclabel"
 
     # Non-recursive ACLs can be applied to anything.
@@ -60,7 +60,7 @@ define splunk::acl(
       path    => '/bin:/usr/bin',
       command => $setfacl,
       onlyif  => $testacl,
-      unless  => "getfacl ${object} 2>/dev/null | egrep -q '${acl}'",
+      unless  => "which getfacl && getfacl ${object} 2>/dev/null | egrep -q '${acl}'",
       timeout => '0'
     }
 
@@ -70,7 +70,7 @@ define splunk::acl(
       path    => '/bin:/usr/bin',
       command => "setfacl -R -m mask:${perm},default:mask:${perm} ${object}",
       onlyif  => "${testacl} && ${testdir}",
-      unless  => "getfacl ${object} 2>/dev/null | egrep -q '^mask::r-x' ",
+      unless  => "which getfacl && getfacl ${object} 2>/dev/null | egrep -q '^mask::r-x' ",
       timeout => '0'
     }
 
@@ -85,7 +85,7 @@ define splunk::acl(
             path    => '/bin:/usr/bin',
             command => "setfacl -m ${gacl} ${full_path}",
             onlyif  => "${testacl} && ${testdir}",
-            unless  => "getfacl ${full_path} 2>/dev/null | egrep -q '${gacl}'",
+            unless  => "which getfacl && getfacl ${full_path} 2>/dev/null | egrep -q '${gacl}'",
             timeout => '0'
           }
 
@@ -93,7 +93,7 @@ define splunk::acl(
             path    => '/bin:/usr/bin',
             command => "setfacl -m mask:r-x,default:mask:r-x ${full_path}",
             onlyif  => "${testacl} && ${testdir}",
-            unless  => "getfacl ${full_path} 2>/dev/null | egrep -q '^mask::r-x' ",
+            unless  => "which getfacl && getfacl ${full_path} 2>/dev/null | egrep -q '^mask::r-x' ",
             timeout => '0'
           }
         }

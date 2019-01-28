@@ -23,8 +23,7 @@ syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore c
   variables:
     PUPPET_GEM_VERSION: '~> 6.1'
   only:
-    - master
-    - /^v\d/
+    - test
 
 parallel_spec-Ruby 2.4.4-Puppet ~> 4.0:
   stage: unit
@@ -36,8 +35,7 @@ parallel_spec-Ruby 2.4.4-Puppet ~> 4.0:
   variables:
     PUPPET_GEM_VERSION: '~> 4.10.11'
   only:
-    - master
-    - /^v\d/
+    - test
 
 parallel_spec-Ruby 2.4.4-Puppet ~> 5.5:
   stage: unit
@@ -49,8 +47,7 @@ parallel_spec-Ruby 2.4.4-Puppet ~> 5.5:
   variables:
     PUPPET_GEM_VERSION: '~> 5.5'
   only:
-    - master
-    - /^v\d/
+    - test
 
 parallel_spec-Ruby 2.4.4-Puppet ~> 6.1:
   stage: unit
@@ -62,5 +59,4 @@ parallel_spec-Ruby 2.4.4-Puppet ~> 6.1:
   variables:
     PUPPET_GEM_VERSION: '~> 6.1'
   only:
-    - master
-    - /^v\d/
+    - test
