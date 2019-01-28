@@ -47,7 +47,7 @@ classes:
 Specify a version to install in your hiera. The included defaults are for testing only.
 
 ```
-splunk::version: 7.2.x
+splunk::version: 7.2.3
 splunk::release: ca04e0f28ae3
 ```
 
@@ -198,31 +198,68 @@ splunk::webcert: 'srchsite1_web.cert'
 <a id="inputs"></a>
 ### Inputs
 
-Sample hiera for RedHat log files. See the class tests for other examples.
+```
+splunk::input(
+user       => <string> (Default splunk::user), # user and group will be used in ACLs
+group      => <string> (Default splunk::group),
+target     => <string> (Optional), # if not given, the title param will be used
+inputtype  => <string> [monitor, udp, tcp, tcp-ssl, splunktcp, etc], # valid server.conf input types
+sourcetype => <string> (Default 'auto'),
+index      => <string> (Default 'default'),
+cache      => <boolean> (Default true), # whether to establish a persistent queue for a network input
+size       => <int> (Default 1), # size of queue on disk in GB
+options    => <array>, # a list of strings containing any other valid inputs.conf \
+                       #  parameters for the input type
+recurse    => <boolean>, # should the acls applied to the input recurse
+content    => <string>, # any custom input definition you would like to use \
+                        # instead of the templated input options
+)
 
 ```
-  splunk::inputs:
-    'messages':
-      target: '/var/log/messages'
-      index: 'main'
-      sourcetype: 'linux_messages_syslog'
-    'secure':
-      target: '/var/log/secure'
-      index: 'main'
-      sourcetype: 'linux_secure'
-    'maillog':
-      target: '/var/log/maillog'
-      index: 'main'
-      sourcetype: 'syslog'
-    'spooler':
-      target: '/var/log/spooler'
-      index: 'main'
-      sourcetype: 'syslog'
-    'cron':
-      target: '/var/log/cron'
-      index: 'main'
-      sourcetype: 'syslog'
+
+#####RedHat log files.
+
 ```
+splunk::inputs:
+  'messages':
+    target: '/var/log/messages'
+    index: 'main'
+    sourcetype: 'linux_messages_syslog'
+  'secure':
+    target: '/var/log/secure'
+    index: 'main'
+    sourcetype: 'linux_secure'
+  'maillog':
+    target: '/var/log/maillog'
+    index: 'main'
+    sourcetype: 'syslog'
+  'spooler':
+    target: '/var/log/spooler'
+    index: 'main'
+    sourcetype: 'syslog'
+  'cron':
+    target: '/var/log/cron'
+    index: 'main'
+    sourcetype: 'syslog'
+```
+
+#####A network input
+
+```
+splunk::inputs:
+  'syslog-ssl':
+    target: '5140'
+    inputtype: 'tcp-ssl'
+    index: 'secure'
+    sourcetype: 'syslog'
+    cache: true
+    size: 6
+    options:
+      - 'connection_host = dns'
+      - 'no_appending_timestamp = true'
+```
+
+More examples can be found in the unit tests.
 
 <a id="limitations"></a>
 ## Limitations
