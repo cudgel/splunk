@@ -42,7 +42,7 @@ define splunk::acl(
     $gacl = "group:${group}:r-x"
 
     # returns 0 if the mount containing the object suports ACLs
-    $testacl = "df -P ${object} | tail -1 | awk '{print \$1}' \
+    $testacl = "which getfacl && df -P ${object} | tail -1 | awk '{print \$1}' \
 | fgrep -f - /proc/mounts | grep -q seclabel"
 
     # Non-recursive ACLs can be applied to anything.
