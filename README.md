@@ -27,6 +27,8 @@ If you choose to use a fileserver definition (you should - to save everyone's ba
 
 The file server should be populated with the tarballs for the splunk components you want to manage and splunk::source should be set to 'fileserver'.
 
+Since the module defaults to user 'splunk', it includes a defined type 'splunk::acl' that will apply read-only POSIX ACLs for group 'splunk' to any inputs defined using this app. There are optional parameters 'recurse' and 'parents' that will try to apply minimial read-only ACLs to parent paths or contents of a directory if set to true.
+
 <a id="history"></a>
 ### History
 
@@ -51,7 +53,7 @@ splunk::release: ca04e0f28ae3
 
 Typically I would define outputs and cluster sites based on a fact like datacenter, but the examples below show it in a node context. 
 
-The app can install certificates from a Puppet file server if any of the default cert names are overridden in hiera. If you supply a new web server cert you must also supply the cert password.
+The app can install certificates from a Puppet file server if any of the default cert names are overridden in hiera. If you supply a new cert you must also supply the cert password.
 
 Use hiera-eyaml to protect secrets in your control repo, like the server cert password. 
 
@@ -225,7 +227,9 @@ Sample hiera for RedHat log files. See the class tests for other examples.
 <a id="limitations"></a>
 ## Limitations
 
-The module has only been tested on RHEL and Debian derivatives. The support for clustering is a work-in-progress - the nodes will be depoyed and Splunk will enforce an existing cluster config, but dynamically creating a new cluster is not yet functional.
+The module has only been tested on RHEL and Debian derivatives. 
+
+The support for clustering is a work-in-progress - the nodes will be depoyed and Splunk will enforce an existing cluster config, but dynamically creating a new cluster is not fully functional.
 
 License
 -------
