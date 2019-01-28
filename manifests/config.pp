@@ -110,6 +110,7 @@ export PATH
     require => Exec['test_for_splunk']
   }
 
+  # lint:ignore:puppet_url_without_modules
   if $cacert != 'cacert.pem' {
     file { "${dir}/etc/auth/${cacert}":
       source  => "puppet:///splunk_files/auth/${cacert}",
@@ -168,6 +169,8 @@ export PATH
       require => Exec['test_for_splunk']
     }
   }
+  # lint:endignore
+
 
   file { "${dir}/etc/apps":
     ensure  => 'directory',

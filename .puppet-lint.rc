@@ -21,8 +21,7 @@
 #--no-only_variable_string-check
 #--no-single_quote_string_with_variables-check
 #--no-quoted_booleans-check
---no-puppet_url_without_modules-check
-# ^ module uses puppet fileserver reference that fails this test
+#--no-puppet_url_without_modules-check
 
 # resources
 #--no-unquoted_resource_title-check
