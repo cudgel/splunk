@@ -48,7 +48,7 @@ Specify a version to install in your hiera. The included defaults are for testin
 
 ```
 splunk::version: 7.2.3
-splunk::release: ca04e0f28ae3
+splunk::release: 06d57c595b80
 ```
 
 Typically I would define outputs and cluster sites based on a fact like datacenter, but the examples below show it in a node context. 
@@ -267,6 +267,8 @@ More examples can be found in the unit tests.
 The module has only been tested on RHEL and Debian derivatives. 
 
 The support for clustering is a work-in-progress - the nodes will be depoyed and Splunk will enforce an existing cluster config, but dynamically creating a new cluster is not fully functional.
+
+The next major release will require you to set the parameter 'splunk::accept_license' to true, since the automated installation accepts the Splunk license when completing the install.
 
 License
 -------
