@@ -15,7 +15,7 @@
 
 This Splunk module supports deploying complex Splunk environments (forwarder, indexer, and search head roles, clustering, etc). By default, it is does not create the user or group, leaving that up to your implementation. It does require the user and group to exist prior to the application being installed. The module does include support for creating the Splunk user/group, but it is intended only for testing the code - not production environments.
 
-It supports running as root or a dedicated account. By default it assumes running as user/group splunk/splunk and will apply Posix ACLs to grant access to log files specified in the hiera hash splunk::inputs. 
+It supports running as root or a dedicated account. By default it assumes running as user/group splunk/splunk and will apply Posix ACLs to grant access to log files specified in the hiera hash splunk::inputs.
 
 If you choose to use a fileserver definition (you should - to save everyone's bandwitdh) for your splunk tarballs, e.g.:
 
@@ -85,7 +85,7 @@ splunk::deployment_server: 'https://ds.example.com:8089'
 Indexer cluster master:
 
 ```
-splunk::type: 'index_master'
+splunk::type: 'indexer'
 splunk::cluster_mode: 'master'
 splunk::clusters:
   - label: 'IDX'
@@ -140,7 +140,7 @@ splunk::tcpout:
   servers:
     - 'idx1.example.com:9998'
     - 'idx2.example.com:9998'
-    - 'idx3.example.com:9998'    
+    - 'idx3.example.com:9998'
 ```
 
 <a id="inputs"></a>

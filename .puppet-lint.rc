@@ -42,8 +42,7 @@
 #--no-right_to_left_relationship-check
 #--no-nested_classes_or_defines-check
 #--no-inherits_across_namespaces-check
---no-variable_scope-check
-# ^ module uses built-in facts that fail this test
+#--no-variable_scope-check
 #--no-variable_contains_dash-check
 #--no-parameter_order-check
 #--no-names_containing_dash-check
