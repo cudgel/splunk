@@ -1,5 +1,5 @@
 name    'cudgel/splunk'
-version '1.4.4'
+version '1.4.5'
 source 'https://github.com/cudgel/splunk
 author 'cudgel'
 license 'Apache License, Version 2.0'
