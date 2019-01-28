@@ -51,11 +51,11 @@ splunk::version: 7.2.3
 splunk::release: 06d57c595b80
 ```
 
-Typically I would define outputs and cluster sites based on a fact like datacenter, but the examples below show it in a node context. 
+Typically I would define outputs and cluster sites based on a fact like datacenter, but the examples below show it in a node context.
 
 The app can install certificates from a Puppet file server if any of the default cert names are overridden in hiera. If you supply a new cert you must also supply the cert password.
 
-Use hiera-eyaml to protect secrets in your control repo, like the server cert password. 
+Use hiera-eyaml to protect secrets in your control repo, like the server cert password, e.g. 'password':
 
 ```
 splunk::servercertpass: >
@@ -75,7 +75,7 @@ splunk::servercertpass: >
 
 ####
 
-Below are some examples of various Splunk types. 
+Below are some examples of various Splunk types.
 
 
 #####A Splunk Universal forwarder, Puppet manages the outputs:
@@ -264,7 +264,7 @@ More examples can be found in the unit tests.
 <a id="limitations"></a>
 ## Limitations
 
-The module has only been tested on RHEL and Debian derivatives. 
+The module has only been tested on RHEL and Debian derivatives.
 
 The support for clustering is a work-in-progress - the nodes will be depoyed and Splunk will enforce an existing cluster config, but dynamically creating a new cluster is not fully functional.
 
