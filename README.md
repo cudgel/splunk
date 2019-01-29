@@ -3,11 +3,12 @@
 #### Table of Contents
 
 1. [Overview](#overview)
-  - [History](#history)
+    - [File Module](#splunk_files)
+    - [History](#history)
 2. [Module Description](#module-description)
 3. [Usage](#usage)
-  - [Splunk Server Types](#types)
-  - [Inputs](#inputs)
+    - [Splunk Server Types](#types)
+    - [Inputs](#inputs)
 4. [Limitations](#limitations)
 
 <a id="overview"></a>
@@ -17,7 +18,41 @@ This Splunk module supports deploying complex Splunk environments (forwarder, in
 
 It supports running as root or a dedicated account. By default it assumes running as user/group splunk/splunk and will apply Posix ACLs to grant access to log files specified in the hiera hash splunk::inputs.
 
+<a id="splunk_files"></a>
+### File Module
+
 To save everyone's bandwitdh, you should create a private Splunk module "splunk_files" to serve the Splunk installers and any certificates you want to distribute. The parameter splunk::source should be set to 'module' if the module is present.
+
+The structure of the module should contain the following:
+
+```
+files
+├── auth
+│   ├── ixc_splunkd.cert
+│   ├── ixsite1_splunkd.cert
+│   ├── ixsite2_splunkd.cert
+│   ├── srchsite1_splunkd.cert
+│   └── web
+│       ├── ixc_web.cert
+│       ├── ixc_web.key
+│       ├── ixsite1_web.cert
+│       ├── ixsite1_web.key
+│       ├── ixsite2_web.cert
+│       ├── ixsite2_web.key
+        ├── srchsite1_web.cert
+│       ├── srchsite1_web.key
+│  ├── getsplunk.sh
+├── props.conf
+├── -6.6.1-aeae3fe0c5af-Linux-x86_64.tgz
+├── -6.6.3-e21ee54bc796-Linux-x86_64.tgz
+├── -6.6.4-00895e76d346-Linux-x86_64.tgz
+├── -6.6.5-b119a2a8b0ad-Linux-x86_64.tgz
+├── -7.0.1-2b5b15c4ee89-Linux-x86_64.tgz
+├── -7.0.3-fa31da744b51-Linux-x86_64.tgz
+├── -7.1.1-8f0ead9ec3db-Linux-x86_64.tgz
+└── -7.1.3-51d9cac7b837-Linux-x86_64.tgz
+```
+
 
 Since the module defaults to user 'splunk', it includes a defined type 'splunk::acl' that will apply read-only POSIX ACLs for group 'splunk' to any inputs defined using this app. There are optional parameters 'recurse' and 'parents' that will try to apply minimial read-only ACLs to parent paths or contents of a directory if set to true.
 
