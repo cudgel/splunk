@@ -5,7 +5,7 @@
 # specified version of either splunk or splunkforwarder (depending on the
 # type of install) from splunk.com or a hiera-defined server.
 # Manages system/local config files, certificates (if defined in hiera and
-# served via puppet fileserver), and service installation.
+# served via puppet module), and service installation.
 #
 # === Examples
 #
@@ -41,7 +41,7 @@ class splunk::install
   $ext          = $splunk::ext
   $tarcmd       = $splunk::tarcmd
   $manifest     = $splunk::manifest
-  # splunk (web) or fileserver or a custom url
+  # splunk (web) or module or a custom url
   $source       = $splunk::source
   $user         = $splunk::user
   $group        = $splunk::group

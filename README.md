@@ -17,15 +17,7 @@ This Splunk module supports deploying complex Splunk environments (forwarder, in
 
 It supports running as root or a dedicated account. By default it assumes running as user/group splunk/splunk and will apply Posix ACLs to grant access to log files specified in the hiera hash splunk::inputs.
 
-If you choose to use a fileserver definition (you should - to save everyone's bandwitdh) for your splunk tarballs, e.g.:
-
-```
-  [splunk]
-    path /etc/puppetlabs/puppet/files/splunk
-    allow *
-```
-
-The file server should be populated with the tarballs for the splunk components you want to manage and splunk::source should be set to 'fileserver'.
+To save everyone's bandwitdh, you should create a private Splunk module "splunk_files" to serve the Splunk installers and any certificates you want to distribute. The parameter splunk::source should be set to 'module' if the module is present.
 
 Since the module defaults to user 'splunk', it includes a defined type 'splunk::acl' that will apply read-only POSIX ACLs for group 'splunk' to any inputs defined using this app. There are optional parameters 'recurse' and 'parents' that will try to apply minimial read-only ACLs to parent paths or contents of a directory if set to true.
 

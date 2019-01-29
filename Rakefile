@@ -35,7 +35,6 @@ def changelog_future_release
 end
 
 PuppetLint.configuration.send('disable_relative')
-PuppetLint.configuration.send('disable_disable_puppet_url_without_modules')
 
 if Bundler.rubygems.find_name('github_changelog_generator').any?
   GitHubChangelogGenerator::RakeTask.new :changelog do |config|
