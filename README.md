@@ -39,10 +39,8 @@ files
 │       ├── ixsite1_web.key
 │       ├── ixsite2_web.cert
 │       ├── ixsite2_web.key
-        ├── srchsite1_web.cert
+│       ├── srchsite1_web.cert
 │       ├── srchsite1_web.key
-│  ├── getsplunk.sh
-├── props.conf
 ├── splunk-6.6.1-aeae3fe0c5af-Linux-x86_64.tgz
 ├── splunk-6.6.3-e21ee54bc796-Linux-x86_64.tgz
 ├── splunk-6.6.4-00895e76d346-Linux-x86_64.tgz
