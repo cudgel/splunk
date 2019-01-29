@@ -100,12 +100,10 @@ splunk::servercertpass: >
 <a id="types"></a>
 ### Splunk Server Types
 
-####
-
 Below are some examples of various Splunk types.
 
 
-#####A Splunk Universal forwarder, Puppet manages the outputs:
+##### A Splunk Universal forwarder, Puppet manages the outputs:
 
 ```
 splunk::type: 'forwarder'
@@ -119,21 +117,21 @@ splunk::tcpout:
 
 ```
 
-#####A Splunk Universal forwarder with deployment server:
+##### A Splunk Universal forwarder with deployment server:
 
 ```
 splunk::type: 'forwarder'
 splunk::deployment_server: 'https://ds.example.com:8089'
 ```
 
-#####A Splunk heavy forwarder with deployment server:
+##### A Splunk heavy forwarder with deployment server:
 
 ```
 splunk::type: 'heavyforwarder'
 splunk::deployment_server: 'https://ds.example.com:8089'
 ```
 
-#####Indexer cluster master:
+##### Indexer cluster master:
 
 ```
 splunk::clusters:
@@ -153,7 +151,7 @@ splunk::servercert: 'ixc_splunkd.cert'
 splunk::webcert: 'ixc_web.cert'
 ```
 
-#####Indexer cluster member:
+##### Indexer cluster member:
 
 ```
 splunk::type: 'indexer'
@@ -176,7 +174,7 @@ splunk::servercert: 'ixsite1_splunkd.cert'
 splunk::webcert: 'ixsite1_web.cert'
 ```
 
-#####Search head with indexer-cluster for search peers:
+##### Search head with indexer-cluster for search peers:
 
 ```
 splunk::type: 'search'
@@ -197,7 +195,7 @@ splunk::tcpout:
     - 'idx3.example.com:9998'
 ```
 
-#####Splunk search cluster member, multiple indexer clusters:
+##### Splunk search cluster member, multiple indexer clusters:
 
 ```
 splunk::type: 'search'
@@ -221,6 +219,7 @@ splunk::servercert: 'srchsite1_splunkd.cert'
 splunk::webcert: 'srchsite1_web.cert'
 
 ```
+---
 
 <a id="inputs"></a>
 ### Inputs
@@ -244,7 +243,7 @@ content    => <string>, # any custom input definition you would like to use \
 
 ```
 
-#####RedHat log files.
+##### RedHat log files.
 
 ```
 splunk::inputs:
@@ -270,7 +269,7 @@ splunk::inputs:
     sourcetype: 'syslog'
 ```
 
-#####A network input
+##### A network input
 
 ```
 splunk::inputs:
@@ -287,6 +286,8 @@ splunk::inputs:
 ```
 
 More examples can be found in the unit tests.
+
+---
 
 <a id="limitations"></a>
 ## Limitations
