@@ -1,7 +1,7 @@
 # == Class: splunk::config
 #
 # This class manages system/local config files, certificates (if defined in hiera and
-# served via puppet fileserver), and service installation.
+# served via puppet module), and service installation.
 #
 # === Examples
 #
@@ -112,7 +112,7 @@ export PATH
 
   if $cacert != 'cacert.pem' {
     file { "${dir}/etc/auth/${cacert}":
-      source  => "puppet:///splunk_files/auth/${cacert}",
+      source  => "puppet:///modules/splunk_files/auth/${cacert}",
       owner   => $user,
       group   => $group,
       mode    => '0640',
@@ -123,7 +123,7 @@ export PATH
 
   if $privkey != 'privkey.pem' {
     file { "${dir}/etc/auth/splunkweb/${privkey}":
-      source  => "puppet:///splunk_files/auth/splunkweb/${privkey}",
+      source  => "puppet:///modules/splunk_files/auth/splunkweb/${privkey}",
       owner   => $user,
       group   => $group,
       mode    => '0640',
@@ -134,7 +134,7 @@ export PATH
 
   if $servercert != 'server.pem' {
     file { "${dir}/etc/auth/${servercert}":
-      source  => "puppet:///splunk_files/auth/${servercert}",
+      source  => "puppet:///modules/splunk_files/auth/${servercert}",
       owner   => $user,
       group   => $group,
       mode    => '0640',
@@ -145,7 +145,7 @@ export PATH
 
   if $webcert != 'cert.pem' {
     file { "${dir}/etc/auth/splunkweb/${webcert}":
-      source  => "puppet:///splunk_files/auth/splunkweb/${webcert}",
+      source  => "puppet:///modules/splunk_files/auth/splunkweb/${webcert}",
       owner   => $user,
       group   => $group,
       mode    => '0640',
@@ -160,7 +160,7 @@ export PATH
     }
 
     file { "${dir}/etc/auth/splunk.secret":
-      source  => 'puppet:///splunk_files/splunk.secret',
+      source  => 'puppet:///modules/splunk_files/splunk.secret',
       owner   => $user,
       group   => $group,
       mode    => '0640',

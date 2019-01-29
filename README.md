@@ -3,6 +3,7 @@
 #### Table of Contents
 
 1. [Overview](#overview)
+    - [File Module](#splunk_files)
   - [History](#history)
 2. [Module Description](#module-description)
 3. [Usage](#usage)
@@ -17,15 +18,41 @@ This Splunk module supports deploying complex Splunk environments (forwarder, in
 
 It supports running as root or a dedicated account. By default it assumes running as user/group splunk/splunk and will apply Posix ACLs to grant access to log files specified in the hiera hash splunk::inputs.
 
-If you choose to use a fileserver definition (you should - to save everyone's bandwitdh) for your splunk tarballs, e.g.:
+<a id="splunk_files"></a>
+### File Module
+
+To save everyone's bandwitdh, you should create a private Splunk module "splunk_files" to serve the Splunk installers and any certificates you want to distribute. The parameter splunk::source should be set to 'module' if the module is present.
+
+The structure of the module should contain the following:
 
 ```
-  [splunk]
-    path /etc/puppetlabs/puppet/files/splunk
-    allow *
+files
+├── auth
+│   ├── ixc_splunkd.cert
+│   ├── ixsite1_splunkd.cert
+│   ├── ixsite2_splunkd.cert
+│   ├── srchsite1_splunkd.cert
+│   └── web
+│       ├── ixc_web.cert
+│       ├── ixc_web.key
+│       ├── ixsite1_web.cert
+│       ├── ixsite1_web.key
+│       ├── ixsite2_web.cert
+│       ├── ixsite2_web.key
+        ├── srchsite1_web.cert
+│       ├── srchsite1_web.key
+│  ├── getsplunk.sh
+├── props.conf
+├── -6.6.1-aeae3fe0c5af-Linux-x86_64.tgz
+├── -6.6.3-e21ee54bc796-Linux-x86_64.tgz
+├── -6.6.4-00895e76d346-Linux-x86_64.tgz
+├── -6.6.5-b119a2a8b0ad-Linux-x86_64.tgz
+├── -7.0.1-2b5b15c4ee89-Linux-x86_64.tgz
+├── -7.0.3-fa31da744b51-Linux-x86_64.tgz
+├── -7.1.1-8f0ead9ec3db-Linux-x86_64.tgz
+└── -7.1.3-51d9cac7b837-Linux-x86_64.tgz
 ```
 
-The file server should be populated with the tarballs for the splunk components you want to manage and splunk::source should be set to 'fileserver'.
 
 Since the module defaults to user 'splunk', it includes a defined type 'splunk::acl' that will apply read-only POSIX ACLs for group 'splunk' to any inputs defined using this app. There are optional parameters 'recurse' and 'parents' that will try to apply minimial read-only ACLs to parent paths or contents of a directory if set to true.
 
@@ -73,12 +100,10 @@ splunk::servercertpass: >
 <a id="types"></a>
 ### Splunk Server Types
 
-####
-
 Below are some examples of various Splunk types.
 
 
-#####A Splunk Universal forwarder, Puppet manages the outputs:
+##### A Splunk Universal forwarder, Puppet manages the outputs:
 
 ```
 splunk::type: 'forwarder'
@@ -92,21 +117,21 @@ splunk::tcpout:
 
 ```
 
-#####A Splunk Universal forwarder with deployment server:
+##### A Splunk Universal forwarder with deployment server:
 
 ```
 splunk::type: 'forwarder'
 splunk::deployment_server: 'https://ds.example.com:8089'
 ```
 
-#####A Splunk heavy forwarder with deployment server:
+##### A Splunk heavy forwarder with deployment server:
 
 ```
 splunk::type: 'heavyforwarder'
 splunk::deployment_server: 'https://ds.example.com:8089'
 ```
 
-#####Indexer cluster master:
+##### Indexer cluster master:
 
 ```
 splunk::clusters:
@@ -126,7 +151,7 @@ splunk::servercert: 'ixc_splunkd.cert'
 splunk::webcert: 'ixc_web.cert'
 ```
 
-#####Indexer cluster member:
+##### Indexer cluster member:
 
 ```
 splunk::type: 'indexer'
@@ -149,7 +174,7 @@ splunk::servercert: 'ixsite1_splunkd.cert'
 splunk::webcert: 'ixsite1_web.cert'
 ```
 
-#####Search head with indexer-cluster for search peers:
+##### Search head with indexer-cluster for search peers:
 
 ```
 splunk::type: 'search'
@@ -170,7 +195,7 @@ splunk::tcpout:
     - 'idx3.example.com:9998'
 ```
 
-#####Splunk search cluster member, multiple indexer clusters:
+##### Splunk search cluster member, multiple indexer clusters:
 
 ```
 splunk::type: 'search'
@@ -194,6 +219,7 @@ splunk::servercert: 'srchsite1_splunkd.cert'
 splunk::webcert: 'srchsite1_web.cert'
 
 ```
+---
 
 <a id="inputs"></a>
 ### Inputs
@@ -217,7 +243,7 @@ content    => <string>, # any custom input definition you would like to use \
 
 ```
 
-#####RedHat log files.
+##### RedHat log files.
 
 ```
 splunk::inputs:
@@ -243,7 +269,7 @@ splunk::inputs:
     sourcetype: 'syslog'
 ```
 
-#####A network input
+##### A network input
 
 ```
 splunk::inputs:
@@ -260,6 +286,8 @@ splunk::inputs:
 ```
 
 More examples can be found in the unit tests.
+
+---
 
 <a id="limitations"></a>
 ## Limitations
