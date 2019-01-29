@@ -43,14 +43,15 @@ files
 │       ├── srchsite1_web.key
 │  ├── getsplunk.sh
 ├── props.conf
-├── -6.6.1-aeae3fe0c5af-Linux-x86_64.tgz
-├── -6.6.3-e21ee54bc796-Linux-x86_64.tgz
-├── -6.6.4-00895e76d346-Linux-x86_64.tgz
-├── -6.6.5-b119a2a8b0ad-Linux-x86_64.tgz
-├── -7.0.1-2b5b15c4ee89-Linux-x86_64.tgz
-├── -7.0.3-fa31da744b51-Linux-x86_64.tgz
-├── -7.1.1-8f0ead9ec3db-Linux-x86_64.tgz
-└── -7.1.3-51d9cac7b837-Linux-x86_64.tgz
+├── splunk-6.6.1-aeae3fe0c5af-Linux-x86_64.tgz
+├── splunk-6.6.3-e21ee54bc796-Linux-x86_64.tgz
+├── splunk-6.6.4-00895e76d346-Linux-x86_64.tgz
+├── splunk-6.6.5-b119a2a8b0ad-Linux-x86_64.tgz
+├── splunk-7.0.1-2b5b15c4ee89-Linux-x86_64.tgz
+├── splunk-7.0.3-fa31da744b51-Linux-x86_64.tgz
+├── splunk-7.1.1-8f0ead9ec3db-Linux-x86_64.tgz
+├── splunkforwarder-7.1.3-51d9cac7b837-Linux-x86_64.tgz
+└── splunk-7.1.3-51d9cac7b837-Linux-x86_64.tgz
 ```
 
 
