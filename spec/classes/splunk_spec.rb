@@ -442,6 +442,7 @@ describe 'splunk' do
     it { is_expected.to contain_file('/home/splunk/.bashrc.custom') }
     it { is_expected.to contain_class('splunk::install') }
     it { is_expected.to contain_file('/opt/splunk-7.2.1-be11b2c46e23-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
+    it { is_expected.to contain_exec('serviceStart') }
     it { is_expected.to contain_class('splunk::config') }
     it { is_expected.to contain_file('/opt/splunk/etc/splunk-launch.conf').that_notifies('Service[splunk]').that_requires('Exec[test_for_splunk]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/limits.conf').that_notifies('Service[splunk]').that_requires('Exec[test_for_splunk]') }
@@ -472,7 +473,7 @@ describe 'splunk' do
           'binddnpassword' => 'password',
           'groupbasedn' => 'ou=Groups,dc=example,dc=com;',
           'userbasedn' => 'ou=People,dc=example,dc=com;',
-          'userbasefilter' => '(|(memberOf=CN=Splunk Admins,OU=Groups,DC=example,DC=com)(memberOf=CN=Splunk Power Users,OU=Groups,DC=example,DC=com)(memberOf=CN=Splunk Users,OU=Groups,DC=example,DC=com))',
+          'userbasefilter' => '(|(memberOf=CN=SplunkAdmins,OU=Groups,DC=example,DC=com)(memberOf=CN=SplunkPowerUsers,OU=Groups,DC=example,DC=com)(memberOf=CN=SplunkUsers,OU=Groups,DC=example,DC=com))',
           'role_maps' => [
             {
               'role' => 'admin',
