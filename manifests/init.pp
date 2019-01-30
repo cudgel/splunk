@@ -90,22 +90,24 @@ String $tarcmd,
 String $webcert,
 Boolean $webssl,
 Optional[String] $license_master,
-Optional[Hash] $acls = undef,
-Optional[String] $admin_pass = undef,
-Optional[Hash] $inputs = undef,
-Optional[Tuple] $clusters = undef,
+Optional[Hash] $acls                = undef,
+Optional[String] $admin_pass        = undef,
+Optional[String] $authentication    = undef,
+Optional[Hash] $authconfig          = undef,
+Optional[Hash] $inputs              = undef,
+Optional[Tuple] $clusters           = undef,
 Optional[String] $deployment_server = undef,
-Optional[Tuple] $licenses = undef,
-Optional[Array] $packages = undef,
-Optional[Integer] $repl_count = undef,
-Optional[Integer] $repl_port = undef,
-Optional[String] $search_deploy = undef,
-Optional[String] $serviceurl = undef,
-Optional[String] $shcluster_label = undef,
-Optional[String] $shcluster_mode = undef,
-Optional[Array] $shcluster_members = undef,
-Optional[String] $symmkey = undef,
-Optional[Hash] $tcpout = undef
+Optional[Tuple] $licenses           = undef,
+Optional[Array] $packages           = undef,
+Optional[Integer] $repl_count       = undef,
+Optional[Integer] $repl_port        = undef,
+Optional[String] $search_deploy     = undef,
+Optional[String] $serviceurl        = undef,
+Optional[String] $shcluster_label   = undef,
+Optional[String] $shcluster_mode    = undef,
+Optional[Array] $shcluster_members  = undef,
+Optional[String] $symmkey           = undef,
+Optional[Hash] $tcpout              = undef
 ) {
 
   if $type != 'none' {
@@ -212,6 +214,11 @@ Optional[Hash] $tcpout = undef
     }
 
     if $action != 'none' {
+      # have Puppet configure Splunk authentication
+      if $authentication != undef {
+        class { 'splunk::auth': }
+      }
+
       # configure deployment server for indexers and forwarders
       if $type =~ /^(heavy)?forwarder/ and $deployment_server != undef {
         class { 'splunk::deployment': }

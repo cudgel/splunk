@@ -244,10 +244,6 @@ export PATH
       require => Exec['test_for_splunk']
     }
 
-    file { "${local}/server.d/000_default":
-      ensure => absent
-    }
-
     file { "${local}/server.d/000_header":
       content => '# DO NOT EDIT -- Managed by Puppet',
       owner   => $user,
@@ -291,7 +287,6 @@ export PATH
 
     file { "${local}/web.conf":
       content => template("${module_name}/web.conf.erb"),
-      alias   => 'splunk-web',
       owner   => $user,
       group   => $user,
       require => Exec['test_for_splunk'],
@@ -366,7 +361,6 @@ export PATH
       }
 
       file { "${local}/default-mode.conf":
-        alias   => 'splunk-mode',
         content => template("${module_name}/default-mode.conf.erb"),
         owner   => $user,
         group   => $user,
