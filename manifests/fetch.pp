@@ -26,13 +26,19 @@ define splunk::fetch(
     $product = 'splunk'
   }
 
-  if $source == 'module' {
+  if $source== 'module' or $source == 'filserver' {
+    if $source == 'fileserver' {
+      $filepath = 'splunk_files'
+    }
+    if $source == 'module' {
+      $filepath = 'modules/splunk_files'
+    }
 
     file{ "${::splunk::install_path}/${splunk_bundle}":
       owner  => $splunk::user,
       group  => $splunk::group,
       mode   => '0750',
-      source => "puppet:///modules/splunk_files/${splunk_bundle}",
+      source => "puppet:///${filepath}/${splunk_bundle}",
       notify => Exec['unpackSplunk']
     }
 

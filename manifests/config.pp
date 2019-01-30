@@ -25,6 +25,7 @@ class splunk::config
   $local             = $splunk::local
   $user              = $splunk::user
   $group             = $splunk::group
+  $source            = $splunk::source
   $cacert            = $splunk::cacert
   $privkey           = $splunk::privkey
   $servercert        = $splunk::servercert
@@ -110,9 +111,16 @@ export PATH
     require => Exec['test_for_splunk']
   }
 
+  if $source == 'fileserver' {
+    $filepath = 'splunk_files'
+  }
+  if $source == 'module' {
+    $filepath = 'modules/splunk_files'
+  }
+
   if $cacert != 'cacert.pem' {
     file { "${dir}/etc/auth/${cacert}":
-      source  => "puppet:///modules/splunk_files/auth/${cacert}",
+      source  => "puppet:///${filepath}/auth/${cacert}",
       owner   => $user,
       group   => $group,
       mode    => '0640',
@@ -123,7 +131,7 @@ export PATH
 
   if $privkey != 'privkey.pem' {
     file { "${dir}/etc/auth/splunkweb/${privkey}":
-      source  => "puppet:///modules/splunk_files/auth/splunkweb/${privkey}",
+      source  => "puppet:///${filepath}/auth/splunkweb/${privkey}",
       owner   => $user,
       group   => $group,
       mode    => '0640',
@@ -134,7 +142,7 @@ export PATH
 
   if $servercert != 'server.pem' {
     file { "${dir}/etc/auth/${servercert}":
-      source  => "puppet:///modules/splunk_files/auth/${servercert}",
+      source  => "puppet:///${filepath}/auth/${servercert}",
       owner   => $user,
       group   => $group,
       mode    => '0640',
@@ -145,7 +153,7 @@ export PATH
 
   if $webcert != 'cert.pem' {
     file { "${dir}/etc/auth/splunkweb/${webcert}":
-      source  => "puppet:///modules/splunk_files/auth/splunkweb/${webcert}",
+      source  => "puppet:///${filepath}/auth/splunkweb/${webcert}",
       owner   => $user,
       group   => $group,
       mode    => '0640',
@@ -160,7 +168,7 @@ export PATH
     }
 
     file { "${dir}/etc/auth/splunk.secret":
-      source  => 'puppet:///modules/splunk_files/splunk.secret',
+      source  => "puppet:///${filepath}/splunk.secret",
       owner   => $user,
       group   => $group,
       mode    => '0640',
