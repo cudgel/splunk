@@ -26,7 +26,7 @@ define splunk::fetch(
     $product = 'splunk'
   }
 
-  if $source== 'module' or $source == 'filserver' {
+  if $source== 'module' or $source == 'fileserver' {
     if $source == 'fileserver' {
       $filepath = 'splunk_files'
     }
