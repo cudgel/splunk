@@ -1,7 +1,7 @@
 <%
   config = scope['::splunk::authconfig']
 %>
-['<%= config['label'] -%>]
+[<%= config['label'] -%>]
 SSLEnabled = <%= config['sslenabled'] %>
 anonymous_referrals = <%= config['anonymous_referrals'] %>
 bindDN = <%= config['binddn'] %>
