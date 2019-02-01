@@ -2,29 +2,29 @@
   config = scope['::splunk::authconfig']
 %>
 ['<%= config['label'] -%>]
-SSLEnabled = <%= config['sslenabled'] -%>
-anonymous_referrals = <%= config['anonymous_referrals'] -%>
-bindDN = <%= config['binddn'] -%>
-bindDNpassword = <%= config['binddnpassword'] -%>
-charset = <%= config['charset'] -%>
-groupBaseDN = <%= config['groupbasedn'] -%>
-groupMappingAttribute = <%= config['groupmappingattribute'] -%>
-groupMemberAttribute = <%= config['groupmemberattribute'] -%>
-groupNameAttribute = <%= config['groupnameattribute'] -%>
-host = <%= config['host'] -%>
-nestedGroups = <%= config['nestedgroups'] -%>
-network_timeout = <%= config['network_timeout'] -%>
-port = <%= config['port'] -%>
-realNameAttribute = <%= config['realnameattribute'] -%>
-sizelimit = <%= config['sizelimit'] -%>
-timelimit = <%= config['timelimit'] -%>
-userBaseDN = <%= config['userbasedn'] -%>
-userBaseFilter = <%= config['userbasefilter'] -%>
-userNameAttribute = <%= config['usernameattribute'] -%>
-emailAttribute = <%= config['emailattribute'] -%>
+SSLEnabled = <%= config['sslenabled'] %>
+anonymous_referrals = <%= config['anonymous_referrals'] %>
+bindDN = <%= config['binddn'] %>
+bindDNpassword = <%= config['binddnpassword'] %>
+charset = <%= config['charset'] %>
+groupBaseDN = <%= config['groupbasedn'] %>
+groupMappingAttribute = <%= config['groupmappingattribute'] %>
+groupMemberAttribute = <%= config['groupmemberattribute'] %>
+groupNameAttribute = <%= config['groupnameattribute'] %>
+host = <%= config['host'] %>
+nestedGroups = <%= config['nestedgroups'] %>
+network_timeout = <%= config['network_timeout'] %>
+port = <%= config['port'] %>
+realNameAttribute = <%= config['realnameattribute'] %>
+sizelimit = <%= config['sizelimit'] %>
+timelimit = <%= config['timelimit'] %>
+userBaseDN = <%= config['userbasedn'] %>
+userBaseFilter = <%= config['userbasefilter'] %>
+userNameAttribute = <%= config['usernameattribute'] %>
+emailAttribute = <%= config['emailattribute'] %>
 
 [roleMap_<%= config['label'] -%>]
-<% for role in config['role_maps'] %>
+<% for role in config['role_maps'] -%>
 <%= role['role'] %> = <% role['groups'].each do |group| %><%= group -%><%= ";" unless group == role['groups'].last %><% end %>
 <% end -%><%# end role maps config -%>
 
