@@ -34,7 +34,8 @@ class splunk::auth(
     group   => $group,
     mode    => '0440',
     content => $content,
-    require => File["${local}/auth.d"]
+    require => File["${local}/auth.d"],
+    notify  => Exec['update-server']
   }
 
 }

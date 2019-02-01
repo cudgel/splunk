@@ -214,17 +214,31 @@ Optional[Hash] $tcpout              = undef
     }
 
     if $action != 'none' {
-      # have Puppet configure Splunk authentication
-      if $authentication != undef {
-        class { 'splunk::auth': }
-      }
-
       # configure deployment server for indexers and forwarders
       if $type =~ /^(heavy)?forwarder/ and $deployment_server != undef {
         class { 'splunk::deployment': }
       }
 
       $perms = "${user}:${group}"
+
+      # have Puppet configure Splunk authentication
+      if $authentication != undef {
+        class { 'splunk::auth': }
+        $auth_dir  = "${local}/auth.d/"
+        $auth_conf  = "${local}/authentication.conf"
+        $auth_cmd = "/bin/cat ${auth_dir}/* > ${auth_conf}; \
+            chown ${perms} ${auth_conf}"
+
+        exec { 'update-auth':
+          command     => $auth_cmd,
+          refreshonly => true,
+          user        => $user,
+          group       => $group,
+          umask       => '027',
+          creates     => $auth_conf,
+          notify      => Service['splunk']
+        }
+      }
 
       $inputs_dir  = "${local}/inputs.d/"
       $inputs_conf  = "${local}/inputs.conf"
