@@ -51,11 +51,11 @@ class splunk::install
 
   $stopcmd  = 'splunk stop'
 
-  if $admin_pass != undef and ($my_cwd == undef or $my_cwd != $dir) {
-    $seed = " --seed-passwd ${admin_pass}"
-  } else {
+  # if $admin_pass != undef and ($my_cwd == undef or $my_cwd != $dir) {
+  #   $seed = " --seed-passwd ${admin_pass}"
+  # } else {
     $seed = ''
-  }
+  # }
   $startcmd = "splunk start --accept-license --answer-yes --no-prompt${seed}"
 
 
