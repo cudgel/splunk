@@ -143,6 +143,8 @@ class splunk::install
     environment => 'HISTFILE=/dev/null',
     path        => "${dir}/bin:/bin:/usr/bin:",
     cwd         => $install_path,
+    user        => $user,
+    group       => $group,
     subscribe   => Exec['unpackSplunk'],
     unless      => "test -f ${local}/user-seed.conf"
   }
