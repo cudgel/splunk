@@ -132,23 +132,6 @@ class splunk::install
     onlyif    => "test -d ${dir}"
   }
 
-  $userseed = "[user_info]
-  USERNAME = admin
-  HASHED_PASSWORD = "
-  $seedcmd = "echo \"${userseed}\" > ${local}/user-seed.conf \
-      && echo `splunk hash-password ${admin_pass}` >> ${local}/user-seed.conf"
-
-  exec { 'hashPassword':
-    command     => $seedcmd,
-    environment => 'HISTFILE=/dev/null',
-    path        => "${dir}/bin:/bin:/usr/bin:",
-    cwd         => $install_path,
-    user        => $user,
-    group       => $group,
-    subscribe   => Exec['unpackSplunk'],
-    unless      => "test -f ${local}/user-seed.conf"
-  }
-
   exec { 'serviceStart':
     command     => "${stopcmd}; ${startcmd}",
     path        => "${dir}/bin:/bin:/usr/bin:",
@@ -169,4 +152,20 @@ class splunk::install
     returns   => [0, 8]
   }
 
+  $userseed = "[user_info]
+  USERNAME = admin
+  HASHED_PASSWORD = "
+  $seedcmd = "echo \"${userseed}\" > ${local}/user-seed.conf \
+      && echo `splunk hash-password ${admin_pass}` >> ${local}/user-seed.conf"
+
+  exec { 'hashPassword':
+    command     => $seedcmd,
+    environment => 'HISTFILE=/dev/null',
+    path        => "${dir}/bin:/bin:/usr/bin:",
+    cwd         => $install_path,
+    user        => $user,
+    group       => $group,
+    subscribe   => Exec['unpackSplunk'],
+    unless      => "test -f ${local}/user-seed.conf"
+  }
 }
