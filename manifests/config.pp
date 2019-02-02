@@ -23,6 +23,7 @@ class splunk::config
   $confdir           = $splunk::confdir
   $confpath          = $splunk::confpath
   $local             = $splunk::local
+  $source            = $splunk::source
   $user              = $splunk::user
   $group             = $splunk::group
   $cacert            = $splunk::cacert
@@ -125,62 +126,61 @@ export PATH
     }
   }
 
-  if $cacert != 'cacert.pem' {
-    file { "${dir}/etc/auth/${cacert}":
-      source  => "puppet:///modules/splunk_files/auth/${cacert}",
-      owner   => $user,
-      group   => $group,
-      mode    => '0640',
-      notify  => Service['splunk'],
-      require => Exec['test_for_splunk']
-    }
-  }
+  if $source != 'splunk' and $source !~ /http.*/ {
 
-  if $privkey != 'privkey.pem' {
-    file { "${dir}/etc/auth/splunkweb/${privkey}":
-      source  => "puppet:///modules/splunk_files/auth/splunkweb/${privkey}",
-      owner   => $user,
-      group   => $group,
-      mode    => '0640',
-      notify  => Service['splunk'],
-      require => Exec['test_for_splunk']
-    }
-  }
-
-  if $servercert != 'server.pem' {
-    file { "${dir}/etc/auth/${servercert}":
-      source  => "puppet:///modules/splunk_files/auth/${servercert}",
-      owner   => $user,
-      group   => $group,
-      mode    => '0640',
-      notify  => Service['splunk'],
-      require => Exec['test_for_splunk']
-    }
-  }
-
-  if $webcert != 'cert.pem' {
-    file { "${dir}/etc/auth/splunkweb/${webcert}":
-      source  => "puppet:///modules/splunk_files/auth/splunkweb/${webcert}",
-      owner   => $user,
-      group   => $group,
-      mode    => '0640',
-      notify  => Service['splunk'],
-      require => Exec['test_for_splunk']
-    }
-  }
-
-  if $managesecret == true {
-    file { "${dir}/etc/splunk.secret":
-      ensure => absent
+    if $cacert != 'cacert.pem' {
+      file { "${dir}/etc/auth/${cacert}":
+        source  => "${source}/auth/${cacert}",
+        owner   => $user,
+        group   => $group,
+        mode    => '0640',
+        notify  => Service['splunk'],
+        require => Exec['test_for_splunk']
+      }
     }
 
-    file { "${dir}/etc/auth/splunk.secret":
-      source  => 'puppet:///modules/splunk_files/splunk.secret',
-      owner   => $user,
-      group   => $group,
-      mode    => '0640',
-      notify  => Service['splunk'],
-      require => Exec['test_for_splunk']
+    if $privkey != 'privkey.pem' {
+      file { "${dir}/etc/auth/splunkweb/${privkey}":
+        source  => "${source}/auth/splunkweb/${privkey}",
+        owner   => $user,
+        group   => $group,
+        mode    => '0640',
+        notify  => Service['splunk'],
+        require => Exec['test_for_splunk']
+      }
+    }
+
+    if $servercert != 'server.pem' {
+      file { "${dir}/etc/auth/${servercert}":
+        source  => "${source}/auth/${servercert}",
+        owner   => $user,
+        group   => $group,
+        mode    => '0640',
+        notify  => Service['splunk'],
+        require => Exec['test_for_splunk']
+      }
+    }
+
+    if $webcert != 'cert.pem' {
+      file { "${dir}/etc/auth/splunkweb/${webcert}":
+        source  => "${source}/auth/splunkweb/${webcert}",
+        owner   => $user,
+        group   => $group,
+        mode    => '0640',
+        notify  => Service['splunk'],
+        require => Exec['test_for_splunk']
+      }
+    }
+
+    if $managesecret == true {
+      file { "${dir}/etc/auth/splunk.secret":
+        source  => "${source}/splunk.secret",
+        owner   => $user,
+        group   => $group,
+        mode    => '0640',
+        notify  => Service['splunk'],
+        require => Exec['test_for_splunk']
+      }
     }
   }
 
@@ -302,6 +302,7 @@ export PATH
 
     file { "${local}/web.conf":
       content => template("${module_name}/web.conf.erb"),
+      alias   => 'splunk-web',
       owner   => $user,
       group   => $user,
       require => Exec['test_for_splunk'],
@@ -376,6 +377,7 @@ export PATH
       }
 
       file { "${local}/default-mode.conf":
+        alias   => 'splunk-mode',
         content => template("${module_name}/default-mode.conf.erb"),
         owner   => $user,
         group   => $user,
