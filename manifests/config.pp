@@ -40,6 +40,7 @@ class splunk::config
   $is_captain        = $splunk::is_captain
   $shcluster_members = $splunk::shcluster_members
   $symmkey           = $splunk::symmkey
+  $pass4symmkey      = $splunk::pass4symmkey
   $splunk_acls       = $splunk::acls
   $splunk_inputs     = $splunk::inputs
   $cluster_mode      = $splunk::cluster_mode
@@ -108,6 +109,21 @@ export PATH
     group   => $group,
     notify  => Service['splunk'],
     require => Exec['test_for_splunk']
+  }
+
+  if $symmkey != undef and $pass4symmkey != $symmkey {
+    $symmcmd = "echo \"${pass4symmkey}\" > ${local}/symmkey.conf"
+
+    exec { 'storeKey':
+      command     => $symmcmd,
+      environment => 'HISTFILE=/dev/null',
+      path        => "${dir}/bin:/bin:/usr/bin:",
+      cwd         => $install_path,
+      user        => $user,
+      group       => $group,
+      require     => Exec['test_for_splunk'],
+      unless      => "test -f ${local}/symmkey.conf"
+    }
   }
 
   if $cacert != 'cacert.pem' {

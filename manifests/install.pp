@@ -51,11 +51,11 @@ class splunk::install
 
   $stopcmd  = 'splunk stop'
 
-  # if $admin_pass != undef and ($my_cwd == undef or $my_cwd != $dir) {
-  #   $seed = " --seed-passwd ${admin_pass}"
-  # } else {
+  if $admin_pass != undef and ($my_cwd == undef or $my_cwd != $dir) {
+    $seed = " --seed-passwd ${admin_pass}"
+  } else {
     $seed = ''
-  # }
+  }
   $startcmd = "splunk start --accept-license --answer-yes --no-prompt${seed}"
 
 
@@ -150,22 +150,5 @@ class splunk::install
     creates   => '/etc/init.d/splunk',
     require   => Exec['unpackSplunk'],
     returns   => [0, 8]
-  }
-
-  $userseed = "[user_info]
-  USERNAME = admin
-  HASHED_PASSWORD = "
-  $seedcmd = "echo \"${userseed}\" > ${local}/user-seed.conf \
-      && echo `splunk hash-password ${admin_pass}` >> ${local}/user-seed.conf"
-
-  exec { 'hashPassword':
-    command     => $seedcmd,
-    environment => 'HISTFILE=/dev/null',
-    path        => "${dir}/bin:/bin:/usr/bin:",
-    cwd         => $install_path,
-    user        => $user,
-    group       => $group,
-    subscribe   => Exec['unpackSplunk'],
-    unless      => "test -f ${local}/user-seed.conf"
   }
 }
