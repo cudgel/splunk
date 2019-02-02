@@ -132,6 +132,19 @@ class splunk::install
     onlyif    => "test -d ${dir}"
   }
 
+  $userseed = "[user_info]
+  USERNAME = admin
+  HASHED_PASSWORD = "
+
+  exec { 'hashPassword':
+    command     => " echo \"${userseed} $(splunk hash-password ${admin_pass}\"} > ${local}/user-seed.conf",
+    environment => 'HISTCONTROL=ignoreboth',
+    path        => "${dir}/bin:/bin:/usr/bin:",
+    cwd         => $install_path,
+    subscribe   => Exec['unpackSplunk'],
+    unless      => "test -f ${local}/user-seed.conf"
+  }
+
   exec { 'serviceStart':
     command     => "${stopcmd}; ${startcmd}",
     path        => "${dir}/bin:/bin:/usr/bin:",
