@@ -135,7 +135,7 @@ class splunk::install
   $userseed = "[user_info]
   USERNAME = admin
   HASHED_PASSWORD = "
-  $seedcmd = "echo ${userseed} > ${local}/user-seed.conf \
+  $seedcmd = "echo \"${userseed}\" > ${local}/user-seed.conf \
       && echo `splunk hash-password ${admin_pass}` >> ${local}/user-seed.conf"
 
   exec { 'hashPassword':
