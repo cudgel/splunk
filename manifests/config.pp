@@ -115,14 +115,13 @@ export PATH
     $symmcmd = "echo \"${pass4symmkey}\" > ${local}/symmkey.conf"
 
     exec { 'storeKey':
-      command     => $symmcmd,
-      environment => 'HISTFILE=/dev/null',
-      path        => "${dir}/bin:/bin:/usr/bin:",
-      cwd         => $install_path,
-      user        => $user,
-      group       => $group,
-      require     => Exec['test_for_splunk'],
-      unless      => "test -f ${local}/symmkey.conf"
+      command => $symmcmd,
+      path    => "${dir}/bin:/bin:/usr/bin:",
+      cwd     => $install_path,
+      user    => $user,
+      group   => $group,
+      require => Exec['test_for_splunk'],
+      unless  => "test -f ${local}/symmkey.conf"
     }
   }
 
