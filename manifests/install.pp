@@ -133,8 +133,8 @@ class splunk::install
   }
 
   exec { 'serviceStart':
-    command     => " ${stopcmd}; ${startcmd}",
-    environment => 'HISTFILE=ignorespace',
+    command     => "${stopcmd}; ${startcmd}",
+    environment => 'HISTFILE=/dev/null',
     path        => "${dir}/bin:/bin:/usr/bin:",
     user        => $user,
     group       => $group,
