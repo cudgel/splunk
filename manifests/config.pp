@@ -112,8 +112,8 @@ export PATH
     require => Exec['test_for_splunk']
   }
 
-  if $pass4symmkey != undef and $pass4symmkey =~ /^\$\S+/ {
-    $symmcmd = "echo \"${pass4symmkey}\" > ${local}/symmkey.conf"
+  if $pass4symmkey != undef and $pass4symmkey =~ /\$\d\$\w+/ {
+    $symmcmd = "echo '${pass4symmkey}' > ${local}/symmkey.conf"
 
     exec { 'storeKey':
       command => $symmcmd,
