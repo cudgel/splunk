@@ -148,7 +148,7 @@ Optional[Hash] $tcpout              = undef
       $shcluster_id = undef
     }
 
-    if defined('$splunk_symmkey') and $symmkey =~ /\$\d\$\w+/ {
+    if defined('$splunk_symmkey') and $symmkey =~ /\$\d\$\S+/ {
       $pass4symmkey = $::splunk_symmkey
     } else {
       $pass4symmkey = undef
