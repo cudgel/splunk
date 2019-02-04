@@ -148,10 +148,10 @@ Optional[Hash] $tcpout              = undef
       $shcluster_id = undef
     }
 
-    if defined('$splunk_symmkey') and is_string('$splunk_symmkey') {
+    if defined('$splunk_symmkey') and and $symmkey =~ /\$\d\$\w+/ {
       $pass4symmkey = $::splunk_symmkey
     } else {
-      $pass4symmkey = $symmkey
+      $pass4symmkey = undef
     }
 
     # splunk user home dir from fact
