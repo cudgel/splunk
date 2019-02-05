@@ -141,14 +141,14 @@ Optional[Hash] $tcpout              = undef
     $manifest = "${sourcepart}-${new_version}-${os}-${arch}-manifest"
 
     # fact containing splunk search head cluster id (if a cluster member)
-    # once defined, we add it to our generated files so it is not lost
+    # once defined, we add it to our generated files so it is not  lost
     if defined('$splunk_shcluster_id') and is_string('$splunk_shcluster_id') {
       $shcluster_id = $::splunk_shcluster_id
     } else {
       $shcluster_id = undef
     }
 
-    if defined('$splunk_symmkey') and $symmkey =~ /\$\d\$\S+/ {
+    if defined('$splunk_symmkey') and $::splunk_symmkey =~ /\$\d\$\S+/ {
       $pass4symmkey = $::splunk_symmkey
     } else {
       $pass4symmkey = undef
