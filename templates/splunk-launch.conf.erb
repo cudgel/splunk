@@ -5,7 +5,7 @@ selinux = scope['::selinux']
 db = scope['::splunk::splunkdb']
 home = scope['::splunk::dir']
 user = scope['::splunk::user']
-name = scope['::splunk::type']
+name = scope['::splunk::sourcepart']
 -%>
 # Modify the following line to suit the location of your Splunk install.
 # If unset, Splunk will use the parent of the directory this configuration
