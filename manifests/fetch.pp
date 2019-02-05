@@ -53,7 +53,7 @@ define splunk::fetch(
       owner  => $splunk::user,
       group  => $splunk::group,
       mode   => '0750',
-      source => "${source}}/${splunk_bundle}",
+      source => "${source}/${splunk_bundle}",
       notify => Exec['unpackSplunk']
     }
   }
