@@ -9,7 +9,7 @@
 -%>
 
 [SSL]
-sslPassword = <% if certpass != nil -%><%= certpass %><% else -%><%= servercertpass %><% end -%>
+sslPassword = <% if certpass != nil -%><%= certpass %><% else -%><%= servercertpass %><% end %>
 cipherSuite = <%= ciphersuite %>
 <% if ecdhcurves != nil -%>
 ecdhCurves = <%= ecdhcurves %>

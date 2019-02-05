@@ -30,7 +30,7 @@ disabled = false
 forceTimebasedAutoLB = <%= forcetimebasedautolb %>
 server = <% indexers['servers'].each do |server| %><%= server %><%= "," unless server == indexers['servers'].last %><% end %>
 sslCommonNameToCheck = <%= indexers['cname'] %>
-sslPassword = <% if certpass != nil -%><%= certpass %><% else -%><%= servercertpass %><% end -%>
+sslPassword = <% if certpass != nil -%><%= certpass %><% else -%><%= servercertpass %><% end %>
 sslVerifyServerCert = <%= sslverify %>
 sslVersions = <%= sslversions %>
 useClientSSLCompression = <%= sslclientcompression %>

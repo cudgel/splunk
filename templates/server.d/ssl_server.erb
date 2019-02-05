@@ -27,7 +27,7 @@ enableSplunkdSSL = true
 requireClientCert = <%= sslclientcert %>
 sendStrictTransportSecurityHeader = <%= sslstsheader %>
 serverCert = $SPLUNK_HOME/etc/auth/<%= servercert %>
-sslPassword = <% if certpass != nil -%><%= certpass %><% else -%><%= servercertpass %><% end -%>
+sslPassword = <% if certpass != nil -%><%= certpass %><% else -%><%= servercertpass %><% end %>
 sslVerifyServerCert = <%= sslverify %>
 sslVersions = <%= sslversions %>
 sslVersionsForClient = <%= sslversions %>

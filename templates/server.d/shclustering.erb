@@ -1,14 +1,14 @@
 <%
-  fqdn = scope['::fqdn']
-  id = scope['::splunk::shcluster_id']
-  confdeploy = scope['::splunk::search_deploy']
-  shcluster_mode = scope['::splunk::shcluster_mode']
-  shcluster_label = scope['::splunk::shcluster_label']
-  symmkey = scope['::splunk::symmkey']
-  pass4symmkey = scope['::splunk::pass4symmkey']
+  fqdn              = scope['::fqdn']
+  id                = scope['::splunk::shcluster_id']
+  confdeploy        = scope['::splunk::search_deploy']
+  shcluster_mode    = scope['::splunk::shcluster_mode']
+  shcluster_label   = scope['::splunk::shcluster_label']
+  symmkey           = scope['::splunk::symmkey']
+  pass4symmkey      = scope['::splunk::pass4symmkey']
   preferred_captain = scope['::splunk::preferred_captain']
-  adhoc_searchhead = scope['::splunk::adhoc_searchhead']
-  captain_is_adhoc = scope['::splunk::captain_is_adhoc']
+  adhoc_searchhead  = scope['::splunk::adhoc_searchhead']
+  captain_is_adhoc  = scope['::splunk::captain_is_adhoc']
 %>
 <% if shcluster_mode == 'peer' %>
 [shclustering]
@@ -21,7 +21,7 @@ conf_replication_include.mobile_access = true
 conf_replication_include.mobile_access_users = true
 conf_replication_include.mobile_access_settings = true
 mgmt_uri = https://<%= fqdn %>:8089
-pass4SymmKey = <%if pass4symmkey != nil -%><%= pass4symmkey %><% else -%><%= symmkey %><% end -%>
+pass4SymmKey = <%if pass4symmkey != nil -%><%= pass4symmkey %><% else -%><%= symmkey %><% end %>
 shcluster_label = <%= shcluster_label %>
 adhoc_searchhead = <%= adhoc_searchhead %>
 captain_is_adhoc_searchhead = = <%= captain_is_adhoc %>
