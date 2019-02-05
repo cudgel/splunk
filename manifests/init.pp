@@ -90,22 +90,24 @@ String $tarcmd,
 String $webcert,
 Boolean $webssl,
 Optional[String] $license_master,
-Optional[Hash] $acls = undef,
-Optional[String] $admin_pass = undef,
-Optional[Hash] $inputs = undef,
-Optional[Tuple] $clusters = undef,
+Optional[Hash] $acls                = undef,
+Optional[String] $admin_pass        = undef,
+Optional[String] $authentication    = undef,
+Optional[Hash] $authconfig          = undef,
+Optional[Hash] $inputs              = undef,
+Optional[Tuple] $clusters           = undef,
 Optional[String] $deployment_server = undef,
-Optional[Tuple] $licenses = undef,
-Optional[Array] $packages = undef,
-Optional[Integer] $repl_count = undef,
-Optional[Integer] $repl_port = undef,
-Optional[String] $search_deploy = undef,
-Optional[String] $serviceurl = undef,
-Optional[String] $shcluster_label = undef,
-Optional[String] $shcluster_mode = undef,
-Optional[Array] $shcluster_members = undef,
-Optional[String] $symmkey = undef,
-Optional[Hash] $tcpout = undef
+Optional[Tuple] $licenses           = undef,
+Optional[Array] $packages           = undef,
+Optional[Integer] $repl_count       = undef,
+Optional[Integer] $repl_port        = undef,
+Optional[String] $search_deploy     = undef,
+Optional[String] $serviceurl        = undef,
+Optional[String] $shcluster_label   = undef,
+Optional[String] $shcluster_mode    = undef,
+Optional[Array] $shcluster_members  = undef,
+Optional[String] $symmkey           = undef,
+Optional[Hash] $tcpout              = undef
 ) {
 
   if $type != 'none' {
@@ -139,11 +141,23 @@ Optional[Hash] $tcpout = undef
     $manifest = "${sourcepart}-${new_version}-${os}-${arch}-manifest"
 
     # fact containing splunk search head cluster id (if a cluster member)
-    # once defined, we add it to our generated files so it is not lost
+    # once defined, we add it to our generated files so it is not  lost
     if defined('$splunk_shcluster_id') and is_string('$splunk_shcluster_id') {
       $shcluster_id = $::splunk_shcluster_id
     } else {
       $shcluster_id = undef
+    }
+
+    if defined('$splunk_symmkey') and $::splunk_symmkey =~ /\$\d\$\S+/ {
+      $pass4symmkey = $::splunk_symmkey
+    } else {
+      $pass4symmkey = undef
+    }
+
+    if defined('$splunk_certpass') and $::splunk_certpass =~ /\$\d\$\S+/ {
+      $certpass = $::splunk_certpass
+    } else {
+      $certpass = undef
     }
 
     # splunk user home dir from fact
@@ -218,6 +232,25 @@ Optional[Hash] $tcpout = undef
       }
 
       $perms = "${user}:${group}"
+
+      # have Puppet configure Splunk authentication
+      if $authentication != undef {
+        class { 'splunk::auth': }
+        $auth_dir  = "${local}/auth.d/"
+        $auth_conf  = "${local}/authentication.conf"
+        $auth_cmd = "/bin/cat ${auth_dir}/* > ${auth_conf}; \
+            chown ${perms} ${auth_conf}"
+
+        exec { 'update-auth':
+          command     => $auth_cmd,
+          refreshonly => true,
+          user        => $user,
+          group       => $group,
+          umask       => '027',
+          creates     => $auth_conf,
+          notify      => Service['splunk']
+        }
+      }
 
       $inputs_dir  = "${local}/inputs.d/"
       $inputs_conf  = "${local}/inputs.conf"

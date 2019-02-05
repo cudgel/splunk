@@ -134,6 +134,7 @@ class splunk::install
 
   exec { 'serviceStart':
     command     => "${stopcmd}; ${startcmd}",
+    environment => 'HISTFILE=/dev/null',
     path        => "${dir}/bin:/bin:/usr/bin:",
     user        => $user,
     group       => $group,
@@ -151,5 +152,4 @@ class splunk::install
     require   => Exec['unpackSplunk'],
     returns   => [0, 8]
   }
-
 }

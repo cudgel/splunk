@@ -6,6 +6,7 @@
   ciphersuite          = scope['::splunk::ciphersuite']
   ecdhcurves           = scope['::splunk::ecdhcurves']
   servercertpass       = scope['::splunk::servercertpass']
+  certpass             = scope['splunk::certpass']
   servercert           = scope['::splunk::servercert']
   sslclientcompression = scope['::splunk::sslclientcompression']
   sslverify            = scope['::splunk::sslverify']
@@ -29,7 +30,7 @@ disabled = false
 forceTimebasedAutoLB = <%= forcetimebasedautolb %>
 server = <% indexers['servers'].each do |server| %><%= server %><%= "," unless server == indexers['servers'].last %><% end %>
 sslCommonNameToCheck = <%= indexers['cname'] %>
-sslPassword = <%= servercertpass %>
+sslPassword = <% if certpass != nil -%><%= certpass %><% else -%><%= servercertpass %><% end %>
 sslVerifyServerCert = <%= sslverify %>
 sslVersions = <%= sslversions %>
 useClientSSLCompression = <%= sslclientcompression %>

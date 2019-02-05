@@ -25,25 +25,7 @@ define splunk::fetch(
   } else {
     $product = 'splunk'
   }
-
-  if $source== 'module' or $source == 'fileserver' {
-    if $source == 'fileserver' {
-      $filepath = 'splunk_files'
-    }
-    if $source == 'module' {
-      $filepath = 'modules/splunk_files'
-    }
-
-    file{ "${::splunk::install_path}/${splunk_bundle}":
-      owner  => $splunk::user,
-      group  => $splunk::group,
-      mode   => '0750',
-      source => "puppet:///${filepath}/${splunk_bundle}",
-      notify => Exec['unpackSplunk']
-    }
-
-  } else {
-
+  if $source == 'splunk' or source =~ /http.*/  {
     if $source == 'splunk' {
       $wget_url = "https://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=linux&version=${version}&product=${product}&filename=${sourcepart}-${version}-${release}-Linux-x86_64.tgz&wget=true"
     } else {
@@ -65,6 +47,14 @@ define splunk::fetch(
       mode    => '0750',
       require => Exec["retrieve_${splunk_bundle}"],
       notify  => Exec['unpackSplunk']
+    }
+  } else {
+    file{ "${::splunk::install_path}/${splunk_bundle}":
+      owner  => $splunk::user,
+      group  => $splunk::group,
+      mode   => '0750',
+      source => "${source}}/${splunk_bundle}",
+      notify => Exec['unpackSplunk']
     }
   }
 
