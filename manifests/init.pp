@@ -154,6 +154,12 @@ Optional[Hash] $tcpout              = undef
       $pass4symmkey = undef
     }
 
+    if defined('$splunk_certpass') and $::splunk_certpass =~ /\$\d\$\S+/ {
+      $certpass = $::splunk_certpass
+    } else {
+      $certpass = undef
+    }
+
     # splunk user home dir from fact
     if defined('$splunk_home') and is_string('$splunk_home') {
       $home = $::splunk_home
