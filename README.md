@@ -19,14 +19,19 @@ This Splunk module supports deploying complex Splunk environments (forwarder, in
 It supports running as root or a dedicated account. By default it assumes running as user/group splunk/splunk and will apply Posix ACLs to grant access to log files specified in the hiera hash splunk::inputs.
 
 <a id="splunk_files"></a>
-### File Module
+### File Source
 
-To save everyone's bandwitdh, you should create a private Splunk module "splunk_files" to serve the Splunk installers and any certificates you want to distribute. The parameter splunk::source should be set to 'module' if the module is present.
+To save everyone's bandwitdh, you should find another way to serve the Splunk installers and any certificates you want to distribute. The parameter splunk::source can be set to any valid Puppet file resource that contains the expected structure.
 
-The structure of the module should contain the following:
+For example, the directory structure below exported on the puppetmaster as splunk_files would have the setting `splunk::source: 'puppet:///splunk_files'`.
 
 ```
-files
+[splunk_files]
+  path /etc/puppetlabs/puppet/files/splunk
+```
+
+```
+splunk
 ├── auth
 │   ├── ixc_splunkd.cert
 │   ├── ixsite1_splunkd.cert
@@ -79,6 +84,8 @@ splunk::release: 06d57c595b80
 
 Typically I would define outputs and cluster sites based on a fact like datacenter, but the examples below show it in a node context.
 
+### Security
+
 The app can install certificates from a Puppet file server if any of the default cert names are overridden in hiera. If you supply a new cert you must also supply the cert password.
 
 Use hiera-eyaml to protect secrets in your control repo, like the server cert password, e.g. 'password':
@@ -95,6 +102,48 @@ splunk::servercertpass: >
     b0n6IzA8BgkqhkiG9w0BBwEwHQYJYIZIAWUDBAEqBBAULtw3VN2+8goqyOMa
     Hn0pgBAKWUW3IYF42XuuivjTfZlN]
 ```
+
+Starting with v1.5.0, the app will store only hashed passwords on-disk once it knows them.
+
+### Authentication
+
+Starting with v1.5.0 the app has tested support for deploying a working LDAP authentication configuration. If you supply the setting `splunk::authpass` in EYAML, the module will hash and use this password instead of the cleartext password in the authconfig setting.
+
+splunk::authentication: 'LDAP'
+splunk::authconfig:
+  sslenabled: 1
+  anonymous_referrals: 1
+  charset: 'utf8'
+  groupbasedn: 'ou=Groups,dc=example,dc=com;'
+  groupmappingattribute: 'dn'
+  groupmemberattribute: 'member'
+  groupNameAttribute: 'cn'
+  label: 'AD'
+  type: 'Active Directory'
+  host: 'ad.example.com'
+  binddn: 'cn=Directory Manager'
+  binddnpassword: 'password'
+  nestedgroups: 1
+  network_timeout: 20
+  port: 636
+  realnameattribute: 'displayname'
+  sizelimit: 1000
+  timelimit: 15
+  userbasedn: 'ou=People,dc=example,dc=com;'
+  userbasefilter: '(|(memberOf=CN=SplunkAdmins,OU=Groups,DC=example,DC=com)(memberOf=CN=SplunkPowerUsers,OU=Groups,DC=example,DC=com)(memberOf=CN=SplunkUsers,OU=Groups,DC=example,DC=com))'
+  usernameattribute: 'samaccountname'
+  emailattribute: 'userprincipalname'
+  role_maps:
+    - role: 'admin'
+      groups:
+        - 'SplunkAdmins'
+    - role: 'power'
+      groups:
+        - 'SplunkPowerUsers'
+    - role: 'users'
+      groups:
+        - 'SplunkUsers'
+        - 'Contractors'
 
 <a id="types"></a>
 ### Splunk Server Types

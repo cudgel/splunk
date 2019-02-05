@@ -302,7 +302,6 @@ export PATH
 
     file { "${local}/web.conf":
       content => template("${module_name}/web.conf.erb"),
-      alias   => 'splunk-web',
       owner   => $user,
       group   => $user,
       require => Exec['test_for_splunk'],
@@ -377,7 +376,6 @@ export PATH
       }
 
       file { "${local}/default-mode.conf":
-        alias   => 'splunk-mode',
         content => template("${module_name}/default-mode.conf.erb"),
         owner   => $user,
         group   => $user,
