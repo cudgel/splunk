@@ -4,7 +4,7 @@ require 'spec_helper'
 
 describe 'splunk' do
   let(:title) { 'splunk' }
-  let(:node) { 'splunk.test' }
+  let(:node) { 'splunk.example.com' }
   let(:facts) do
     {
       'splunk_home'         => '/home/splunk',
@@ -47,7 +47,7 @@ describe 'splunk' do
         'create_user' => true,
         'tcpout'      => {
           'group'   => 'splunkidx',
-          'cname'   => 'splunkidx.test',
+          'cname'   => 'splunkidx.example.com',
           'servers' => [
             'splunkidx1:9998',
           ],
@@ -73,14 +73,13 @@ describe 'splunk' do
     it { is_expected.to contain_file('/opt/splunkforwarder/etc/system/local/outputs.d/000_default').that_requires('File[/opt/splunkforwarder/etc/system/local/outputs.d]').that_notifies('Exec[update-outputs]') }
     it { is_expected.to contain_class('splunk::service') }
     it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
-    it { is_expected.to have_exec_resource_count(9) }
   end
 
   context 'universal forwarder with deployment server' do
     let(:params) do
       {
         'type'              => 'forwarder',
-        'deployment_server' => 'https://splunkds.test:8089',
+        'deployment_server' => 'https://splunkds.example.com:8089',
         'create_user'       => true,
       }
     end
@@ -104,7 +103,6 @@ describe 'splunk' do
     it { is_expected.to contain_file('/opt/splunkforwarder/etc/apps/deployclient/local/deploymentclient.conf').that_requires('File[/opt/splunkforwarder/etc/apps/deployclient/local]').that_notifies('Service[splunk]') }
     it { is_expected.to contain_class('splunk::service') }
     it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
-    it { is_expected.to have_exec_resource_count(7) }
   end
 
   context 'universal forwarder upgrade' do
@@ -130,7 +128,6 @@ describe 'splunk' do
     it { is_expected.to contain_class('splunk::config') }
     it { is_expected.to contain_class('splunk::service') }
     it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
-    it { is_expected.to have_exec_resource_count(8) }
   end
 
   context 'universal forwarder attempted downgrade' do
@@ -153,7 +150,6 @@ describe 'splunk' do
     it { is_expected.to contain_class('splunk::config') }
     it { is_expected.to contain_class('splunk::service') }
     it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
-    it { is_expected.to have_exec_resource_count(3) }
   end
 
   context 'universal forwarder already installed' do
@@ -176,7 +172,6 @@ describe 'splunk' do
     it { is_expected.to contain_class('splunk::config') }
     it { is_expected.to contain_class('splunk::service') }
     it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
-    it { is_expected.to have_exec_resource_count(3) }
   end
 
   context 'universal forwarder converted to heavy forwarder' do
@@ -202,14 +197,13 @@ describe 'splunk' do
     it { is_expected.to contain_class('splunk::config') }
     it { is_expected.to contain_class('splunk::service') }
     it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
-    it { is_expected.to have_exec_resource_count(10) }
   end
 
   context 'heavy forwarder with deployment server' do
     let(:params) do
       {
         'type'              => 'heavyforwarder',
-        'deployment_server' => 'https://splunkds.test:8089',
+        'deployment_server' => 'https://splunkds.example.com:8089',
         'create_user'       => true,
       }
     end
@@ -240,7 +234,7 @@ describe 'splunk' do
       {
         'type'              => 'indexer',
         'create_user'       => true,
-        'license_master'    => 'splunklm.test:8089',
+        'license_master'    => 'splunklm.example.com:8089',
         'server_site'       => 'site1',
         'repl_port'         => 8193,
         'cluster_mode'      => 'slave',
@@ -256,7 +250,7 @@ describe 'splunk' do
             ],
             'repl_factor'   => 'origin:2,total:3',
             'search_factor' => 'origin:1,total:2',
-            'uri'           => 'splunk-cm.test:8089',
+            'uri'           => 'splunk-cm.example.com:8089',
           },
         ],
       }
@@ -298,12 +292,12 @@ describe 'splunk' do
             'sites'     => [
               'site1',
             ],
-            'uri' => 'splunk-cm.test:8089',
+            'uri' => 'splunk-cm.example.com:8089',
           },
         ],
         'tcpout' => {
           'group'   => 'splunkidx',
-          'cname'   => 'splunkidx.test',
+          'cname'   => 'splunkidx.example.com',
           'servers' => [
             'splunkidx1:9998',
             'splunkidx2:9998',
@@ -359,12 +353,12 @@ describe 'splunk' do
             'sites'     => [
               'site1',
             ],
-            'uri' => 'splunk-cm.test:8089',
+            'uri' => 'splunk-cm.example.com:8089',
           },
         ],
         'tcpout' => {
           'group'   => 'splunkidx',
-          'cname'   => 'splunkidx.test',
+          'cname'   => 'splunkidx.example.com',
           'servers' => [
             'splunkidx1:9998',
             'splunkidx2:9998',
@@ -385,6 +379,8 @@ describe 'splunk' do
     it { is_expected.to contain_file('/opt/splunk/etc/splunk-launch.conf').that_notifies('Service[splunk]').that_requires('Exec[test_for_splunk]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/inputs.d').with_ensure('directory').that_requires('Exec[test_for_splunk]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/inputs.d/000_default').that_requires('File[/opt/splunk/etc/system/local/inputs.d]') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/outputs.d').with_ensure('directory').that_requires('Exec[test_for_splunk]') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/outputs.d/000_default').that_requires('File[/opt/splunk/etc/system/local/outputs.d]').that_notifies('Exec[update-outputs]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/server.d').with_ensure('directory').that_requires('Exec[test_for_splunk]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/server.d/001_license') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/server.d/995_replication') }
@@ -415,7 +411,6 @@ describe 'splunk' do
     it { is_expected.to contain_class('splunk::install') }
     it { is_expected.to contain_file('/opt/splunk-7.2.1-be11b2c46e23-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
     it { is_expected.to contain_class('splunk::config') }
-    it { is_expected.to contain_file('/opt/splunk/etc/splunk-launch.conf').that_notifies('Service[splunk]').that_requires('Exec[test_for_splunk]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/inputs.d').with_ensure('directory').that_requires('Exec[test_for_splunk]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/inputs.d/000_default').that_requires('File[/opt/splunk/etc/system/local/inputs.d]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/server.d').with_ensure('directory').that_requires('Exec[test_for_splunk]') }
@@ -441,9 +436,75 @@ describe 'splunk' do
     it { is_expected.to contain_file('/home/splunk/.bashrc.custom') }
     it { is_expected.to contain_class('splunk::install') }
     it { is_expected.to contain_file('/opt/splunk-7.2.1-be11b2c46e23-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
+    it { is_expected.to contain_exec('serviceStart') }
+    it { is_expected.to contain_class('splunk::config') }
+    it { is_expected.to contain_file('/opt/splunk/etc/splunk-launch.conf').that_notifies('Service[splunk]').that_requires('Exec[test_for_splunk]') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/limits.conf').that_notifies('Service[splunk]').that_requires('Exec[test_for_splunk]') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/web.conf').that_notifies('Service[splunk]').that_requires('Exec[test_for_splunk]') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/default-mode.conf').that_notifies('Service[splunk]').that_requires('Exec[test_for_splunk]') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/alert_actions.conf') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/server.d').with_ensure('directory').that_requires('Exec[test_for_splunk]') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/server.d/000_header') }
+    it { is_expected.to contain_package('xorg-x11-server-Xvfb').with_ensure('installed') }
+    it { is_expected.to contain_package('liberation-mono-fonts').with_ensure('installed') }
+    it { is_expected.to contain_package('liberation-sans-fonts').with_ensure('installed') }
+    it { is_expected.to contain_package('liberation-serif-fonts').with_ensure('installed') }
+    it { is_expected.to contain_class('splunk::service') }
+    it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
+  end
+
+  context 'standalone splunk server with LDAP' do
+    let(:params) do
+      {
+        'type'        => 'standalone',
+        'create_user' => true,
+        'authentication' => 'LDAP',
+        'authconfig' => {
+          'label' => 'AD',
+          'type' => 'Active Directory',
+          'host' => 'ad.example.com',
+          'binddn' => 'cn=Directory Manager',
+          'binddnpassword' => 'password',
+          'groupbasedn' => 'ou=Groups,dc=example,dc=com;',
+          'userbasedn' => 'ou=People,dc=example,dc=com;',
+          'userbasefilter' => '(|(memberOf=CN=SplunkAdmins,OU=Groups,DC=example,DC=com)(memberOf=CN=SplunkPowerUsers,OU=Groups,DC=example,DC=com)(memberOf=CN=SplunkUsers,OU=Groups,DC=example,DC=com))',
+          'role_maps' => [
+            {
+              'role' => 'admin',
+              'groups' => [
+                'SplunkAdmins',
+              ],
+            },
+            {
+              'role' => 'power',
+              'groups' => [
+                'SplunkPowerUsers',
+              ],
+            },
+            {
+              'role' => 'users',
+              'groups' => [
+                'SplunkUsers',
+                'Contractors',
+              ],
+            },
+          ],
+        },
+      }
+    end
+
+    it { is_expected.to compile.with_all_deps }
+    it { is_expected.to contain_class('splunk') }
+    it { is_expected.to contain_class('splunk::user') }
+    it { is_expected.to contain_user('splunk').with('ensure' => 'present', 'gid' => 'splunk') }
+    it { is_expected.to contain_file('/home/splunk/.bashrc.custom') }
+    it { is_expected.to contain_class('splunk::install') }
+    it { is_expected.to contain_file('/opt/splunk-7.2.1-be11b2c46e23-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
     it { is_expected.to contain_class('splunk::config') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/alert_actions.conf') }
-    it { is_expected.to contain_package('xorg-x11-server-Xvfb').with_ensure('installed') }
+    it { is_expected.to contain_class('splunk::auth') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/auth.d').with_ensure('directory').that_requires('Exec[test_for_splunk]') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/auth.d/ldap') }
     it { is_expected.to contain_class('splunk::service') }
     it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
   end

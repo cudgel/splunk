@@ -1,8 +1,8 @@
 {
   "name": "cudgel-splunk",
-  "version": "1.4.3",
+  "version": "1.5.0",
   "author": "Christopher Caldwell",
-  "summary": "Splunk Deployment App",
+  "summary": "Deploy and manage from stand-alone servers through complex distributed Splunk architectures.",
   "license": "Apache-2.0",
   "source": "https://github.com/cudgel/splunk",
   "project_page": "https://github.com/cudgel/splunk",

@@ -21,8 +21,7 @@
 #--no-only_variable_string-check
 #--no-single_quote_string_with_variables-check
 #--no-quoted_booleans-check
---no-puppet_url_without_modules-check
-# ^ module uses puppet fileserver reference that fails this test
+#--no-puppet_url_without_modules-check
 
 # resources
 #--no-unquoted_resource_title-check
@@ -42,8 +41,7 @@
 #--no-right_to_left_relationship-check
 #--no-nested_classes_or_defines-check
 #--no-inherits_across_namespaces-check
---no-variable_scope-check
-# ^ module uses built-in facts that fail this test
+#--no-variable_scope-check
 #--no-variable_contains_dash-check
 #--no-parameter_order-check
 #--no-names_containing_dash-check

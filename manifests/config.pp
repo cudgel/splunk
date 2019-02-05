@@ -1,7 +1,7 @@
 # == Class: splunk::config
 #
 # This class manages system/local config files, certificates (if defined in hiera and
-# served via puppet fileserver), and service installation.
+# served via puppet module), and service installation.
 #
 # === Examples
 #
@@ -23,6 +23,7 @@ class splunk::config
   $confdir           = $splunk::confdir
   $confpath          = $splunk::confpath
   $local             = $splunk::local
+  $source            = $splunk::source
   $user              = $splunk::user
   $group             = $splunk::group
   $cacert            = $splunk::cacert
@@ -40,6 +41,7 @@ class splunk::config
   $is_captain        = $splunk::is_captain
   $shcluster_members = $splunk::shcluster_members
   $symmkey           = $splunk::symmkey
+  $pass4symmkey      = $splunk::pass4symmkey
   $splunk_acls       = $splunk::acls
   $splunk_inputs     = $splunk::inputs
   $cluster_mode      = $splunk::cluster_mode
@@ -110,62 +112,75 @@ export PATH
     require => Exec['test_for_splunk']
   }
 
-  if $cacert != 'cacert.pem' {
-    file { "${dir}/etc/auth/${cacert}":
-      source  => "puppet:///splunk_files/auth/${cacert}",
-      owner   => $user,
+  if $pass4symmkey != undef and $pass4symmkey =~ /\$\d\$\S+/ {
+    $symmcmd = "echo '${pass4symmkey}' > ${local}/symmkey.conf"
+
+    exec { 'storeKey':
+      command => $symmcmd,
+      path    => "${dir}/bin:/bin:/usr/bin:",
+      cwd     => $install_path,
+      user    => $user,
       group   => $group,
-      mode    => '0640',
-      notify  => Service['splunk'],
-      require => Exec['test_for_splunk']
+      require => Exec['test_for_splunk'],
+      unless  => "test -f ${local}/symmkey.conf"
     }
   }
 
-  if $privkey != 'privkey.pem' {
-    file { "${dir}/etc/auth/splunkweb/${privkey}":
-      source  => "puppet:///splunk_files/auth/splunkweb/${privkey}",
-      owner   => $user,
-      group   => $group,
-      mode    => '0640',
-      notify  => Service['splunk'],
-      require => Exec['test_for_splunk']
-    }
-  }
+  if $source != 'splunk' and $source !~ /http.*/ {
 
-  if $servercert != 'server.pem' {
-    file { "${dir}/etc/auth/${servercert}":
-      source  => "puppet:///splunk_files/auth/${servercert}",
-      owner   => $user,
-      group   => $group,
-      mode    => '0640',
-      notify  => Service['splunk'],
-      require => Exec['test_for_splunk']
-    }
-  }
-
-  if $webcert != 'cert.pem' {
-    file { "${dir}/etc/auth/splunkweb/${webcert}":
-      source  => "puppet:///splunk_files/auth/splunkweb/${webcert}",
-      owner   => $user,
-      group   => $group,
-      mode    => '0640',
-      notify  => Service['splunk'],
-      require => Exec['test_for_splunk']
-    }
-  }
-
-  if $managesecret == true {
-    file { "${dir}/etc/splunk.secret":
-      ensure => absent
+    if $cacert != 'cacert.pem' {
+      file { "${dir}/etc/auth/${cacert}":
+        source  => "${source}/auth/${cacert}",
+        owner   => $user,
+        group   => $group,
+        mode    => '0640',
+        notify  => Service['splunk'],
+        require => Exec['test_for_splunk']
+      }
     }
 
-    file { "${dir}/etc/auth/splunk.secret":
-      source  => 'puppet:///splunk_files/splunk.secret',
-      owner   => $user,
-      group   => $group,
-      mode    => '0640',
-      notify  => Service['splunk'],
-      require => Exec['test_for_splunk']
+    if $privkey != 'privkey.pem' {
+      file { "${dir}/etc/auth/splunkweb/${privkey}":
+        source  => "${source}/auth/splunkweb/${privkey}",
+        owner   => $user,
+        group   => $group,
+        mode    => '0640',
+        notify  => Service['splunk'],
+        require => Exec['test_for_splunk']
+      }
+    }
+
+    if $servercert != 'server.pem' {
+      file { "${dir}/etc/auth/${servercert}":
+        source  => "${source}/auth/${servercert}",
+        owner   => $user,
+        group   => $group,
+        mode    => '0640',
+        notify  => Service['splunk'],
+        require => Exec['test_for_splunk']
+      }
+    }
+
+    if $webcert != 'cert.pem' {
+      file { "${dir}/etc/auth/splunkweb/${webcert}":
+        source  => "${source}/auth/splunkweb/${webcert}",
+        owner   => $user,
+        group   => $group,
+        mode    => '0640',
+        notify  => Service['splunk'],
+        require => Exec['test_for_splunk']
+      }
+    }
+
+    if $managesecret == true {
+      file { "${dir}/etc/auth/splunk.secret":
+        source  => "${source}/splunk.secret",
+        owner   => $user,
+        group   => $group,
+        mode    => '0640',
+        notify  => Service['splunk'],
+        require => Exec['test_for_splunk']
+      }
     }
   }
 
@@ -244,10 +259,6 @@ export PATH
       require => Exec['test_for_splunk']
     }
 
-    file { "${local}/server.d/000_default":
-      ensure => absent
-    }
-
     file { "${local}/server.d/000_header":
       content => '# DO NOT EDIT -- Managed by Puppet',
       owner   => $user,
@@ -291,7 +302,6 @@ export PATH
 
     file { "${local}/web.conf":
       content => template("${module_name}/web.conf.erb"),
-      alias   => 'splunk-web',
       owner   => $user,
       group   => $user,
       require => Exec['test_for_splunk'],
@@ -366,7 +376,6 @@ export PATH
       }
 
       file { "${local}/default-mode.conf":
-        alias   => 'splunk-mode',
         content => template("${module_name}/default-mode.conf.erb"),
         owner   => $user,
         group   => $user,

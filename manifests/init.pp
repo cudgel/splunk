@@ -90,22 +90,24 @@ String $tarcmd,
 String $webcert,
 Boolean $webssl,
 Optional[String] $license_master,
-Optional[Hash] $acls = undef,
-Optional[String] $admin_pass = undef,
-Optional[Hash] $inputs = undef,
-Optional[Tuple] $clusters = undef,
+Optional[Hash] $acls                = undef,
+Optional[String] $admin_pass        = undef,
+Optional[String] $authentication    = undef,
+Optional[Hash] $authconfig          = undef,
+Optional[Hash] $inputs              = undef,
+Optional[Tuple] $clusters           = undef,
 Optional[String] $deployment_server = undef,
-Optional[Tuple] $licenses = undef,
-Optional[Array] $packages = undef,
-Optional[Integer] $repl_count = undef,
-Optional[Integer] $repl_port = undef,
-Optional[String] $search_deploy = undef,
-Optional[String] $serviceurl = undef,
-Optional[String] $shcluster_label = undef,
-Optional[String] $shcluster_mode = undef,
-Optional[Array] $shcluster_members = undef,
-Optional[String] $symmkey = undef,
-Optional[Hash] $tcpout = undef
+Optional[Tuple] $licenses           = undef,
+Optional[Array] $packages           = undef,
+Optional[Integer] $repl_count       = undef,
+Optional[Integer] $repl_port        = undef,
+Optional[String] $search_deploy     = undef,
+Optional[String] $serviceurl        = undef,
+Optional[String] $shcluster_label   = undef,
+Optional[String] $shcluster_mode    = undef,
+Optional[Array] $shcluster_members  = undef,
+Optional[String] $symmkey           = undef,
+Optional[Hash] $tcpout              = undef
 ) {
 
   if $type != 'none' {
@@ -139,16 +141,28 @@ Optional[Hash] $tcpout = undef
     $manifest = "${sourcepart}-${new_version}-${os}-${arch}-manifest"
 
     # fact containing splunk search head cluster id (if a cluster member)
-    # once defined, we add it to our generated files so it is not lost
+    # once defined, we add it to our generated files so it is not  lost
     if defined('$splunk_shcluster_id') and is_string('$splunk_shcluster_id') {
-      $shcluster_id = $splunk_shcluster_id
+      $shcluster_id = $::splunk_shcluster_id
     } else {
       $shcluster_id = undef
     }
 
+    if defined('$splunk_symmkey') and $::splunk_symmkey =~ /\$\d\$\S+/ {
+      $pass4symmkey = $::splunk_symmkey
+    } else {
+      $pass4symmkey = undef
+    }
+
+    if defined('$splunk_certpass') and $::splunk_certpass =~ /\$\d\$\S+/ {
+      $certpass = $::splunk_certpass
+    } else {
+      $certpass = undef
+    }
+
     # splunk user home dir from fact
     if defined('$splunk_home') and is_string('$splunk_home') {
-      $home = $splunk_home
+      $home = $::splunk_home
     } else {
       $home = undef
     }
@@ -156,14 +170,14 @@ Optional[Hash] $tcpout = undef
     # fact showing directory of any running splunk process
     # should match $dir for the type
     if defined('$splunk_cwd') and is_string('$splunk_cwd') {
-      $cwd = $splunk_cwd
+      $cwd = $::splunk_cwd
     } else {
       $cwd = undef
     }
 
     # splunk is currently installed - get version from fact
-    if defined('$splunk_version') and $splunk_version =~ /^\d+\.\d+\.\d+-.*/ {
-      $cur_version = $splunk_version
+    if defined('$splunk_version') and $::splunk_version =~ /^\d+\.\d+\.\d+-.*/ {
+      $cur_version = $::splunk_version
       # because the legacy fact does not represent splunk version as
       # version-release, we cut the version from the string.
       $vtemp = regsubst($cur_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
@@ -218,6 +232,31 @@ Optional[Hash] $tcpout = undef
       }
 
       $perms = "${user}:${group}"
+
+      # have Puppet configure Splunk authentication
+      if $authentication != undef {
+        if defined('$splunk_authpass') and $::splunk_authpass =~ /\$\d\$\S+/ {
+          $authpass = $::splunk_authpass
+        } else {
+          $authpass = undef
+        }
+
+        class { 'splunk::auth': }
+        $auth_dir  = "${local}/auth.d/"
+        $auth_conf  = "${local}/authentication.conf"
+        $auth_cmd = "/bin/cat ${auth_dir}/* > ${auth_conf}; \
+            chown ${perms} ${auth_conf}"
+
+        exec { 'update-auth':
+          command     => $auth_cmd,
+          refreshonly => true,
+          user        => $user,
+          group       => $group,
+          umask       => '027',
+          creates     => $auth_conf,
+          notify      => Service['splunk']
+        }
+      }
 
       $inputs_dir  = "${local}/inputs.d/"
       $inputs_conf  = "${local}/inputs.conf"
