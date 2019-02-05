@@ -4,11 +4,11 @@
 
 1. [Overview](#overview)
     - [File Module](#splunk_files)
-  - [History](#history)
+    - [History](#history)
 2. [Module Description](#module-description)
 3. [Usage](#usage)
-  - [Splunk Server Types](#types)
-  - [Inputs](#inputs)
+    - [Splunk Server Types](#types)
+    - [Inputs](#inputs)
 4. [Limitations](#limitations)
 
 <a id="overview"></a>

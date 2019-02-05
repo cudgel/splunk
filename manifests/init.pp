@@ -235,6 +235,12 @@ Optional[Hash] $tcpout              = undef
 
       # have Puppet configure Splunk authentication
       if $authentication != undef {
+        if defined('$splunk_authpass') and $::splunk_authpass =~ /\$\d\$\S+/ {
+          $authpass = $::splunk_authpass
+        } else {
+          $authpass = undef
+        }
+
         class { 'splunk::auth': }
         $auth_dir  = "${local}/auth.d/"
         $auth_conf  = "${local}/authentication.conf"
