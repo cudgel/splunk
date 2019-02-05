@@ -1,4 +1,0 @@
----
-splunk::repl_port: 8193
-splunk::repl_count: 3
-splunk::type: 'indexer'

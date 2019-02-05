@@ -1,11 +1,12 @@
 <%
-  config = scope['::splunk::authconfig']
+  config   = scope['::splunk::authconfig']
+  authpass = scope['::splunk::authpass']
 %>
 [<%= config['label'] -%>]
 SSLEnabled = <%= config['sslenabled'] %>
 anonymous_referrals = <%= config['anonymous_referrals'] %>
 bindDN = <%= config['binddn'] %>
-bindDNpassword = <%= config['binddnpassword'] %>
+bindDNpassword = <% if authpass != nil -%><%= authpass %><% else -%><%= config['binddnpassword'] %><% end %>
 charset = <%= config['charset'] %>
 groupBaseDN = <%= config['groupbasedn'] %>
 groupMappingAttribute = <%= config['groupmappingattribute'] %>
