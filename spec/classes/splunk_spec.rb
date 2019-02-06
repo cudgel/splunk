@@ -470,33 +470,33 @@ describe 'splunk' do
   context 'standalone splunk server with LDAP' do
     let(:params) do
       {
-        'type'        => 'standalone',
-        'create_user' => true,
+        'type'           => 'standalone',
+        'create_user'    => true,
         'authentication' => 'LDAP',
-        'authconfig' => {
-          'label' => 'AD',
-          'type' => 'Active Directory',
-          'host' => 'ad.example.com',
-          'binddn' => 'cn=Directory Manager',
+        'authconfig'     => {
+          'label'          => 'AD',
+          'type'           => 'Active Directory',
+          'host'           => 'ad.example.com',
+          'binddn'         => 'cn=Directory Manager',
           'binddnpassword' => 'password',
-          'groupbasedn' => 'ou=Groups,dc=example,dc=com;',
-          'userbasedn' => 'ou=People,dc=example,dc=com;',
+          'groupbasedn'    => 'ou=Groups,dc=example,dc=com;',
+          'userbasedn'     => 'ou=People,dc=example,dc=com;',
           'userbasefilter' => '(|(memberOf=CN=SplunkAdmins,OU=Groups,DC=example,DC=com)(memberOf=CN=SplunkPowerUsers,OU=Groups,DC=example,DC=com)(memberOf=CN=SplunkUsers,OU=Groups,DC=example,DC=com))',
-          'role_maps' => [
+          'role_maps'      => [
             {
-              'role' => 'admin',
+              'role'   => 'admin',
               'groups' => [
                 'SplunkAdmins',
               ],
             },
             {
-              'role' => 'power',
+              'role'   => 'power',
               'groups' => [
                 'SplunkPowerUsers',
               ],
             },
             {
-              'role' => 'users',
+              'role'   => 'users',
               'groups' => [
                 'SplunkUsers',
                 'Contractors',
@@ -504,6 +504,17 @@ describe 'splunk' do
             },
           ],
         },
+        'roles'          => [
+            {
+              'name'     => 'admin',
+              'disabled' => false,
+              'options'  => [
+                'rtsearch = enabled',
+                'srchIndexesDefault = *',
+                'srchMaxTime = 0',
+              ],
+            },
+          ],
       }
     end
 
@@ -520,6 +531,7 @@ describe 'splunk' do
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/auth.d').with_ensure('directory').that_requires('Exec[test_for_splunk]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/auth.d/ldap') }
     it { is_expected.to contain_exec('update-auth').that_notifies('Service[splunk]') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/authorize.conf').that_notifies('Service[splunk]') }
     it { is_expected.to contain_class('splunk::service') }
     it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
   end
