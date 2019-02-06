@@ -504,17 +504,17 @@ describe 'splunk' do
             },
           ],
         },
-        'roles'          => [
-            {
-              'name'     => 'admin',
-              'disabled' => false,
-              'options'  => [
-                'rtsearch = enabled',
-                'srchIndexesDefault = *',
-                'srchMaxTime = 0',
-              ],
-            },
-          ],
+        'roles' => [
+          {
+            'name'     => 'admin',
+            'disabled' => false,
+            'options'  => [
+              'rtsearch = enabled',
+              'srchIndexesDefault = *',
+              'srchMaxTime = 0',
+            ],
+          },
+        ],
       }
     end
 
