@@ -2,31 +2,31 @@
 #
 <%
 selinux = scope['::selinux']
-db = scope['::splunk::splunkdb']
-home = scope['::splunk::dir']
-user = scope['::splunk::user']
-name = scope['::splunk::sourcepart']
+db      = scope['::splunk::splunkdb']
+home    = scope['::splunk::dir']
+user    = scope['::splunk::user']
+name    = scope['::splunk::sourcepart']
 -%>
 # Modify the following line to suit the location of your Splunk install.
 # If unset, Splunk will use the parent of the directory this configuration
 # file was found in
 #
-SPLUNK_HOME=<%= home %>
+SPLUNK_HOME = <%= home %>
 
 #
 # By default, Splunk stores its indexes under SPLUNK_HOME in the
 # var/lib/splunk subdirectory.  This can be overridden
 # here:
 #
-SPLUNK_DB=<%= db %>
+SPLUNK_DB = <%= db %>
 <% if selinux == true %>
 SPLUNK_IGNORE_SELINUX = 1
 <% end %>
 
 # Splunkd daemon name
-SPLUNK_SERVER_NAME=<%= name %>
+SPLUNK_SERVER_NAME=splunkd
 
 # Splunkweb daemon name
 SPLUNK_WEB_NAME=splunkweb
 
-SPLUNK_OS_USER=<%= user %>
+SPLUNK_OS_USER = <%= user %>
