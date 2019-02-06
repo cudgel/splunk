@@ -470,51 +470,51 @@ describe 'splunk' do
   context 'standalone splunk server with LDAP' do
     let(:params) do
       {
-        'type'        => 'standalone',
-        'create_user' => true,
+        'type'           => 'standalone',
+        'create_user'    => true,
         'authentication' => 'LDAP',
-        'authconfig' => {
-          'label' => 'AD',
-          'type' => 'Active Directory',
-          'host' => 'ad.example.com',
-          'binddn' => 'cn=Directory Manager',
+        'authconfig'     => {
+          'label'          => 'AD',
+          'type'           => 'Active Directory',
+          'host'           => 'ad.example.com',
+          'binddn'         => 'cn=Directory Manager',
           'binddnpassword' => 'password',
-          'groupbasedn' => 'ou=Groups,dc=example,dc=com;',
-          'userbasedn' => 'ou=People,dc=example,dc=com;',
+          'groupbasedn'    => 'ou=Groups,dc=example,dc=com;',
+          'userbasedn'     => 'ou=People,dc=example,dc=com;',
           'userbasefilter' => '(|(memberOf=CN=SplunkAdmins,OU=Groups,DC=example,DC=com)(memberOf=CN=SplunkPowerUsers,OU=Groups,DC=example,DC=com)(memberOf=CN=SplunkUsers,OU=Groups,DC=example,DC=com))',
-          'role_maps' => [
+          'role_maps'      => [
             {
-              'role' => 'admin',
+              'role'   => 'admin',
               'groups' => [
                 'SplunkAdmins',
               ],
             },
             {
-              'role' => 'power',
+              'role'   => 'power',
               'groups' => [
                 'SplunkPowerUsers',
               ],
             },
             {
-              'role' => 'users',
+              'role'   => 'users',
               'groups' => [
                 'SplunkUsers',
                 'Contractors',
               ],
             },
           ],
-          'roles' => [
+        },
+        'roles'          => [
             {
-              'name' => 'admin',
+              'name'     => 'admin',
               'disabled' => false,
-              'options' => [
+              'options'  => [
                 'rtsearch = enabled',
                 'srchIndexesDefault = *',
                 'srchMaxTime = 0',
               ],
             },
           ],
-        },
       }
     end
 

@@ -9,7 +9,7 @@ class splunk::auth(
   Optional[String] $group          = $splunk::group,
   Optional[String] $authentication = $splunk::authentication,
   Optional[Hash] $authconfig       = $splunk::authconfig,
-  Optional[Hash] $roles            = $splunk::roles,
+  Optional[Tuple] $roles            = $splunk::roles,
   Optional[String] $body           = undef
 ) {
 
@@ -39,13 +39,14 @@ class splunk::auth(
     notify  => Exec['update-auth']
   }
 
-  file { "${local}/authorize.conf":
-    owner   => $user,
-    group   => $group,
-    mode    => '0440',
-    content => $content,
-    require => File[$local],
-    notify  => Service['splunk']
+  if $roles.is_a(Tuple) {
+    file { "${local}/authorize.conf":
+      owner   => $user,
+      group   => $group,
+      mode    => '0440',
+      content => template("${module_name}/authorize.conf.erb"),
+      require => File[$local],
+      notify  => Service['splunk']
+    }
   }
-
 }
