@@ -27,4 +27,6 @@ describe 'splunk::acl' do
   end
 
   it { is_expected.to compile }
+  it { is_expected.to contain_exec('set_effective_rights_mask_/var/log/authlog') }
+  it { is_expected.to contain_exec('setfacl_/var/log/authlog') }
 end

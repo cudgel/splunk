@@ -109,6 +109,7 @@ Starting with v1.5.0, the app will store only hashed passwords on-disk once it k
 
 Starting with v1.5.0 the app has tested support for deploying a working LDAP authentication configuration. If you supply the setting `splunk::authpass` in EYAML, the module will hash and use this password instead of the cleartext password in the authconfig setting.
 
+```
 splunk::authentication: 'LDAP'
 splunk::authconfig:
   sslenabled: 1
@@ -144,6 +145,7 @@ splunk::authconfig:
       groups:
         - 'SplunkUsers'
         - 'Contractors'
+```
 
 <a id="types"></a>
 ### Splunk Server Types
@@ -182,6 +184,8 @@ splunk::deployment_server: 'https://ds.example.com:8089'
 ##### Indexer cluster master:
 
 ```
+splunk::type: 'indexer'
+splunk::cluster_mode: 'master'
 splunk::clusters:
   - label: 'IDX-MS'
     access_logging: 1

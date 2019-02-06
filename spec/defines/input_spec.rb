@@ -44,4 +44,6 @@ describe 'splunk::input' do
   let(:pre_condition) { "class { splunk: type => 'forwarder' }" }
 
   it { is_expected.to contain_file('/opt/splunkforwarder/etc/system/local/inputs.d/authlog').that_notifies('Exec[update-inputs]') }
+  it { is_expected.to contain_exec('set_effective_rights_mask_authlog') }
+  it { is_expected.to contain_exec('setfacl_authlog') }
 end

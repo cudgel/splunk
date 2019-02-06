@@ -69,8 +69,10 @@ describe 'splunk' do
     it { is_expected.to contain_file('/opt/splunkforwarder/etc/system/local/inputs.d').with_ensure('directory').that_requires('Exec[test_for_splunk]') }
     it { is_expected.to contain_file('/opt/splunkforwarder/etc/system/local/inputs.d/000_default').that_requires('File[/opt/splunkforwarder/etc/system/local/inputs.d]') }
     it { is_expected.to contain_file('/opt/splunkforwarder/etc/system/local/inputs.d/000_splunkssl').that_requires('File[/opt/splunkforwarder/etc/system/local/inputs.d]').that_notifies('Exec[update-inputs]') }
+    it { is_expected.to contain_exec('update-inputs').that_notifies('Service[splunk]') }
     it { is_expected.to contain_file('/opt/splunkforwarder/etc/system/local/outputs.d').with_ensure('directory').that_requires('Exec[test_for_splunk]') }
     it { is_expected.to contain_file('/opt/splunkforwarder/etc/system/local/outputs.d/000_default').that_requires('File[/opt/splunkforwarder/etc/system/local/outputs.d]').that_notifies('Exec[update-outputs]') }
+    it { is_expected.to contain_exec('update-outputs').that_notifies('Service[splunk]') }
     it { is_expected.to contain_class('splunk::service') }
     it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
   end
@@ -90,6 +92,7 @@ describe 'splunk' do
     it { is_expected.to contain_user('splunk').with('ensure' => 'present', 'gid' => 'splunk') }
     it { is_expected.to contain_file('/home/splunk/.bashrc.custom') }
     it { is_expected.to contain_class('splunk::install') }
+    it { is_expected.to contain_exec('retrieve_splunkforwarder-7.2.1-be11b2c46e23-Linux-x86_64.tgz') }
     it { is_expected.to contain_file('/opt/splunkforwarder-7.2.1-be11b2c46e23-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
     it { is_expected.to contain_class('splunk::config') }
     it { is_expected.to contain_file('/opt/splunkforwarder/etc/apps').with_ensure('directory').that_requires('Exec[test_for_splunk]') }
@@ -124,6 +127,7 @@ describe 'splunk' do
     it { is_expected.to contain_class('splunk') }
     it { is_expected.to contain_class('splunk::install') }
     it { is_expected.to contain_file('/opt/splunkforwarder-7.2.1-be11b2c46e23-Linux-x86_64.tgz').with('ensure' => 'absent') }
+    it { is_expected.to contain_exec('retrieve_splunkforwarder-7.2.3-06d57c595b80-Linux-x86_64.tgz') }
     it { is_expected.to contain_file('/opt/splunkforwarder-7.2.3-06d57c595b80-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
     it { is_expected.to contain_class('splunk::config') }
     it { is_expected.to contain_class('splunk::service') }
@@ -193,6 +197,9 @@ describe 'splunk' do
     it { is_expected.to contain_class('splunk') }
     it { is_expected.to contain_class('splunk::install') }
     it { is_expected.to contain_file('/opt/splunkforwarder-7.2.1-be11b2c46e23-Linux-x86_64.tgz').with('ensure' => 'absent') }
+    it { is_expected.to contain_exec('uninstallSplunkService') }
+    it { is_expected.to contain_exec('serviceStop') }
+    it { is_expected.to contain_file('/opt/splunkforwarder').with('ensure' => 'absent') }
     it { is_expected.to contain_file('/opt/splunk-7.2.1-be11b2c46e23-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
     it { is_expected.to contain_class('splunk::config') }
     it { is_expected.to contain_class('splunk::service') }
@@ -432,12 +439,18 @@ describe 'splunk' do
     it { is_expected.to compile.with_all_deps }
     it { is_expected.to contain_class('splunk') }
     it { is_expected.to contain_class('splunk::user') }
+    it { is_expected.to contain_group('splunk') }
     it { is_expected.to contain_user('splunk').with('ensure' => 'present', 'gid' => 'splunk') }
     it { is_expected.to contain_file('/home/splunk/.bashrc.custom') }
     it { is_expected.to contain_class('splunk::install') }
+    it { is_expected.to contain_exec('retrieve_splunk-7.2.1-be11b2c46e23-Linux-x86_64.tgz') }
     it { is_expected.to contain_file('/opt/splunk-7.2.1-be11b2c46e23-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
+    it { is_expected.to contain_exec('unpackSplunk').that_subscribes_to('File[/opt/splunk-7.2.1-be11b2c46e23-Linux-x86_64.tgz]') }
+    it { is_expected.to contain_exec('splunkDir').that_subscribes_to('Exec[unpackSplunk]') }
     it { is_expected.to contain_exec('serviceStart') }
+    it { is_expected.to contain_exec('installSplunkService').that_subscribes_to('Exec[unpackSplunk]').that_requires('Exec[unpackSplunk]') }
     it { is_expected.to contain_class('splunk::config') }
+    it { is_expected.to contain_exec('test_for_splunk') }
     it { is_expected.to contain_file('/opt/splunk/etc/splunk-launch.conf').that_notifies('Service[splunk]').that_requires('Exec[test_for_splunk]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/limits.conf').that_notifies('Service[splunk]').that_requires('Exec[test_for_splunk]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/web.conf').that_notifies('Service[splunk]').that_requires('Exec[test_for_splunk]') }
@@ -445,6 +458,7 @@ describe 'splunk' do
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/alert_actions.conf') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/server.d').with_ensure('directory').that_requires('Exec[test_for_splunk]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/server.d/000_header') }
+    it { is_expected.to contain_exec('update-server').that_notifies('Service[splunk]') }
     it { is_expected.to contain_package('xorg-x11-server-Xvfb').with_ensure('installed') }
     it { is_expected.to contain_package('liberation-mono-fonts').with_ensure('installed') }
     it { is_expected.to contain_package('liberation-sans-fonts').with_ensure('installed') }
@@ -505,6 +519,7 @@ describe 'splunk' do
     it { is_expected.to contain_class('splunk::auth') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/auth.d').with_ensure('directory').that_requires('Exec[test_for_splunk]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/auth.d/ldap') }
+    it { is_expected.to contain_exec('update-auth').that_notifies('Service[splunk]') }
     it { is_expected.to contain_class('splunk::service') }
     it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
   end
