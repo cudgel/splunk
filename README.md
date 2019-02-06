@@ -147,6 +147,27 @@ splunk::authconfig:
         - 'Contractors'
 ```
 
+### Roles
+
+Beginning with v1.5.4, the module will populate authorize.conf with roles defined in hiera.
+
+```
+splunk::roles:
+  - name: 'admin'
+    disabled: false
+    options:
+      - 'rtsearch = enabled'
+      - 'srchIndexesDefault = *'
+      - 'srchMaxTime = 0'
+  - name: 'power'
+    disabled: false
+    options:
+      - 'rtsearch = disabled'
+      - 'schedule_rtsearch = disabled'
+      - 'schedule_search = enabled'
+      - 'srchDiskQuota = 5000'
+```
+
 <a id="types"></a>
 ### Splunk Server Types
 
