@@ -231,25 +231,25 @@ export PATH
     notify  => Exec['update-inputs']
   }
 
-  if $type != 'forwarder' or $deployment_server == undef  {
-
-    if ($type != 'indexer') and ($type != 'standalone')  and is_hash($tcpout) {
-      file { "${local}/outputs.d":
-        ensure  => 'directory',
-        mode    => '0750',
-        owner   => $user,
-        group   => $group,
-        require => Exec['test_for_splunk']
-      }
-
-      file { "${local}/outputs.d/000_default":
-        content => template("${module_name}/outputs.d/outputs.erb"),
-        owner   => $user,
-        group   => $group,
-        require => File["${local}/outputs.d"],
-        notify  => Exec['update-outputs']
-      }
+  if (($type != 'forwarder' and $type != 'indexer' and $type != 'standalone') or ($type == 'forwarder' and $deployment_server == undef)) and is_hash($tcpout) {
+    file { "${local}/outputs.d":
+      ensure  => 'directory',
+      mode    => '0750',
+      owner   => $user,
+      group   => $group,
+      require => Exec['test_for_splunk']
     }
+
+    file { "${local}/outputs.d/000_default":
+      content => template("${module_name}/outputs.d/outputs.erb"),
+      owner   => $user,
+      group   => $group,
+      require => File["${local}/outputs.d"],
+      notify  => Exec['update-outputs']
+    }
+  }
+
+  if $type != forwarder {
 
     file { "${local}/server.d":
       ensure  => 'directory',

@@ -184,6 +184,8 @@ splunk::deployment_server: 'https://ds.example.com:8089'
 ##### Indexer cluster master:
 
 ```
+splunk::type: 'indexer'
+splunk::cluster_mode: 'master'
 splunk::clusters:
   - label: 'IDX-MS'
     access_logging: 1
