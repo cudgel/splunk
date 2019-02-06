@@ -503,6 +503,17 @@ describe 'splunk' do
               ],
             },
           ],
+          'roles' => [
+            {
+              'name' => 'admin',
+              'disabled' => false,
+              'options' => [
+                'rtsearch = enabled',
+                'srchIndexesDefault = *',
+                'srchMaxTime = 0',
+              ],
+            },
+          ],
         },
       }
     end
@@ -520,6 +531,7 @@ describe 'splunk' do
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/auth.d').with_ensure('directory').that_requires('Exec[test_for_splunk]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/auth.d/ldap') }
     it { is_expected.to contain_exec('update-auth').that_notifies('Service[splunk]') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/authorize.conf').that_notifies('Service[splunk]') }
     it { is_expected.to contain_class('splunk::service') }
     it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
   end
