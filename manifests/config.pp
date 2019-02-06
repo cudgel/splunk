@@ -231,7 +231,8 @@ export PATH
     notify  => Exec['update-inputs']
   }
 
-  if (($type != 'forwarder' and $type != 'indexer' and $type != 'standalone') or ($type == 'forwarder' and $deployment_server == undef)) and is_hash($tcpout) {
+  if (($type != 'forwarder' and $type != 'indexer' and $type != 'standalone') or
+    ($type == 'forwarder' and $deployment_server == undef)) and is_hash($tcpout) {
     file { "${local}/outputs.d":
       ensure  => 'directory',
       mode    => '0750',

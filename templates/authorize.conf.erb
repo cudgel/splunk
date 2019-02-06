@@ -1,0 +1,10 @@
+<%
+  roles = scope['::splunk::roles']
+-%>
+<% roles.each do |r| %>
+[role_<%= r['name'] %>]
+disabled = <%= r['disabled'] %>
+<% if r['options'] != nil -%><% r['options'].each do |op| -%>
+<%= op %>
+<% end %><% end -%>
+<% end %>
