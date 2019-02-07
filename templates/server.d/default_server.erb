@@ -11,7 +11,7 @@
 serverName = <%= scope['::hostname'] %>
 pass4SymmKey = <% if pass4symmkey != nil -%><%= pass4symmkey %><% else -%><%= symmkey %><% end %>
 <% if cluster_mode == 'master' || cluster_mode == 'slave' -%>
-site = <%= server_site %><% end %>
+site = <%= server_site %><% end -%>
 legacyCiphers = <%= ciphers %>
 
 [node_auth]
