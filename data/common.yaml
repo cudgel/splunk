@@ -1,6 +1,8 @@
 ---
 splunk::version: '7.2.1'
 splunk::release: 'be11b2c46e23'
+splunk::group: 'splunk'
+splunk::user: 'splunk'
 splunk::type: 'none'
 splunk::admin_pass: 'changeme'
 splunk::adhoc_searchhead: false
@@ -37,9 +39,8 @@ splunk::search_maxqueue: 100
 splunk::server_site: 'default'
 splunk::servercert: 'server.pem'
 splunk::servercertpass: 'password'
+splunk::signatureversion: 'v1,v2'
 splunk::source: 'splunk'
-splunk::group: 'splunk'
-splunk::user: 'splunk'
 splunk::shcluster_mode: 'none'
 splunk::splunknotcp_ssl: false
 splunk::splunknotcp: true
