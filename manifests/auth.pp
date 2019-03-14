@@ -9,7 +9,7 @@ class splunk::auth(
   Optional[String] $group          = $splunk::group,
   Optional[String] $authentication = $splunk::authentication,
   Optional[Hash] $authconfig       = $splunk::authconfig,
-  Optional[Tuple] $roles            = $splunk::roles,
+  Optional[Tuple] $roles           = $splunk::roles,
   Optional[String] $body           = undef
 ) {
 
