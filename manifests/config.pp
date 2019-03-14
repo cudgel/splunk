@@ -76,34 +76,6 @@ export PATH
     unless  => "test -d ${dir}/etc"
   }
 
-  file_line { 'splunk-start':
-    path    => '/etc/init.d/splunk',
-    line    => "  su - ${user} -c \'\"${dir}/bin/splunk\" start --no-prompt --answer-yes\'",
-    match   => "^\s\s\"${dir}/bin/splunk\" start",
-    require => Exec['test_for_splunk']
-  }
-
-  file_line { 'splunk-stop':
-    path    => '/etc/init.d/splunk',
-    line    => "  su - ${user} -c \'\"${dir}/bin/splunk\" stop\'",
-    match   => "^\s\s\"${dir}/bin/splunk\" stop",
-    require => Exec['test_for_splunk']
-  }
-
-  file_line { 'splunk-restart':
-    path    => '/etc/init.d/splunk',
-    line    => "  su - ${user} -c \'\"${dir}/bin/splunk\" restart\'",
-    match   => "^\s\s\"${dir}/bin/splunk\" restart",
-    require => Exec['test_for_splunk']
-  }
-
-  file_line { 'splunk-status':
-    path    => '/etc/init.d/splunk',
-    line    => "  su - ${user} -c \'\"${dir}/bin/splunk\" status\'",
-    match   => "^\s\s\"${dir}/bin/splunk\" status",
-    require => Exec['test_for_splunk']
-  }
-
   file { "${dir}/etc/splunk-launch.conf":
     content => template("${module_name}/splunk-launch.conf.erb"),
     owner   => $user,
