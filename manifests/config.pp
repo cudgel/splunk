@@ -47,6 +47,7 @@ class splunk::config
   $cluster_mode      = $splunk::cluster_mode
   $tcpout            = $splunk::tcpout
   $deployment_server = $splunk::deployment_server
+  $indexes           = $splunk::indexes
   $packages          = $splunk::packages
 
   $splunk_home = $splunk_home
@@ -203,6 +204,26 @@ export PATH
     notify  => Exec['update-inputs']
   }
 
+  if ($type == 'indexer'or $type == 'standalone') and is_hash($indexes) {
+    file { "${local}/indexes.d":
+      ensure  => 'directory',
+      mode    => '0750',
+      owner   => $user,
+      group   => $group,
+      require => Exec['test_for_splunk']
+    }
+
+    file { "${local}/indexes.d/000_default":
+      mode    => '0750',
+      owner   => $user,
+      group   => $group,
+      require => Exec['test_for_splunk'],
+      content => template('splunk/default_indexes.erb')
+    }
+
+    create_resources('splunk::input', $splunk_inputs)
+  }
+
   if (($type != 'forwarder' and $type != 'indexer' and $type != 'standalone') or
     ($type == 'forwarder' and $deployment_server == undef)) and is_hash($tcpout) {
     file { "${local}/outputs.d":
@@ -282,7 +303,6 @@ export PATH
     }
 
     if $type == 'indexer' {
-
       file { "${local}/inputs.d/999_splunktcp":
         content => template("${module_name}/inputs.d/splunktcp.erb"),
         owner   => $user,
@@ -300,7 +320,6 @@ export PATH
           notify  => Exec['update-server']
         }
       }
-
     }
 
     if ($type == 'search') or ($type == 'standalone') {
