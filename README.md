@@ -3,13 +3,15 @@
 #### Table of Contents
 
 1. [Overview](#overview)
-    - [File Module](#splunk_files)
-    - [History](#history)
-2. [Module Description](#module-description)
-3. [Usage](#usage)
+    - [File Source](#splunk_files)
+1. [Module Description](#module-description)
+1. [Security](#security)
+1. [Usage](#usage)
+    - [Authentication](#auth)
+    - [Roles](#roles)
     - [Splunk Server Types](#types)
     - [Inputs](#inputs)
-4. [Limitations](#limitations)
+1. [Limitations](#limitations)
 
 <a id="overview"></a>
 ## Overview
@@ -18,17 +20,21 @@ This Splunk module supports deploying complex Splunk environments (forwarder, in
 
 It supports running as root or a dedicated account. By default it assumes running as user/group splunk/splunk and will apply Posix ACLs to grant access to log files specified in the hiera hash splunk::inputs.
 
+This module is the descendent of some Puppet code I wrote a long time ago to manage our in-house Splunk intrastructure. I have been using this module to manage a large Splunk infrastructure consising of multiple stand-alone and clustered search heads, multiple single-site and multi-site indexer clusters, management hosts, and hundreds of forwarders (Universal and Heavy). I am not a git expert, so bear with me if I do not follow the best practices in releasing updates to the module.
+
 <a id="splunk_files"></a>
 ### File Source
 
 To save everyone's bandwitdh, you should find another way to serve the Splunk installers and any certificates you want to distribute. The parameter splunk::source can be set to any valid Puppet file resource that contains the expected structure.
 
-For example, the directory structure below exported on the puppetmaster as splunk_files would have the setting `splunk::source: 'puppet:///splunk_files'`.
+For example, given this export in fileserver.conf:
 
 ```
 [splunk_files]
   path /etc/puppetlabs/puppet/files/splunk
 ```
+
+And this file structure on disk:
 
 ```
 splunk
@@ -57,34 +63,12 @@ splunk
 └── splunk-7.1.3-51d9cac7b837-Linux-x86_64.tgz
 ```
 
+The source would have the setting `splunk::source: 'puppet:///splunk_files'` which will compile as using the fileserver for source.
 
-Since the module defaults to user 'splunk', it includes a defined type 'splunk::acl' that will apply read-only POSIX ACLs for group 'splunk' to any inputs defined using this app. There are optional parameters 'recurse' and 'parents' that will try to apply minimial read-only ACLs to parent paths or contents of a directory if set to true.
+---
 
-<a id="history"></a>
-### History
-
-This module is the descendent of some Puppet code I wrote a long time ago to manage our in-house Splunk intrastructure. I currently use this module to manage a large Splunk infrastructure consising of multiple stand-alone and clustered search heads, multiple single-site and multi-site indexer clusters, management hosts, and hundreds of forwarders (Universal and Heavy). I am not a git expert, so bear with me if I do not follow the best practices in releasing updates to the module.
-
-<a id="usage"></a>
-## Usage
-
-Including the Splunk class:
-
-```
-classes:
-  - splunk
-```
-
-Specify a version to install in your hiera. The included defaults are for testing only.
-
-```
-splunk::version: 7.2.3
-splunk::release: 06d57c595b80
-```
-
-Typically I would define outputs and cluster sites based on a fact like datacenter, but the examples below show it in a node context.
-
-### Security
+<a id="security"></a>
+## Security
 
 The app can install certificates from a Puppet file server if any of the default cert names are overridden in hiera. If you supply a new cert you must also supply the cert password.
 
@@ -105,6 +89,32 @@ splunk::servercertpass: >
 
 Starting with v1.5.0, the app will store only hashed passwords on-disk once it knows them.
 
+#### ACLs
+
+Since the module defaults to user 'splunk', it includes a defined type 'splunk::acl' that will apply read-only POSIX ACLs for group 'splunk' to any inputs defined using this app. There are optional parameters 'recurse' and 'parents' that will try to apply minimial read-only ACLs to parent paths or contents of a directory if set to true.
+
+---
+
+<a id="usage"></a>
+## Usage
+
+Including the Splunk class:
+
+```
+classes:
+  - splunk
+```
+
+Specify a version to install in your hiera. The included defaults are for testing only.
+
+```
+splunk::version: 7.2.3
+splunk::release: 06d57c595b80
+```
+
+Typically I would define outputs and cluster sites based on a fact like datacenter, but the examples below show it in a node context.
+
+<a id="auth"></a>
 ### Authentication
 
 Starting with v1.5.0 the app has tested support for deploying a working LDAP authentication configuration. If you supply the setting `splunk::authpass` in EYAML, the module will hash and use this password instead of the cleartext password in the authconfig setting.
@@ -147,6 +157,7 @@ splunk::authconfig:
         - 'Contractors'
 ```
 
+<a id="roles"></a>
 ### Roles
 
 Beginning with v1.5.4, the module will populate authorize.conf with roles defined in hiera.
@@ -168,11 +179,12 @@ splunk::roles:
       - 'srchDiskQuota = 5000'
 ```
 
+---
+
 <a id="types"></a>
 ### Splunk Server Types
 
 Below are some examples of various Splunk types.
-
 
 ##### A Splunk Universal forwarder, Puppet manages the outputs:
 
