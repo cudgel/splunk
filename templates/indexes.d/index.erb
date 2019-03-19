@@ -6,7 +6,6 @@ end -%>
 # Puppet Name: <%= @title %>
 #
 [<%= @title -%>]
-
 homePath = volume:splunk_warm/<%= name -%>/db
 coldPath = volume:splunk_cold/<%= name -%>/colddb
 thawedPath = $SPLUNK_DB/<%= name -%>/thaweddb
