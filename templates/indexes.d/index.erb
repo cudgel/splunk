@@ -3,12 +3,12 @@
 [<%= title -%>]
 <%
 if title == 'main'
-    dbName = 'defaultdb'
+  name = 'defaultdb'
 else
-    dbName = title
+  name = title
 end
 -%>
-homePath = volume:splunk_warm/<%= dbName -%>/db
-coldPath = volume:splunk_cold/<%= dbName -%>/colddb
-thawedPath = $SPLUNK_DB/<%= dbName -%>/thaweddb
-frozenTimePeriodInSecs = <%= frozenTime -%>
+homePath = volume:splunk_warm/<%= name -%>/db
+coldPath = volume:splunk_cold/<%= name -%>/colddb
+thawedPath = $SPLUNK_DB/<%= name -%>/thaweddb
+frozenTimePeriodInSecs = <%= frozen_tTime -%>
