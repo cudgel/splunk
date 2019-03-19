@@ -1,7 +1,7 @@
-<% if title == 'main'
+<% if @title == 'main'
   name = 'defaultdb'
 else
-  name = title
+  name = @title
 end -%>
 # Puppet Name: <%= @title %>
 #
