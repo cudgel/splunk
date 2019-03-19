@@ -221,7 +221,7 @@ export PATH
       content => template('splunk/indexes.d/default_indexes.erb')
     }
 
-    create_resources('splunk::input', $splunk_inputs)
+    create_resources('splunk::index', $indexes)
   }
 
   if (($type != 'forwarder' and $type != 'indexer' and $type != 'standalone') or
