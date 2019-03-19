@@ -218,7 +218,7 @@ export PATH
       owner   => $user,
       group   => $group,
       require => Exec['test_for_splunk'],
-      content => template('splunk/default_indexes.erb')
+      content => template('splunk/indexes.d/default_indexes.erb')
     }
 
     create_resources('splunk::input', $splunk_inputs)
