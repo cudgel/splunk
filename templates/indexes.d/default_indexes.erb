@@ -1,3 +1,9 @@
+<%
+warm_path = scope['::splunk::warm_path']
+cold_path = scope['::splunk::cold_path']
+maxwarm = scope['::splunk::maxwarm']
+maxcold = scope['::splunk::maxcold']
+-%>
 [default]
 
 [volume:splunk_warm]

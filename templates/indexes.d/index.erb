@@ -1,14 +1,16 @@
-# Puppet Name: <%= title %>
-#
-[<%= title -%>]
-<%
-if title == 'main'
+<% if title == 'main'
   name = 'defaultdb'
 else
   name = title
-end
--%>
+end -%>
+# Puppet Name: <%= @title %>
+#
+[<%= @title -%>]
+
 homePath = volume:splunk_warm/<%= name -%>/db
 coldPath = volume:splunk_cold/<%= name -%>/colddb
 thawedPath = $SPLUNK_DB/<%= name -%>/thaweddb
-frozenTimePeriodInSecs = <%= frozen_tTime -%>
+frozenTimePeriodInSecs = <%= frozen_time -%>
+<% if @options != nil -%><% @options.each do |op| -%>
+<%= op %>
+<% end %>i<% end -%>
