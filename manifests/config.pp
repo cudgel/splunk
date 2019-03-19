@@ -48,6 +48,10 @@ class splunk::config
   $tcpout            = $splunk::tcpout
   $deployment_server = $splunk::deployment_server
   $indexes           = $splunk::indexes
+  $cold_path         = $splunk::cold_path
+  $warm_path         = $splunk::warm_path
+  $maxwarm           = $splunk::maxwarm
+  $maxcold           = $splunk::maxcold
   $packages          = $splunk::packages
 
   $splunk_home = $splunk_home
