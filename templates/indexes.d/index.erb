@@ -10,7 +10,7 @@ end -%>
 homePath = volume:splunk_warm/<%= name -%>/db
 coldPath = volume:splunk_cold/<%= name -%>/colddb
 thawedPath = $SPLUNK_DB/<%= name -%>/thaweddb
-frozenTimePeriodInSecs = <%= frozen_time -%>
+frozenTimePeriodInSecs = <%= @frozen_time -%>
 <% if @options != nil -%><% @options.each do |op| -%>
 <%= op %>
 <% end %>i<% end -%>
