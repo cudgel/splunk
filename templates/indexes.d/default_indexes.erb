@@ -1,0 +1,19 @@
+<%
+warm_path = scope['::splunk::warm_path']
+cold_path = scope['::splunk::cold_path']
+maxwarm = scope['::splunk::maxwarm']
+maxcold = scope['::splunk::maxcold']
+-%>
+[default]
+
+[volume:splunk_warm]
+path = <%= warm_path %>
+<% if maxwarm.to_i > 0 -%>
+maxVolumeDataSizeMB = <%= maxwarm %>
+<% end -%>
+
+[volume:splunk_cold]
+path = <%= cold_path %>
+<% if maxcold.to_i > 0 -%>
+maxVolumeDataSizeMB = <%= maxcold %>
+<% end %>

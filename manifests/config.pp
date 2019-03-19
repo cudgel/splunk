@@ -47,6 +47,7 @@ class splunk::config
   $cluster_mode      = $splunk::cluster_mode
   $tcpout            = $splunk::tcpout
   $deployment_server = $splunk::deployment_server
+  $indexes           = $splunk::indexes
   $packages          = $splunk::packages
 
   $splunk_home = $splunk_home

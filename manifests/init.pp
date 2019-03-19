@@ -92,10 +92,15 @@ Boolean $webssl,
 Enum['v1,v2', 'v2'] $signatureversion,
 Enum['decryptOnly', 'disabled'] $legacyciphers,
 Optional[String] $license_master,
+Optional[String] $cold_path,
+Optional[String] $warm_path,
+Optional[Integer] $maxwarm          = 0,
+Optional[Integer] $maxcold          = 0,
 Optional[Hash] $acls                = undef,
 Optional[String] $admin_pass        = undef,
 Optional[String] $authentication    = undef,
 Optional[Hash] $authconfig          = undef,
+Optional[Hash] $indexes             = undef,
 Optional[Hash] $inputs              = undef,
 Optional[Tuple] $clusters           = undef,
 Optional[String] $deployment_server = undef,
@@ -290,6 +295,23 @@ Optional[Hash] $tcpout              = undef
             group       => $group,
             umask       => '027',
             creates     => $outputs_conf,
+            notify      => Service['splunk']
+          }
+        }
+
+        if ($type == 'indexer' or $type == 'standalone') and is_hash($indexes) {
+          $indexes_dir = "${local}/indexes.d/"
+          $indexes_conf = "${local}/indexes.conf"
+          $indexes_cmd = "/bin/cat ${indexes_dir}/* > ${indexes_conf}; \
+              chown ${perms} ${indexes_conf}"
+
+          exec { 'update-indexes':
+            command     => $indexes_cmd,
+            refreshonly => true,
+            user        => $user,
+            group       => $group,
+            umask       => '027',
+            creates     => $indexes_conf,
             notify      => Service['splunk']
           }
         }

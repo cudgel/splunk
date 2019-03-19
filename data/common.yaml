@@ -12,6 +12,7 @@ splunk::cacert: 'cacert.pem'
 splunk::captain_is_adhoc: false
 splunk::ciphersuite: 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:AES256-GCM-SHA:AES256-SHA:AES128-GCM-SHA:AES128-SHA'
 splunk::cluster_mode: 'none'
+splunk::cold_path: '/opt/splunk/var/lib/splunk'
 splunk::confdir: 'system'
 splunk::create_user: false
 splunk::deployment_disable: false
@@ -57,5 +58,6 @@ splunk::symmkey: 'password'
 splunk::subsearch_maxout: 50000
 splunk::subsearch_maxtime: 60
 splunk::subsearch_ttl: 300
+splunk::warm_path: '/opt/splunk/var/lib/splunk'
 splunk::webcert: 'cert.pem'
 splunk::webssl: true
