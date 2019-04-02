@@ -20,6 +20,7 @@ class splunk::config
   $type              = $splunk::type
   $install_path      = $splunk::install_path
   $dir               = $splunk::dir
+  $cert_source       = $splunk::cert_source
   $confdir           = $splunk::confdir
   $confpath          = $splunk::confpath
   $local             = $splunk::local
@@ -99,11 +100,11 @@ export PATH
     }
   }
 
-  if $source != 'splunk' and $source !~ /http.*/ {
+  if $cert_source != undef {
 
     if $cacert != 'cacert.pem' {
       file { "${dir}/etc/auth/${cacert}":
-        source  => "${source}/auth/${cacert}",
+        source  => "${cert_source}/auth/${cacert}",
         owner   => $user,
         group   => $group,
         mode    => '0640',
@@ -114,7 +115,7 @@ export PATH
 
     if $privkey != 'privkey.pem' {
       file { "${dir}/etc/auth/splunkweb/${privkey}":
-        source  => "${source}/auth/splunkweb/${privkey}",
+        source  => "${cert_source}/auth/splunkweb/${privkey}",
         owner   => $user,
         group   => $group,
         mode    => '0640',
@@ -125,7 +126,7 @@ export PATH
 
     if $servercert != 'server.pem' {
       file { "${dir}/etc/auth/${servercert}":
-        source  => "${source}/auth/${servercert}",
+        source  => "${cert_source}/auth/${servercert}",
         owner   => $user,
         group   => $group,
         mode    => '0640',
@@ -136,7 +137,7 @@ export PATH
 
     if $webcert != 'cert.pem' {
       file { "${dir}/etc/auth/splunkweb/${webcert}":
-        source  => "${source}/auth/splunkweb/${webcert}",
+        source  => "${cert_source}/auth/splunkweb/${webcert}",
         owner   => $user,
         group   => $group,
         mode    => '0640',
@@ -147,7 +148,7 @@ export PATH
 
     if $managesecret == true {
       file { "${dir}/etc/auth/splunk.secret":
-        source  => "${source}/splunk.secret",
+        source  => "${cert_source}/splunk.secret",
         owner   => $user,
         group   => $group,
         mode    => '0640',
