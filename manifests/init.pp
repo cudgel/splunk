@@ -231,7 +231,7 @@ Optional[Hash] $tcpout              = undef
         $action = 'install'
       } else {
         info('Wait for mounts')
-        $action = 'none'
+        $action = 'wait'
       }
       $cur_version = undef
     }
