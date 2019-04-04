@@ -5,7 +5,7 @@ user = scope['::splunk::user']
 group = scope['::splunk::group']
 -%>
 [Unit]
-Description=Splunk Enterprise <%= version -%>
+Description=Splunk Enterprise <%= version %>
 After=network.target
 Wants=network.target
 
