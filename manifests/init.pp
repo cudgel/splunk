@@ -87,6 +87,7 @@ Integer $subsearch_maxout,
 Integer $subsearch_maxtime,
 Integer $subsearch_ttl,
 String $tarcmd,
+Boolean $use_mounts,
 String $webcert,
 Boolean $webssl,
 Enum['v1,v2', 'v2'] $signatureversion,
@@ -100,6 +101,7 @@ Optional[Hash] $acls                = undef,
 Optional[String] $admin_pass        = undef,
 Optional[String] $authentication    = undef,
 Optional[Hash] $authconfig          = undef,
+Optional[String] $cert_source       = undef,
 Optional[Hash] $indexes             = undef,
 Optional[Hash] $inputs              = undef,
 Optional[Tuple] $clusters           = undef,
@@ -183,6 +185,14 @@ Optional[Hash] $tcpout              = undef
       $cwd = undef
     }
 
+    # fact is true if splunk/etc and splunk/var are on
+    # separate mount points
+    if defined('$splunk_mounts') and $::splunk_mounts == true {
+      $has_mounts = true
+    } else {
+      $has_mounts = false
+    }
+
     # splunk is currently installed - get version from fact
     if defined('$splunk_version') and $::splunk_version =~ /^\d+\.\d+\.\d+-.*/ {
       $cur_version = $::splunk_version
@@ -217,7 +227,12 @@ Optional[Hash] $tcpout              = undef
     } else {
       # no installed version of splunk from fact
       info('Unhandled splunk_version')
-      $action = 'install'
+      if ($use_mounts == true and $has_mounts == true) or $use_mounts == false {
+        $action = 'install'
+      } else {
+        info('Wait for mounts')
+        $action = 'wait'
+      }
       $cur_version = undef
     }
 
@@ -228,12 +243,14 @@ Optional[Hash] $tcpout              = undef
     } elsif $action == 'config' {
       class { 'splunk::config': }
       -> class { 'splunk::service': }
+    } elsif $action == 'wait' {
+      notice('Waiting for pre-requisites.')
     } else {
       notice('Unhandled action.')
       $action = 'none'
     }
 
-    if $action != 'none' {
+    if $action != 'none' and $action != 'wait' {
       # configure deployment server for indexers and forwarders
       if $type =~ /^(heavy)?forwarder/ and $deployment_server != undef {
         class { 'splunk::deployment': }

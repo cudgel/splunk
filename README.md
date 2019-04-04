@@ -3,6 +3,7 @@
 #### Table of Contents
 
 1. [Overview](#overview)
+    - [FS Mounts](#splunk_mounts)
     - [File Source](#splunk_files)
 1. [Module Description](#module-description)
 1. [Security](#security)
@@ -11,6 +12,7 @@
     - [Roles](#roles)
     - [Splunk Server Types](#types)
     - [Inputs](#inputs)
+    - [Indexes](#indexes)
 1. [Limitations](#limitations)
 
 <a id="overview"></a>
@@ -21,6 +23,11 @@ This Splunk module supports deploying complex Splunk environments (forwarder, in
 It supports running as root or a dedicated account. By default it assumes running as user/group splunk/splunk and will apply Posix ACLs to grant access to log files specified in the hiera hash splunk::inputs.
 
 This module is the descendent of some Puppet code I wrote a long time ago to manage our in-house Splunk intrastructure. I have been using this module to manage a large Splunk infrastructure consising of multiple stand-alone and clustered search heads, multiple single-site and multi-site indexer clusters, management hosts, and hundreds of forwarders (Universal and Heavy). I am not a git expert, so bear with me if I do not follow the best practices in releasing updates to the module.
+
+<a id="splunk_mounts"></a>
+### FS Mounts
+
+The module assumes installation on a single partition. If you set the parameter splunk::use_mounts to true, the module will not install Splunk until "splunk/etc" and "splunk/var" are mounted on the server.
 
 <a id="splunk_files"></a>
 ### File Source
@@ -63,7 +70,7 @@ splunk
 └── splunk-7.1.3-51d9cac7b837-Linux-x86_64.tgz
 ```
 
-The source would have the setting `splunk::source: 'puppet:///splunk_files'` which will compile as using the fileserver for source.
+The source would have the setting `splunk::source: 'puppet:///splunk_files'` which will compile as using the fileserver for the splunk installer source. A similar setting splunk::cert_source controls where the certs are served from (should they differ). This setting is required if using non-default certs.
 
 ---
 
@@ -370,7 +377,22 @@ splunk::inputs:
       - 'no_appending_timestamp = true'
 ```
 
-More examples can be found in the unit tests.
+---
+
+<a id="indexes"></a>
+### Indexes
+
+Starting with version 1.6.0, you can define indexes in Puppet if you are configuring a stand-alone indexer or an S1 architecture. Indexes are defined as a hash in hiera, any valid index settings can be added as an array of strings under options. The settings splunk::cold_path and splunk::warm_path can be used to relocate indexes outside of the Splunk var/lib/splunk directory.
+
+```
+splunk::indexes:
+  'main':
+    frozen_time: 604800
+    options:
+      - 'maxDataSize = auto'
+      - 'maxWarmDBCount = 10'
+
+```
 
 ---
 
