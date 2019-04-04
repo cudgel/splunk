@@ -87,15 +87,22 @@ Integer $subsearch_maxout,
 Integer $subsearch_maxtime,
 Integer $subsearch_ttl,
 String $tarcmd,
+Boolean $use_mounts,
 String $webcert,
 Boolean $webssl,
 Enum['v1,v2', 'v2'] $signatureversion,
 Enum['decryptOnly', 'disabled'] $legacyciphers,
 Optional[String] $license_master,
+Optional[String] $cold_path,
+Optional[String] $warm_path,
+Optional[Integer] $maxwarm          = 0,
+Optional[Integer] $maxcold          = 0,
 Optional[Hash] $acls                = undef,
 Optional[String] $admin_pass        = undef,
 Optional[String] $authentication    = undef,
 Optional[Hash] $authconfig          = undef,
+Optional[String] $cert_source       = undef,
+Optional[Hash] $indexes             = undef,
 Optional[Hash] $inputs              = undef,
 Optional[Tuple] $clusters           = undef,
 Optional[String] $deployment_server = undef,
@@ -178,6 +185,14 @@ Optional[Hash] $tcpout              = undef
       $cwd = undef
     }
 
+    # fact is true if splunk/etc and splunk/var are on
+    # separate mount points
+    if defined('$splunk_mounts') and $::splunk_mounts == true {
+      $has_mounts = true
+    } else {
+      $has_mounts = false
+    }
+
     # splunk is currently installed - get version from fact
     if defined('$splunk_version') and $::splunk_version =~ /^\d+\.\d+\.\d+-.*/ {
       $cur_version = $::splunk_version
@@ -212,7 +227,12 @@ Optional[Hash] $tcpout              = undef
     } else {
       # no installed version of splunk from fact
       info('Unhandled splunk_version')
-      $action = 'install'
+      if ($use_mounts == true and $has_mounts == true) or $use_mounts == false {
+        $action = 'install'
+      } else {
+        info('Wait for mounts')
+        $action = 'wait'
+      }
       $cur_version = undef
     }
 
@@ -223,12 +243,14 @@ Optional[Hash] $tcpout              = undef
     } elsif $action == 'config' {
       class { 'splunk::config': }
       -> class { 'splunk::service': }
+    } elsif $action == 'wait' {
+      notice('Waiting for pre-requisites.')
     } else {
       notice('Unhandled action.')
       $action = 'none'
     }
 
-    if $action != 'none' {
+    if $action != 'none' and $action != 'wait' {
       # configure deployment server for indexers and forwarders
       if $type =~ /^(heavy)?forwarder/ and $deployment_server != undef {
         class { 'splunk::deployment': }
@@ -290,6 +312,23 @@ Optional[Hash] $tcpout              = undef
             group       => $group,
             umask       => '027',
             creates     => $outputs_conf,
+            notify      => Service['splunk']
+          }
+        }
+
+        if ($type == 'indexer' or $type == 'standalone') and is_hash($indexes) {
+          $indexes_dir = "${local}/indexes.d/"
+          $indexes_conf = "${local}/indexes.conf"
+          $indexes_cmd = "/bin/cat ${indexes_dir}/* > ${indexes_conf}; \
+              chown ${perms} ${indexes_conf}"
+
+          exec { 'update-indexes':
+            command     => $indexes_cmd,
+            refreshonly => true,
+            user        => $user,
+            group       => $group,
+            umask       => '027',
+            creates     => $indexes_conf,
             notify      => Service['splunk']
           }
         }
