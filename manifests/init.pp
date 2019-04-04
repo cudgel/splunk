@@ -243,6 +243,8 @@ Optional[Hash] $tcpout              = undef
     } elsif $action == 'config' {
       class { 'splunk::config': }
       -> class { 'splunk::service': }
+    } elsif $action == 'wait' {
+      notice('Waiting for pre-requisites.')
     } else {
       notice('Unhandled action.')
       $action = 'none'
