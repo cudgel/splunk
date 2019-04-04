@@ -250,7 +250,7 @@ Optional[Hash] $tcpout              = undef
       $action = 'none'
     }
 
-    if $action != 'none' and action != 'wait' {
+    if $action != 'none' and $action != 'wait' {
       # configure deployment server for indexers and forwarders
       if $type =~ /^(heavy)?forwarder/ and $deployment_server != undef {
         class { 'splunk::deployment': }
