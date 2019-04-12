@@ -35,6 +35,7 @@ splunk::preferred_captain: false
 splunk::privkey: 'privkey.pem'
 splunk::repl_port: 8192
 splunk::repl_count: 3
+splunk::s3_encryption: 'none'
 splunk::scheduler_disable: false
 splunk::search_maxinfocsv: 20
 splunk::search_maxqueue: 100

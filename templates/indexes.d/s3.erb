@@ -1,0 +1,38 @@
+<%
+  s3_encryption = scope['::splunk::s3_encryption']
+  s3_kms_key = scope['::splunk::s3_kms_key']
+  s3_sslverify = scope['::splunk::s3_sslverify']
+  s3_sslversions = scope['::splunk::s3_sslversions']
+  s3_sslaltname = scope['::splunk::s3_sslaltname']
+  s3_ssl_capath = scope['::splunk::s3_ssl_capath']
+  s3_ciphersuite = scope['::splunk::s3_ciphersuite']
+  s3_ecdhcurves = scope['::splunk::s3_ecdhcurves']
+-%>
+
+[volume:splunk_remote]
+<% if s3_encryption != 'none' -%>
+remote.s3.encryption = <%= s3_encryption %>
+<% if s3_encryption == 'sse-c' -%>
+remote.s3.encryption.sse-c.key_type = kms
+remote.s3.encryption.sse-c.key_refresh_interval = <%= refresh %>
+remote.s3.kms.auth_region = <%= s3_region %>
+remote.s3.kms.key_id = <%= s3_kms_key %>
+remote.s3.sslVerifyServerCert<$= s3_sslverify %>
+remote.s3.sslVersions<$= s3_sslversions %>
+remote.s3.sslAltNameToCheck<$= s3_sslaltname %>
+remote.s3.sslRootCAPath<$= s3_ssl_capath %>
+remote.s3.cipherSuite<$= s3_ciphersuite %>
+remote.s3.ecdhCurves<$= s3_ecdhcurves %>
+<% end -%>
+<% if s3_encryption == 'sse-kms' -%>
+remote.s3.kms.key_id = <%= kms_keyid %>
+<% end -%>
+<% end -%>
+
+
+
+
+
+
+
+

@@ -50,6 +50,7 @@ class splunk::config
   $deployment_server = $splunk::deployment_server
   $indexes           = $splunk::indexes
   $packages          = $splunk::packages
+  $remote_path       = $splunk::remote_path
 
   $splunk_home = $splunk_home
   $perms = "${user}:${group}"
@@ -241,6 +242,16 @@ export PATH
       group   => $group,
       require => File["${local}/outputs.d"],
       notify  => Exec['update-outputs']
+    }
+
+    if $remote_path != undef {
+      file { "${local}/outputs.d/001_s3":
+        content => template("${module_name}/outputs.d/s3.erb"),
+        owner   => $user,
+        group   => $group,
+        require => File["${local}/outputs.d"],
+        notify  => Exec['update-outputs']
+      }
     }
   }
 
