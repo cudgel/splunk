@@ -15,6 +15,13 @@
 -%>
 
 [volume:splunk_remote]
+storage_type = 'remote'
+path = <%= remote_path %>
+<% if s3_access_key != nil -%>
+remote.s3.access_key = <%= s3_access_key %>
+remote.s3.secret_key = <%= s3_secret_key %>
+remote.s3.endpoint = https://<%= s3_endpoint %>
+<% end -%>
 <% if s3_encryption != 'none' -%>
 remote.s3.encryption = <%= s3_encryption %>
 <% if s3_encryption == 'sse-c' -%>
@@ -32,12 +39,7 @@ remote.s3.ecdhCurves<%= s3_ecdhcurves %>
 remote.s3.kms.key_id = <%= kms_keyid %>
 <% end -%>
 <% end -%>
-storage_type = 'remote'
-path = <%= remote_path %>
-<% if s3_access_key != nil -%>
-remote.s3.access_key = <%= s3_access_key %>
-remote.s3.secret_key = <%= s3_access_key %>
-remote.s3.endpoint = https://<%= s3_endpoint %>
+
 
 
 
