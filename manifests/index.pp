@@ -10,6 +10,7 @@ define splunk::index(
   Optional[String] $dir          = $splunk::dir,
   Optional[Boolean] $sign        = false,
   Optional[Boolean] $archive     = false,
+  Optional[Boolean] $remote      = false,
   Optional[Array] $options       = undef,
 ) {
   $local = "${dir}/etc/system/local"

@@ -223,6 +223,16 @@ export PATH
       content => template('splunk/indexes.d/default_indexes.erb')
     }
 
+    if $remote_path != undef {
+      file { "${local}/indexes.d/001_s3":
+        content => template("${module_name}/indexes.d/s3.erb"),
+        owner   => $user,
+        group   => $group,
+        require => File["${local}/indexes.d"],
+        notify  => Exec['update-indexes']
+      }
+    }
+
     create_resources('splunk::index', $indexes)
   }
 
@@ -242,16 +252,6 @@ export PATH
       group   => $group,
       require => File["${local}/outputs.d"],
       notify  => Exec['update-outputs']
-    }
-
-    if $remote_path != undef {
-      file { "${local}/outputs.d/001_s3":
-        content => template("${module_name}/outputs.d/s3.erb"),
-        owner   => $user,
-        group   => $group,
-        require => File["${local}/outputs.d"],
-        notify  => Exec['update-outputs']
-      }
     }
   }
 
