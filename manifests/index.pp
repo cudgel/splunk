@@ -4,13 +4,13 @@
 # $SPLUNK_HOME/etc/system/local/indexes.conf
 #
 define splunk::index(
-  Optional[Integer] $frozen_time,
-  Optional[String] $user     = $splunk::user,
-  Optional[String] $group    = $splunk::group,
-  Optional[String] $dir      = $splunk::dir,
-  Optional[Boolean] $sign    = false,
-  Optional[Boolean] $archive = false,
-  Optional[Array] $options   = undef,
+  Optional[Integer] $frozen_time = 188697600,
+  Optional[String] $user         = $splunk::user,
+  Optional[String] $group        = $splunk::group,
+  Optional[String] $dir          = $splunk::dir,
+  Optional[Boolean] $sign        = false,
+  Optional[Boolean] $archive     = false,
+  Optional[Array] $options       = undef,
 ) {
   $local = "${dir}/etc/system/local"
 
