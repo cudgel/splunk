@@ -15,7 +15,7 @@
 -%>
 
 [volume:splunk_remote]
-storage_type = 'remote'
+storage_type = remote
 path = <%= remote_path %>
 <% if s3_access_key != nil -%>
 remote.s3.access_key = <%= s3_access_key %>
