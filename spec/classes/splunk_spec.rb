@@ -245,12 +245,6 @@ describe 'splunk' do
         'server_site'       => 'site1',
         'repl_port'         => 8193,
         'cluster_mode'      => 'none',
-        'indexes'           => [
-          {
-            'title'       => 'test',
-            'frozen_time' => 86_400,
-          },
-        ],
       }
     end
 
