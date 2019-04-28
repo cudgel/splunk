@@ -239,18 +239,17 @@ describe 'splunk' do
   context 'indexer' do
     let(:params) do
       {
-        'type'              => 'indexer',
-        'create_user'       => true,
-        'license_master'    => 'splunklm.example.com:8089',
-        'server_site'       => 'site1',
-        'repl_port'         => 8193,
-        'cluster_mode'      => 'none',
-        'indexes'           => [
-          {
-            'title'       => 'test',
-            'frozen_time' => 86_400,
+        'type'           => 'indexer',
+        'create_user'    => true,
+        'license_master' => 'splunklm.example.com:8089',
+        'server_site'    => 'site1',
+        'repl_port'      => 8193,
+        'cluster_mode'   => 'none',
+        'indexes'        => {
+          'main' => {
+            'frozen_time' => 86400,
           },
-        ],
+        },
       }
     end
 
@@ -267,6 +266,9 @@ describe 'splunk' do
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/inputs.d/000_default').that_requires('File[/opt/splunk/etc/system/local/inputs.d]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/inputs.d/000_splunkssl').that_requires('File[/opt/splunk/etc/system/local/inputs.d]').that_notifies('Exec[update-inputs]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/inputs.d/999_splunktcp') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/indexes.d').with_ensure('directory').that_requires('Exec[test_for_splunk]') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/indexes.d/000_default').that_requires('File[/opt/splunk/etc/system/local/indexes.d]') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/indexes.d/main').that_requires('File[/opt/splunk/etc/system/local/indexes.d]').that_notifies('Exec[update-indexes]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/server.d').with_ensure('directory').that_requires('Exec[test_for_splunk]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/server.d/001_license') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/server.d/998_ssl').that_requires('File[/opt/splunk/etc/system/local/server.d]').that_notifies('Exec[update-server]') }
