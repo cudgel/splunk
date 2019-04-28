@@ -112,9 +112,18 @@ class splunk::install
     source        => $source
   }
 
+  exec { 'splunkDir':
+    command => "mkdir -p ${dir} && chown ${user}:${group} ${dir}",
+    path    => "${dir}/bin:/bin:/usr/bin:",
+    cwd     => $install_path,
+    before  => Exec['unpackSplunk']
+  }
+
   exec { 'unpackSplunk':
     command   => "${tarcmd} ${newsource}",
     path      => "${dir}/bin:/bin:/usr/bin:",
+    user      => $user,
+    group     => $group,
     cwd       => $install_path,
     timeout   => 600,
     subscribe => File["${install_path}/${newsource}"],
@@ -124,16 +133,16 @@ class splunk::install
     creates   => "${dir}/${manifest}"
   }
 
-  exec { 'splunkDir':
-    command   => "chown ${user}:${group} ${dir}; chown ${user}:${group} ${dir}/*; \
-    chown -r ${user}:${group} ${dir}/bin ${dir}/etc ${dir}/include ${dir}/lib ${dir}/openssl ${dir}/share",
-    path      => "${dir}/bin:/bin:/usr/bin:",
-    cwd       => $install_path,
-    subscribe => Exec['unpackSplunk'],
-    onlyif    => "test -d ${dir}",
-    timeout   => 600,
-    returns   => [0, 1]
-  }
+  # exec { 'splunkDir':
+  #   command   => "chown ${user}:${group} ${dir}; chown ${user}:${group} ${dir}/*; \
+  #   chown -R ${user}:${group} ${dir}/bin ${dir}/etc ${dir}/include ${dir}/lib ${dir}/openssl ${dir}/share",
+  #   path      => "${dir}/bin:/bin:/usr/bin:",
+  #   cwd       => $install_path,
+  #   subscribe => Exec['unpackSplunk'],
+  #   onlyif    => "test -d ${dir}",
+  #   timeout   => 600,
+  #   returns   => [0, 1]
+  # }
 
   exec { 'serviceStart':
     command     => "${stopcmd}; ${startcmd}",
@@ -141,7 +150,7 @@ class splunk::install
     path        => "${dir}/bin:/bin:/usr/bin:",
     user        => $user,
     group       => $group,
-    subscribe   => Exec['splunkDir'],
+    subscribe   => Exec['unpackSplunk'],
     refreshonly => true
   }
 
