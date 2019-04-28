@@ -130,7 +130,7 @@ class splunk::install
     cwd       => $install_path,
     subscribe => Exec['unpackSplunk'],
     onlyif    => "test -d ${dir}",
-    timeout   => 0,
+    timeout   => 600,
     returns   => [0, 1]
   }
 
