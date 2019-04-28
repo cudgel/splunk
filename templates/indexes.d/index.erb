@@ -7,9 +7,14 @@ end -%>
 #
 [<%= @title -%>]
 homePath = volume:splunk_warm/<%= name -%>/db
+<% if @remote != nil -%>
+remotePath = volume:splunk_remote/<%= name %>
+# SmartStore-enabled indexes do not use thawedPath or coldPath, but you must still specify them here.
+<% end -%>
 coldPath = volume:splunk_cold/<%= name -%>/colddb
 thawedPath = $SPLUNK_DB/<%= name -%>/thaweddb
-frozenTimePeriodInSecs = <%= @frozen_time -%>
+frozenTimePeriodInSecs = <%= @frozen_time %>
 <% if @options != nil -%><% @options.each do |op| -%>
 <%= op %>
-<% end %>i<% end -%>
+<% end -%>
+<% end -%>

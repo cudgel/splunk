@@ -50,6 +50,7 @@ class splunk::config
   $deployment_server = $splunk::deployment_server
   $indexes           = $splunk::indexes
   $packages          = $splunk::packages
+  $remote_path       = $splunk::remote_path
 
   $splunk_home = $splunk_home
   $perms = "${user}:${group}"
@@ -220,6 +221,16 @@ export PATH
       group   => $group,
       require => Exec['test_for_splunk'],
       content => template('splunk/indexes.d/default_indexes.erb')
+    }
+
+    if $remote_path != undef {
+      file { "${local}/indexes.d/001_s3":
+        content => template("${module_name}/indexes.d/s3.erb"),
+        owner   => $user,
+        group   => $group,
+        require => File["${local}/indexes.d"],
+        notify  => Exec['update-indexes']
+      }
     }
 
     create_resources('splunk::index', $indexes)
