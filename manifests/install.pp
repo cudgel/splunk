@@ -133,17 +133,6 @@ class splunk::install
     creates   => "${dir}/${manifest}"
   }
 
-  # exec { 'splunkDir':
-  #   command   => "chown ${user}:${group} ${dir}; chown ${user}:${group} ${dir}/*; \
-  #   chown -R ${user}:${group} ${dir}/bin ${dir}/etc ${dir}/include ${dir}/lib ${dir}/openssl ${dir}/share",
-  #   path      => "${dir}/bin:/bin:/usr/bin:",
-  #   cwd       => $install_path,
-  #   subscribe => Exec['unpackSplunk'],
-  #   onlyif    => "test -d ${dir}",
-  #   timeout   => 600,
-  #   returns   => [0, 1]
-  # }
-
   exec { 'serviceStart':
     command     => "${stopcmd}; ${startcmd}",
     environment => 'HISTFILE=/dev/null',
