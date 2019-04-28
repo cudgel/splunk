@@ -129,7 +129,8 @@ class splunk::install
     path      => "${dir}/bin:/bin:/usr/bin:",
     cwd       => $install_path,
     subscribe => Exec['unpackSplunk'],
-    onlyif    => "test -d ${dir}"
+    onlyif    => "test -d ${dir}",
+    returns   => [0, 1]
   }
 
   exec { 'serviceStart':
