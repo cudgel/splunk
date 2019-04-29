@@ -92,11 +92,13 @@ String $webcert,
 Boolean $webssl,
 Enum['v1,v2', 'v2'] $signatureversion,
 Enum['decryptOnly', 'disabled'] $legacyciphers,
+Enum['sse-s3', 'sse-kms', 'sse-c', 'none'] $s3_encryption,
 Optional[String] $license_master,
 Optional[String] $cold_path,
 Optional[String] $warm_path,
 Optional[Integer] $maxwarm          = 0,
 Optional[Integer] $maxcold          = 0,
+Optional[Integer] $s3_keyrefresh    = 86400,
 Optional[Hash] $acls                = undef,
 Optional[String] $admin_pass        = undef,
 Optional[String] $authentication    = undef,
@@ -117,7 +119,19 @@ Optional[String] $shcluster_label   = undef,
 Optional[String] $shcluster_mode    = undef,
 Optional[Array] $shcluster_members  = undef,
 Optional[String] $symmkey           = undef,
-Optional[Hash] $tcpout              = undef
+Optional[Hash] $tcpout              = undef,
+Optional[String] $remote_path       = undef,
+Optional[String] $s3_access_key     = undef,
+Optional[String] $s3_secret_key     = undef,
+Optional[String] $s3_endpoint       = undef,
+Optional[string] $s3_sslverify      = undef,
+Optional[string] $s3_sslversions    = undef,
+Optional[string] $s3_ssl_altname    = undef,
+Optional[string] $s3_ssl_capath     = undef,
+Optional[string] $s3_ciphersuite    = undef,
+Optional[string] $s3_ecdhcurves     = undef,
+Optional[string] $s3_region         = undef,
+Optional[string] $s3_kms_key        = undef
 ) {
 
   if $type != 'none' {
@@ -194,11 +208,11 @@ Optional[Hash] $tcpout              = undef
     }
 
     # splunk is currently installed - get version from fact
-    if defined('$splunk_version') and $::splunk_version =~ /^\d+\.\d+\.\d+-.*/ {
+    if defined('$splunk_version') and $::splunk_version =~ /^(\d\.)+\d-\w+/ {
       $cur_version = $::splunk_version
       # because the legacy fact does not represent splunk version as
       # version-release, we cut the version from the string.
-      $vtemp = regsubst($cur_version, '^(\d+\.\d+\.\d+)-.*$', '\1')
+      $vtemp = regsubst($cur_version, '^((?:\d\.)+\d)-\w+$', '\1')
       $vdiff = versioncmp($version, $vtemp)
       if $cwd =~ /\/\w+\/.*/ {
         # splunk is running from the directory expected for the type
@@ -208,8 +222,8 @@ Optional[Hash] $tcpout              = undef
             $action = 'upgrade'
           } elsif $vdiff == -1 {
             # current version is higher than the one puppet wants to install
-            info('Not downgrading. Splunk is already at a higher version.')
-            $action = 'config'
+            info('Not downgrading or configuring. Splunk is already at a higher version.')
+            $action = 'service'
           } else {
             # version matches - just do config tasks
             $action = 'config'
@@ -243,6 +257,8 @@ Optional[Hash] $tcpout              = undef
     } elsif $action == 'config' {
       class { 'splunk::config': }
       -> class { 'splunk::service': }
+    } elsif $action == 'service' {
+      class { 'splunk::service': }
     } elsif $action == 'wait' {
       notice('Waiting for pre-requisites.')
     } else {

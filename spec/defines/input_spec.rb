@@ -43,7 +43,10 @@ describe 'splunk::input' do
   end
   let(:pre_condition) { "class { splunk: type => 'forwarder' }" }
 
+  it { is_expected.to contain_exec('retrieve_splunkforwarder-7.2.1-be11b2c46e23-Linux-x86_64.tgz') }
+  it { is_expected.to contain_file('/opt/splunkforwarder-7.2.1-be11b2c46e23-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
   it { is_expected.to contain_file('/opt/splunkforwarder/etc/system/local/inputs.d/authlog').that_notifies('Exec[update-inputs]') }
+  it { is_expected.to contain_splunk__acl('authlog') }
   it { is_expected.to contain_exec('set_effective_rights_mask_authlog') }
   it { is_expected.to contain_exec('setfacl_authlog') }
 end
