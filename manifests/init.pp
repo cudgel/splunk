@@ -222,8 +222,8 @@ Optional[string] $s3_kms_key        = undef
             $action = 'upgrade'
           } elsif $vdiff == -1 {
             # current version is higher than the one puppet wants to install
-            info('Not downgrading. Splunk is already at a higher version.')
-            $action = 'config'
+            info('Not downgrading or configuring. Splunk is already at a higher version.')
+            $action = 'service'
           } else {
             # version matches - just do config tasks
             $action = 'config'
@@ -257,6 +257,8 @@ Optional[string] $s3_kms_key        = undef
     } elsif $action == 'config' {
       class { 'splunk::config': }
       -> class { 'splunk::service': }
+    } elsif $action == 'service' {
+      class { 'splunk::service': }
     } elsif $action == 'wait' {
       notice('Waiting for pre-requisites.')
     } else {
