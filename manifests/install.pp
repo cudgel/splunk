@@ -116,7 +116,8 @@ class splunk::install
     command => "mkdir -p ${dir} && chown ${user}:${group} ${dir}",
     path    => "${dir}/bin:/bin:/usr/bin:",
     cwd     => $install_path,
-    before  => Exec['unpackSplunk']
+    before  => Exec['unpackSplunk'],
+    unless  => "test -d ${dir}"
   }
 
   exec { 'unpackSplunk':
