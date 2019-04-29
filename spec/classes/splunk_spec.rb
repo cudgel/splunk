@@ -282,7 +282,7 @@ describe 'splunk' do
         'cluster_mode'   => 'none',
         'remote_path'    => 's3://splunk-remote/indexes',
         's3_endpoint'    => 's3.amazonaws.com',
-        's3_encryption'     => 'sse-s3',
+        's3_encryption'  => 'sse-s3',
         'indexes'        => {
           'main' => {
             'frozen_time' => 86_400,
