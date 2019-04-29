@@ -223,6 +223,7 @@ export PATH
       content => template('splunk/indexes.d/default_indexes.erb')
     }
 
+
     if $remote_path != undef {
       file { "${local}/indexes.d/001_s3":
         content => template("${module_name}/indexes.d/s3.erb"),
