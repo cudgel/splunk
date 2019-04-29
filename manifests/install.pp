@@ -117,6 +117,7 @@ class splunk::install
     path    => "${dir}/bin:/bin:/usr/bin:",
     cwd     => $install_path,
     before  => Exec['unpackSplunk']
+    unless  => "test -d ${dir}"
   }
 
   exec { 'unpackSplunk':
