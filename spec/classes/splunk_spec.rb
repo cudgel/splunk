@@ -74,6 +74,10 @@ describe 'splunk' do
     it { is_expected.to contain_file('/opt/splunkforwarder/etc/system/local/outputs.d/000_default').that_requires('File[/opt/splunkforwarder/etc/system/local/outputs.d]').that_notifies('Exec[update-outputs]') }
     it { is_expected.to contain_exec('update-outputs').that_notifies('Service[splunk]') }
     it { is_expected.to contain_class('splunk::service') }
+    it { is_expected.to contain_file_line('splunk-restart') }
+    it { is_expected.to contain_file_line('splunk-start') }
+    it { is_expected.to contain_file_line('splunk-status') }
+    it { is_expected.to contain_file_line('splunk-stop') }
     it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
   end
 
@@ -259,7 +263,9 @@ describe 'splunk' do
     it { is_expected.to contain_user('splunk').with('ensure' => 'present', 'gid' => 'splunk') }
     it { is_expected.to contain_file('/home/splunk/.bashrc.custom') }
     it { is_expected.to contain_class('splunk::install') }
+    it { is_expected.to contain_splunk__fetch('sourcefile') }
     it { is_expected.to contain_file('/opt/splunk-7.2.1-be11b2c46e23-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
+    it { is_expected.to contain_exec('splunkDir') }
     it { is_expected.to contain_class('splunk::config') }
     it { is_expected.to contain_file('/opt/splunk/etc/splunk-launch.conf').that_notifies('Service[splunk]').that_requires('Exec[test_for_splunk]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/inputs.d').with_ensure('directory').that_requires('Exec[test_for_splunk]') }
@@ -268,13 +274,41 @@ describe 'splunk' do
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/inputs.d/999_splunktcp') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/indexes.d').with_ensure('directory').that_requires('Exec[test_for_splunk]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/indexes.d/000_default').that_requires('File[/opt/splunk/etc/system/local/indexes.d]') }
+    it { is_expected.to contain_splunk__index('main') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/indexes.d/main').that_requires('File[/opt/splunk/etc/system/local/indexes.d]').that_notifies('Exec[update-indexes]') }
+    it { is_expected.to contain_exec('update-indexes').that_notifies('Service[splunk]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/server.d').with_ensure('directory').that_requires('Exec[test_for_splunk]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/server.d/001_license') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/server.d/998_ssl').that_requires('File[/opt/splunk/etc/system/local/server.d]').that_notifies('Exec[update-server]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/server.d/999_default').that_requires('File[/opt/splunk/etc/system/local/server.d]').that_notifies('Exec[update-server]') }
     it { is_expected.to contain_class('splunk::service') }
     it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
+  end
+
+  context 'indexer with smartstore' do
+    let(:params) do
+      {
+        'type'           => 'indexer',
+        'create_user'    => true,
+        'license_master' => 'splunklm.example.com:8089',
+        'server_site'    => 'site1',
+        'repl_port'      => 8193,
+        'cluster_mode'   => 'none',
+        'remote_path'    => 's3://splunk-remote/indexes',
+        's3_endpoint'    => 's3.amazonaws.com',
+        's3_encryption'     => 'sse-s3',
+        'indexes'        => {
+          'main' => {
+            'frozen_time' => 86_400,
+            'remote'      => true,
+          },
+        },
+      }
+    end
+
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/indexes.d').with_ensure('directory').that_requires('Exec[test_for_splunk]') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/indexes.d/001_s3').that_requires('File[/opt/splunk/etc/system/local/indexes.d]') }
+    it { is_expected.to contain_splunk__index('main') }
   end
 
   context 'index cluster member' do
