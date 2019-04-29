@@ -208,11 +208,11 @@ Optional[string] $s3_kms_key        = undef
     }
 
     # splunk is currently installed - get version from fact
-    if defined('$splunk_version') and $::splunk_version =~ /^(\d\.)+\d-.*/ {
+    if defined('$splunk_version') and $::splunk_version =~ /^(\d\.)+\d-\w+/ {
       $cur_version = $::splunk_version
       # because the legacy fact does not represent splunk version as
       # version-release, we cut the version from the string.
-      $vtemp = regsubst($cur_version, '^(\d\.)+\d-.*$', '\1')
+      $vtemp = regsubst($cur_version, '^(\d\.)+\d-\w+$', '\1')
       $vdiff = versioncmp($version, $vtemp)
       if $cwd =~ /\/\w+\/.*/ {
         # splunk is running from the directory expected for the type
