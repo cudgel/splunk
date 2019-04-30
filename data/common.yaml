@@ -1,6 +1,4 @@
 ---
-splunk::version: '7.2.1'
-splunk::release: 'be11b2c46e23'
 splunk::group: 'splunk'
 splunk::user: 'splunk'
 splunk::type: 'none'
