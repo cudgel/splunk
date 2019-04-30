@@ -31,7 +31,7 @@ splunk::license_master: 'none'
 splunk::managesecret: false
 splunk::max_rawsize_perchunk: 100000000
 splunk::max_searches: 1
-splunk::preferred_captain: false
+splunk::preferred_captain: true
 splunk::privkey: 'privkey.pem'
 splunk::repl_port: 8192
 splunk::repl_count: 3
