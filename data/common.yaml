@@ -1,6 +1,4 @@
 ---
-splunk::version: '7.2.1'
-splunk::release: 'be11b2c46e23'
 splunk::group: 'splunk'
 splunk::user: 'splunk'
 splunk::type: 'none'
@@ -15,6 +13,7 @@ splunk::cluster_mode: 'none'
 splunk::cold_path: '/opt/splunk/var/lib/splunk'
 splunk::confdir: 'system'
 splunk::create_user: false
+splunk::datamodel_path: '/opt/splunk/var/lib/splunk'
 splunk::deployment_disable: false
 splunk::deployment_interval: 30
 splunk::dispatch_earliest: '-60m@m'
@@ -31,7 +30,7 @@ splunk::license_master: 'none'
 splunk::managesecret: false
 splunk::max_rawsize_perchunk: 100000000
 splunk::max_searches: 1
-splunk::preferred_captain: false
+splunk::preferred_captain: true
 splunk::privkey: 'privkey.pem'
 splunk::repl_port: 8192
 splunk::repl_count: 3

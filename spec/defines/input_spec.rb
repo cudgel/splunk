@@ -35,15 +35,16 @@ describe 'splunk::input' do
   end
   let(:params) do
     {
-      'target' => '/var/log/authlog',
-      'dir'   => '/opt/splunkforwarder',
-      'user'  => 'splunk',
-      'group' => 'splunk',
+      'target'  => '/var/log/authlog',
+      'dir'     => '/opt/splunkforwarder',
+      'user'    => 'splunk',
+      'group'   => 'splunk',
     }
   end
-  let(:pre_condition) { "class { splunk: type => 'forwarder' }" }
-  it { is_expected.to contain_exec('retrieve_splunkforwarder-7.2.1-be11b2c46e23-Linux-x86_64.tgz') }
-  it { is_expected.to contain_file('/opt/splunkforwarder-7.2.1-be11b2c46e23-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
+  let(:pre_condition) do
+    "class { splunk: type => 'forwarder', version => '7.2.3', release => '06d57c595b80' }"
+  end
+
   it { is_expected.to contain_file('/opt/splunkforwarder/etc/system/local/inputs.d/authlog').that_notifies('Exec[update-inputs]') }
   it { is_expected.to contain_splunk__acl('authlog') }
   it { is_expected.to contain_exec('set_effective_rights_mask_authlog') }
