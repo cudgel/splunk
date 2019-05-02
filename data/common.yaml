@@ -13,6 +13,7 @@ splunk::cluster_mode: 'none'
 splunk::cold_path: '/opt/splunk/var/lib/splunk'
 splunk::confdir: 'system'
 splunk::create_user: false
+splunk::datamodel_path: '/opt/splunk/var/lib/splunk'
 splunk::deployment_disable: false
 splunk::deployment_interval: 30
 splunk::dispatch_earliest: '-60m@m'
@@ -57,6 +58,7 @@ splunk::symmkey: 'password'
 splunk::subsearch_maxout: 50000
 splunk::subsearch_maxtime: 60
 splunk::subsearch_ttl: 300
+splunk::thawed_path: '/opt/splunk/var/lib/splunk'
 splunk::use_mounts: false
 splunk::warm_path: '/opt/splunk/var/lib/splunk'
 splunk::webcert: 'cert.pem'

@@ -1,6 +1,8 @@
 <%
 warm_path = scope['::splunk::warm_path']
 cold_path = scope['::splunk::cold_path']
+thawed_path = scope['::splunk::thawed_path']
+datamodel_path = scope['::splunk::datamodel_path']
 maxwarm = scope['::splunk::maxwarm']
 maxcold = scope['::splunk::maxcold']
 -%>
@@ -17,3 +19,9 @@ path = <%= cold_path %>
 <% if maxcold.to_i > 0 -%>
 maxVolumeDataSizeMB = <%= maxcold %>
 <% end %>
+
+[volume:splunk_thawed]
+path = <%= thawed_path %>
+
+[volume:splunk_datamodels]
+path = <%= datamodel_path %>
