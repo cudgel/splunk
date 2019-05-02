@@ -7,7 +7,7 @@ end -%>
 #
 [<%= @title -%>]
 homePath = volume:splunk_warm/<%= name -%>/db
-<% if @remote != nil -%>
+<% if @remote == true -%>
 remotePath = volume:splunk_remote/<%= name %>
 # SmartStore-enabled indexes do not use thawedPath or coldPath, but you must still specify them here.
 <% end -%>
