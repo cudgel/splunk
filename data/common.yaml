@@ -58,7 +58,6 @@ splunk::symmkey: 'password'
 splunk::subsearch_maxout: 50000
 splunk::subsearch_maxtime: 60
 splunk::subsearch_ttl: 300
-splunk::thawed_path: '/opt/splunk/var/lib/splunk'
 splunk::use_mounts: false
 splunk::warm_path: '/opt/splunk/var/lib/splunk'
 splunk::webcert: 'cert.pem'
