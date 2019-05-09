@@ -281,6 +281,8 @@ Optional[string] $s3_kms_key        = undef
       if $authentication != undef {
         if defined('$splunk_authpass') and $::splunk_authpass =~ /\$\d\$\S+/ {
           $authpass = $::splunk_authpass
+        } elsif is_string('$auth_pass') {
+          $authpass = $auth_pass
         } else {
           $authpass = undef
         }
