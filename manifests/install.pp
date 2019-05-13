@@ -49,7 +49,7 @@ class splunk::install
 
   $perms = "${user}:${group}"
 
-  $stopcmd  = 'splunk stop'
+  $stopcmd = 'splunk stop'
 
   if $admin_pass != undef and ($my_cwd == undef or $my_cwd != $dir) {
     $seed = " --seed-passwd ${admin_pass}"
