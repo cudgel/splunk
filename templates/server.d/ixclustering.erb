@@ -11,13 +11,13 @@
 mode = <%= cluster_mode %>
 <% if cluster_mode == 'slave' -%>
 master_uri = <% ix_clusters.each do |cm| %>https://<%= cm['uri'] %><%= "," unless cm == ix_clusters.last %><% end %>
-pass4SymmKey = <%if pass4symmkey != nil -%><%= pass4symmkey %><% else -%><%= symmkey %><% end -%>
+pass4SymmKey = <% if pass4symmkey != nil -%><%= pass4symmkey %><% else -%><%= symmkey %><% end %>
 <% elsif cluster_mode == 'searchhead' -%>
 master_uri = <% ix_clusters.each do |cm| %>clustermaster:<%= cm['label'] %><%= "," unless cm == ix_clusters.last %><% end %>
 <% end -%>
 <% if cluster_mode == 'master' -%>
 # cluster master config
-pass4SymmKey = <%if pass4symmkey != nil -%><%= pass4symmkey %><% else -%><%= symmkey %><% end %>
+pass4SymmKey = <% if pass4symmkey != nil -%><%= pass4symmkey %><% else -%><%= symmkey %><% end %>
 <% for cm in ix_clusters %>
 # cluster config
 cluster_label = <%= cm['label'] %>
@@ -27,8 +27,9 @@ max_peer_build_load = <%= cm['build_load'] %>
 # multi-site cluster
 multisite = true
 available_sites = <% cm['sites'].each do |site| %><%= site %><%= "," unless site == cm['sites'].last %><% end %>
-site_replication_factor =  <%= cm['repl_factor'] %>
+site_replication_factor =  <%= cm['site_repl_factor'] %>
 site_search_factor = <%= cm['search_factor'] %>
+replication_factor = <%= cm['repl_factor'] %>
 <% else -%>
 # single-site cluster
 multisite = false
@@ -50,7 +51,7 @@ multisite = false
 <% end -%><%# end multisite -%>
 site = <% cm['sites'].each do |site| %><%= site %><%= "," unless site == cm['sites'].last %><% end %>
 master_uri = https://<%= cm['uri'] %>
-pass4SymmKey = <%if pass4symmkey != nil -%><%= pass4symmkey %><% else -%><%= symmkey %><% end -%>
+pass4SymmKey = <% if pass4symmkey != nil -%><%= pass4symmkey %><% else -%><%= symmkey %><% end %>
 <% end -%><%# end index clusters to search -%>
 <% end -%><%# end search head config -%>
 <% end -%><%# end clustering -%>

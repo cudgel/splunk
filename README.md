@@ -124,7 +124,7 @@ Typically I would define outputs and cluster sites based on a fact like datacent
 <a id="auth"></a>
 ### Authentication
 
-Starting with v1.5.0 the app has tested support for deploying a working LDAP authentication configuration. If you supply the setting `splunk::authpass` in EYAML, the module will hash and use this password instead of the cleartext password in the authconfig setting.
+Starting with v1.5.0 the app has tested support for deploying a working LDAP authentication configuration. If you supply the setting `splunk::auth_pass` in EYAML, the module will hash and use this password instead of the cleartext password in the authconfig setting.
 
 ```
 splunk::authentication: 'LDAP'
@@ -234,7 +234,8 @@ splunk::clusters:
     sites:
       - site1
       - site2
-    repl_factor: 'origin:2,total:3'
+    site_repl_factor: 'origin:2,total:3'
+    repl_factor: 3
     search_factor: 'origin:1,total:2'
     uri: 'ixc.example.com:8089'
 splunk::server_site: 'site1'
@@ -258,6 +259,7 @@ splunk::clusters:
       - site1
       - site2
     repl_factor: 'origin:2,total:3'
+    repl_factor: 3
     search_factor: 'origin:1,total:2'
     uri: 'ixc.example.com:8089'
 splunk::server_site: 'site1'

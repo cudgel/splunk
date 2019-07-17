@@ -73,6 +73,7 @@ String $servercertpass,
 String $source,
 String $group,
 String $user,
+Boolean $replace_hash,
 Boolean $splunknotcp_ssl,
 Boolean $splunknotcp,
 Boolean $sslclientcert,
@@ -86,8 +87,10 @@ String $sslversions,
 Integer $subsearch_maxout,
 Integer $subsearch_maxtime,
 Integer $subsearch_ttl,
+String $symmkey,
 String $tarcmd,
 Boolean $use_mounts,
+Boolean $use_systemd,
 String $webcert,
 Boolean $webssl,
 Enum['v1,v2', 'v2'] $signatureversion,
@@ -96,20 +99,22 @@ Enum['sse-s3', 'sse-kms', 'sse-c', 'none'] $s3_encryption,
 Optional[String] $license_master,
 Optional[String] $cold_path,
 Optional[String] $warm_path,
+Optional[String] $datamodel_path,
 Optional[Integer] $maxwarm          = 0,
 Optional[Integer] $maxcold          = 0,
 Optional[Integer] $s3_keyrefresh    = 86400,
 Optional[Hash] $acls                = undef,
 Optional[String] $admin_pass        = undef,
+Optional[String] $auth_pass         = undef,
 Optional[String] $authentication    = undef,
 Optional[Hash] $authconfig          = undef,
 Optional[String] $cert_source       = undef,
 Optional[Hash] $indexes             = undef,
 Optional[Hash] $inputs              = undef,
+Optional[Hash] $apps                = undef,
 Optional[Tuple] $clusters           = undef,
 Optional[String] $deployment_server = undef,
 Optional[Tuple] $licenses           = undef,
-Optional[Array] $packages           = undef,
 Optional[Integer] $repl_count       = undef,
 Optional[Integer] $repl_port        = undef,
 Optional[Tuple] $roles              = undef,
@@ -118,7 +123,6 @@ Optional[String] $serviceurl        = undef,
 Optional[String] $shcluster_label   = undef,
 Optional[String] $shcluster_mode    = undef,
 Optional[Array] $shcluster_members  = undef,
-Optional[String] $symmkey           = undef,
 Optional[Hash] $tcpout              = undef,
 Optional[String] $remote_path       = undef,
 Optional[String] $s3_access_key     = undef,
@@ -166,26 +170,26 @@ Optional[string] $s3_kms_key        = undef
 
     # fact containing splunk search head cluster id (if a cluster member)
     # once defined, we add it to our generated files so it is not  lost
-    if defined('$splunk_shcluster_id') and is_string('$splunk_shcluster_id') {
+    if defined('$splunk_shcluster_id') and $::splunk_shcluster_id =~ String {
       $shcluster_id = $::splunk_shcluster_id
     } else {
       $shcluster_id = undef
     }
 
-    if defined('$splunk_symmkey') and $::splunk_symmkey =~ /\$\d\$\S+/ {
+    if defined('$splunk_symmkey') and $::splunk_symmkey =~ /^\$\d\$\S+/ and $replace_hash == false {
       $pass4symmkey = $::splunk_symmkey
     } else {
       $pass4symmkey = undef
     }
 
-    if defined('$splunk_certpass') and $::splunk_certpass =~ /\$\d\$\S+/ {
+    if defined('$splunk_certpass') and $::splunk_certpass =~ /^\$\d\$\S+/ and $replace_hash == false {
       $certpass = $::splunk_certpass
     } else {
       $certpass = undef
     }
 
     # splunk user home dir from fact
-    if defined('$splunk_home') and is_string('$splunk_home') {
+    if defined('$splunk_home') and $::splunk_home =~ String {
       $home = $::splunk_home
     } else {
       $home = undef
@@ -193,7 +197,7 @@ Optional[string] $s3_kms_key        = undef
 
     # fact showing directory of any running splunk process
     # should match $dir for the type
-    if defined('$splunk_cwd') and is_string('$splunk_cwd') {
+    if defined('$splunk_cwd') and $::splunk_cwd =~ String {
       $cwd = $::splunk_cwd
     } else {
       $cwd = undef
@@ -275,9 +279,11 @@ Optional[string] $s3_kms_key        = undef
       $perms = "${user}:${group}"
 
       # have Puppet configure Splunk authentication
-      if $authentication != undef {
+      if $authentication != undef and $type != 'forwarder' {
         if defined('$splunk_authpass') and $::splunk_authpass =~ /\$\d\$\S+/ {
           $authpass = $::splunk_authpass
+        } elsif $auth_pass =~ String {
+          $authpass = $auth_pass
         } else {
           $authpass = undef
         }
@@ -294,7 +300,7 @@ Optional[string] $s3_kms_key        = undef
           user        => $user,
           group       => $group,
           umask       => '027',
-          creates     => $auth_conf,
+#          creates     => $auth_conf,
           notify      => Service['splunk']
         }
       }
@@ -310,12 +316,11 @@ Optional[string] $s3_kms_key        = undef
         user        => $user,
         group       => $group,
         umask       => '027',
-        creates     => $inputs_conf,
         notify      => Service['splunk']
       }
 
       if $type != 'forwarder' or $deployment_server == undef {
-        if $type != 'indexer' and is_hash($tcpout) {
+        if $type != 'indexer' and $tcpout =~ Hash {
           $outputs_dir = "${local}/outputs.d/"
           $outputs_conf = "${local}/outputs.conf"
           $outputs_cmd = "/bin/cat ${outputs_dir}/* > ${outputs_conf}; \
@@ -327,12 +332,11 @@ Optional[string] $s3_kms_key        = undef
             user        => $user,
             group       => $group,
             umask       => '027',
-            creates     => $outputs_conf,
             notify      => Service['splunk']
           }
         }
 
-        if ($type == 'indexer' or $type == 'standalone') and is_hash($indexes) {
+        if ($type == 'indexer' or $type == 'standalone') and $indexes =~ Hash {
           $indexes_dir = "${local}/indexes.d/"
           $indexes_conf = "${local}/indexes.conf"
           $indexes_cmd = "/bin/cat ${indexes_dir}/* > ${indexes_conf}; \
@@ -344,7 +348,6 @@ Optional[string] $s3_kms_key        = undef
             user        => $user,
             group       => $group,
             umask       => '027',
-            creates     => $indexes_conf,
             notify      => Service['splunk']
           }
         }
@@ -360,7 +363,6 @@ Optional[string] $s3_kms_key        = undef
           user        => $user,
           group       => $group,
           umask       => '027',
-          creates     => $server_conf,
           notify      => Service['splunk']
         }
       }
