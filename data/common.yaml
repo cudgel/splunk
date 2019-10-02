@@ -62,3 +62,9 @@ splunk::use_mounts: false
 splunk::warm_path: '/opt/splunk/var/lib/splunk'
 splunk::webcert: 'cert.pem'
 splunk::webssl: true
+
+lookup_options:
+  splunk::authconfig:               # This lookup option applies to parameter 'local' of class 'users'
+    merge:                          # Merge the values found across hierarchies, instead of getting the first one
+      strategy: deep                # Do a deep merge, useful when dealing with Hashes (to override single subkeys)
+      merge_hash_arrays: true
