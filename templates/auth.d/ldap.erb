@@ -1,5 +1,5 @@
 <%
-  config   = scope['::splunk::authconf']
+  config   = scope['splunk::authconf']
   authpass = scope['::splunk::authpass']
 %>
 [<%= config['label'] -%>]
