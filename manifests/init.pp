@@ -286,8 +286,6 @@ Optional[string] $s3_kms_key        = undef
           $authpass = undef
         }
 
-        $authconf = $authconfig
-
         class { 'splunk::auth': }
         $auth_dir  = "${local}/auth.d/"
         $auth_conf  = "${local}/authentication.conf"
