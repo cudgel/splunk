@@ -57,7 +57,11 @@ class splunk::install
     $seed = ''
   }
   $startcmd = "splunk start --accept-license --answer-yes --no-prompt${seed}"
-
+  if $facts['os']['family'] == 'RedHat' and Integer($facts['os']['release']['major']) >= 7 {
+    $enablecmd = "splunk enable boot-start -systemd-managed 1 -user ${user}"
+  } else {
+    $enablecmd = "splunk enable boot-start -systemd-managed 0 -user ${user}"
+  }
 
   # clean up a splunk instance running out of the wrong directory for the type
   if $action == 'change' {
@@ -134,6 +138,14 @@ class splunk::install
     creates   => "${dir}/${manifest}"
   }
 
+  file { "${dir}/etc/splunk-launch.conf":
+    content   => template("${module_name}/splunk-launch.conf.erb"),
+    owner     => $user,
+    group     => $group,
+    notify    => Service['splunk'],
+    subscribe => Exec['unpackSplunk']
+  }
+
   exec { 'serviceStart':
     command     => "${stopcmd}; ${startcmd}",
     environment => 'HISTFILE=/dev/null',
@@ -145,7 +157,7 @@ class splunk::install
   }
 
   exec { 'installSplunkService':
-    command   => "splunk enable boot-start -user ${user}",
+    command   => $enablecmd,
     path      => "${dir}/bin:/bin:/usr/bin:",
     cwd       => $dir,
     subscribe => Exec['unpackSplunk'],

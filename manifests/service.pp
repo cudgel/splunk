@@ -19,7 +19,7 @@ class splunk::service {
   $dir  = $splunk::dir
   $user = $splunk::user
 
-  if $facts['os']['family'] == 'RedHat' and Integer($facts['os']['release']['major']) >= 7  {
+  if $facts['os']['family'] == 'RedHat' and Integer($facts['os']['release']['major']) >= 7  and $::virtual != 'Docker' {
     file { '/etc/systemd/system/multi-user.target.wants/splunk.service':
       content => template("${module_name}/splunk.service.erb"),
       owner   => 'root',

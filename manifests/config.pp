@@ -49,7 +49,6 @@ class splunk::config
   $tcpout            = $splunk::tcpout
   $deployment_server = $splunk::deployment_server
   $indexes           = $splunk::indexes
-  $packages          = $splunk::packages
   $remote_path       = $splunk::remote_path
 
   $splunk_home = $splunk_home
@@ -77,14 +76,6 @@ export PATH
     user    => $user,
     group   => $group,
     unless  => "test -d ${dir}/etc"
-  }
-
-  file { "${dir}/etc/splunk-launch.conf":
-    content => template("${module_name}/splunk-launch.conf.erb"),
-    owner   => $user,
-    group   => $group,
-    notify  => Service['splunk'],
-    require => Exec['test_for_splunk']
   }
 
   if $pass4symmkey != undef and $pass4symmkey =~ /\$\d\$\S+/ {
@@ -198,7 +189,11 @@ export PATH
     notify  => Exec['update-inputs']
   }
 
-  file { "${local}/inputs.d/000_splunkssl":
+  file { "${local}/inputd.d/000_splunkssl":
+    ensure => absent
+  }
+
+  file { "${local}/inputs.d/001_splunkssl":
     content => template("${module_name}/inputs.d/ssl.erb"),
     owner   => $user,
     group   => $group,
@@ -206,7 +201,7 @@ export PATH
     notify  => Exec['update-inputs']
   }
 
-  if ($type == 'indexer'or $type == 'standalone') and is_hash($indexes) {
+  if ($type == 'indexer'or $type == 'standalone') and $indexes =~ Hash {
     file { "${local}/indexes.d":
       ensure  => 'directory',
       mode    => '0750',
@@ -237,7 +232,7 @@ export PATH
   }
 
   if (($type != 'forwarder' and $type != 'indexer' and $type != 'standalone') or
-    ($type == 'forwarder' and $deployment_server == undef)) and is_hash($tcpout) {
+    ($type == 'forwarder' and $deployment_server == undef)) and $tcpout =~ Hash {
     file { "${local}/outputs.d":
       ensure  => 'directory',
       mode    => '0750',
@@ -315,7 +310,11 @@ export PATH
     }
 
     if $type == 'indexer' {
-      file { "${local}/inputs.d/999_splunktcp":
+      file { "${local}/inputd.d/999_splunktcp":
+        ensure => absent
+      }
+
+      file { "${local}/inputs.d/994_splunktcp":
         content => template("${module_name}/inputs.d/splunktcp.erb"),
         owner   => $user,
         group   => $group,
@@ -373,10 +372,6 @@ export PATH
           }
 
         }
-      }
-
-      package { $packages:
-        ensure => installed
       }
 
       file { "${local}/default-mode.conf":
@@ -444,10 +439,10 @@ export PATH
     }
   }
 
-  if is_hash($splunk_inputs) and $splunk_inputs != undef {
+  if $splunk_inputs =~ Hash and $splunk_inputs != undef {
     create_resources('splunk::input', $splunk_inputs)
   }
-  if is_hash($splunk_acls) and $splunk_acls != undef {
+  if $splunk_acls =~ Hash and $splunk_acls != undef {
     create_resources('splunk::acl', $splunk_acls)
   }
 }
