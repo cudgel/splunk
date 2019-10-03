@@ -68,3 +68,7 @@ lookup_options:
     merge:
       strategy: deep
       merge_hash_arrays: true
+  splunk::roles:
+    merge:
+      strategy: deep
+      merge_hash_arrays: true
