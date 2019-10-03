@@ -298,7 +298,7 @@ Optional[string] $s3_kms_key        = undef
           user        => $user,
           group       => $group,
           umask       => '027',
-          creates     => $auth_conf,
+#          creates     => $auth_conf,
           notify      => Service['splunk']
         }
       }
@@ -314,7 +314,7 @@ Optional[string] $s3_kms_key        = undef
         user        => $user,
         group       => $group,
         umask       => '027',
-        creates     => $inputs_conf,
+#        creates     => $inputs_conf,
         notify      => Service['splunk']
       }
 
@@ -331,7 +331,7 @@ Optional[string] $s3_kms_key        = undef
             user        => $user,
             group       => $group,
             umask       => '027',
-            creates     => $outputs_conf,
+#            creates     => $outputs_conf,
             notify      => Service['splunk']
           }
         }
@@ -348,7 +348,7 @@ Optional[string] $s3_kms_key        = undef
             user        => $user,
             group       => $group,
             umask       => '027',
-            creates     => $indexes_conf,
+#            creates     => $indexes_conf,
             notify      => Service['splunk']
           }
         }
@@ -364,7 +364,7 @@ Optional[string] $s3_kms_key        = undef
           user        => $user,
           group       => $group,
           umask       => '027',
-          creates     => $server_conf,
+#          creates     => $server_conf,
           notify      => Service['splunk']
         }
       }
