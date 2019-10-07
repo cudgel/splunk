@@ -1,6 +1,6 @@
 {
   "name": "cudgel-splunk",
-  "version": "1.6.3",
+  "version": "1.6.4",
   "author": "Christopher Caldwell",
   "summary": "Deploy and manage from stand-alone servers through complex distributed Splunk architectures.",
   "license": "Apache-2.0",

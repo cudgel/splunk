@@ -234,7 +234,8 @@ splunk::clusters:
     sites:
       - site1
       - site2
-    repl_factor: 'origin:2,total:3'
+    site_repl_factor: 'origin:2,total:3'
+    repl_factor: 3
     search_factor: 'origin:1,total:2'
     uri: 'ixc.example.com:8089'
 splunk::server_site: 'site1'
@@ -257,7 +258,8 @@ splunk::clusters:
     sites:
       - site1
       - site2
-    repl_factor: 'origin:2,total:3'
+    site_repl_factor: 'origin:2,total:3'
+    repl_factor: 3
     search_factor: 'origin:1,total:2'
     uri: 'ixc.example.com:8089'
 splunk::server_site: 'site1'

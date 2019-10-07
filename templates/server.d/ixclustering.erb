@@ -27,7 +27,7 @@ max_peer_build_load = <%= cm['build_load'] %>
 # multi-site cluster
 multisite = true
 available_sites = <% cm['sites'].each do |site| %><%= site %><%= "," unless site == cm['sites'].last %><% end %>
-site_replication_factor =  <%= cm['repl_factor'] %>
+site_replication_factor =  <%= cm['site_repl_factor'] %>
 site_search_factor = <%= cm['search_factor'] %>
 replication_factor = <%= cm['repl_factor'] %>
 <% else -%>
