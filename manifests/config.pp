@@ -158,7 +158,7 @@ export PATH
   }
 
   if $confpath == 'app' {
-    file { "$(dir}/etc/apps/__puppet_conf":
+    file { "${dir}/etc/apps/__puppet_conf":
       ensure  => 'directory',
       owner   => $user,
       group   => $group,
