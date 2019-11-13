@@ -3,7 +3,6 @@
 -%>
 <% roles.each do |r| %>
 [role_<%= r['name'] %>]
-<% if r['options'] != true -%>disabled = <%= r['disabled'] -%><% end %>
 <% if r['options'] != nil -%><% r['options'].each do |op| -%>
 <%= op %>
 <% end %><% end -%>

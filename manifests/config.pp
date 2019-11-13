@@ -78,19 +78,19 @@ export PATH
     unless  => "test -d ${dir}/etc"
   }
 
-  if $pass4symmkey != undef and $pass4symmkey =~ /\$\d\$\S+/ {
-    $symmcmd = "echo '${pass4symmkey}' > ${local}/symmkey.conf"
+  # if $pass4symmkey != undef and $pass4symmkey =~ /\$\d\$\S+/ {
+  #   $symmcmd = "echo '${pass4symmkey}' > ${local}/symmkey.conf"
 
-    exec { 'storeKey':
-      command => $symmcmd,
-      path    => "${dir}/bin:/bin:/usr/bin:",
-      cwd     => $install_path,
-      user    => $user,
-      group   => $group,
-      require => Exec['test_for_splunk'],
-      unless  => "test -f ${local}/symmkey.conf"
-    }
-  }
+  #   exec { 'storeKey':
+  #     command => $symmcmd,
+  #     path    => "${dir}/bin:/bin:/usr/bin:",
+  #     cwd     => $install_path,
+  #     user    => $user,
+  #     group   => $group,
+  #     require => Exec['test_for_splunk'],
+  #     unless  => "test -f ${local}/symmkey.conf"
+  #   }
+  # }
 
   if $cert_source != undef {
 
@@ -187,10 +187,6 @@ export PATH
     group   => $group,
     require => File["${local}/inputs.d"],
     notify  => Exec['update-inputs']
-  }
-
-  file { "${local}/inputd.d/000_splunkssl":
-    ensure => absent
   }
 
   file { "${local}/inputs.d/001_splunkssl":
@@ -310,18 +306,6 @@ export PATH
     }
 
     if $type == 'indexer' {
-      file { "${local}/inputd.d/999_splunktcp":
-        ensure => absent
-      }
-
-      file { "${local}/inputs.d/994_splunktcp":
-        content => template("${module_name}/inputs.d/splunktcp.erb"),
-        owner   => $user,
-        group   => $group,
-        require => File["${local}/inputs.d"],
-        notify  => Exec['update-inputs']
-      }
-
       if $cluster_mode != 'none' {
         file { "${local}/server.d/995_replication":
           content => template("${module_name}/server.d/replication.erb"),
@@ -423,17 +407,6 @@ export PATH
           group   => $group,
           require => File["${local}/server.d"],
           notify  => Exec['update-server']
-        }
-      } else {
-        # remove any fragments from unconfigured shc member or standalone
-        file { "${local}/server.d/996_shclustering":
-          ensure => absent,
-          notify => Exec['update-server']
-        }
-
-        file { "${local}/server.d/995_replication":
-          ensure => absent,
-          notify => Exec['update-server']
         }
       }
     }
