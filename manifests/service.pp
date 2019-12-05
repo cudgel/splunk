@@ -19,13 +19,7 @@ class splunk::service {
   $dir  = $splunk::dir
   $user = $splunk::user
 
-  if $facts['os']['family'] == 'RedHat' and Integer($facts['os']['release']['major']) >= 7  and $::virtual != 'Docker' {
-    file { '/etc/systemd/system/multi-user.target.wants/splunk.service':
-      content => template("${module_name}/splunk.service.erb"),
-      owner   => 'root',
-      group   => 'root'
-    }
-  } else {
+  if $user == 'splunk' {
     exec { 'test_for_init':
       command => 'test -f /etc/init.d/splunk',
       path    => '/bin:/bin:/usr/bin',

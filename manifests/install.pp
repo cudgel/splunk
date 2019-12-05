@@ -82,9 +82,10 @@ class splunk::install
 
     if $my_cwd =~ /\/\w+\/.*/ {
       file { $my_cwd:
-        ensure => absent,
-        force  => true,
-        backup => false
+        ensure  => absent,
+        force   => true,
+        backup  => false,
+        require => Exec['serviceStop']
       }
     }
 

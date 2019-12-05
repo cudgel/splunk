@@ -215,7 +215,7 @@ describe 'splunk' do
     it { is_expected.to contain_file('/opt/splunkforwarder-7.2.3-06d57c595b80-Linux-x86_64.tgz').with('ensure' => 'absent') }
     it { is_expected.to contain_exec('uninstallSplunkService') }
     it { is_expected.to contain_exec('serviceStop') }
-    it { is_expected.to contain_file('/opt/splunkforwarder').with('ensure' => 'absent') }
+    it { is_expected.to contain_file('/opt/splunkforwarder').with('ensure' => 'absent').that_requires('Exec[serviceStop]') }
     it { is_expected.to contain_file('/opt/splunk-7.2.3-06d57c595b80-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
     it { is_expected.to contain_class('splunk::config') }
     it { is_expected.to contain_class('splunk::service') }
