@@ -10,7 +10,7 @@ _meta = input_host::<%= scope['::hostname'] %>
 [monitor:/<%= dir %>/var/log/splunk/*.log]
 index = _internal
 _TCP_ROUTING = *
-blacklist = *.lock$
+blacklist = .*lock$
 
 [filter:blacklist:splunkvar]
 regex1 = ^<%= dir %>/var
