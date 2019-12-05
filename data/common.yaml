@@ -32,6 +32,7 @@ splunk::max_rawsize_perchunk: 100000000
 splunk::max_searches: 1
 splunk::preferred_captain: true
 splunk::privkey: 'privkey.pem'
+splunk::replace_hash: false
 splunk::repl_port: 8192
 splunk::repl_count: 3
 splunk::s3_encryption: 'none'
