@@ -279,7 +279,7 @@ Optional[string] $s3_kms_key        = undef
       $perms = "${user}:${group}"
 
       # have Puppet configure Splunk authentication
-      if $authentication != undef {
+      if $authentication != undef and $type != 'forwarder' {
         if defined('$splunk_authpass') and $::splunk_authpass =~ /\$\d\$\S+/ {
           $authpass = $::splunk_authpass
         } elsif $auth_pass =~ String {
