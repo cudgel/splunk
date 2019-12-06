@@ -152,8 +152,14 @@ class splunk::install
     subscribe => Exec['unpackSplunk']
   }
 
+  if $my_cwd =~ /\/\w+\/.*/ {
+    $servicecmd = "${stopcmd}; ${startcmd}"
+  } else {
+    $servicecmd = $startcmd
+  }
+
   exec { 'serviceStart':
-    command     => "${stopcmd}; ${startcmd}",
+    command     => $servicecmd,
     environment => 'HISTFILE=/dev/null',
     path        => "${dir}/bin:/bin:/usr/bin:",
     subscribe   => Exec['unpackSplunk'],
