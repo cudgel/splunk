@@ -176,13 +176,13 @@ Optional[string] $s3_kms_key        = undef
       $shcluster_id = undef
     }
 
-    if defined('$splunk_symmkey') and $::splunk_symmkey =~ /^\$\d\$\S+/ and $::replace_hash == false {
+    if defined('$splunk_symmkey') and $::splunk_symmkey =~ /^\$\d\$\S+/ and $replace_hash == false {
       $pass4symmkey = $::splunk_symmkey
     } else {
       $pass4symmkey = undef
     }
 
-    if defined('$splunk_certpass') and $::splunk_certpass =~ /^\$\d\$\S+/ and $::replace_hash == false {
+    if defined('$splunk_certpass') and $::splunk_certpass =~ /^\$\d\$\S+/ and $replace_hash == false {
       $certpass = $::splunk_certpass
     } else {
       $certpass = undef
