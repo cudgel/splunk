@@ -87,6 +87,7 @@ String $sslversions,
 Integer $subsearch_maxout,
 Integer $subsearch_maxtime,
 Integer $subsearch_ttl,
+String $symmkey,
 String $tarcmd,
 Boolean $use_mounts,
 Boolean $use_systemd,
@@ -122,7 +123,6 @@ Optional[String] $serviceurl        = undef,
 Optional[String] $shcluster_label   = undef,
 Optional[String] $shcluster_mode    = undef,
 Optional[Array] $shcluster_members  = undef,
-Optional[String] $symmkey           = undef,
 Optional[Hash] $tcpout              = undef,
 Optional[String] $remote_path       = undef,
 Optional[String] $s3_access_key     = undef,
@@ -176,13 +176,13 @@ Optional[string] $s3_kms_key        = undef
       $shcluster_id = undef
     }
 
-    if defined('$splunk_symmkey') and $::splunk_symmkey =~ /\$\d\$\S+/ and $::replace_hash == false {
+    if defined('$splunk_symmkey') and $::splunk_symmkey =~ /^\$\d\$\S+/ and $replace_hash == false {
       $pass4symmkey = $::splunk_symmkey
     } else {
       $pass4symmkey = undef
     }
 
-    if defined('$splunk_certpass') and $::splunk_certpass =~ /\$\d\$\S+/ and $::replace_hash == false {
+    if defined('$splunk_certpass') and $::splunk_certpass =~ /^\$\d\$\S+/ and $replace_hash == false {
       $certpass = $::splunk_certpass
     } else {
       $certpass = undef
