@@ -32,6 +32,7 @@ splunk::max_rawsize_perchunk: 100000000
 splunk::max_searches: 1
 splunk::preferred_captain: true
 splunk::privkey: 'privkey.pem'
+splunk::replace_hash: false
 splunk::repl_port: 8192
 splunk::repl_count: 3
 splunk::s3_encryption: 'none'
@@ -59,6 +60,17 @@ splunk::subsearch_maxout: 50000
 splunk::subsearch_maxtime: 60
 splunk::subsearch_ttl: 300
 splunk::use_mounts: false
+splunk::use_systemd: false
 splunk::warm_path: '/opt/splunk/var/lib/splunk'
 splunk::webcert: 'cert.pem'
 splunk::webssl: true
+
+lookup_options:
+  splunk::authconfig:
+    merge:
+      strategy: deep
+      merge_hash_arrays: true
+  splunk::roles:
+    merge:
+      strategy: deep
+      merge_hash_arrays: true

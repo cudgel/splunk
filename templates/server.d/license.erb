@@ -2,6 +2,7 @@
   license_master      = scope['::splunk::license_master']
   license_master_mode = scope['::splunk::license_master_mode']
   licenses            = scope['::splunk::licenses']
+  type                = scope['::splunk::type']
 -%>
 
 # license manager
@@ -27,7 +28,11 @@ stack_id = free
 [license]
 <% if license_master_mode == 'slave' -%>
 <% if license_master != 'none' -%>
+<% if type == 'heavyforwarder' -%>
+active_group = forwarder
+<% else -%>
 master_uri = https://<%= license_master %>
+<% end -%>
 <% end -%>
 <% else -%>
 active_group = Enterprise

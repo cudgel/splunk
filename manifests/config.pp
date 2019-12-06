@@ -49,7 +49,6 @@ class splunk::config
   $tcpout            = $splunk::tcpout
   $deployment_server = $splunk::deployment_server
   $indexes           = $splunk::indexes
-  $packages          = $splunk::packages
   $remote_path       = $splunk::remote_path
 
   $splunk_home = $splunk_home
@@ -79,27 +78,19 @@ export PATH
     unless  => "test -d ${dir}/etc"
   }
 
-  file { "${dir}/etc/splunk-launch.conf":
-    content => template("${module_name}/splunk-launch.conf.erb"),
-    owner   => $user,
-    group   => $group,
-    notify  => Service['splunk'],
-    require => Exec['test_for_splunk']
-  }
+  # if $pass4symmkey != undef and $pass4symmkey =~ /\$\d\$\S+/ {
+  #   $symmcmd = "echo '${pass4symmkey}' > ${local}/symmkey.conf"
 
-  if $pass4symmkey != undef and $pass4symmkey =~ /\$\d\$\S+/ {
-    $symmcmd = "echo '${pass4symmkey}' > ${local}/symmkey.conf"
-
-    exec { 'storeKey':
-      command => $symmcmd,
-      path    => "${dir}/bin:/bin:/usr/bin:",
-      cwd     => $install_path,
-      user    => $user,
-      group   => $group,
-      require => Exec['test_for_splunk'],
-      unless  => "test -f ${local}/symmkey.conf"
-    }
-  }
+  #   exec { 'storeKey':
+  #     command => $symmcmd,
+  #     path    => "${dir}/bin:/bin:/usr/bin:",
+  #     cwd     => $install_path,
+  #     user    => $user,
+  #     group   => $group,
+  #     require => Exec['test_for_splunk'],
+  #     unless  => "test -f ${local}/symmkey.conf"
+  #   }
+  # }
 
   if $cert_source != undef {
 
@@ -167,7 +158,7 @@ export PATH
   }
 
   if $confpath == 'app' {
-    file { "$(dir}/etc/apps/__puppet_conf":
+    file { "${dir}/etc/apps/__puppet_conf":
       ensure  => 'directory',
       owner   => $user,
       group   => $group,
@@ -198,7 +189,7 @@ export PATH
     notify  => Exec['update-inputs']
   }
 
-  file { "${local}/inputs.d/000_splunkssl":
+  file { "${local}/inputs.d/001_splunkssl":
     content => template("${module_name}/inputs.d/ssl.erb"),
     owner   => $user,
     group   => $group,
@@ -206,7 +197,7 @@ export PATH
     notify  => Exec['update-inputs']
   }
 
-  if ($type == 'indexer'or $type == 'standalone') and is_hash($indexes) {
+  if ($type == 'indexer'or $type == 'standalone') and $indexes =~ Hash {
     file { "${local}/indexes.d":
       ensure  => 'directory',
       mode    => '0750',
@@ -237,7 +228,7 @@ export PATH
   }
 
   if (($type != 'forwarder' and $type != 'indexer' and $type != 'standalone') or
-    ($type == 'forwarder' and $deployment_server == undef)) and is_hash($tcpout) {
+    ($type == 'forwarder' and $deployment_server == undef)) and $tcpout =~ Hash {
     file { "${local}/outputs.d":
       ensure  => 'directory',
       mode    => '0750',
@@ -315,14 +306,6 @@ export PATH
     }
 
     if $type == 'indexer' {
-      file { "${local}/inputs.d/999_splunktcp":
-        content => template("${module_name}/inputs.d/splunktcp.erb"),
-        owner   => $user,
-        group   => $group,
-        require => File["${local}/inputs.d"],
-        notify  => Exec['update-inputs']
-      }
-
       if $cluster_mode != 'none' {
         file { "${local}/server.d/995_replication":
           content => template("${module_name}/server.d/replication.erb"),
@@ -375,10 +358,6 @@ export PATH
         }
       }
 
-      package { $packages:
-        ensure => installed
-      }
-
       file { "${local}/default-mode.conf":
         content => template("${module_name}/default-mode.conf.erb"),
         owner   => $user,
@@ -429,25 +408,14 @@ export PATH
           require => File["${local}/server.d"],
           notify  => Exec['update-server']
         }
-      } else {
-        # remove any fragments from unconfigured shc member or standalone
-        file { "${local}/server.d/996_shclustering":
-          ensure => absent,
-          notify => Exec['update-server']
-        }
-
-        file { "${local}/server.d/995_replication":
-          ensure => absent,
-          notify => Exec['update-server']
-        }
       }
     }
   }
 
-  if is_hash($splunk_inputs) and $splunk_inputs != undef {
+  if $splunk_inputs =~ Hash and $splunk_inputs != undef {
     create_resources('splunk::input', $splunk_inputs)
   }
-  if is_hash($splunk_acls) and $splunk_acls != undef {
+  if $splunk_acls =~ Hash and $splunk_acls != undef {
     create_resources('splunk::acl', $splunk_acls)
   }
 }

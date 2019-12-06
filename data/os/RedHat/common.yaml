@@ -1,6 +1,0 @@
----
-splunk::packages:
-  - xorg-x11-server-Xvfb
-  - liberation-mono-fonts
-  - liberation-sans-fonts
-  - liberation-serif-fonts

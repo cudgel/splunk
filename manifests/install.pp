@@ -27,6 +27,7 @@ class splunk::install
   # splunk user home
   $home         = $splunk::home
   $install_path = $splunk::install_path
+  $use_systemd  = $splunk::use_systemd
   # splunk install directory
   $dir          = $splunk::dir
   $local        = $splunk::local
@@ -49,7 +50,6 @@ class splunk::install
 
   $perms = "${user}:${group}"
 
-  $stopcmd = 'splunk stop'
 
   if $admin_pass != undef and ($my_cwd == undef or $my_cwd != $dir) {
     $seed = " --seed-passwd ${admin_pass}"
@@ -57,13 +57,21 @@ class splunk::install
     $seed = ''
   }
   $startcmd = "splunk start --accept-license --answer-yes --no-prompt${seed}"
-
+  if $use_systemd == true {
+    $enablecmd = "splunk enable boot-start -systemd-managed 1 -user ${user} -systemd-unit-file-name Splunkd && systemctl daemon-reload"
+    $disablecmd = 'splunk disable boot-start -systemd-managed 1 -systemd-unit-file-name Splunkd'
+    $stopcmd = 'systemctl stop Splunkd'
+  } else {
+    $enablecmd = "splunk enable boot-start -systemd-managed 0 -user ${user}"
+    $disablecmd = 'splunk disable boot-start'
+    $stopcmd = 'splunk stop'
+  }
 
   # clean up a splunk instance running out of the wrong directory for the type
   if $action == 'change' {
 
     exec { 'uninstallSplunkService':
-      command => 'splunk disable boot-start',
+      command => $disablecmd,
       path    => "${my_cwd}/bin:/bin:/usr/bin:",
       returns => [0, 8]
     }
@@ -71,16 +79,15 @@ class splunk::install
     exec { 'serviceStop':
       command => $stopcmd,
       path    => "${my_cwd}/bin:/bin:/usr/bin:",
-      user    => $user,
-      group   => $group,
       timeout => 600
     }
 
     if $my_cwd =~ /\/\w+\/.*/ {
       file { $my_cwd:
-        ensure => absent,
-        force  => true,
-        backup => false
+        ensure  => absent,
+        force   => true,
+        backup  => false,
+        require => Exec['serviceStop']
       }
     }
 
@@ -134,18 +141,30 @@ class splunk::install
     creates   => "${dir}/${manifest}"
   }
 
+  file { "${dir}/etc/splunk-launch.conf":
+    content   => template("${module_name}/splunk-launch.conf.erb"),
+    owner     => $user,
+    group     => $group,
+    notify    => Service['splunk'],
+    subscribe => Exec['unpackSplunk']
+  }
+
+  if defined('$my_cwd') {
+    $servicecmd = "${stopcmd}; ${startcmd}"
+  } else {
+    $servicecmd = $startcmd
+  }
+
   exec { 'serviceStart':
-    command     => "${stopcmd}; ${startcmd}",
+    command     => $servicecmd,
     environment => 'HISTFILE=/dev/null',
     path        => "${dir}/bin:/bin:/usr/bin:",
-    user        => $user,
-    group       => $group,
     subscribe   => Exec['unpackSplunk'],
     refreshonly => true
   }
 
   exec { 'installSplunkService':
-    command   => "splunk enable boot-start -user ${user}",
+    command   => $enablecmd,
     path      => "${dir}/bin:/bin:/usr/bin:",
     cwd       => $dir,
     subscribe => Exec['unpackSplunk'],
