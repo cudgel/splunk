@@ -78,20 +78,6 @@ export PATH
     unless  => "test -d ${dir}/etc"
   }
 
-  # if $pass4symmkey != undef and $pass4symmkey =~ /\$\d\$\S+/ {
-  #   $symmcmd = "echo '${pass4symmkey}' > ${local}/symmkey.conf"
-
-  #   exec { 'storeKey':
-  #     command => $symmcmd,
-  #     path    => "${dir}/bin:/bin:/usr/bin:",
-  #     cwd     => $install_path,
-  #     user    => $user,
-  #     group   => $group,
-  #     require => Exec['test_for_splunk'],
-  #     unless  => "test -f ${local}/symmkey.conf"
-  #   }
-  # }
-
   if $cert_source != undef {
 
     if $cacert != 'cacert.pem' {
