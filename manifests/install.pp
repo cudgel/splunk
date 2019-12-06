@@ -57,7 +57,7 @@ class splunk::install
   }
   $startcmd = "splunk start --accept-license --answer-yes --no-prompt${seed}"
   if $facts['os']['family'] == 'RedHat' and Integer($facts['os']['release']['major']) >= 7 {
-    $enablecmd = "splunk enable boot-start -systemd-managed 1 -user ${user} -systemd-unit-file-name Splunkd"
+    $enablecmd = "splunk enable boot-start -systemd-managed 1 -user ${user} -systemd-unit-file-name Splunkd && systemctl daemon-reload"
     $disablecmd = 'splunk disable boot-start -systemd-managed 1'
     $stopcmd = 'systemctl stop Splunkd'
   } else {
