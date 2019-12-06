@@ -16,11 +16,12 @@
 #
 class splunk::service {
 
-  $dir  = $splunk::dir
-  $user = $splunk::user
+  $dir         = $splunk::dir
+  $user        = $splunk::user
+  $use_systemd = $splunk::use_systemd
 
   if $user == 'splunk' {
-    unless $facts['os']['family'] == 'RedHat' and Integer($facts['os']['release']['major']) >= 7 {
+    unless $use_systemd == true {
       exec { 'test_for_init':
         command => 'test -f /etc/init.d/splunk',
         path    => '/bin:/bin:/usr/bin',
@@ -54,6 +55,7 @@ class splunk::service {
         match   => "^\s\s\"${dir}/bin/splunk\" status",
         require => Exec['test_for_init']
       }
+
       $restart = "/usr/bin/sudo -u ${user} ${dir}/bin/splunk restart"
       $start   = "/usr/bin/sudo -u ${user} ${dir}/bin/splunk start"
       $stop    = "/usr/bin/sudo -u ${user} ${dir}/bin/splunk stop"

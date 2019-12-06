@@ -27,6 +27,7 @@ class splunk::install
   # splunk user home
   $home         = $splunk::home
   $install_path = $splunk::install_path
+  $use_systemd  = $splunk::use_systemd
   # splunk install directory
   $dir          = $splunk::dir
   $local        = $splunk::local
@@ -56,9 +57,9 @@ class splunk::install
     $seed = ''
   }
   $startcmd = "splunk start --accept-license --answer-yes --no-prompt${seed}"
-  if $facts['os']['family'] == 'RedHat' and Integer($facts['os']['release']['major']) >= 7 {
+  if $use_systemd == true {
     $enablecmd = "splunk enable boot-start -systemd-managed 1 -user ${user} -systemd-unit-file-name Splunkd && systemctl daemon-reload"
-    $disablecmd = 'splunk disable boot-start -systemd-managed 1'
+    $disablecmd = 'splunk disable boot-start -systemd-managed 1 -systemd-unit-file-name Splunkd'
     $stopcmd = 'systemctl stop Splunkd'
   } else {
     $enablecmd = "splunk enable boot-start -systemd-managed 0 -user ${user}"
