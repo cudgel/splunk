@@ -57,9 +57,9 @@ class splunk::service {
 
   service { 'splunk':
     ensure  => 'running',
-    restart => "/usr/bin/sudo -u ${user} ${dir}/bin/splunk restart",
-    start   => "/usr/bin/sudo -u ${user} ${dir}/bin/splunk start",
-    stop    => "/usr/bin/sudo -u ${user} ${dir}/bin/splunk stop",
-    status  => "/usr/bin/sudo -u ${user} ${dir}/bin/splunk status",
+    # restart => "/usr/bin/sudo -u ${user} ${dir}/bin/splunk restart",
+    # start   => "/usr/bin/sudo -u ${user} ${dir}/bin/splunk start",
+    # stop    => "/usr/bin/sudo -u ${user} ${dir}/bin/splunk stop",
+    # status  => "/usr/bin/sudo -u ${user} ${dir}/bin/splunk status",
   }
 }
