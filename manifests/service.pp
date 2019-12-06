@@ -54,14 +54,23 @@ class splunk::service {
         match   => "^\s\s\"${dir}/bin/splunk\" status",
         require => Exec['test_for_init']
       }
+      $restart = "/usr/bin/sudo -u ${user} ${dir}/bin/splunk restart"
+      $start   = "/usr/bin/sudo -u ${user} ${dir}/bin/splunk start"
+      $stop    = "/usr/bin/sudo -u ${user} ${dir}/bin/splunk stop"
+      $status  = "/usr/bin/sudo -u ${user} ${dir}/bin/splunk status"
+    } else {
+      $restart = '/usr/bin/sudo /usr/bin/systemctl restart Splunkd.service'
+      $start   = '/usr/bin/sudo /usr/bin/systemctl start Splunkd.service'
+      $stop    = '/usr/bin/sudo /usr/bin/systemctl stop Splunkd.service'
+      $status  = '/usr/bin/sudo /usr/bin/systemctl status Splunkd.service'
     }
   }
 
   service { 'splunk':
     ensure  => 'running',
-    # restart => "/usr/bin/sudo -u ${user} ${dir}/bin/splunk restart",
-    # start   => "/usr/bin/sudo -u ${user} ${dir}/bin/splunk start",
-    # stop    => "/usr/bin/sudo -u ${user} ${dir}/bin/splunk stop",
-    # status  => "/usr/bin/sudo -u ${user} ${dir}/bin/splunk status",
+    restart => $restart,
+    start   => $start,
+    stop    => $stop,
+    status  => $status
   }
 }

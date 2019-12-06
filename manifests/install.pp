@@ -152,7 +152,7 @@ class splunk::install
     subscribe => Exec['unpackSplunk']
   }
 
-  if $my_cwd =~ /\/\w+\/.*/ {
+  if defined('$my_cwd') {
     $servicecmd = "${stopcmd}; ${startcmd}"
   } else {
     $servicecmd = $startcmd
