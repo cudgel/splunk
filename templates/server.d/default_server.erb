@@ -1,4 +1,5 @@
 <%
+  symmkey      = scope['::splunk::symmkey']
   pass4symmkey = scope['::splunk::pass4symmkey']
   cluster_mode = scope['::splunk::cluster_mode']
   server_site  = scope['::splunk::server_site']
@@ -8,7 +9,7 @@
 
 [general]
 serverName = <%= scope['::hostname'] %>
-pass4SymmKey = <%= pass4symmkey %>
+pass4SymmKey = <% if pass4symmkey != nil -%><%= pass4symmkey %><% else -%><%= symmkey %><% end %>
 legacyCiphers = <%= ciphers %>
 <% if cluster_mode == 'master' || cluster_mode == 'slave' -%>
 site = <%= server_site %><% end %>
