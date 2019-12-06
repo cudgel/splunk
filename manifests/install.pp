@@ -49,7 +49,6 @@ class splunk::install
 
   $perms = "${user}:${group}"
 
-  $stopcmd = 'splunk stop'
 
   if $admin_pass != undef and ($my_cwd == undef or $my_cwd != $dir) {
     $seed = " --seed-passwd ${admin_pass}"
@@ -59,15 +58,23 @@ class splunk::install
   $startcmd = "splunk start --accept-license --answer-yes --no-prompt${seed}"
   if $facts['os']['family'] == 'RedHat' and Integer($facts['os']['release']['major']) >= 7 {
     $enablecmd = "splunk enable boot-start -systemd-managed 1 -user ${user}"
+    $disablecmd = 'splunk disable boot-start -systemd-managed 1'
+    if $type == 'forwarder' {
+      $stopcmd = 'systemctl stop SplunkForwarder'
+    } else {
+      $stopcmd = 'systemctl stop Splunkd'
+    }
   } else {
     $enablecmd = "splunk enable boot-start -systemd-managed 0 -user ${user}"
+    $disablecmd = 'splunk disable boot-start'
+    $stopcmd = 'splunk stop'
   }
 
   # clean up a splunk instance running out of the wrong directory for the type
   if $action == 'change' {
 
     exec { 'uninstallSplunkService':
-      command => 'splunk disable boot-start',
+      command => $disablecmd,
       path    => "${my_cwd}/bin:/bin:/usr/bin:",
       returns => [0, 8]
     }
@@ -75,8 +82,6 @@ class splunk::install
     exec { 'serviceStop':
       command => $stopcmd,
       path    => "${my_cwd}/bin:/bin:/usr/bin:",
-      user    => $user,
-      group   => $group,
       timeout => 600
     }
 
@@ -151,8 +156,6 @@ class splunk::install
     command     => "${stopcmd}; ${startcmd}",
     environment => 'HISTFILE=/dev/null',
     path        => "${dir}/bin:/bin:/usr/bin:",
-    user        => $user,
-    group       => $group,
     subscribe   => Exec['unpackSplunk'],
     refreshonly => true
   }
