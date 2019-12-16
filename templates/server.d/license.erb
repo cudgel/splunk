@@ -28,7 +28,7 @@ stack_id = free
 [license]
 <% if license_master_mode == 'slave' -%>
 <% if license_master != 'none' -%>
-<% if type == 'heavyforwarder' -%>
+<% if type == 'forwarder' -%>
 active_group = forwarder
 <% else -%>
 master_uri = https://<%= license_master %>
