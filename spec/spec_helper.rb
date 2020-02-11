@@ -1,7 +1,3 @@
-RSpec.configure do |c|
-  c.mock_with :rspec
-end
-
 require 'puppetlabs_spec_helper/module_spec_helper'
 require 'rspec-puppet-facts'
 
@@ -43,7 +39,6 @@ RSpec.configure do |c|
   end
   c.filter_run_excluding(bolt: true) unless ENV['GEM_BOLT']
   c.after(:suite) do
-    RSpec::Puppet::Coverage.report!(0)
   end
 end
 
@@ -57,6 +52,3 @@ def ensure_module_defined(module_name)
 end
 
 # 'spec_overrides' from sync.yml will appear below this line
-def regexp_matches(available_parameters)
-  match(available_parameters)
-end
