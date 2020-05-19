@@ -397,7 +397,7 @@ export PATH
           path    => "${dir}/${manifest}",
           line    => "f 444 ${user} ${group} splunk/share/GeoLite2-City.mmdb ${geo_hash}",
           match   => "^f 444 ${user} ${group} splunk/share/GeoLite2-City.mmdb",
-          require => Exec['test_for_init']
+          require => Exec['test_for_splunk']
         }
       }
 
