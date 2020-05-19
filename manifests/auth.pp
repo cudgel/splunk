@@ -26,18 +26,20 @@ class splunk::auth(
 
   if $authentication == 'LDAP' {
     $content = template("${module_name}/auth.d/ldap.erb")
+
+    file { "${local}/auth.d/ldap":
+      owner   => $user,
+      group   => $group,
+      mode    => '0440',
+      content => $content,
+      require => File["${local}/auth.d"],
+      notify  => Exec['update-auth']
+    }
   } else {
     $content = $body
   }
 
-  file { "${local}/auth.d/ldap":
-    owner   => $user,
-    group   => $group,
-    mode    => '0440',
-    content => $content,
-    require => File["${local}/auth.d"],
-    notify  => Exec['update-auth']
-  }
+
 
   if $roles.is_a(Tuple) {
     file { "${local}/authorize.conf":

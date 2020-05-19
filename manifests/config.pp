@@ -25,6 +25,12 @@ class splunk::config
   $confpath          = $splunk::confpath
   $local             = $splunk::local
   $source            = $splunk::source
+  $sourcepart        = $splunk::sourcepart
+  $new_version       = $splunk::new_version
+  $os                = $splunk::os
+  $arch              = $splunk::arch
+  $geo_source        = $splunk::geo_source
+  $geo_hash          = $splunk::geo_hash
   $user              = $splunk::user
   $group             = $splunk::group
   $cacert            = $splunk::cacert
@@ -53,6 +59,7 @@ class splunk::config
 
   $splunk_home = $splunk_home
   $perms = "${user}:${group}"
+  $manifest = "${sourcepart}-${new_version}-${os}-${arch}-manifeset"
 
   $bashrc = "
 SPLUNK_HOME=${dir}
@@ -375,6 +382,23 @@ export PATH
         group   => $user,
         notify  => Service['splunk'],
         require => Exec['test_for_splunk']
+      }
+
+      if $geo_source != undef {
+        file { "${dir}/GeoLite2-City.mmdb":
+          source  => "${source}/GeoLite2-City.mmdb",
+          owner   => $user,
+          group   => $user,
+          notify  => Service['splunk'],
+          require => Exec['test_for_splunk']
+        }
+
+        file_line { 'geolite2_hash':
+          path    => "${dir}/${manifest}",
+          line    => "f 444 ${user} ${group} splunk/share/GeoLite2-City.mmdb ${geo_hash}",
+          match   => "^f 444 ${user} ${group} splunk/share/GeoLite2-City.mmdb",
+          require => Exec['test_for_init']
+        }
       }
 
       if $shcluster_id != undef or $shcluster_mode == 'deployer' {
