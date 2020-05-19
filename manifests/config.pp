@@ -24,11 +24,7 @@ class splunk::config
   $confdir           = $splunk::confdir
   $confpath          = $splunk::confpath
   $local             = $splunk::local
-  $source            = $splunk::source
-  $sourcepart        = $splunk::sourcepart
-  $new_version       = $splunk::new_version
-  $os                = $splunk::os
-  $arch              = $splunk::arch
+  $manifest          = $splunk::manifest
   $geo_source        = $splunk::geo_source
   $geo_hash          = $splunk::geo_hash
   $user              = $splunk::user
@@ -59,7 +55,6 @@ class splunk::config
 
   $splunk_home = $splunk_home
   $perms = "${user}:${group}"
-  $manifest = downcase("${sourcepart}-${new_version}-${os}-${arch}-manifest")
 
   $bashrc = "
 SPLUNK_HOME=${dir}

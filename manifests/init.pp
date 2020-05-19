@@ -169,7 +169,7 @@ Optional[string] $s3_kms_key        = undef
     }
     $local    = "${dir}/${confpath}/local"
     $splunkdb = "${dir}/var/lib/splunk"
-    $manifest = "${sourcepart}-${new_version}-${os}-${arch}-manifest"
+    $manifest = downcase("${sourcepart}-${new_version}-${os}-${arch}-manifest")
 
     # fact containing splunk search head cluster id (if a cluster member)
     # once defined, we add it to our generated files so it is not  lost
