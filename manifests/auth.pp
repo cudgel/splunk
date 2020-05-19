@@ -30,7 +30,7 @@ class splunk::auth(
     file { "${local}/auth.d/ldap":
       owner   => $user,
       group   => $group,
-      mode    => '0440',
+      mode    => '0600',
       content => $content,
       require => File["${local}/auth.d"],
       notify  => Exec['update-auth']

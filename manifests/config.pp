@@ -59,7 +59,7 @@ class splunk::config
 
   $splunk_home = $splunk_home
   $perms = "${user}:${group}"
-  $manifest = downcase("${sourcepart}-${new_version}-${os}-${arch}-manifeset")
+  $manifest = downcase("${sourcepart}-${new_version}-${os}-${arch}-manifest")
 
   $bashrc = "
 SPLUNK_HOME=${dir}
@@ -389,7 +389,6 @@ export PATH
           source  => "${geo_source}/GeoLite2-City.mmdb",
           owner   => $user,
           group   => $user,
-          notify  => Service['splunk'],
           require => Exec['test_for_splunk']
         }
 
@@ -397,7 +396,8 @@ export PATH
           path    => "${dir}/${manifest}",
           line    => "f 444 ${user} ${group} splunk/share/GeoLite2-City.mmdb ${geo_hash}",
           match   => "^f 444 ${user} ${group} splunk/share/GeoLite2-City.mmdb",
-          require => Exec['test_for_splunk']
+          require => Exec['test_for_splunk'],
+          notify  => Service['splunk']
         }
       }
 
