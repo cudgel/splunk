@@ -386,7 +386,7 @@ export PATH
 
       if $geo_source != undef {
         file { "${dir}/GeoLite2-City.mmdb":
-          source  => "${source}/GeoLite2-City.mmdb",
+          source  => "${geo_source}/GeoLite2-City.mmdb",
           owner   => $user,
           group   => $user,
           notify  => Service['splunk'],
