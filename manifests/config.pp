@@ -59,7 +59,7 @@ class splunk::config
 
   $splunk_home = $splunk_home
   $perms = "${user}:${group}"
-  $manifest = "${sourcepart}-${new_version}-${os}-${arch}-manifeset"
+  $manifest = downcase("${sourcepart}-${new_version}-${os}-${arch}-manifeset")
 
   $bashrc = "
 SPLUNK_HOME=${dir}
