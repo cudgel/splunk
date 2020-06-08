@@ -62,6 +62,7 @@ Boolean $managesecret,
 Integer $max_rawsize_perchunk,
 Integer $max_searches,
 String $os,
+String $kernel,
 Boolean $preferred_captain,
 String $privkey,
 Boolean $scheduler_disable,
@@ -112,6 +113,8 @@ Optional[String] $cert_source       = undef,
 Optional[Hash] $indexes             = undef,
 Optional[Hash] $inputs              = undef,
 Optional[Hash] $apps                = undef,
+Optional[String] $geo_source        = undef,
+Optional[String] $geo_hash          = undef,
 Optional[Tuple] $clusters           = undef,
 Optional[String] $deployment_server = undef,
 Optional[Tuple] $licenses           = undef,
@@ -167,7 +170,7 @@ Optional[string] $s3_kms_key        = undef
     }
     $local    = "${dir}/${confpath}/local"
     $splunkdb = "${dir}/var/lib/splunk"
-    $manifest = "${sourcepart}-${new_version}-${os}-${arch}-manifest"
+    $manifest = downcase("${sourcepart}-${new_version}-${os}-${kernel}-${arch}-manifest")
 
     # fact containing splunk search head cluster id (if a cluster member)
     # once defined, we add it to our generated files so it is not  lost

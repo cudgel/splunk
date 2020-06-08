@@ -620,10 +620,81 @@ describe 'splunk' do
     it { is_expected.to contain_class('splunk::install') }
     it { is_expected.to contain_file('/opt/splunk-7.2.3-06d57c595b80-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
     it { is_expected.to contain_class('splunk::config') }
+    it { is_expected.to contain_file('/opt/splunk/etc/splunk-launch.conf').that_notifies('Service[splunk]') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/limits.conf').that_notifies('Service[splunk]').that_requires('Exec[test_for_splunk]') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/web.conf').that_notifies('Service[splunk]').that_requires('Exec[test_for_splunk]') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/default-mode.conf').that_notifies('Service[splunk]').that_requires('Exec[test_for_splunk]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/alert_actions.conf') }
     it { is_expected.to contain_class('splunk::auth') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/auth.d').with_ensure('directory').that_requires('Exec[test_for_splunk]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/auth.d/ldap') }
+    it { is_expected.to contain_exec('update-auth').that_notifies('Service[splunk]') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/authorize.conf').that_notifies('Service[splunk]') }
+    it { is_expected.to contain_class('splunk::service') }
+    it { is_expected.to contain_service('splunk').with('ensure' => 'running') }
+  end
+
+  context 'standalone splunk server with SAML' do
+    let(:params) do
+      {
+        'type'           => 'standalone',
+        'create_user'    => true,
+        'authentication' => 'SAML',
+        'authconfig'     => {
+          'fqdn'           => 'splunktest.example.com',
+          'idpslourl'      => 'https://login.microsoftonline.com/e0ee69a0-6181-449d-8229-eae7e8fa8eb3/saml2',
+          'idpssourl'      => 'https://login.microsoftonline.com/e0ee69a0-6181-449d-8229-eae7e8fa8eb3/saml2',
+          'issuerid'       => 'https://sts.windows.net/e0ee69a0-6181-449d-8229-eae7e8fa8eb3/',
+          'role_maps'      => [
+            {
+              'role'   => 'admin',
+              'groups' => [
+                'SplunkAdmins',
+              ],
+            },
+            {
+              'role'   => 'power',
+              'groups' => [
+                'SplunkPowerUsers',
+              ],
+            },
+            {
+              'role'   => 'users',
+              'groups' => [
+                'SplunkUsers',
+                'Contractors',
+              ],
+            },
+          ],
+        },
+        'roles' => [
+          {
+            'name'     => 'admin',
+            'disabled' => false,
+            'options'  => [
+              'rtsearch = enabled',
+              'srchIndexesDefault = *',
+              'srchMaxTime = 0',
+            ],
+          },
+        ],
+        'version' => '7.2.3',
+        'release' => '06d57c595b80',
+      }
+    end
+
+    it { is_expected.to compile.with_all_deps }
+    it { is_expected.to contain_class('splunk') }
+    it { is_expected.to contain_class('splunk::user') }
+    it { is_expected.to contain_user('splunk').with('ensure' => 'present', 'gid' => 'splunk') }
+    it { is_expected.to contain_file('/home/splunk/.bashrc.custom') }
+    it { is_expected.to contain_class('splunk::install') }
+    it { is_expected.to contain_file('/opt/splunk-7.2.3-06d57c595b80-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
+    it { is_expected.to contain_class('splunk::config') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/alert_actions.conf') }
+    it { is_expected.to contain_class('splunk::auth') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/auth.d').with_ensure('directory').that_requires('Exec[test_for_splunk]') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/auth.d/saml') }
     it { is_expected.to contain_exec('update-auth').that_notifies('Service[splunk]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/authorize.conf').that_notifies('Service[splunk]') }
     it { is_expected.to contain_class('splunk::service') }
