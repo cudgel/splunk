@@ -21,8 +21,8 @@ issuerId = <%= config['issuerid'] %>
 <% if config['signaturealgorithm'] != nil -%>signatureAlgorithm = <%= config['signaturealgorithm'] %><% else -%>signatureAlgorithm = RSA-SHA1<% end %>
 <% if config['signedassertion'] != nil -%>signedAssertion = <%= config['signedassertion'] %><% else -%>signedAssertion = true<% end %>
 <% if config['slobinding'] != nil -%>sloBinding = <%= config['slobinding'] %><% else -%>sloBinding = HTTP-POST<% end %>
-<% if config['sslkeysfile'] != nil -%>sslKeysfile = <%= servercert %><% end %>
-<% if config['sslkeysfilepassword'] != nil -%>sslKeysfilePassword = <%= servercertpass %><% end %>
+<% if servercert != nil -%>sslKeysfile = <%= servercert %><% end %>
+<% if servercertpass != nil -%>sslKeysfilePassword = <%= servercertpass %><% end %>
 
 [authenticationResponseAttrMap_SAML]
 role = <%= config['role'] %>
