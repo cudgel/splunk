@@ -10,19 +10,19 @@ authSettings = <%= config['label'] %>
 [saml]
 entityId = <% config['fqdn'] %>
 fqdn = https://<% config['fqdn'] %>
-<% if config['idpCertPath'] != nil -%>idpCertPath = <% config['idpcertpath'] %><% else -%>idpCert.pem<% end -%>
+<% if config['idpcertpath'] != nil -%>idpCertPath = <% config['idpcertpath'] %><% else -%>idpCert.pem<% end %>
 idpSLOUrl = <% config['idpslourl'] %>
 idpSSOUrl = <% config['idpssourl'] %>
-<% if config['inboundSignatureAlgorithm'] != nil -%>inboundSignatureAlgorithm = <% config['inboundsignaturealgorithm'] %><% else -%>RSA-SHA1;RSA-SHA256<% end -%>
+<% if config['inboundsignaturealgorithm'] != nil -%>inboundSignatureAlgorithm = <% config['inboundsignaturealgorithm'] %><% else -%>RSA-SHA1;RSA-SHA256<% end %>
 issuerId = <% config['issuerid'] %>
-<% if config['redirectPort'] != nil -%>redirectPort = <% config['redirectport'] %><% else -%>8000<% end -%>
-<% if config['replicateCertificates'] != nil -%>replicateCertificates = <% config['replicatecertificates'] %><% else -%><% end -%>
-<% if config['signAuthnRequest'] != nil -%>signAuthnRequest = <% config['signauthnrequest'] %><% else -%>true<% end -%>
-<% if config['signatureAlgorithm'] != nil -%>signatureAlgorithm = <% config['signaturealgorithm'] %><% else -%>RSA-SHA1<% end -%>
-<% if config['signedAssertion'] != nil -%>signedAssertion = <% config['signedassertion'] %><% else -%>true<% end -%>
-<% if config['sloBinding'] != nil -%>sloBinding = <% config['slobinding'] %><% else -%>HTTP-POST<% end -%>
-<% if config['sslKeysfile'] != nil -%>sslKeysfile = <%= servercert %><% end -%>
-<% if config['sslKeysfilePassword'] != nil -%>sslKeysfilePassword = <%= servercertpass %><% end -%>
+<% if config['redirectport'] != nil -%>redirectPort = <% config['redirectport'] %><% else -%>8000<% end %>
+<% if config['replicatecertificates'] != nil -%>replicateCertificates = <% config['replicatecertificates'] %><% else -%><% end %>
+<% if config['signauthnrequest'] != nil -%>signAuthnRequest = <% config['signauthnrequest'] %><% else -%>true<% end %>
+<% if config['signaturealgorithm'] != nil -%>signatureAlgorithm = <% config['signaturealgorithm'] %><% else -%>RSA-SHA1<% end %>
+<% if config['signedassertion'] != nil -%>signedAssertion = <% config['signedassertion'] %><% else -%>true<% end %>
+<% if config['slobinding'] != nil -%>sloBinding = <% config['slobinding'] %><% else -%>HTTP-POST<% end %>
+<% if config['sslkeysfile'] != nil -%>sslKeysfile = <%= servercert %><% end %>
+<% if config['sslkeysfilepassword'] != nil -%>sslKeysfilePassword = <%= servercertpass %><% end %>
 
 [authenticationResponseAttrMap_SAML]
 role = <% config['role'] %>
