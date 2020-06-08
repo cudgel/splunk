@@ -21,7 +21,7 @@ issuerId = <%= config['issuerid'] %>
 <% if config['signauthnrequest'] != nil -%>signAuthnRequest = <%= config['signauthnrequest'] %><% else -%>signAuthnRequest = true<% end %>
 <% if config['signaturealgorithm'] != nil -%>signatureAlgorithm = <%= config['signaturealgorithm'] %><% else -%>signatureAlgorithm = RSA-SHA1<% end %>
 <% if config['signedassertion'] != nil -%>signedAssertion = <%= config['signedassertion'] %><% else -%>signedAssertion = true<% end %>
-<% if config['slobinding'] != nil -%>sloBinding = <%= config['slobinding'] %><% else -%>sloBinding = HTTP-POST<% end %>
+<% if config['ssobinding'] != nil -%>ssoBinding = <%= config['ssobinding'] %><% else -%>ssoBinding = HTTP-POST<% end %>
 <% if servercert != nil -%>sslKeysfile = /opt/splunk/etc/auth/<%= servercert %><% end %>
 <% if certpass != nil -%>sslKeysfilePassword = <%= certpass %><% elsif servercertpass != nil -%><%= servercertpass %><% else -%><% end %>
 
