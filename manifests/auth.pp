@@ -38,12 +38,13 @@ class splunk::auth(
   } elsif $authentication == 'SAML' {
     $content = template("${module_name}/auth.d/saml.erb")
 
-    file { "${local}/auth.d/saml_test":
+    file { "${local}/auth.d/saml":
       owner   => $user,
       group   => $group,
       mode    => '0600',
       content => $content,
-      require => File["${local}/auth.d"]
+      require => File["${local}/auth.d"],
+      notify  => Exec['update-auth']
     }
 
     file { "${local}/auth.d/ldap":
