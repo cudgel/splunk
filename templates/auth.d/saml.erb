@@ -1,0 +1,35 @@
+<%
+  config         = scope['::splunk::authconfig']
+  servercert     = scope['::splunk::servercert']
+  servercertpass = scope['::splunk::servercertpass']
+%>
+[authentication]
+authType = <%= scope['::splunk::authentication'] %>
+authSettings = <%= config['label'] %>
+
+[saml]
+entityId = <% config['fqdn'] %>
+fqdn = https://<% config['fqdn'] %>
+<% if config['idpCertPath'] != nil -%>idpCertPath = <% config['idpcertpath'] %><% else -%>idpCert.pem<% end -%>
+idpSLOUrl = <% config['idpslourl'] %>
+idpSSOUrl = <% config['idpssourl'] %>
+<% if config['inboundSignatureAlgorithm'] != nil -%>inboundSignatureAlgorithm = <% config['inboundsignaturealgorithm'] %><% else -%>RSA-SHA1;RSA-SHA256<% end -%>
+issuerId = <% config['issuerid'] %>
+<% if config['redirectPort'] != nil -%>redirectPort = <% config['redirectport'] %><% else -%>8000<% end -%>
+<% if config['replicateCertificates'] != nil -%>replicateCertificates = <% config['replicatecertificates'] %><% else -%><% end -%>
+<% if config['signAuthnRequest'] != nil -%>signAuthnRequest = <% config['signauthnrequest'] %><% else -%>true<% end -%>
+<% if config['signatureAlgorithm'] != nil -%>signatureAlgorithm = <% config['signaturealgorithm'] %><% else -%>RSA-SHA1<% end -%>
+<% if config['signedAssertion'] != nil -%>signedAssertion = <% config['signedassertion'] %><% else -%>true<% end -%>
+<% if config['sloBinding'] != nil -%>sloBinding = <% config['slobinding'] %><% else -%>HTTP-POST<% end -%>
+<% if config['sslKeysfile'] != nil -%>sslKeysfile = <%= servercert %><% end -%>
+<% if config['sslKeysfilePassword'] != nil -%>sslKeysfilePassword = <%= servercertpass %><% end -%>
+
+[authenticationResponseAttrMap_SAML]
+role = <% config['role'] %>
+
+[roleMap_<%= config['label'] -%>]
+<% for role in config['role_maps'] -%>
+<%= role['role'] %> = <% role['groups'].each do |group| %><%= group -%><%= ";" unless group == role['groups'].last %><% end %>
+<% end -%><%# end role maps config -%>
+
+[userToRoleMap_SAML]

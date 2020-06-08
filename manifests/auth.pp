@@ -35,11 +35,26 @@ class splunk::auth(
       require => File["${local}/auth.d"],
       notify  => Exec['update-auth']
     }
+  } elsif $authentication == 'SAML' {
+    $content = template("${module_name}/auth.d/saml.erb")
+
+    file { "${local}/auth.d/saml_test":
+      owner   => $user,
+      group   => $group,
+      mode    => '0600',
+      content => $content,
+      require => File["${local}/auth.d"],
+      notify  => Exec['update-auth']
+    }
+
+    file { "${local}/auth.d/ldap":
+      ensure => absent
+    }
   } else {
-    $content = $body
+    file { "${local}/auth.d/ldap":
+      ensure => absent
+    }
   }
-
-
 
   if $roles.is_a(Tuple) {
     file { "${local}/authorize.conf":
