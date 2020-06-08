@@ -29,7 +29,7 @@ issuerId = <%= config['issuerid'] %>
 [authenticationResponseAttrMap_SAML]
 role = <% if config['role'] != nil -%><%= config['role'] %><% else -%>groups<% end %>
 
-[roleMap_<%= config['label'] -%>]
+[roleMap_SAML]
 <% for role in config['role_maps'] -%>
 <%= role['role'] %> = <% role['groups'].each do |group| %><%= group -%><%= ";" unless group == role['groups'].last %><% end %>
 <% end -%><%# end role maps config -%>
