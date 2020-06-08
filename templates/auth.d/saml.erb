@@ -2,6 +2,7 @@
   config         = scope['::splunk::authconfig']
   servercert     = scope['::splunk::servercert']
   servercertpass = scope['::splunk::servercertpass']
+  certpass       = scope['splunk::certpass']
 %>
 [authentication]
 authType = <%= scope['::splunk::authentication'] %>
@@ -22,10 +23,10 @@ issuerId = <%= config['issuerid'] %>
 <% if config['signedassertion'] != nil -%>signedAssertion = <%= config['signedassertion'] %><% else -%>signedAssertion = true<% end %>
 <% if config['slobinding'] != nil -%>sloBinding = <%= config['slobinding'] %><% else -%>sloBinding = HTTP-POST<% end %>
 <% if servercert != nil -%>sslKeysfile = <%= servercert %><% end %>
-<% if servercertpass != nil -%>sslKeysfilePassword = <%= servercertpass %><% end %>
+<% if certpass != nil -%>sslKeysfilePassword = <%= certpass %><% elsif servercertpass != nil -%><%= servercertpass %><% else -%><% end %>
 
 [authenticationResponseAttrMap_SAML]
-role = <%= config['role'] %>
+role = <% if config['role'] != nil -%><%= config['role'] %><% else -%>groups<% end %>
 
 [roleMap_<%= config['label'] -%>]
 <% for role in config['role_maps'] -%>
