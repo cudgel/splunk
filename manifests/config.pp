@@ -380,7 +380,7 @@ export PATH
       }
 
       if $geo_source != undef {
-        file { "${dir}/GeoLite2-City.mmdb":
+        file { "${dir}/share/GeoLite2-City.mmdb":
           source  => "${geo_source}/GeoLite2-City.mmdb",
           owner   => $user,
           group   => $user,
