@@ -1,6 +1,6 @@
 {
   "name": "cudgel-splunk",
-  "version": "1.8.1",
+  "version": "1.8.2",
   "author": "Christopher Caldwell",
   "summary": "Deploy and manage from stand-alone servers through complex distributed Splunk architectures.",
   "license": "Apache-2.0",
@@ -51,7 +51,7 @@
   "tags": [
     "splunk"
   ],
-  "pdk-version": "1.15.0",
+  "pdk-version": "1.18.0",
   "template-url": "https://github.com/puppetlabs/pdk-templates#1.15.0",
   "template-ref": "tags/1.15.0-0-g0bc522e"
 }

@@ -1,5 +1,5 @@
 name    'cudgel/splunk'
-version '1.8.1'
+version '1.8.2'
 source 'https://github.com/cudgel/splunk
 author 'cudgel'
 license 'Apache License, Version 2.0'
@@ -9,3 +9,8 @@ project_page 'UNKNOWN'
 
 ## Add dependencies, if any:
 dependency 'puppetlabs/stdlib', '>= 4.0.0'
+
+# Generate the changelog file
+system("git-log-to-changelog > CHANGELOG")
+$? == 0 or fail "changelog generation #{$?}!"
+
