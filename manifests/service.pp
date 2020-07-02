@@ -61,7 +61,13 @@ class splunk::service {
       $stop    = "/usr/bin/sudo -u ${user} ${dir}/bin/splunk stop"
       $status  = "/usr/bin/sudo -u ${user} ${dir}/bin/splunk status"
 
-      $provider = init
+      if $::osfamily == "RedHat" {
+        $provider = redhat
+      } elsif $::osfamily == "Debian" {
+        $provder == debian
+      } else {
+        $provider = init
+      }
     } else {
       $restart = '/usr/bin/sudo /usr/bin/systemctl restart Splunkd.service'
       $start   = '/usr/bin/sudo /usr/bin/systemctl start Splunkd.service'
