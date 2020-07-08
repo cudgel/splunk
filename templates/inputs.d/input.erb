@@ -2,6 +2,7 @@
 #
 [<%= @inputtype -%>://<%= @target %>]
 _meta = input_host::<%= scope['::hostname'] %> input_name::<%= @title %>
+<% if @inputtype !~ /splunktcp/ -%>
 disabled = <%= @disabled %>
 <% if @cache && @inputtype != 'monitor' -%>
 persistentQueueSize = <%= @size -%>GB
@@ -10,4 +11,4 @@ index = <%= @index %>
 <% if @sourcetype != 'auto' then %>sourcetype = <%= @sourcetype %><% end %>
 <% if @options != nil -%><% @options.each do |op| -%>
 <%= op %>
-<% end %><% end -%>
+<% end %><% end -%><% end -%>
