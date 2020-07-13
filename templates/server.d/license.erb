@@ -34,11 +34,7 @@ stack_id = enterprise
 [license]
 <% if license_master_mode == 'slave' -%>
 <% if license_master != 'none' -%>
-<% if type == 'forwarder' -%>
-active_group = forwarder
-<% else -%>
 master_uri = https://<%= license_master %>
-<% end -%>
 <% end -%>
 <% elsif licenses != nil -%>
 active_group = Enterprise
@@ -51,5 +47,9 @@ quota = <%= lmpool['quota'] %>
 slaves = <% lmpool['slaves'].each do |slave| -%><%= slave %><%= "," unless slave == lmpool['slaves'].last %><% end -%>
 <% end -%>
 <% else -%>
+<% if type == 'forwarder' -%>
+active_group = Forwarder
+<% else -%>
 active_group = Trial
+<% end -%>
 <% end -%>
