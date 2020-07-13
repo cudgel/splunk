@@ -1,0 +1,5 @@
+v1.8.3
+ - default to "Trial" license group
+ - add OS specific init providers
+ - cleanup input template for splunktcp/splunktcp-ssl inputs
+ - increase line length for rubocop
