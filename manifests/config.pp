@@ -313,7 +313,10 @@ export PATH
         unless $shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/ {
 
           exec { 'join_cluster':
-            command     => "splunk init shcluster-config -auth admin:${admin_pass} -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} -secret ${symmkey} -shcluster_label ${shcluster_label} && splunk restart",
+            command     => "splunk init shcluster-config \
+-auth admin:${admin_pass} -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} \
+-replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} \
+-secret ${symmkey} -shcluster_label ${shcluster_label} && splunk restart",
             environment => "SPLUNK_HOME=${dir}",
             path        => "${dir}/bin:/bin:/usr/bin:",
             cwd         => $dir,
@@ -325,11 +328,11 @@ export PATH
           }
 
           if $is_captain == true and $shcluster_members != undef {
-             
+
             $servers_list = join($shcluster_members, ",")
 
             $bootstrap_cmd = "splunk bootstrap shcluster-captain \
-                -servers_list \"${servers_list}\" -auth admin:${admin_pass}"
+-servers_list \"${servers_list}\" -auth admin:${admin_pass}"
 
             exec { 'bootstrap_cluster':
               command     => $bootstrap_cmd,
