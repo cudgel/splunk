@@ -170,7 +170,7 @@ Starting with version 1.8.0 the app has tested support for deploying a working S
 
 ```
 splunk::authconfig:
-  certname: 'splunk.example.com'
+  fqdn: 'splunk.example.com'
   idpslourl: 'https://login.microsoftonline.com/e0ee69a0-6181-449d-8229-eae7e8fa8eb3/saml2'
   idpssourl: 'https://login.microsoftonline.com/e0ee69a0-6181-449d-8229-eae7e8fa8eb3/saml2'
   issuerid: 'https://sts.windows.net/e0ee69a0-6181-449d-8229-eae7e8fa8eb3/'

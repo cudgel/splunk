@@ -9,8 +9,8 @@ authType = <%= scope['::splunk::authentication'] %>
 authSettings = saml
 
 [saml]
-entityId = <%= config['certname'] %>
-certname = https://<%= config['certname'] %>
+entityId = <%= config['fqdn'] %>
+fqdn = https://<%= config['fqdn'] %>
 <% if config['idpcertpath'] != nil -%>idpCertPath = <%= config['idpcertpath'] %><% else -%>idpCertPath = idpCert.pem<% end %>
 idpSLOUrl = <%= config['idpslourl'] %>
 idpSSOUrl = <%= config['idpssourl'] %>
