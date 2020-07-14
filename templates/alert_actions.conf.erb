@@ -4,7 +4,7 @@
 hostname = scope['::splunk::serviceurl']
 mailfrom = scope['::splunk::mailfrom']
 mailserver = scope['::splunk::mailserver']
-from = scope['::fqdn']
+from = scope['::certname']
 -%>
 [email]
 inline = 1

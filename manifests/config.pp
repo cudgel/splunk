@@ -314,7 +314,7 @@ export PATH
 
           exec { 'join_cluster':
             command     => "splunk init shcluster-config \
--auth admin:${admin_pass} -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} \
+-auth admin:${admin_pass} -mgmt_uri https://${::certname}:8089 -replication_port ${repl_port} \
 -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} \
 -secret ${symmkey} -shcluster_label ${shcluster_label} && splunk restart",
             environment => "SPLUNK_HOME=${dir}",
