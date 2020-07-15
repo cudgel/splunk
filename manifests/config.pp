@@ -24,7 +24,9 @@ class splunk::config
   $confdir           = $splunk::confdir
   $confpath          = $splunk::confpath
   $local             = $splunk::local
-  $source            = $splunk::source
+  $manifest          = $splunk::manifest
+  $geo_source        = $splunk::geo_source
+  $geo_hash          = $splunk::geo_hash
   $user              = $splunk::user
   $group             = $splunk::group
   $cacert            = $splunk::cacert
@@ -50,6 +52,7 @@ class splunk::config
   $deployment_server = $splunk::deployment_server
   $indexes           = $splunk::indexes
   $remote_path       = $splunk::remote_path
+  $admin_pass        = $splunk::admin_pass
 
   $splunk_home = $splunk_home
   $perms = "${user}:${group}"
@@ -310,7 +313,10 @@ export PATH
         unless $shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/ {
 
           exec { 'join_cluster':
-            command     => "splunk init shcluster-config -auth admin:changme -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} -secret ${symmkey} -shcluster_label ${shcluster_label} && splunk restart",
+            command     => "splunk init shcluster-config \
+-auth admin:${admin_pass} -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} \
+-replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} \
+-secret ${symmkey} -shcluster_label ${shcluster_label} && splunk restart",
             environment => "SPLUNK_HOME=${dir}",
             path        => "${dir}/bin:/bin:/usr/bin:",
             cwd         => $dir,
@@ -322,12 +328,11 @@ export PATH
           }
 
           if $is_captain == true and $shcluster_members != undef {
-            $shcluster_members.each |String $member| {
-              $servers_list = "${servers_list}.${member}:8089"
-            }
+
+            $servers_list = join($shcluster_members, ',')
 
             $bootstrap_cmd = "splunk bootstrap shcluster-captain \
-                -servers_list \"${servers_list}\" -auth admin:changme"
+-servers_list \"${servers_list}\" -auth admin:${admin_pass}"
 
             exec { 'bootstrap_cluster':
               command     => $bootstrap_cmd,
@@ -375,6 +380,23 @@ export PATH
         group   => $user,
         notify  => Service['splunk'],
         require => Exec['test_for_splunk']
+      }
+
+      if $geo_source != undef {
+        file { "${dir}/share/GeoLite2-City.mmdb":
+          source  => "${geo_source}/GeoLite2-City.mmdb",
+          owner   => $user,
+          group   => $user,
+          require => Exec['test_for_splunk']
+        }
+
+        file_line { 'geolite2_hash':
+          path    => "${dir}/${manifest}",
+          line    => "f 444 ${user} ${group} splunk/share/GeoLite2-City.mmdb ${geo_hash}",
+          match   => "^f 444 ${user} ${group} splunk/share/GeoLite2-City.mmdb",
+          require => Exec['test_for_splunk'],
+          notify  => Service['splunk']
+        }
       }
 
       if $shcluster_id != undef or $shcluster_mode == 'deployer' {

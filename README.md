@@ -72,6 +72,8 @@ splunk
 
 The source would have the setting `splunk::source: 'puppet:///splunk_files'` which will compile as using the fileserver for the splunk installer source. A similar setting splunk::cert_source controls where the certs are served from (should they differ). This setting is required if using non-default certs.
 
+Starting with version 1.8.0 the module can install an updated version of GeoLite2-City.mmdb and correct the hash  if you specify `splunk::geo_source` and `splunk::geo_hash`. I put updated versions in the same Puppet fileserver as the Splunk software.
+
 ---
 
 <a id="security"></a>
@@ -162,6 +164,22 @@ splunk::authconfig:
       groups:
         - 'SplunkUsers'
         - 'Contractors'
+```
+
+Starting with version 1.8.0 the app has tested support for deploying a working SAML authentication configuration. Here is an example minimal configuratio for AzureAD using a generated GUID.
+
+```
+splunk::authconfig:
+  fqdn: 'splunk.example.com'
+  idpslourl: 'https://login.microsoftonline.com/e0ee69a0-6181-449d-8229-eae7e8fa8eb3/saml2'
+  idpssourl: 'https://login.microsoftonline.com/e0ee69a0-6181-449d-8229-eae7e8fa8eb3/saml2'
+  issuerid: 'https://sts.windows.net/e0ee69a0-6181-449d-8229-eae7e8fa8eb3/'
+  slobinding: 'HTTP-POST'
+  ssobinding: 'HTTP-POST'
+  role_maps:
+    - role: 'admin'
+      groups:
+         - 'splunk_admins'
 ```
 
 <a id="roles"></a>

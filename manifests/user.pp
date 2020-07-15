@@ -15,6 +15,7 @@ class splunk::user {
     name       => $user,
     comment    => 'Splunk service account',
     managehome => true,
+    provider   => useradd,
     gid        => $group
   }
 }

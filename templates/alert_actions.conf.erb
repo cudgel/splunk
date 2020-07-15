@@ -2,17 +2,23 @@
 #
 <%
 hostname = scope['::splunk::serviceurl']
+mailfrom = scope['::splunk::mailfrom']
+mailserver = scope['::splunk::mailserver']
 from = scope['::fqdn']
 -%>
 [email]
 inline = 1
-mailserver = localhost
+mailserver = <%= mailserver %>
 <% if hostname != nil -%>
 hostname = <%= hostname %>
 <% else -%>
 hostname = <%= from %>
 <% end -%>
+<% if mailfrom != nil -%>
+from = <%= mailfrom %>
+<% else %>
 from = splunk@<%= from %>
+<% end -%>
 footer.text = If you believe you've received this email in error, please contact <%= scope['::splunk::email'] -%>.\
 \
 splunk > the engine for machine data

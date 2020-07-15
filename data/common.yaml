@@ -25,8 +25,9 @@ splunk::forcetimebasedautolb: true
 splunk::install_path: '/opt'
 splunk::is_captain: false
 splunk::legacyciphers: 'decryptOnly'
-splunk::license_master_mode: 'slave'
+splunk::license_master_mode: 'none'
 splunk::license_master: 'none'
+splunk::mailserver: 'localhost'
 splunk::managesecret: false
 splunk::max_rawsize_perchunk: 100000000
 splunk::max_searches: 1

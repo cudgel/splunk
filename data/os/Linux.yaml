@@ -2,3 +2,4 @@
 splunk::ext: 'tgz'
 splunk::os: 'Linux'
 splunk::tarcmd: '/bin/tar xozf'
+splunk::kernel: '2.6'
