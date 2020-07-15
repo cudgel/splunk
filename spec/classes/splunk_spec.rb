@@ -266,6 +266,12 @@ describe 'splunk' do
             'frozen_time' => 86_400,
           },
         },
+        'inputs' => {
+          'splunktcp-ssl' => {
+            'inputtype' => 'splunktcp-ssl',
+            'target'    => '9998',
+          },
+        },
         'version' => '7.2.3',
         'release' => '06d57c595b80',
       }
@@ -285,6 +291,8 @@ describe 'splunk' do
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/inputs.d').with_ensure('directory').that_requires('Exec[test_for_splunk]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/inputs.d/000_default').that_requires('File[/opt/splunk/etc/system/local/inputs.d]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/inputs.d/001_splunkssl').that_requires('File[/opt/splunk/etc/system/local/inputs.d]').that_notifies('Exec[update-inputs]') }
+    it { is_expected.to contain_splunk__input('splunktcp-ssl') }
+    it { is_expected.to contain_file('/opt/splunk/etc/system/local/inputs.d/splunktcp-ssl').that_requires('File[/opt/splunk/etc/system/local/inputs.d]').that_notifies('Exec[update-inputs]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/indexes.d').with_ensure('directory').that_requires('Exec[test_for_splunk]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/indexes.d/000_default').that_requires('File[/opt/splunk/etc/system/local/indexes.d]') }
     it { is_expected.to contain_splunk__index('main') }
