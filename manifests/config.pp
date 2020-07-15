@@ -329,7 +329,7 @@ export PATH
 
           if $is_captain == true and $shcluster_members != undef {
 
-            $servers_list = join($shcluster_members, ",")
+            $servers_list = join($shcluster_members, ',')
 
             $bootstrap_cmd = "splunk bootstrap shcluster-captain \
 -servers_list \"${servers_list}\" -auth admin:${admin_pass}"
