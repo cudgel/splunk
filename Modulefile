@@ -1,11 +1,11 @@
 name    'cudgel/splunk'
-version '1.9.0'
-source 'https://github.com/cudgel/splunk
+version '1.9.1'
+source 'https://github.com/cudgel/splunk'
 author 'cudgel'
 license 'Apache License, Version 2.0'
-summary 'Module to install/manage Splunk forwarders, indexers, search heads'
+summary 'Module to install/manage Splunk deployments'
 description 'UNKNOWN'
-project_page 'UNKNOWN'
+project_page 'https://github.com/cudgel/splunk'
 
 ## Add dependencies, if any:
 dependency 'puppetlabs/stdlib', '>= 4.0.0'

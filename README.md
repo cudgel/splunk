@@ -74,6 +74,11 @@ The source would have the setting `splunk::source: 'puppet:///splunk_files'` whi
 
 Starting with version 1.8.0 the module can install an updated version of GeoLite2-City.mmdb and correct the hash  if you specify `splunk::geo_source` and `splunk::geo_hash`. I put updated versions in the same Puppet fileserver as the Splunk software.
 
+```
+splunk::geo_source: 'puppet:///splunk_files'
+splunk::geo_hash: 'c669f86e6bd1dc4fe14af21b9e79aebfb05c89d29a9ed0e26e648b6b0c94c2a6'
+```
+
 ---
 
 <a id="security"></a>
@@ -204,6 +209,52 @@ splunk::roles:
       - 'srchDiskQuota = 5000'
 ```
 
+### Licenses
+
+The module can manage license pools if you supply the GUIDs for the members. 
+
+```
+splunk::licenses:
+  - label: 'auto_generated_pool_enterprise'
+    description: 'Non-Indexers'
+    quota: 20MB
+    stack_id: 'enterprise'
+    slaves:
+      - '796b94a2-1e35-4902-8e8c-4d3a6f0348bb'
+      - 'be7415d7-2b59-4cfc-9b62-dff99c570c64'
+      - 'c181c480-1c01-4904-b11b-10c25d8e62cb'
+      - 'd5ef522b-a62b-4776-ae06-f4f2e9f59fe7'
+      - '47219520-6f02-44d7-b381-084c52c85495'
+      - '6b1c447c-5d5b-4445-aeaf-051e7831a0bc'
+  - label: 'test_pool'
+    description: 'Test Indexer Cluster'
+    quota: 5120MB
+    stack_id: 'enterprise'
+    slaves:
+      - '84fb0502-073d-4f0c-a58c-e469c8f26a84'
+      - '429a2667-4cb6-4e84-842a-5fd00a484ba7'
+      - 'b58d3395-a7dd-4d6c-bada-c6e7524939a6'
+  - label: 'prod_pool'
+    description: 'Production Indexer Cluster'
+    quota: 97360
+    stack_id: 'enterprise'
+    slaves:
+      - '7c972455-537e-4efc-8860-6fd755c1426c'
+      - '9eb1ca61-ffa1-4453-b29e-7c8360ed89a0'
+      - 'a0e9af28-c6d3-49fa-9c95-6a0f9e70f906'
+      - 'f5375728-5885-496a-a83b-81da6260b15b'
+      - '1aa025a2-eed0-458f-90b4-e2ce1dc9e10c'
+      - '714eacc1-fcd6-4b63-9951-2b6169e19697'
+```
+
+---
+
+### Testing
+
+You can test the module using Vagrant. [This repo](https://github.com/cudgel/splunk-testing) has the minimum hiera necessary to deploy a deployer, 3 node search head cluster, and 3 node indexer cluster (with master). You can find a working Vagrantfile configuration in the vagrant directory of [the Puppet module](https://github.com/cudgel/splunk). You will need a base box with Puppet installed.
+
+![Freshly installed cluster from Vagrantfile.](/vagrant/post-vagrant-up.png)
+
 ---
 
 <a id="types"></a>
@@ -240,6 +291,8 @@ splunk::deployment_server: 'https://ds.example.com:8089'
 ```
 
 ##### Indexer cluster master:
+
+Deploy the cluster master before any cluster memebers.
 
 ```
 splunk::type: 'indexer'
@@ -329,8 +382,19 @@ splunk::clusters:
 splunk::privkey: 'srchsite1_web.key'
 splunk::servercert: 'srchsite1_splunkd.cert'
 splunk::webcert: 'srchsite1_web.cert'
+```
+
+Deploy the search head capitain last and the module will build a working search cluster. The capitain needs special hiera with a list of cluster members.
 
 ```
+splunk::is_captain: true
+splunk::preferred_captain: true
+splunk::shcluster_members:
+  - https://splunksh1.example.com:8089
+  - https://splunksh2.example.com:8089
+  - https://splunksh3.example.com:8089
+```
+
 ---
 
 <a id="inputs"></a>
@@ -346,11 +410,9 @@ sourcetype => <string> (Default 'auto'),
 index      => <string> (Default 'default'),
 cache      => <boolean> (Default true), # whether to establish a persistent queue for a network input
 size       => <int> (Default 1), # size of queue on disk in GB
-options    => <array>, # a list of strings containing any other valid inputs.conf \
-                       #  parameters for the input type
+options    => <array>, # a list of strings containing any other valid inputs.conf parameters for the input type
 recurse    => <boolean>, # should the acls applied to the input recurse
-content    => <string>, # any custom input definition you would like to use \
-                        # instead of the templated input options
+content    => <string>, # any custom input definition you would like to use instead of the templated input options
 )
 
 ```
@@ -421,9 +483,6 @@ splunk::indexes:
 
 The module has only been tested on RHEL and Debian derivatives.
 
-The support for clustering is a work-in-progress - the nodes will be depoyed and Splunk will enforce an existing cluster config, but dynamically creating a new cluster is not fully functional.
-
-The next major release will require you to set the parameter 'splunk::accept_license' to true, since the automated installation accepts the Splunk license when completing the install.
 
 License
 -------
