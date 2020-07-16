@@ -10,9 +10,14 @@
 1. [Usage](#usage)
     - [Authentication](#auth)
     - [Roles](#roles)
+    - [Licenses](#licenses)
     - [Splunk Server Types](#types)
     - [Inputs](#inputs)
     - [Indexes](#indexes)
+1. [Testing](#testing)
+1. [Examples](#examples)
+    - [Server types](#types)
+    - [Inputs](#inputs)
 1. [Limitations](#limitations)
 
 <a id="overview"></a>
@@ -209,6 +214,7 @@ splunk::roles:
       - 'srchDiskQuota = 5000'
 ```
 
+<a id="licenses"></a>
 ### Licenses
 
 The module can manage license pools if you supply the GUIDs for the members. 
@@ -249,6 +255,7 @@ splunk::licenses:
 
 ---
 
+<a id="testing"></a>
 ### Testing
 
 You can test the module using Vagrant. [This repo](https://github.com/cudgel/splunk-testing) has the minimum hiera necessary to deploy a deployer, 3 node search head cluster, and 3 node indexer cluster (with master). You can find a working Vagrantfile configuration in the vagrant directory of [the Puppet module](https://github.com/cudgel/splunk). You will need a base box with Puppet installed.
@@ -257,8 +264,11 @@ You can test the module using Vagrant. [This repo](https://github.com/cudgel/spl
 
 ---
 
+<A id="examples></a>
+## Examples
+
 <a id="types"></a>
-### Splunk Server Types
+### Splunk Server Types 
 
 Below are some examples of various Splunk types.
 
