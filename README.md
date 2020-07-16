@@ -264,7 +264,7 @@ You can test the module using Vagrant. [This repo](https://github.com/cudgel/spl
 
 ---
 
-<A id="examples></a>
+<a id="examples></a>
 ## Examples
 
 <a id="types"></a>
