@@ -1,3 +1,10 @@
+v1.9.1
+ - documentation 
+ - Vagrant example
+
+v1.9.0
+ - cleanup shcluster initialization - now both indexer cluster and search clusters deploy in fuctional state
+
 v1.8.3
  - default to "Trial" license group
  - add OS specific init providers

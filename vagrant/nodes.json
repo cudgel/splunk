@@ -1,0 +1,74 @@
+{
+  "nodes": {
+    "splunkds": {
+      ":node": "splunkds",
+      ":ip": "192.168.56.10",
+      ":ports": {},
+      ":memory": 2048,
+      ":application": "splunk",
+      ":function": "deployer"
+    },
+    "splunksh1": {
+      ":node": "splunksh1",
+      ":ip": "192.168.56.11",
+      ":ports": [
+        {
+          ":host": 8008,
+          ":guest": 8000,
+          ":id": "splunk"
+        }
+      ],
+      ":memory": 2048,
+      ":application": "splunk",
+      ":function": "search"
+    },
+    "splunksh2": {
+      ":node": "splunksh2",
+      ":ip": "192.168.56.12",
+      ":ports": {},
+      ":memory": 2048,
+      ":application": "splunk",
+      ":function": "search"
+    },
+    "splunksh3": {
+      ":node": "splunksh3",
+      ":ip": "192.168.56.13",
+      ":ports": {},
+      ":memory": 2048,
+      ":application": "splunk",
+      ":function": "search_master"
+    },
+    "splunkixm": {
+      ":node": "splunkixm",
+      ":ip": "192.168.56.14",
+      ":ports": {},
+      ":memory": 2048,
+      ":application": "splunk",
+      ":function": "index_master"
+    },
+    "splunkix1": {
+      ":node": "splunkix1",
+      ":ip": "192.168.56.15",
+      ":ports": {},
+      ":memory": 2048,
+      ":application": "splunk",
+      ":function": "indexer"
+    },
+    "splunkix2": {
+      ":node": "splunkix2",
+      ":ip": "192.168.56.16",
+      ":ports": {},
+      ":memory": 2048,
+      ":application": "splunk",
+      ":function": "indexer"
+    },
+    "splunkix3": {
+      ":node": "splunkix3",
+      ":ip": "192.168.56.17",
+      ":ports": {},
+      ":memory": 2048,
+      ":application": "splunk",
+      ":function": "indexer"
+    }
+  }
+}

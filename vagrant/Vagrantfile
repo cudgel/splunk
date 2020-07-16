@@ -1,0 +1,103 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# read vm and puppet configurations from JSON files
+nodes_config = (JSON.parse(File.read("nodes.json")))['nodes']
+puppet_config = (JSON.parse(File.read("puppet.json")))['puppet']
+
+# Replace 10.0.2.2 with the host IP on the NAT network Vagrant uses 
+# (assuming you are running Puppet in a Docker container)
+$puppet = <<-SCRIPT
+sudo echo '10.0.2.2 puppet.local puppet' | sudo tee -a /etc/hosts
+SCRIPT
+
+$resize = <<-SCRIPT
+sudo lvresize --size 20G /dev/mapper/vg_root-lv_opt
+sudo resize2fs /dev/mapper/vg_root-lv_opt
+SCRIPT
+
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  nodes_config.each do |node|
+    node_name   = node[0] # name of node
+    node_values = node[1] # content of node
+
+    config.vm.box = "centos7"
+
+    config.hostmanager.enabled = true
+    config.hostmanager.manage_host = false
+    config.hostmanager.ignore_private_ip = false
+    config.hostmanager.include_offline = false
+    cached_addresses = {}
+    config.hostmanager.ip_resolver = proc do |vm, resolving_vm|
+      if cached_addresses[vm.name].nil?
+        if hostname = (vm.ssh_info && vm.ssh_info[:host])
+          vm.communicate.execute("hostname -I | cut -d ' ' -f 2") do |type, contents|
+            cached_addresses[vm.name] = contents.split("\n").first[/(\d+\.\d+\.\d+\.\d+)/, 1]
+          end
+        end
+      end
+      cached_addresses[vm.name]
+    end
+
+    config.vm.define node_name do |config|
+      # VMware
+      # config.vm.provider "vmware_desktop" do |v|
+      #   v.gui = true
+      #   v.vmx["memsize"] =  node_values[':memory']
+      #   if node_values[':cpu']
+      #     v.vmx["numvcpus"] = node_values[':cpu']
+      #   end
+      #   v.whitelist_verified = true
+      # end
+
+      # VirtualBox
+      config.vm.provider :virtualbox do |vb|
+        vb.customize ["modifyvm", :id, "--memory", node_values[':memory']]
+        vb.customize ["modifyvm", :id, "--name", node_values[':node']]
+      end
+
+      # configures all forwarding ports in JSON array
+      ports = node_values[':ports']
+      ports.each do |port|
+        config.vm.network :forwarded_port,
+          host:  port[':host'],
+          guest: port[':guest'],
+          id:    port[':id']
+      end
+
+      config.vm.hostname = node_name
+      config.vm.network "private_network", ip: node_values[':ip'], name: 'vboxnet0'
+
+      synced_folder = node_values[':folder']
+      if synced_folder
+        config.vm.synced_folder synced_folder, "/vagrant", :disabled => false
+      else
+        config.vm.synced_folder ".", "/vagrant", :disabled => true
+      end
+
+      config.ssh.pty = true
+
+      config.vm.provision "shell", inline: $puppet
+      config.vm.provision "shell", inline: $resize
+
+      # provision bash aliases for vagrant user, the source needs to be relative to wherever you run vagrant up
+      config.vm.provision "file", source: "../files/bashrc", destination: "$HOME/.bashrc"
+      config.vm.provision "file", source: "../files/bashrc.local", destination: "$HOME/.bashrc.local"
+
+      config.vm.provision :puppet_server do |puppet|
+        puppet.puppet_node = node_values[':node']
+        puppet.binary_path = "/opt/puppetlabs/bin"
+        puppet.options = ["--waitforcert=300", "--environment="+puppet_config['environment'], "--verbose"]
+        puppet.puppet_server = puppet_config['server']
+        puppet.facter = {
+          "ec2_tag_application" => node_values[':application'],
+          "ec2_tag_function" => node_values[':function'],
+          "fqdn" => node_values[':node']
+        }
+      end
+
+    end
+  end
+end
