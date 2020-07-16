@@ -34,9 +34,6 @@ stack_id = enterprise
 [license]
 <% if license_master_mode == 'slave' -%>
 <% if license_master != 'none' -%>
-<% if type == 'forwarder' -%>
-active_group = forwarder
-<% else -%>
 master_uri = https://<%= license_master %>
 <% end -%>
 <% elsif licenses != nil -%>
