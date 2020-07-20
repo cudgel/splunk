@@ -341,9 +341,14 @@ Optional[string] $s3_kms_key        = undef
           }
         }
 
-        if ($type == 'indexer' or $type == 'standalone') and $indexes =~ Hash {
+        if ($type == 'indexer' or $type == 'index_master' or $type == 'standalone') and $indexes =~ Hash {
           $indexes_dir = "${local}/indexes.d/"
-          $indexes_conf = "${local}/indexes.conf"
+          if $splunk::cluster_mode == 'master' {
+            $indexes_conf_dir = "${dir}/etc/master-apps/_cluster/local"
+          } else {
+            $indexes_conf_dir = $local
+          }
+          $indexes_conf = "${indexes_conf_dir}/indexes.conf"
           $indexes_cmd = "/bin/cat ${indexes_dir}/* > ${indexes_conf}; \
               chown ${perms} ${indexes_conf}"
 

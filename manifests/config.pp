@@ -186,7 +186,7 @@ export PATH
     notify  => Exec['update-inputs']
   }
 
-  if ($type == 'indexer'or $type == 'standalone') and $indexes =~ Hash {
+  if ($type == 'indexer' or $type == 'index_master' or $type == 'standalone') and $indexes =~ Hash {
     file { "${local}/indexes.d":
       ensure  => 'directory',
       mode    => '0750',
