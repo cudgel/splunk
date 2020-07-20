@@ -11,7 +11,7 @@ define splunk::index(
   Optional[Boolean] $sign        = false,
   Optional[Boolean] $archive     = false,
   Optional[Boolean] $remote      = false,
-  Optional[Array] $options       = undef,
+  Optional[Array] $options       = undef
 ) {
   $local = "${dir}/etc/system/local"
 

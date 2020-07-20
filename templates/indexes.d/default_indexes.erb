@@ -4,8 +4,12 @@ cold_path = scope['::splunk::cold_path']
 datamodel_path = scope['::splunk::datamodel_path']
 maxwarm = scope['::splunk::maxwarm']
 maxcold = scope['::splunk::maxcold']
+remote_path = scope['::splunk::remote_path']
 -%>
 [default]
+<% if remote_path != nil -%>
+remotePath = volume:splunk_remote/$_index_name
+<% ebd -%>
 
 [volume:splunk_warm]
 path = <%= warm_path %>

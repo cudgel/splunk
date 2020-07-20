@@ -217,6 +217,7 @@ splunk::roles:
 The module can manage license pools if you supply the GUIDs for the members. 
 
 ```
+splunk::license_master_mode: 'master'
 splunk::licenses:
   - label: 'auto_generated_pool_enterprise'
     description: 'Non-Indexers'
@@ -468,6 +469,37 @@ splunk::indexes:
       - 'maxDataSize = auto'
       - 'maxWarmDBCount = 10'
 
+```
+
+For testing SmartStore on a stand-alone instance or non-clustered indexer, you can specify credentials and encryption.
+
+```
+splunk::s3_access_key: >
+    ENC[PKCS7,MIIBeQYJKoZIhvcNAQcDoIIBajCCAWYCAQAxggEhMIIBHQIBADAFMAACAQEw
+    DQYJKoZIhvcNAQEBBQAEggEAnVBv1OUPWDbBXaA8T0BIpYuKI7vIIrapLqZ+
+    XdbHjBuR+/8ACAPIPChq7uoXXuHVN6bTyqcWFXBRTGTwTM0NbJ7J88xx4fJH
+    Ic0ZcwmljPvjMAY2NEqUfLo4YNPHKBrH0TMraae1U4CfddSk7xVjLszL61R/
+    udsYjISYylL+xa3VBIjatoQYFU8QmFrkmaUzT1fLgS9e8RZoC6+DtK4q2JLI
+    51DFKanwfIZkIjIrDJP3HiwnNFWQmVHmxGeWaZZv/N+awkNGhwAI3OV0oIol
+    rysyEUCb9Y1RPPl7kEImgbgYN1Zzm5CVHE12DWMuj6vK9FQKTo1dpuEG9cnn
+    FU2ljzA8BgkqhkiG9w0BBwEwHQYJYIZIAWUDBAEqBBCfypAQFgUI0HjTTTyo
+    W0+5gBDfFi8OaQp8W7OTMywIJ4Dy]
+splunk::s3_secret_key: >
+    ENC[PKCS7,MIIBeQYJKoZIhvcNAQcDoIIBajCCAWYCAQAxggEhMIIBHQIBADAFMAACAQEw
+    DQYJKoZIhvcNAQEBBQAEggEAnnRCCxywIDPEprc8wx1u9DPE7y1cHadcK7Uh
+    igeBV4OTVZcdhaJLA18wFJhl9rS2YwMv/P8n6JYyIYgHuX4U6GZMQk1Lyzos
+    OiU7AiIpBydjk7ilO8B/WgCym0npNLYZVN5jP8JDnRJ5T/UyZGwqHZSfbyxH
+    GMg3nIVBNzFxEvTONM/YB/tyVDz1/dhwz2B8y5P1YGc+ou9id3BcNWtckHwn
+    UiQrDFrPh96FQ5/XPJ89c0rruEGJzua52+Gnv9GYq8r/Qm2LmdnIe09oM699
+    Ph4BaP0Yqm8SUE2Q0frbgPGQXh4VVcsSHRBORmlDe33OP87oULvvnzVb3lVJ
+    eyp3jzA8BgkqhkiG9w0BBwEwHQYJYIZIAWUDBAEqBBBlXvuusuH2PXC1et3E
+    e4WvgBBFuYuh/W5+tlbHQrnW8BYi]
+```
+
+```
+splunk::remote_path: 's3://my-aws-bucket/splunkidx'
+splunk::s3_endpoint: 's3.amazonaws.com'
+splunk::s3_encryption: 'sse-s3'
 ```
 
 ---
