@@ -9,7 +9,7 @@ remote_path = scope['::splunk::remote_path']
 [default]
 <% if remote_path != nil -%>
 remotePath = volume:splunk_remote/$_index_name
-<% ebd -%>
+<% end -%>
 
 [volume:splunk_warm]
 path = <%= warm_path %>
