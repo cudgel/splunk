@@ -471,7 +471,7 @@ splunk::indexes:
 
 ```
 
-For testing SmartStore on a stand-alone instance or non-clustered indexer, you can specify credentials and encryption.
+The module supports a great number of SmartStore settings and can configure it for a stand-alone server or a cluster.
 
 ```
 splunk::s3_access_key: >
@@ -495,6 +495,8 @@ splunk::s3_secret_key: >
     eyp3jzA8BgkqhkiG9w0BBwEwHQYJYIZIAWUDBAEqBBBlXvuusuH2PXC1et3E
     e4WvgBBFuYuh/W5+tlbHQrnW8BYi]
 ```
+
+This is the bare minimum configuration to use S3 managed keys.
 
 ```
 splunk::remote_path: 's3://my-aws-bucket/splunkidx'

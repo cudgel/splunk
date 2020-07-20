@@ -1,3 +1,7 @@
+v2.0.0
+ - create indexes.conf on cluster master
+ - create SmartStore configs
+
 v1.9.2
  - cleanup/re-order documentation
  - pdk update
