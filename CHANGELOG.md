@@ -5,7 +5,29 @@ All notable changes to this project will be documented in this file.
 ## Release 
 
 **Features**
+v2.0.0
+ - create indexes.conf on cluster master
+ - create SmartStore configs
+
+v1.9.1
+ - documentation 
+ - Vagrant example
 
 **Bugfixes**
+
+v1.9.2
+ - cleanup/re-order documentation
+ - pdk update
+
+v1.9.0
+ - cleanup shcluster initialization - now both indexer cluster and search clusters deploy in fuctional state
+
+v1.8.3
+ - default to "Trial" license group
+ - add OS specific init providers
+ - cleanup input template for splunktcp/splunktcp-ssl inputs
+ - increase line length for rubocop
+ - cleanup shcluster initialization - now both indexer cluster and search clusters deploy in fuctional state
+ - close #4
 
 **Known Issues**
