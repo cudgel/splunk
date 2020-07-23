@@ -69,10 +69,10 @@ class splunk::service {
         $provider = init
       }
     } else {
-      $restart = '/usr/bin/sudo /usr/bin/systemctl restart Splunkd.service'
-      $start   = '/usr/bin/sudo /usr/bin/systemctl start Splunkd.service'
-      $stop    = '/usr/bin/sudo /usr/bin/systemctl stop Splunkd.service'
-      $status  = '/usr/bin/sudo /usr/bin/systemctl status Splunkd.service'
+      $restart = '/usr/bin/sudo /usr/bin/systemctl restart splunk'
+      $start   = '/usr/bin/sudo /usr/bin/systemctl start splunk'
+      $stop    = '/usr/bin/sudo /usr/bin/systemctl stop splunk'
+      $status  = '/usr/bin/sudo /usr/bin/systemctl status splunk'
 
       $provder = systemd
     }
