@@ -58,7 +58,7 @@ class splunk::install
   }
   $startcmd = "splunk start --accept-license --answer-yes --no-prompt${seed}"
   if $use_systemd == true {
-    $enablecmd = "splunk enable boot-start -systemd-managed 1 -user ${user} -systemd-unit-file-name Splunkd && systemctl daemon-reload"
+    $enablecmd = "splunk stop || splunk enable boot-start -systemd-managed 1 -user ${user} -systemd-unit-file-name Splunkd && systemctl daemon-reload"
     $disablecmd = 'splunk disable boot-start -systemd-managed 1 -systemd-unit-file-name Splunkd'
     $stopcmd = 'systemctl stop Splunkd'
   } else {
