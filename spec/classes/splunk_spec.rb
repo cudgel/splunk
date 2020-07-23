@@ -213,9 +213,8 @@ describe 'splunk' do
     it { is_expected.to contain_class('splunk') }
     it { is_expected.to contain_class('splunk::install') }
     it { is_expected.to contain_file('/opt/splunkforwarder-7.2.3-06d57c595b80-Linux-x86_64.tgz').with('ensure' => 'absent') }
-    it { is_expected.to contain_exec('uninstallSplunkService') }
-    it { is_expected.to contain_exec('serviceStop') }
-    it { is_expected.to contain_file('/opt/splunkforwarder').with('ensure' => 'absent').that_requires('Exec[serviceStop]') }
+    it { is_expected.to contain_exec('serviceChange') }
+    it { is_expected.to contain_file('/opt/splunkforwarder').with('ensure' => 'absent').that_requires('Exec[serviceChange]') }
     it { is_expected.to contain_file('/opt/splunk-7.2.3-06d57c595b80-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
     it { is_expected.to contain_class('splunk::config') }
     it { is_expected.to contain_class('splunk::service') }
@@ -551,8 +550,7 @@ describe 'splunk' do
     it { is_expected.to contain_exec('retrieve_splunk-7.2.3-06d57c595b80-Linux-x86_64.tgz') }
     it { is_expected.to contain_file('/opt/splunk-7.2.3-06d57c595b80-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
     it { is_expected.to contain_exec('unpackSplunk').that_subscribes_to('File[/opt/splunk-7.2.3-06d57c595b80-Linux-x86_64.tgz]') }
-    it { is_expected.to contain_exec('serviceStart') }
-    it { is_expected.to contain_exec('installSplunkService').that_subscribes_to('Exec[unpackSplunk]').that_requires('Exec[unpackSplunk]') }
+    it { is_expected.to contain_exec('serviceInstall').that_subscribes_to('Exec[unpackSplunk]').that_requires('Exec[unpackSplunk]') }
     it { is_expected.to contain_class('splunk::config') }
     it { is_expected.to contain_exec('test_for_splunk') }
     it { is_expected.to contain_file('/opt/splunk/etc/splunk-launch.conf').that_notifies('Service[splunk]') }
@@ -727,7 +725,7 @@ describe 'splunk' do
     it { is_expected.to contain_file('/home/splunk/.bashrc.custom') }
     it { is_expected.to contain_class('splunk::install') }
     it { is_expected.to contain_file('/opt/splunk-7.2.3-06d57c595b80-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
-    it { is_expected.to contain_exec('serviceStart') }
+    it { is_expected.to contain_exec('serviceInstall') }
     it { is_expected.to contain_class('splunk::config') }
     it { is_expected.to contain_file('/opt/splunk/etc/splunk-launch.conf').that_notifies('Service[splunk]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/limits.conf').that_notifies('Service[splunk]').that_requires('Exec[test_for_splunk]') }

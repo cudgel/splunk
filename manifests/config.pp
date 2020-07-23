@@ -17,6 +17,7 @@
 #
 class splunk::config
 {
+  $action            = $splunk::action
   $type              = $splunk::type
   $install_path      = $splunk::install_path
   $dir               = $splunk::dir
@@ -161,6 +162,18 @@ export PATH
     group   => $group,
     require => Exec['test_for_splunk']
   }
+
+  if $action == 'install' {
+    if $admin_pass != undef {
+      file { "${local}/user-seed.conf":
+        content => template("${module_name}/user-seed.conf.erb"),
+        owner   => $user,
+        group   => $group,
+        notify  => Service['splunk']
+      }
+    }
+  }
+
 
   file { "${local}/inputs.d":
     ensure  => 'directory',

@@ -46,38 +46,34 @@ class splunk::install
   $source       = $splunk::source
   $user         = $splunk::user
   $group        = $splunk::group
-  $admin_pass   = $splunk::admin_pass
 
   $perms = "${user}:${group}"
 
-
-  if $admin_pass != undef and ($my_cwd == undef or $my_cwd != $dir) {
-    $seed = " --seed-passwd ${admin_pass}"
-  } else {
-    $seed = ''
-  }
-  $startcmd = "splunk start --accept-license --answer-yes --no-prompt${seed}"
   if $use_systemd == true {
-    $enablecmd = "splunk stop || splunk enable boot-start -systemd-managed 1 -user ${user} && systemctl daemon-reload"
-    $disablecmd = 'splunk disable boot-start -systemd-managed 1'
+    $startcmd = 'splunk start'
+    $enablecmd = "splunk enable boot-start -systemd-managed 1 -user ${user} -systemd-unit-file-name splunk && systemctl daemon-reload"
     $stopcmd = 'splunk stop'
+    $disablecmd = 'splunk disable boot-start -systemd-managed 1'
+    $changecmd = "${stopcmd} && ${disablecmd}"
+    $upgradecmd = "${stopcmd} && ${startcmd}"
+    $intallcmd = "${enablecmd} && ${startcmd}"
+    $installfile = '/etc/systemd/system/splunk.service'
   } else {
+    $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
+    $stopcmd = 'splunk stop'
     $enablecmd = "splunk enable boot-start -systemd-managed 0 -user ${user}"
     $disablecmd = 'splunk disable boot-start'
-    $stopcmd = 'splunk stop'
+    $changecmd = "${disablecmd} && ${stopcmd}"
+    $upgradecmd = "${stopcmd} && ${startcmd}"
+    $installcmd = "${startcmd} && ${enablecmd}"
+    $installfile = '/etc/init.d/splunk'
   }
 
   # clean up a splunk instance running out of the wrong directory for the type
   if $action == 'change' {
 
-    exec { 'uninstallSplunkService':
-      command => $disablecmd,
-      path    => "${my_cwd}/bin:/bin:/usr/bin:",
-      returns => [0, 8]
-    }
-
-    exec { 'serviceStop':
-      command => $stopcmd,
+    exec { 'serviceChange':
+      command => $changecmd,
       path    => "${my_cwd}/bin:/bin:/usr/bin:",
       timeout => 600
     }
@@ -87,7 +83,7 @@ class splunk::install
         ensure  => absent,
         force   => true,
         backup  => false,
-        require => Exec['serviceStop']
+        require => Exec['serviceChange']
       }
     }
 
@@ -149,28 +145,25 @@ class splunk::install
     subscribe => Exec['unpackSplunk']
   }
 
-  if defined('$my_cwd') {
-    $servicecmd = "${stopcmd}; ${startcmd}"
+  if $action == 'upgrade' {
+    exec { 'serviceStart':
+      command     => $upgradecmd,
+      environment => 'HISTFILE=/dev/null',
+      path        => "${dir}/bin:/bin:/usr/bin:",
+      subscribe   => Exec['unpackSplunk'],
+      timeout     => 600,
+      refreshonly => true
+    }
   } else {
-    $servicecmd = $startcmd
+    exec { 'serviceInstall':
+      command   => $installcmd,
+      path      => "${dir}/bin:/bin:/usr/bin:",
+      cwd       => $dir,
+      subscribe => Exec['unpackSplunk'],
+      timeout   => 600,
+      creates   => $installfile,
+      require   => Exec['unpackSplunk']
+    }
   }
 
-  exec { 'serviceStart':
-    command     => $servicecmd,
-    environment => 'HISTFILE=/dev/null',
-    path        => "${dir}/bin:/bin:/usr/bin:",
-    subscribe   => Exec['unpackSplunk'],
-    refreshonly => true
-  }
-
-  exec { 'installSplunkService':
-    command   => $enablecmd,
-    path      => "${dir}/bin:/bin:/usr/bin:",
-    cwd       => $dir,
-    subscribe => Exec['unpackSplunk'],
-    unless    => 'test -e /etc/init.d/splunk',
-    creates   => '/etc/init.d/splunk',
-    require   => Exec['unpackSplunk'],
-    returns   => [0, 8]
-  }
 }
