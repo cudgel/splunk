@@ -162,7 +162,8 @@ class splunk::install
       subscribe => Exec['unpackSplunk'],
       timeout   => 600,
       creates   => $installfile,
-      require   => Exec['unpackSplunk']
+      require   => Exec['unpackSplunk'],
+      returns   => [0, 8]
     }
   }
 
