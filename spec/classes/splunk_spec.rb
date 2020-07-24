@@ -66,7 +66,6 @@ describe 'splunk' do
     it { is_expected.to contain_exec('retrieve_splunkforwarder-7.2.3-06d57c595b80-Linux-x86_64.tgz') }
     it { is_expected.to contain_file('/opt/splunkforwarder-7.2.3-06d57c595b80-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
     it { is_expected.to contain_file('/opt/splunkforwarder/etc/system/local/user-seed.conf')}
-    it { is_expected.to contain_exec('serviceRestart').that_subscribes_to('File[/opt/splunkforwarder/etc/system/local/user-seed.conf]')}
     it { is_expected.to contain_class('splunk::config') }
     it { is_expected.to contain_file('/opt/splunkforwarder/etc/splunk-launch.conf').that_notifies('Service[splunk]') }
     it { is_expected.to contain_file('/opt/splunkforwarder/etc/system/local/inputs.d').with_ensure('directory').that_requires('Exec[test_for_splunk]') }
@@ -551,7 +550,6 @@ describe 'splunk' do
     it { is_expected.to contain_exec('unpackSplunk').that_subscribes_to('File[/opt/splunk-7.2.3-06d57c595b80-Linux-x86_64.tgz]') }
     it { is_expected.to contain_exec('serviceInstall').that_subscribes_to('Exec[unpackSplunk]').that_requires('Exec[unpackSplunk]') }
     it { is_expected.to contain_file('/opt/splunk/etc/system/local/user-seed.conf') }
-    it { is_expected.to contain_exec('serviceRestart').that_subscribes_to('File[/opt/splunk/etc/system/local/user-seed.conf]') }
     it { is_expected.to contain_class('splunk::config') }
     it { is_expected.to contain_exec('test_for_splunk') }
     it { is_expected.to contain_file('/opt/splunk/etc/splunk-launch.conf').that_notifies('Service[splunk]') }

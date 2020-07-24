@@ -54,7 +54,6 @@ class splunk::install
   if $use_systemd == true {
     $startcmd = 'splunk start'
     $stopcmd = 'splunk stop'
-    $restartcmd = 'splunk restart'
     $enablecmd = "splunk enable boot-start -systemd-managed 1 -user ${user} -systemd-unit-file-name splunk --accept-license  --no-prompt"
     $disablecmd = 'splunk disable boot-start -systemd-managed 1'
     $changecmd = "${stopcmd} && ${disablecmd}"
@@ -64,7 +63,6 @@ class splunk::install
   } else {
     $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
     $stopcmd = 'splunk stop'
-    $restartcmd = 'splunk restart'
     $enablecmd = "splunk enable boot-start -systemd-managed 0 -user ${user}"
     $disablecmd = 'splunk disable boot-start'
     $changecmd = "${disablecmd} && ${stopcmd}"
@@ -159,6 +157,16 @@ class splunk::install
       refreshonly => true
     }
   } else {
+    if $admin_pass != undef {
+      file { "${dir}/etc/system/local/user-seed.conf":
+        content   => template("${module_name}/user-seed.conf.erb"),
+        owner     => $user,
+        group     => $group,
+        before    => Exec['serviceInstall'],
+        require   => Exec['unpackSplunk']
+      }
+    }
+
     exec { 'serviceInstall':
       command   => $installcmd,
       path      => "${dir}/bin:/bin:/usr/bin:",
@@ -170,24 +178,6 @@ class splunk::install
       returns   => [0, 8]
     }
 
-    if $admin_pass != undef {
-      file { "${dir}/etc/system/local/user-seed.conf":
-        content   => template("${module_name}/user-seed.conf.erb"),
-        owner     => $user,
-        group     => $group,
-        require   => Exec['unpackSplunk'],
-        subscribe => Exec['serviceInstall']
-      }
-
-      exec { 'serviceRestart':
-        command     => $restartcmd,
-        environment => 'HISTFILE=/dev/null',
-        path        => "${dir}/bin:/bin:/usr/bin:",
-        timeout     => 600,
-        subscribe   => File["${dir}/etc/system/local/user-seed.conf"],
-        refreshonly => true
-      }
-    }
   }
 
 }
