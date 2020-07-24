@@ -17,7 +17,6 @@
 #
 class splunk::config
 {
-  $action            = $splunk::action
   $type              = $splunk::type
   $install_path      = $splunk::install_path
   $dir               = $splunk::dir
@@ -140,6 +139,13 @@ export PATH
     }
   }
 
+  file { "${dir}/etc/apps":
+    ensure  => 'directory',
+    owner   => $user,
+    group   => $group,
+    require => Exec['test_for_splunk']
+  }
+
   if $confpath == 'app' {
     file { "${dir}/etc/apps/__puppet_conf":
       ensure  => 'directory',
@@ -147,6 +153,13 @@ export PATH
       group   => $group,
       require => Exec['test_for_splunk']
     }
+  }
+
+  file { $local:
+    ensure  => 'directory',
+    owner   => $user,
+    group   => $group,
+    require => Exec['test_for_splunk']
   }
 
   file { "${local}/inputs.d":
@@ -300,17 +313,17 @@ export PATH
         unless $shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/ {
 
           exec { 'join_cluster':
-            command     => "splunk init shcluster-config \
+            command => "splunk init shcluster-config \
 -auth admin:${admin_pass} -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} \
 -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} \
 -secret ${symmkey} -shcluster_label ${shcluster_label} && splunk restart",
-            path        => "${dir}/bin:/bin:/usr/bin:",
-            cwd         => $dir,
-            timeout     => 600,
-            user        => $user,
-            group       => $group,
-            onlyif      => 'splunk status',
-            require     => Exec['test_for_splunk']
+            path    => "${dir}/bin:/bin:/usr/bin:",
+            cwd     => $dir,
+            timeout => 600,
+            user    => $user,
+            group   => $group,
+            onlyif  => 'splunk status',
+            require => Exec['test_for_splunk']
           }
 
           if $is_captain == true and $shcluster_members != undef {
@@ -321,13 +334,13 @@ export PATH
 -servers_list \"${servers_list}\" -auth admin:${admin_pass}"
 
             exec { 'bootstrap_cluster':
-              command     => $bootstrap_cmd,
-              path        => "${dir}/bin:/bin:/usr/bin:",
-              cwd         => $dir,
-              user        => $user,
-              group       => $group,
-              onlyif      => 'splunk status',
-              require     => Exec['test_for_splunk']
+              command => $bootstrap_cmd,
+              path    => "${dir}/bin:/bin:/usr/bin:",
+              cwd     => $dir,
+              user    => $user,
+              group   => $group,
+              onlyif  => 'splunk status',
+              require => Exec['test_for_splunk']
             }
           }
 

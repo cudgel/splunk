@@ -48,22 +48,26 @@ class splunk::install
   $group        = $splunk::group
   $admin_pass   = $splunk::admin_pass
 
-
   $perms = "${user}:${group}"
 
+  if $admin_pass != undef and ($my_cwd == undef or $my_cwd != $dir) {
+    $seed = " --seed-passwd ${admin_pass}"
+  } else {
+    $seed = ''
+  }
+
+  $startcmd = 'splunk start'
+  $stopcmd = 'splunk stop'
+  $args = "--accept-license --no-prompt${seed}"
   if $use_systemd == true {
-    $startcmd = 'splunk start'
-    $stopcmd = 'splunk stop'
-    $enablecmd = "splunk enable boot-start -systemd-managed 1 -user ${user} -systemd-unit-file-name splunk --accept-license  --no-prompt"
+    $enablecmd = "splunk enable boot-start -systemd-managed 1 -user ${user} -systemd-unit-file-name splunk ${args}"
     $disablecmd = 'splunk disable boot-start -systemd-managed 1'
     $changecmd = "${stopcmd} && ${disablecmd}"
     $upgradecmd = "${stopcmd} && ${startcmd}"
     $installcmd = "${enablecmd} && ${startcmd}"
     $installfile = '/etc/systemd/system/splunk.service'
   } else {
-    $startcmd = 'splunk start --accept-license --answer-yes --no-prompt'
-    $stopcmd = 'splunk stop'
-    $enablecmd = "splunk enable boot-start -systemd-managed 0 -user ${user}"
+    $enablecmd = "splunk enable boot-start -systemd-managed 0 -user ${user} ${args}"
     $disablecmd = 'splunk disable boot-start'
     $changecmd = "${disablecmd} && ${stopcmd}"
     $upgradecmd = "${stopcmd} && ${startcmd}"
@@ -157,16 +161,6 @@ class splunk::install
       refreshonly => true
     }
   } else {
-    if $admin_pass != undef {
-      file { "${dir}/etc/system/local/user-seed.conf":
-        content   => template("${module_name}/user-seed.conf.erb"),
-        owner     => $user,
-        group     => $group,
-        before    => Exec['serviceInstall'],
-        require   => Exec['unpackSplunk']
-      }
-    }
-
     exec { 'serviceInstall':
       command   => $installcmd,
       path      => "${dir}/bin:/bin:/usr/bin:",
@@ -177,7 +171,6 @@ class splunk::install
       require   => Exec['unpackSplunk'],
       returns   => [0, 8]
     }
-
   }
 
 }
