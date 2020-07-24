@@ -53,6 +53,7 @@ class splunk::config
   $deployment_server = $splunk::deployment_server
   $indexes           = $splunk::indexes
   $remote_path       = $splunk::remote_path
+  $admin_pass        = $splunk::admin_pass
 
   $splunk_home = $splunk_home
   $perms = "${user}:${group}"
@@ -303,7 +304,6 @@ export PATH
 -auth admin:${admin_pass} -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} \
 -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} \
 -secret ${symmkey} -shcluster_label ${shcluster_label} && splunk restart",
-            environment => "SPLUNK_HOME=${dir}",
             path        => "${dir}/bin:/bin:/usr/bin:",
             cwd         => $dir,
             timeout     => 600,
@@ -322,7 +322,6 @@ export PATH
 
             exec { 'bootstrap_cluster':
               command     => $bootstrap_cmd,
-              environment => "SPLUNK_HOME=${dir}",
               path        => "${dir}/bin:/bin:/usr/bin:",
               cwd         => $dir,
               user        => $user,
