@@ -53,7 +53,6 @@ class splunk::config
   $deployment_server = $splunk::deployment_server
   $indexes           = $splunk::indexes
   $remote_path       = $splunk::remote_path
-  $admin_pass        = $splunk::admin_pass
 
   $splunk_home = $splunk_home
   $perms = "${user}:${group}"
@@ -140,13 +139,6 @@ export PATH
     }
   }
 
-  file { "${dir}/etc/apps":
-    ensure  => 'directory',
-    owner   => $user,
-    group   => $group,
-    require => Exec['test_for_splunk']
-  }
-
   if $confpath == 'app' {
     file { "${dir}/etc/apps/__puppet_conf":
       ensure  => 'directory',
@@ -155,25 +147,6 @@ export PATH
       require => Exec['test_for_splunk']
     }
   }
-
-  file { $local:
-    ensure  => 'directory',
-    owner   => $user,
-    group   => $group,
-    require => Exec['test_for_splunk']
-  }
-
-  if $action == 'install' {
-    if $admin_pass != undef {
-      file { "${local}/user-seed.conf":
-        content => template("${module_name}/user-seed.conf.erb"),
-        owner   => $user,
-        group   => $group,
-        notify  => Service['splunk']
-      }
-    }
-  }
-
 
   file { "${local}/inputs.d":
     ensure  => 'directory',
