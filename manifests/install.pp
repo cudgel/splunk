@@ -60,14 +60,14 @@ class splunk::install
   $stopcmd = 'splunk stop'
   $args = "--accept-license --no-prompt${seed}"
   if $use_systemd == true {
-    $enablecmd = " splunk enable boot-start -systemd-managed 1 -user ${user} -systemd-unit-file-name splunk ${args}"
+    $enablecmd = "splunk enable boot-start -systemd-managed 1 -user ${user} -systemd-unit-file-name splunk ${args}"
     $disablecmd = 'splunk disable boot-start -systemd-managed 1'
     $changecmd = "${stopcmd} && ${disablecmd}"
     $upgradecmd = "${stopcmd} && ${startcmd}"
     $installcmd = "${enablecmd} && ${startcmd}"
     $installfile = '/etc/systemd/system/splunk.service'
   } else {
-    $enablecmd = " splunk enable boot-start -systemd-managed 0 -user ${user} ${args}"
+    $enablecmd = "splunk enable boot-start -systemd-managed 0 -user ${user} ${args}"
     $disablecmd = 'splunk disable boot-start'
     $changecmd = "${disablecmd} && ${stopcmd}"
     $upgradecmd = "${stopcmd} && ${startcmd}"

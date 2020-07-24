@@ -362,7 +362,7 @@ export PATH
 
       unless $shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/ {
 
-        $joincmd = " splunk init shcluster-config -auth admin:${admin_pass} -mgmt_uri https://${::fqdn}:8089 \
+        $joincmd = "splunk init shcluster-config -auth admin:${admin_pass} -mgmt_uri https://${::fqdn}:8089 \
 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} \
 -secret ${symmkey} -shcluster_label ${shcluster_label} && splunk restart"
 
@@ -382,7 +382,7 @@ export PATH
 
           $servers_list = join($shcluster_members, ',')
 
-          $bootstrap_cmd = " splunk bootstrap shcluster-captain -servers_list \"${servers_list}\"
+          $bootstrap_cmd = "splunk bootstrap shcluster-captain -servers_list \"${servers_list}\"
 -auth admin:${admin_pass}"
 
           exec { 'bootstrap_cluster':
