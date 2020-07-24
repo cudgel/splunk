@@ -60,14 +60,14 @@ class splunk::install
   $stopcmd = 'splunk stop'
   $args = "--accept-license --no-prompt${seed}"
   if $use_systemd == true {
-    $enablecmd = "splunk enable boot-start -systemd-managed 1 -user ${user} -systemd-unit-file-name splunk ${args}"
+    $enablecmd = " splunk enable boot-start -systemd-managed 1 -user ${user} -systemd-unit-file-name splunk ${args}"
     $disablecmd = 'splunk disable boot-start -systemd-managed 1'
     $changecmd = "${stopcmd} && ${disablecmd}"
     $upgradecmd = "${stopcmd} && ${startcmd}"
     $installcmd = "${enablecmd} && ${startcmd}"
     $installfile = '/etc/systemd/system/splunk.service'
   } else {
-    $enablecmd = "splunk enable boot-start -systemd-managed 0 -user ${user} ${args}"
+    $enablecmd = " splunk enable boot-start -systemd-managed 0 -user ${user} ${args}"
     $disablecmd = 'splunk disable boot-start'
     $changecmd = "${disablecmd} && ${stopcmd}"
     $upgradecmd = "${stopcmd} && ${startcmd}"
@@ -162,14 +162,15 @@ class splunk::install
     }
   } else {
     exec { 'serviceInstall':
-      command   => $installcmd,
-      path      => "${dir}/bin:/bin:/usr/bin:",
-      cwd       => $dir,
-      subscribe => Exec['unpackSplunk'],
-      timeout   => 600,
-      creates   => $installfile,
-      require   => Exec['unpackSplunk'],
-      returns   => [0, 8]
+      command     => $installcmd,
+      environment => 'HISTFILE=/dev/null',
+      path        => "${dir}/bin:/bin:/usr/bin:",
+      cwd         => $dir,
+      subscribe   => Exec['unpackSplunk'],
+      timeout     => 600,
+      creates     => $installfile,
+      require     => Exec['unpackSplunk'],
+      returns     => [0, 8]
     }
   }
 
