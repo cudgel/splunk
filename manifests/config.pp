@@ -368,7 +368,7 @@ export PATH
 
         exec { 'join_cluster':
           command     => $joincmd,
-          environment => "=${dir}",
+          environment => "${dir}",
           path        => "${dir}/bin:/bin:/usr/bin:",
           cwd         => $dir,
           timeout     => 600,
