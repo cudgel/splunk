@@ -172,19 +172,21 @@ class splunk::install
 
     if $admin_pass != undef {
       file { "${dir}/etc/system/local/user-seed.conf":
-        content => template("${module_name}/user-seed.conf.erb"),
-        owner   => $user,
-        group   => $group
+        content   => template("${module_name}/user-seed.conf.erb"),
+        owner     => $user,
+        group     => $group,
+        require   => Exec['unpackSplunk'],
+        subscribe => Exec['serviceInstall']
       }
-    }
 
-    exec { 'serviceRestart':
-      command     => $restartcmd,
-      environment => 'HISTFILE=/dev/null',
-      path        => "${dir}/bin:/bin:/usr/bin:",
-      timeout     => 600,
-      subscribe   => File["${dir}/etc/system/local/user-seed.conf"],
-      refreshonly => true
+      exec { 'serviceRestart':
+        command     => $restartcmd,
+        environment => 'HISTFILE=/dev/null',
+        path        => "${dir}/bin:/bin:/usr/bin:",
+        timeout     => 600,
+        subscribe   => File["${dir}/etc/system/local/user-seed.conf"],
+        refreshonly => true
+      }
     }
   }
 
