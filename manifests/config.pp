@@ -368,7 +368,7 @@ export PATH
 
         exec { 'join_cluster':
           command     => $joincmd,
-          environment => "${dir}",
+          environment => "SPLUNK_HOME=${dir}",
           path        => "${dir}/bin:/bin:/usr/bin:",
           cwd         => $dir,
           timeout     => 600,
@@ -387,6 +387,7 @@ export PATH
 
           exec { 'bootstrap_cluster':
             command     => $bootstrap_cmd,
+            environment => "SPLUNK_HOME=${dir}",
             path        => "${dir}/bin:/bin:/usr/bin:",
             cwd         => $dir,
             user        => $user,
