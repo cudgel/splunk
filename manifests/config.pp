@@ -368,7 +368,7 @@ export PATH
 
         exec { 'join_cluster':
           command     => $joincmd,
-          environment => "SPLUNK_HOME=${dir}",
+          environment => "=${dir}",
           path        => "${dir}/bin:/bin:/usr/bin:",
           cwd         => $dir,
           timeout     => 600,
@@ -382,12 +382,11 @@ export PATH
 
           $servers_list = join($shcluster_members, ',')
 
-          $bootstrap_cmd = "splunk bootstrap shcluster-captain -servers_list \"${servers_list}\"
+          $bootstrap_cmd = "splunk bootstrap shcluster-captain -servers_list \"${servers_list}\" \
 -auth admin:${admin_pass}"
 
           exec { 'bootstrap_cluster':
             command     => $bootstrap_cmd,
-            environment => "SPLUNK_HOME=${dir}",
             path        => "${dir}/bin:/bin:/usr/bin:",
             cwd         => $dir,
             user        => $user,
