@@ -194,7 +194,7 @@ class splunk::install
       exec { 'join_cluster':
         command     => $joincmd,
         timeout     => 600,
-        environment => "SPLUNK_HOME=${dir}",
+        environment => [ "SPLUNK_HOME=${dir}", "HOME=${home}" ],
         path        => "${dir}/bin:/bin:/usr/bin:",
         user        => $user,
         group       => $group,
@@ -211,7 +211,7 @@ class splunk::install
         exec { 'bootstrap_cluster':
           command     => $bootstrap_cmd,
           timeout     => 600,
-          environment => "SPLUNK_HOME=${dir}",
+          environment => [ "SPLUNK_HOME=${dir}", "HOME=${home}" ],
           path        => "${dir}/bin:/bin:/usr/bin:",
           user        => $user,
           group       => $group,
