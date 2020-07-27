@@ -80,6 +80,7 @@ class splunk::service {
 
   service { 'splunk':
     ensure   => 'running',
+    timeout  => 600,
     restart  => $restart,
     start    => $start,
     stop     => $stop,
