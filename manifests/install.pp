@@ -21,33 +21,41 @@
 #
 class splunk::install
 {
-  $action       = $splunk::action
-  $my_cwd       = $splunk::cwd
-  $type         = $splunk::type
+  $action            = $splunk::action
+  $my_cwd            = $splunk::cwd
+  $type              = $splunk::type
   # splunk user home
-  $home         = $splunk::home
-  $install_path = $splunk::install_path
-  $use_systemd  = $splunk::use_systemd
+  $home              = $splunk::home
+  $install_path      = $splunk::install_path
+  $use_systemd       = $splunk::use_systemd
   # splunk install directory
-  $dir          = $splunk::dir
-  $local        = $splunk::local
+  $dir               = $splunk::dir
+  $local             = $splunk::local
   # splunk or splunkforwarder
-  $sourcepart   = $splunk::sourcepart
+  $sourcepart        = $splunk::sourcepart
   # currently installed version from fact
-  $cur_version  = $splunk::cur_version
+  $cur_version       = $splunk::cur_version
   # new verion from hiera
-  $new_version  = $splunk::new_version
-  $os           = $splunk::os
-  $arch         = $splunk::arch
-  $ext          = $splunk::ext
-  $tarcmd       = $splunk::tarcmd
-  $manifest     = $splunk::manifest
+  $new_version       = $splunk::new_version
+  $os                = $splunk::os
+  $arch              = $splunk::arch
+  $ext               = $splunk::ext
+  $tarcmd            = $splunk::tarcmd
+  $manifest          = $splunk::manifest
   # splunk (web) or module or a custom url
-  $source       = $splunk::source
-  $user         = $splunk::user
-  $group        = $splunk::group
-  $admin_pass   = $splunk::admin_pass
-
+  $confdeploy        = $splunk::search_deploy
+  $repl_port         = $splunk::repl_port
+  $repl_count        = $splunk::repl_count
+  $source            = $splunk::source
+  $user              = $splunk::user
+  $group             = $splunk::group
+  $admin_pass        = $splunk::admin_pass
+  $shcluster_id      = $splunk::shcluster_id
+  $shcluster_mode    = $splunk::shcluster_mode
+  $shcluster_label   = $splunk::shcluster_label
+  $is_captain        = $splunk::is_captain
+  $shcluster_members = $splunk::shcluster_members
+  $symmkey           = $splunk::symmkey
   $perms = "${user}:${group}"
 
   if $admin_pass != undef and ($my_cwd == undef or $my_cwd != $dir) {
