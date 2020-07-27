@@ -187,14 +187,14 @@ class splunk::install
 
     unless $shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/ {
 
-      $joincmd = "splunk init shcluster-config -auth admin:${admin_pass} -mgmt_uri https://${::fqdn}:8089 \
+      $joincmd = "sleep 30 && splunk init shcluster-config -auth admin:${admin_pass} -mgmt_uri https://${::fqdn}:8089 \
 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} \
 -secret ${symmkey} -shcluster_label ${shcluster_label}"
 
       exec { 'join_cluster':
         command     => $joincmd,
         timeout     => 600,
-        environment => [ "SPLUNK_HOME=${dir}", "HOME=${home}" ],
+        environment => "SPLUNK_HOME=${dir}",
         path        => "${dir}/bin:/bin:/usr/bin:",
         user        => $user,
         group       => $group,
@@ -205,13 +205,13 @@ class splunk::install
 
         $servers_list = join($shcluster_members, ',')
 
-        $bootstrap_cmd = "splunk restart && splunk bootstrap shcluster-captain -servers_list \"${servers_list}\" \
+        $bootstrap_cmd = "sleep 30 && splunk restart && splunk bootstrap shcluster-captain -servers_list \"${servers_list}\" \
 -auth admin:${admin_pass}"
 
         exec { 'bootstrap_cluster':
           command     => $bootstrap_cmd,
           timeout     => 600,
-          environment => [ "SPLUNK_HOME=${dir}", "HOME=${home}" ],
+          environment => "SPLUNK_HOME=${dir}",
           path        => "${dir}/bin:/bin:/usr/bin:",
           user        => $user,
           group       => $group,
