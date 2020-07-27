@@ -373,7 +373,6 @@ export PATH
           path        => "${dir}/bin:/bin:/usr/bin:",
           user        => $user,
           group       => $group,
-          onlyif      => 'splunk status',
           before      => Exec['update-server'],
           require     => Exec['test_for_splunk']
         }
@@ -392,7 +391,6 @@ export PATH
             path        => "${dir}/bin:/bin:/usr/bin:",
             user        => $user,
             group       => $group,
-            onlyif      => 'splunk status',
             before      => Exec['update-server'],
             require     => Exec['test_for_splunk']
           }
