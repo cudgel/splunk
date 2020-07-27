@@ -205,7 +205,7 @@ class splunk::install
 
         $servers_list = join($shcluster_members, ',')
 
-        $bootstrap_cmd = "sleep 30 && splunk restart && splunk bootstrap shcluster-captain -servers_list \"${servers_list}\" \
+        $bootstrap_cmd = "splunk restart && sudo -u splunk ${dir}/bin/splunk bootstrap shcluster-captain -servers_list \"${servers_list}\" \
 -auth admin:${admin_pass}"
 
         exec { 'bootstrap_cluster':
@@ -213,8 +213,6 @@ class splunk::install
           timeout     => 600,
           environment => "SPLUNK_HOME=${dir}",
           path        => "${dir}/bin:/bin:/usr/bin:",
-          user        => $user,
-          group       => $group,
           require     => Exec['serviceInstall']
         }
       }
