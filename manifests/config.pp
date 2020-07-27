@@ -364,7 +364,7 @@ export PATH
 
         $joincmd = "splunk init shcluster-config -auth admin:${admin_pass} -mgmt_uri https://${::fqdn}:8089 \
 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} \
--secret ${symmkey} -shcluster_label ${shcluster_label} && splunk restart"
+-secret ${symmkey} -shcluster_label ${shcluster_label}"
 
         exec { 'join_cluster':
           command     => $joincmd,
@@ -374,7 +374,7 @@ export PATH
           timeout     => 600,
           user        => $user,
           group       => $group,
-          onlyif      => 'splunk status',
+          before      => Exec['update-server'],
           require     => Exec['test_for_splunk']
         }
 
@@ -392,7 +392,7 @@ export PATH
             cwd         => $dir,
             user        => $user,
             group       => $group,
-            onlyif      => 'splunk status',
+            before      => Exec['update-server'],
             require     => Exec['test_for_splunk']
           }
         }
