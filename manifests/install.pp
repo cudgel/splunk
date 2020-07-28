@@ -205,8 +205,8 @@ class splunk::install
 
         $servers_list = join($shcluster_members, ',')
 
-        $bootstrap_cmd = "splunk restart && sleep 30 && sudo -u splunk ${dir}/bin/splunk bootstrap shcluster-captain -servers_list \"${servers_list}\" \
--auth admin:${admin_pass}"
+        $bootstrap_cmd = "splunk restart && sleep 30 && sudo -u splunk ${dir}/bin/splunk bootstrap shcluster-captain \
+-servers_list \"${servers_list}\" -auth admin:${admin_pass}"
 
         exec { 'bootstrap_cluster':
           command     => $bootstrap_cmd,
