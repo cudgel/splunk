@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changes to ensure systemd option works
 - Cleanup of unnecessary file declarations (etc/apps, etc/system/local)
 - Updated spec tests
+- Closed #17 - Splunk not upgrading when stopped
 
 ## [v2.0.1] - 2020-07-21
 
