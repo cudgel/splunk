@@ -186,34 +186,45 @@ export PATH
     notify  => Exec['update-inputs']
   }
 
-  if ($type == 'indexer' or $type == 'index_master' or $type == 'standalone') and $indexes =~ Hash {
-    file { "${local}/indexes.d":
-      ensure  => 'directory',
-      mode    => '0750',
-      owner   => $user,
-      group   => $group,
-      require => Exec['test_for_splunk']
-    }
-
-    file { "${local}/indexes.d/000_default":
-      mode    => '0750',
-      owner   => $user,
-      group   => $group,
-      require => Exec['test_for_splunk'],
-      content => template('splunk/indexes.d/default_indexes.erb')
-    }
-
-    if $remote_path != undef {
-      file { "${local}/indexes.d/001_s3":
-        content => template("${module_name}/indexes.d/s3.erb"),
+  if ($type == 'indexer' or $type == 'index_master' or $type == 'standalone') {
+    if $indexes =~ Hash {
+      file { "${local}/indexes.d":
+        ensure  => 'directory',
+        mode    => '0750',
         owner   => $user,
         group   => $group,
-        require => File["${local}/indexes.d"],
-        notify  => Exec['update-indexes']
+        require => Exec['test_for_splunk']
       }
+
+      file { "${local}/indexes.d/000_default":
+        mode    => '0750',
+        owner   => $user,
+        group   => $group,
+        require => Exec['test_for_splunk'],
+        content => template('splunk/indexes.d/default_indexes.erb')
+      }
+
+      if $remote_path != undef {
+        file { "${local}/indexes.d/001_s3":
+          content => template("${module_name}/indexes.d/s3.erb"),
+          owner   => $user,
+          group   => $group,
+          require => File["${local}/indexes.d"],
+          notify  => Exec['update-indexes']
+        }
+      }
+      create_resources('splunk::index', $indexes)
     }
 
-    create_resources('splunk::index', $indexes)
+    if $cluster_mode == 'slave' {
+      file { "${local}/server.d/995_replication":
+        content => template("${module_name}/server.d/replication.erb"),
+        owner   => $user,
+        group   => $group,
+        require => File["${local}/server.d"],
+        notify  => Exec['update-server']
+      }
+    }
   }
 
   if (($type != 'forwarder' and $type != 'indexer' and $type != 'standalone') or
@@ -293,129 +304,117 @@ export PATH
       require => Exec['test_for_splunk'],
       notify  => Service['splunk']
     }
+  }
 
-    if $type == 'indexer' {
-      if $cluster_mode != 'none' {
-        file { "${local}/server.d/995_replication":
-          content => template("${module_name}/server.d/replication.erb"),
-          owner   => $user,
-          group   => $group,
-          require => File["${local}/server.d"],
-          notify  => Exec['update-server']
-        }
+  if ($type == 'search') or ($type == 'standalone') {
+
+    file { "${local}/default-mode.conf":
+      content => template("${module_name}/default-mode.conf.erb"),
+      owner   => $user,
+      group   => $user,
+      notify  => Service['splunk'],
+      require => Exec['test_for_splunk']
+    }
+
+    file { "${local}/alert_actions.conf":
+      alias   => 'alert-actions',
+      content => template("${module_name}/alert_actions.conf.erb"),
+      owner   => $user,
+      group   => $user,
+      notify  => Service['splunk'],
+      require => Exec['test_for_splunk']
+    }
+
+    file { "${local}/ui-prefs.conf":
+      content => template("${module_name}/ui-prefs.conf.erb"),
+      owner   => $user,
+      group   => $user,
+      notify  => Service['splunk'],
+      require => Exec['test_for_splunk']
+    }
+
+    file { "${local}/limits.conf":
+      content => template("${module_name}/limits.conf.erb"),
+      owner   => $user,
+      group   => $user,
+      notify  => Service['splunk'],
+      require => Exec['test_for_splunk']
+    }
+
+    if $geo_source != undef {
+      file { "${dir}/share/GeoLite2-City.mmdb":
+        source  => "${geo_source}/GeoLite2-City.mmdb",
+        owner   => $user,
+        group   => $user,
+        require => Exec['test_for_splunk']
+      }
+
+      file_line { 'geolite2_hash':
+        path    => "${dir}/${manifest}",
+        line    => "f 444 ${user} ${group} splunk/share/GeoLite2-City.mmdb ${geo_hash}",
+        match   => "^f 444 ${user} ${group} splunk/share/GeoLite2-City.mmdb",
+        require => Exec['test_for_splunk'],
+        notify  => Service['splunk']
       }
     }
 
-    if ($type == 'search') or ($type == 'standalone') {
+#     if $shcluster_mode == 'peer' {
 
-      if $shcluster_mode == 'peer' {
+#       unless $shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/ {
 
-        unless $shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/ {
+#         $joincmd = "splunk init shcluster-config -auth admin:${admin_pass} -mgmt_uri https://${::fqdn}:8089 \
+# -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} \
+# -secret ${symmkey} -shcluster_label ${shcluster_label}"
 
-          exec { 'join_cluster':
-            command     => "splunk init shcluster-config \
--auth admin:${admin_pass} -mgmt_uri https://${::fqdn}:8089 -replication_port ${repl_port} \
--replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} \
--secret ${symmkey} -shcluster_label ${shcluster_label} && splunk restart",
-            environment => "SPLUNK_HOME=${dir}",
-            path        => "${dir}/bin:/bin:/usr/bin:",
-            cwd         => $dir,
-            timeout     => 600,
-            user        => $user,
-            group       => $group,
-            onlyif      => 'splunk status',
-            require     => Exec['test_for_splunk']
-          }
+#         exec { 'join_cluster':
+#           command     => $joincmd,
+#           timeout     => 600,
+#           environment => "SPLUNK_HOME=${dir}",
+#           path        => "${dir}/bin:/bin:/usr/bin:",
+#           user        => $user,
+#           group       => $group,
+#           onlyif      => 'splunk status',
+#           before      => Exec['update-server'],
+#           require     => Exec['test_for_splunk']
+#         }
 
-          if $is_captain == true and $shcluster_members != undef {
+#         if $is_captain == true and $shcluster_members != undef {
 
-            $servers_list = join($shcluster_members, ',')
+#           $servers_list = join($shcluster_members, ',')
 
-            $bootstrap_cmd = "splunk bootstrap shcluster-captain \
--servers_list \"${servers_list}\" -auth admin:${admin_pass}"
+#           $bootstrap_cmd = "splunk restart && splunk bootstrap shcluster-captain -servers_list \"${servers_list}\" \
+# -auth admin:${admin_pass}"
 
-            exec { 'bootstrap_cluster':
-              command     => $bootstrap_cmd,
-              environment => "SPLUNK_HOME=${dir}",
-              path        => "${dir}/bin:/bin:/usr/bin:",
-              cwd         => $dir,
-              user        => $user,
-              group       => $group,
-              onlyif      => 'splunk status',
-              require     => Exec['test_for_splunk']
-            }
-          }
+#           exec { 'bootstrap_cluster':
+#             command     => $bootstrap_cmd,
+#             timeout     => 600,
+#             environment => "SPLUNK_HOME=${dir}",
+#             path        => "${dir}/bin:/bin:/usr/bin:",
+#             user        => $user,
+#             group       => $group,
+#             before      => Exec['update-server'],
+#             require     => Exec['test_for_splunk']
+#           }
+#         }
+#       }
+#     }
 
-        }
-      }
-
-      file { "${local}/default-mode.conf":
-        content => template("${module_name}/default-mode.conf.erb"),
+    if $shcluster_id != undef or $shcluster_mode == 'deployer' {
+      # if clustering has already been set up, manage configs
+      file { "${local}/server.d/996_shclustering":
+        content => template("${module_name}/server.d/shclustering.erb"),
         owner   => $user,
-        group   => $user,
-        notify  => Service['splunk'],
-        require => Exec['test_for_splunk']
+        group   => $group,
+        require => File["${local}/server.d"],
+        notify  => Exec['update-server']
       }
 
-      file { "${local}/alert_actions.conf":
-        alias   => 'alert-actions',
-        content => template("${module_name}/alert_actions.conf.erb"),
+      file { "${local}/server.d/995_replication":
+        content => template("${module_name}/server.d/replication.erb"),
         owner   => $user,
-        group   => $user,
-        notify  => Service['splunk'],
-        require => Exec['test_for_splunk']
-      }
-
-      file { "${local}/ui-prefs.conf":
-        content => template("${module_name}/ui-prefs.conf.erb"),
-        owner   => $user,
-        group   => $user,
-        notify  => Service['splunk'],
-        require => Exec['test_for_splunk']
-      }
-
-      file { "${local}/limits.conf":
-        content => template("${module_name}/limits.conf.erb"),
-        owner   => $user,
-        group   => $user,
-        notify  => Service['splunk'],
-        require => Exec['test_for_splunk']
-      }
-
-      if $geo_source != undef {
-        file { "${dir}/share/GeoLite2-City.mmdb":
-          source  => "${geo_source}/GeoLite2-City.mmdb",
-          owner   => $user,
-          group   => $user,
-          require => Exec['test_for_splunk']
-        }
-
-        file_line { 'geolite2_hash':
-          path    => "${dir}/${manifest}",
-          line    => "f 444 ${user} ${group} splunk/share/GeoLite2-City.mmdb ${geo_hash}",
-          match   => "^f 444 ${user} ${group} splunk/share/GeoLite2-City.mmdb",
-          require => Exec['test_for_splunk'],
-          notify  => Service['splunk']
-        }
-      }
-
-      if $shcluster_id != undef or $shcluster_mode == 'deployer' {
-        # if clustering has already been set up, manage configs
-        file { "${local}/server.d/996_shclustering":
-          content => template("${module_name}/server.d/shclustering.erb"),
-          owner   => $user,
-          group   => $group,
-          require => File["${local}/server.d"],
-          notify  => Exec['update-server']
-        }
-
-        file { "${local}/server.d/995_replication":
-          content => template("${module_name}/server.d/replication.erb"),
-          owner   => $user,
-          group   => $group,
-          require => File["${local}/server.d"],
-          notify  => Exec['update-server']
-        }
+        group   => $group,
+        require => File["${local}/server.d"],
+        notify  => Exec['update-server']
       }
     }
   }

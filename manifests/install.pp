@@ -21,63 +21,74 @@
 #
 class splunk::install
 {
-  $action       = $splunk::action
-  $my_cwd       = $splunk::cwd
-  $type         = $splunk::type
+  $action            = $splunk::action
+  $my_cwd            = $splunk::cwd
+  $type              = $splunk::type
   # splunk user home
-  $home         = $splunk::home
-  $install_path = $splunk::install_path
-  $use_systemd  = $splunk::use_systemd
+  $home              = $splunk::home
+  $install_path      = $splunk::install_path
+  $use_systemd       = $splunk::use_systemd
   # splunk install directory
-  $dir          = $splunk::dir
-  $local        = $splunk::local
+  $dir               = $splunk::dir
+  $local             = $splunk::local
   # splunk or splunkforwarder
-  $sourcepart   = $splunk::sourcepart
+  $sourcepart        = $splunk::sourcepart
   # currently installed version from fact
-  $cur_version  = $splunk::cur_version
+  $cur_version       = $splunk::cur_version
   # new verion from hiera
-  $new_version  = $splunk::new_version
-  $os           = $splunk::os
-  $arch         = $splunk::arch
-  $ext          = $splunk::ext
-  $tarcmd       = $splunk::tarcmd
-  $manifest     = $splunk::manifest
+  $new_version       = $splunk::new_version
+  $os                = $splunk::os
+  $arch              = $splunk::arch
+  $ext               = $splunk::ext
+  $tarcmd            = $splunk::tarcmd
+  $manifest          = $splunk::manifest
   # splunk (web) or module or a custom url
-  $source       = $splunk::source
-  $user         = $splunk::user
-  $group        = $splunk::group
-  $admin_pass   = $splunk::admin_pass
-
+  $confdeploy        = $splunk::search_deploy
+  $repl_port         = $splunk::repl_port
+  $repl_count        = $splunk::repl_count
+  $source            = $splunk::source
+  $user              = $splunk::user
+  $group             = $splunk::group
+  $admin_pass        = $splunk::admin_pass
+  $shcluster_id      = $splunk::shcluster_id
+  $shcluster_mode    = $splunk::shcluster_mode
+  $shcluster_label   = $splunk::shcluster_label
+  $is_captain        = $splunk::is_captain
+  $shcluster_members = $splunk::shcluster_members
+  $symmkey           = $splunk::symmkey
   $perms = "${user}:${group}"
-
 
   if $admin_pass != undef and ($my_cwd == undef or $my_cwd != $dir) {
     $seed = " --seed-passwd ${admin_pass}"
   } else {
     $seed = ''
   }
-  $startcmd = "splunk start --accept-license --answer-yes --no-prompt${seed}"
+
+  $stopcmd = 'splunk stop'
+  $args = "--accept-license --answer-yes --no-prompt${seed}"
   if $use_systemd == true {
-    $enablecmd = "splunk enable boot-start -systemd-managed 1 -user ${user} -systemd-unit-file-name Splunkd && systemctl daemon-reload"
-    $disablecmd = 'splunk disable boot-start -systemd-managed 1 -systemd-unit-file-name Splunkd'
-    $stopcmd = 'systemctl stop Splunkd'
+    $startcmd = 'splunk start'
+    $enablecmd = "splunk enable boot-start -systemd-managed 1 -user ${user} -systemd-unit-file-name splunk ${args}"
+    $disablecmd = 'splunk disable boot-start -systemd-managed 1'
+    $changecmd = "${stopcmd} && ${disablecmd}"
+    $upgradecmd = "${stopcmd} && ${startcmd} ${args}"
+    $installcmd = "${enablecmd} && ${startcmd}"
+    $installfile = '/etc/systemd/system/splunk.service'
   } else {
+    $startcmd = "splunk start ${args}"
     $enablecmd = "splunk enable boot-start -systemd-managed 0 -user ${user}"
     $disablecmd = 'splunk disable boot-start'
-    $stopcmd = 'splunk stop'
+    $changecmd = "${disablecmd} && ${stopcmd}"
+    $upgradecmd = "${stopcmd} && ${startcmd}"
+    $installcmd = "${startcmd} && ${enablecmd}"
+    $installfile = '/etc/init.d/splunk'
   }
 
   # clean up a splunk instance running out of the wrong directory for the type
   if $action == 'change' {
 
-    exec { 'uninstallSplunkService':
-      command => $disablecmd,
-      path    => "${my_cwd}/bin:/bin:/usr/bin:",
-      returns => [0, 8]
-    }
-
-    exec { 'serviceStop':
-      command => $stopcmd,
+    exec { 'serviceChange':
+      command => $changecmd,
       path    => "${my_cwd}/bin:/bin:/usr/bin:",
       timeout => 600
     }
@@ -87,7 +98,7 @@ class splunk::install
         ensure  => absent,
         force   => true,
         backup  => false,
-        require => Exec['serviceStop']
+        require => Exec['serviceChange']
       }
     }
 
@@ -149,28 +160,63 @@ class splunk::install
     subscribe => Exec['unpackSplunk']
   }
 
-  if defined('$my_cwd') {
-    $servicecmd = "${stopcmd}; ${startcmd}"
+  if $action == 'upgrade' {
+    exec { 'serviceStart':
+      command     => $upgradecmd,
+      environment => 'HISTFILE=/dev/null',
+      path        => "${dir}/bin:/bin:/usr/bin:",
+      subscribe   => Exec['unpackSplunk'],
+      timeout     => 600,
+      refreshonly => true
+    }
   } else {
-    $servicecmd = $startcmd
+    exec { 'serviceInstall':
+      command     => $installcmd,
+      environment => 'HISTFILE=/dev/null',
+      path        => "${dir}/bin:/bin:/usr/bin:",
+      cwd         => $dir,
+      subscribe   => Exec['unpackSplunk'],
+      timeout     => 600,
+      creates     => $installfile,
+      require     => Exec['unpackSplunk'],
+      returns     => [0, 8]
+    }
   }
 
-  exec { 'serviceStart':
-    command     => $servicecmd,
-    environment => 'HISTFILE=/dev/null',
-    path        => "${dir}/bin:/bin:/usr/bin:",
-    subscribe   => Exec['unpackSplunk'],
-    refreshonly => true
+  if ($type == 'search') and $shcluster_mode == 'peer' {
+
+    unless $shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/ {
+
+      $joincmd = "sleep 30 && splunk init shcluster-config -auth admin:${admin_pass} -mgmt_uri https://${::fqdn}:8089 \
+-replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} \
+-secret ${symmkey} -shcluster_label ${shcluster_label}"
+
+      exec { 'join_cluster':
+        command     => $joincmd,
+        timeout     => 600,
+        environment => "SPLUNK_HOME=${dir}",
+        path        => "${dir}/bin:/bin:/usr/bin:",
+        user        => $user,
+        group       => $group,
+        require     => Exec['serviceInstall']
+      }
+
+      if $is_captain == true and $shcluster_members != undef {
+
+        $servers_list = join($shcluster_members, ',')
+
+        $bootstrap_cmd = "splunk restart && sleep 30 && sudo -u splunk ${dir}/bin/splunk bootstrap shcluster-captain \
+-servers_list \"${servers_list}\" -auth admin:${admin_pass}"
+
+        exec { 'bootstrap_cluster':
+          command     => $bootstrap_cmd,
+          timeout     => 600,
+          environment => "SPLUNK_HOME=${dir}",
+          path        => "${dir}/bin:/bin:/usr/bin:",
+          require     => Exec['serviceInstall']
+        }
+      }
+    }
   }
 
-  exec { 'installSplunkService':
-    command   => $enablecmd,
-    path      => "${dir}/bin:/bin:/usr/bin:",
-    cwd       => $dir,
-    subscribe => Exec['unpackSplunk'],
-    unless    => 'test -e /etc/init.d/splunk',
-    creates   => '/etc/init.d/splunk',
-    require   => Exec['unpackSplunk'],
-    returns   => [0, 8]
-  }
 }

@@ -62,7 +62,6 @@ class splunk::auth(
       group   => $group,
       mode    => '0440',
       content => template("${module_name}/authorize.conf.erb"),
-      require => File[$local],
       notify  => Service['splunk']
     }
   }
