@@ -87,6 +87,8 @@ Style/CollectionMethods:
   Enabled: true
 Style/MethodCalledOnDoEndBlock:
   Enabled: true
+Style/StringLiterals:
+  Enabled: false
 Style/StringMethods:
   Enabled: true
 GetText/DecorateFunctionMessage:
