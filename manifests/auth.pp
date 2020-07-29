@@ -17,10 +17,10 @@ class splunk::auth(
 
 
   file { "${local}/auth.d":
-    ensure  => 'directory',
-    mode    => '0750',
-    owner   => $user,
-    group   => $group
+    ensure => 'directory',
+    mode   => '0750',
+    owner  => $user,
+    group  => $group
   }
 
   if $authentication == 'LDAP' {
