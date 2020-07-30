@@ -74,7 +74,7 @@ class splunk::service {
       $stop    = '/usr/bin/sudo /usr/bin/systemctl stop splunk'
       $status  = '/usr/bin/sudo /usr/bin/systemctl status splunk'
 
-      $provder = systemd
+      $provider = systemd
     }
   }
 
