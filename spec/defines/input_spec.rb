@@ -7,29 +7,12 @@ describe 'splunk::input' do
   let(:node) { 'splunk.test' }
   let(:facts) do
     {
-      'splunk_home'         => '/home/splunk',
-      'environment'         => 'ci',
-      'kernel'              => 'Linux',
-      'architecture'        => 'x86_64',
-      'package_provider'    => 'yum',
-      'service_provider'    => 'redhat',
-      'os'                  => {
+      'splunk_home'      => '/home/splunk',
+      'kernel'           => 'Linux',
+      'architecture'     => 'x86_64',
+      'os'               => {
         'architecture' => 'x86_64',
-        'distro' => {
-          'id'      => 'CentOS',
-          'release' => {
-            'full'  => '6.10',
-            'major' => '6',
-            'minor' => '10',
-          },
-        },
-        'family'   => 'RedHat',
-        'name'     => 'CentOS',
-        'release'  => {
-          'full'  => '6.10',
-          'major' => '6',
-          'minor' => '10',
-        },
+        'family'       => 'RedHat',
       },
     }
   end

@@ -7,16 +7,13 @@ describe 'splunk::acl' do
   let(:node) { 'splunk.test' }
   let(:facts) do
     {
-      'role'                => 'splunk_forwarder',
-      'splunk_home'         => '/home/splunk',
-      'environment'         => 'ci',
-      'architecture'        => 'x86_64',
-      'kernel'              => 'Linux',
-      'os'                  => {
-        'family'  => 'RedHat',
-        'release' => {
-          'major' => '6',
-        },
+      'role'         => 'splunk_forwarder',
+      'splunk_home'  => '/home/splunk',
+      'architecture' => 'x86_64',
+      'kernel'       => 'Linux',
+      'os'           => {
+        'architecture' => 'x86_64',
+        'family'       => 'RedHat',
       },
     }
   end
