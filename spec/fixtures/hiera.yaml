@@ -5,7 +5,7 @@ hierarchy:
     path: "ec2/%{::ec2_tag_application}/%{::ec2_tag_function}.yaml"
   - name: "generic hiera data"
     paths:
-      - "%{::osfamily}.yaml"
+      - "%{::os.family}.yaml"
       - "uids.yaml"
       - "common.yaml"
 defaults:

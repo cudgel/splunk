@@ -305,7 +305,6 @@ Optional[string] $s3_kms_key        = undef
           user        => $user,
           group       => $group,
           umask       => '027',
-#          creates     => $auth_conf,
           notify      => Service['splunk']
         }
       }
