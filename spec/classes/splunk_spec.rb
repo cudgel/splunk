@@ -555,7 +555,7 @@ describe 'splunk' do
     let(:facts) do
       super().merge(
         'service_provider' => 'debian',
-        'architecture' .   => 'x86_64',
+        'architecture'     => 'x86_64',
         'osfamily'         => 'Debian',
         'operatingsystem'  => 'Debian',
         'os'               => {
