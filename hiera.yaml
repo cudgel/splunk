@@ -10,8 +10,8 @@ hierarchy:
     path: "environments/%{facts.r10k_environment}.yaml"
   - name: 'splunk common'
     paths:
-      - "os/%{facts.osfamily}/%{facts.os.name}.yaml"
-      - "os/%{facts.osfamily}/common.yaml"
+      - "os/%{facts.os.family}/%{facts.os.name}.yaml"
+      - "os/%{facts.os.family}/common.yaml"
       - "os/%{facts.kernel}.yaml"
       - 'common.yaml'
 

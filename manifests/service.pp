@@ -20,13 +20,14 @@ class splunk::service {
   $user        = $splunk::user
   $use_systemd = $splunk::use_systemd
 
-  if $user == 'splunk' {
     unless $use_systemd == true {
-      exec { 'test_for_init':
-        command => 'test -f /etc/init.d/splunk',
-        path    => '/bin:/bin:/usr/bin',
-        unless  => 'test -f /etc/init.d/splunk'
-      }
+    exec { 'test_for_init':
+      command => 'test -f /etc/init.d/splunk',
+      path    => '/bin:/bin:/usr/bin',
+      unless  => 'test -f /etc/init.d/splunk'
+    }
+
+    if $user == 'splunk' {
 
       file_line { 'splunk-start':
         path    => '/etc/init.d/splunk',
@@ -55,27 +56,27 @@ class splunk::service {
         match   => "^\s\s\"${dir}/bin/splunk\" status",
         require => Exec['test_for_init']
       }
-
-      $restart = "/usr/bin/sudo -u ${user} ${dir}/bin/splunk restart"
-      $start   = "/usr/bin/sudo -u ${user} ${dir}/bin/splunk start"
-      $stop    = "/usr/bin/sudo -u ${user} ${dir}/bin/splunk stop"
-      $status  = "/usr/bin/sudo -u ${user} ${dir}/bin/splunk status"
-
-      if $facts['osfamily'] == 'RedHat' {
-        $provider = redhat
-      } elsif $facts['osfamily'] == 'Debian' {
-        $provider = debian
-      } else {
-        $provider = init
-      }
-    } else {
-      $restart = '/usr/bin/sudo /usr/bin/systemctl restart splunk'
-      $start   = '/usr/bin/sudo /usr/bin/systemctl start splunk'
-      $stop    = '/usr/bin/sudo /usr/bin/systemctl stop splunk'
-      $status  = '/usr/bin/sudo /usr/bin/systemctl status splunk'
-
-      $provider = systemd
     }
+
+    $restart = "/usr/bin/sudo -u ${user} ${dir}/bin/splunk restart"
+    $start   = "/usr/bin/sudo -u ${user} ${dir}/bin/splunk start"
+    $stop    = "/usr/bin/sudo -u ${user} ${dir}/bin/splunk stop"
+    $status  = "/usr/bin/sudo -u ${user} ${dir}/bin/splunk status"
+
+    if $facts['osfamily'] == 'RedHat' {
+      $provider = redhat
+    } elsif $facts['osfamily'] == 'Debian' {
+      $provider = debian
+    } else {
+      $provider = init
+    }
+  } else {
+    $restart = '/usr/bin/sudo /usr/bin/systemctl restart splunk'
+    $start   = '/usr/bin/sudo /usr/bin/systemctl start splunk'
+    $stop    = '/usr/bin/sudo /usr/bin/systemctl stop splunk'
+    $status  = '/usr/bin/sudo /usr/bin/systemctl status splunk'
+
+    $provider = systemd
   }
 
   service { 'splunk':

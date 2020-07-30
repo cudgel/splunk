@@ -10,6 +10,9 @@ describe 'splunk' do
       'splunk_home'      => '/home/splunk',
       'kernel'           => 'Linux',
       'architecture'     => 'x86_64',
+      'service_provider' => 'init',
+      'operatingsystem'  => 'CentOS',
+      'osfamily'         => 'RedHat',
       'os'               => {
         'architecture' => 'x86_64',
         'family'       => 'RedHat',
@@ -551,8 +554,11 @@ describe 'splunk' do
   context 'standalone splunk server - debian' do
     let(:facts) do
       super().merge(
-        'architecture' => 'x86_64',
-        'os'           => {
+        'service_provider' => 'debian',
+        'architecture' .   => 'x86_64',
+        'osfamily'         => 'Debian',
+        'operatingsystem'  => 'Debian',
+        'os'               => {
           'architecture' => 'x86_64',
           'family'       => 'Debian',
         },
