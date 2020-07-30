@@ -42,7 +42,7 @@ describe 'splunk::input' do
     }
   end
   let(:pre_condition) do
-    "class { splunk: type => 'forwarder', version => '7.2.3', release => '06d57c595b80' }"
+    "class { splunk: type => 'forwarder', version => '8.0.4.1', release => 'ab7a85abaa98' }"
   end
 
   it { is_expected.to contain_file('/opt/splunkforwarder/etc/system/local/inputs.d/authlog').that_notifies('Exec[update-inputs]') }

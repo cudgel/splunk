@@ -61,9 +61,9 @@ class splunk::service {
       $stop    = "/usr/bin/sudo -u ${user} ${dir}/bin/splunk stop"
       $status  = "/usr/bin/sudo -u ${user} ${dir}/bin/splunk status"
 
-      if $facts['os']['family'] == 'RedHat' {
+      if $facts['osfamily'] == 'RedHat' {
         $provider = redhat
-      } elsif $facts['os']['family'] == 'Debian' {
+      } elsif $facts['osfamily'] == 'Debian' {
         $provider = debian
       } else {
         $provider = init
