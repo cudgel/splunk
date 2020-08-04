@@ -25,18 +25,14 @@ quota = MAX
 slaves = *
 stack_id = free
 
-[lmpool:auto_generated_pool_enterprise]
-description = auto_generated_pool_enterprise
-quota = MAX
-slaves = *
-stack_id = enterprise
-
-[license]
 <% if license_master_mode == 'slave' -%>
 <% if license_master != 'none' -%>
+[license]
 master_uri = https://<%= license_master %>
 <% end -%>
 <% elsif licenses != nil -%>
+
+[license]
 active_group = Enterprise
 <% for lmpool in licenses -%>
 
@@ -44,12 +40,20 @@ active_group = Enterprise
 description = <%= lmpool['description'] %>
 stack_id = <%= lmpool['stack_id'] %>
 quota = <%= lmpool['quota'] %>
-slaves = <% lmpool['slaves'].each do |slave| -%><%= slave %><%= "," unless slave == lmpool['slaves'].last %><% end -%>
+slaves = <% lmpool['slaves'].each do |slave| -%><%= slave %><%= "," unless slave == lmpool['slaves'].last %><% end %>
 <% end -%>
 <% else -%>
 <% if type == 'forwarder' -%>
+[license]
 active_group = Forwarder
 <% else -%>
+[lmpool:auto_generated_pool_enterprise]
+description = auto_generated_pool_enterprise
+quota = MAX
+slaves = *
+stack_id = enterprise
+
+[license]
 active_group = Trial
 <% end -%>
 <% end -%>
