@@ -341,64 +341,6 @@ export PATH
       require => Exec['test_for_splunk']
     }
 
-    if $geo_source != undef {
-      file { "${dir}/share/GeoLite2-City.mmdb":
-        source  => "${geo_source}/GeoLite2-City.mmdb",
-        owner   => $user,
-        group   => $user,
-        require => Exec['test_for_splunk']
-      }
-
-      file_line { 'geolite2_hash':
-        path    => "${dir}/${manifest}",
-        line    => "f 444 ${user} ${group} splunk/share/GeoLite2-City.mmdb ${geo_hash}",
-        match   => "^f 444 ${user} ${group} splunk/share/GeoLite2-City.mmdb",
-        require => Exec['test_for_splunk'],
-        notify  => Service['splunk']
-      }
-    }
-
-#     if $shcluster_mode == 'peer' {
-
-#       unless $shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/ {
-
-#         $joincmd = "splunk init shcluster-config -auth admin:${admin_pass} -mgmt_uri https://${::fqdn}:8089 \
-# -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} \
-# -secret ${symmkey} -shcluster_label ${shcluster_label}"
-
-#         exec { 'join_cluster':
-#           command     => $joincmd,
-#           timeout     => 600,
-#           environment => "SPLUNK_HOME=${dir}",
-#           path        => "${dir}/bin:/bin:/usr/bin:",
-#           user        => $user,
-#           group       => $group,
-#           onlyif      => 'splunk status',
-#           before      => Exec['update-server'],
-#           require     => Exec['test_for_splunk']
-#         }
-
-#         if $is_captain == true and $shcluster_members != undef {
-
-#           $servers_list = join($shcluster_members, ',')
-
-#           $bootstrap_cmd = "splunk restart && splunk bootstrap shcluster-captain -servers_list \"${servers_list}\" \
-# -auth admin:${admin_pass}"
-
-#           exec { 'bootstrap_cluster':
-#             command     => $bootstrap_cmd,
-#             timeout     => 600,
-#             environment => "SPLUNK_HOME=${dir}",
-#             path        => "${dir}/bin:/bin:/usr/bin:",
-#             user        => $user,
-#             group       => $group,
-#             before      => Exec['update-server'],
-#             require     => Exec['test_for_splunk']
-#           }
-#         }
-#       }
-#     }
-
     if $shcluster_id != undef or $shcluster_mode == 'deployer' {
       # if clustering has already been set up, manage configs
       file { "${local}/server.d/996_shclustering":
@@ -415,6 +357,26 @@ export PATH
         group   => $group,
         require => File["${local}/server.d"],
         notify  => Exec['update-server']
+      }
+    }
+  }
+
+  if ($type == 'search') or ($type == 'standalone') or ($type == 'indexer') {
+
+    if $geo_source != undef {
+      file { "${dir}/share/GeoLite2-City.mmdb":
+        source  => "${geo_source}/GeoLite2-City.mmdb",
+        owner   => $user,
+        group   => $user,
+        require => Exec['test_for_splunk']
+      }
+
+      file_line { 'geolite2_hash':
+        path    => "${dir}/${manifest}",
+        line    => "f 444 ${user} ${group} splunk/share/GeoLite2-City.mmdb ${geo_hash}",
+        match   => "^f 444 ${user} ${group} splunk/share/GeoLite2-City.mmdb",
+        require => Exec['test_for_splunk'],
+        notify  => Service['splunk']
       }
     }
   }
