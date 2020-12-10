@@ -7,6 +7,7 @@ mailserver = scope['::splunk::mailserver']
 from = scope['::fqdn']
 -%>
 [email]
+icon_path = mod_alert_icon_email.png
 inline = 1
 mailserver = <%= mailserver %>
 <% if hostname != nil -%>
