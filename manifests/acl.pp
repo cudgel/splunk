@@ -54,7 +54,7 @@ define splunk::acl(
     }
 
     # apply the acl to the object, unless it is an nfs mount
-    # throw an error if acl's not supported on filesystem
+    # throw an error if acl is not supported on filesystem
     #
     exec { "setfacl_${title}":
       path    => '/bin:/usr/bin',
