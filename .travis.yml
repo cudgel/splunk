@@ -41,5 +41,6 @@ branches:
   only:
     - master
     - /^v\d/
+    - test
 notifications:
   email: false
