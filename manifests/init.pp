@@ -162,6 +162,7 @@ Optional[string] $s3_kms_key        = undef
       $sourcepart = 'splunk'
     }
 
+    $newsource   = "${sourcepart}-${version}-${release}-${os}-${arch}.${ext}"
     $dir      = "${install_path}/${sourcepart}"
     $capath   = "${dir}/etc/auth"
     $confpath = $confdir ? {
@@ -260,7 +261,8 @@ Optional[string] $s3_kms_key        = undef
     }
 
     if $action == 'install' or $action == 'upgrade' or $action == 'change' {
-      class { 'splunk::install': }
+      class { 'splunk::fetch': }
+      -> class { 'splunk::install': }
       -> class { 'splunk::config': }
       -> class { 'splunk::service': }
     } elsif $action == 'config' {

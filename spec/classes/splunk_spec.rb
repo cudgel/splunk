@@ -47,8 +47,9 @@ describe 'splunk' do
     it { is_expected.to contain_class('splunk::user') }
     it { is_expected.to contain_user('splunk').with('ensure' => 'present', 'gid' => 'splunk') }
     it { is_expected.to contain_file('/home/splunk/.bashrc.custom') }
-    it { is_expected.to contain_class('splunk::install') }
+    it { is_expected.to contain_class('splunk::fetch') }
     it { is_expected.to contain_exec('retrieve_splunkforwarder-8.0.4.1-ab7a85abaa98-Linux-x86_64.tgz') }
+    it { is_expected.to contain_class('splunk::install') }
     it { is_expected.to contain_file('/opt/splunkforwarder-8.0.4.1-ab7a85abaa98-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
     it { is_expected.to contain_class('splunk::config') }
     it { is_expected.to contain_file('/opt/splunkforwarder/etc/splunk-launch.conf').that_notifies('Service[splunk]') }
@@ -105,10 +106,11 @@ describe 'splunk' do
 
     it { is_expected.to compile.with_all_deps }
     it { is_expected.to contain_class('splunk') }
-    it { is_expected.to contain_class('splunk::install') }
-    it { is_expected.to contain_file('/opt/splunkforwarder-8.0.4.1-ab7a85abaa98-Linux-x86_64.tgz').with('ensure' => 'absent') }
+    it { is_expected.to contain_class('splunk::fetch') }
     it { is_expected.to contain_exec('retrieve_splunkforwarder-8.0.5-a1a6394cc5ae-Linux-x86_64.tgz') }
     it { is_expected.to contain_file('/opt/splunkforwarder-8.0.5-a1a6394cc5ae-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
+    it { is_expected.to contain_class('splunk::install') }
+    it { is_expected.to contain_file('/opt/splunkforwarder-8.0.4.1-ab7a85abaa98-Linux-x86_64.tgz').with('ensure' => 'absent') }
     it { is_expected.to contain_exec('serviceStart').that_subscribes_to('Exec[unpackSplunk]') }
     it { is_expected.to contain_class('splunk::config') }
     it { is_expected.to contain_class('splunk::service') }
@@ -268,7 +270,6 @@ describe 'splunk' do
     it { is_expected.to contain_user('splunk').with('ensure' => 'present', 'gid' => 'splunk') }
     it { is_expected.to contain_file('/home/splunk/.bashrc.custom') }
     it { is_expected.to contain_class('splunk::install') }
-    it { is_expected.to contain_splunk__fetch('sourcefile') }
     it { is_expected.to contain_file('/opt/splunk-8.0.4.1-ab7a85abaa98-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
     it { is_expected.to contain_exec('splunkDir') }
     it { is_expected.to contain_class('splunk::config') }
@@ -532,8 +533,9 @@ describe 'splunk' do
     it { is_expected.to contain_group('splunk') }
     it { is_expected.to contain_user('splunk').with('ensure' => 'present', 'gid' => 'splunk') }
     it { is_expected.to contain_file('/home/splunk/.bashrc.custom') }
-    it { is_expected.to contain_class('splunk::install') }
+    it { is_expected.to contain_class('splunk::fetch') }
     it { is_expected.to contain_exec('retrieve_splunk-8.0.4.1-ab7a85abaa98-Linux-x86_64.tgz') }
+    it { is_expected.to contain_class('splunk::install') }
     it { is_expected.to contain_file('/opt/splunk-8.0.4.1-ab7a85abaa98-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
     it { is_expected.to contain_exec('unpackSplunk').that_subscribes_to('File[/opt/splunk-8.0.4.1-ab7a85abaa98-Linux-x86_64.tgz]') }
     it { is_expected.to contain_exec('serviceInstall').that_subscribes_to('Exec[unpackSplunk]').that_requires('Exec[unpackSplunk]') }
@@ -579,8 +581,9 @@ describe 'splunk' do
     it { is_expected.to contain_group('splunk') }
     it { is_expected.to contain_user('splunk').with('ensure' => 'present', 'gid' => 'splunk') }
     it { is_expected.to contain_file('/home/splunk/.bashrc.custom') }
-    it { is_expected.to contain_class('splunk::install') }
+    it { is_expected.to contain_class('splunk::fetch') }
     it { is_expected.to contain_exec('retrieve_splunk-8.0.4.1-ab7a85abaa98-Linux-x86_64.tgz') }
+    it { is_expected.to contain_class('splunk::install') }
     it { is_expected.to contain_file('/opt/splunk-8.0.4.1-ab7a85abaa98-Linux-x86_64.tgz').that_notifies('Exec[unpackSplunk]') }
     it { is_expected.to contain_exec('unpackSplunk').that_subscribes_to('File[/opt/splunk-8.0.4.1-ab7a85abaa98-Linux-x86_64.tgz]') }
     it { is_expected.to contain_exec('serviceInstall').that_subscribes_to('Exec[unpackSplunk]').that_requires('Exec[unpackSplunk]') }
