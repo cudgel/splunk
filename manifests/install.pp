@@ -158,7 +158,7 @@ class splunk::install
     group     => $group,
     notify    => Service['splunk'],
     subscribe => Exec['unpackSplunk'],
-    requires  => Exec['unpackSplunk']
+    require   => Exec['unpackSplunk']
   }
 
   if $action == 'upgrade' {
