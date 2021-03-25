@@ -122,7 +122,7 @@ class splunk::install
 
   exec { 'splunkDir':
     command => "mkdir -p ${dir} && chown ${user}:${group} ${dir}",
-    path    => "${dir}/bin:/bin:/usr/bin:",
+    path    => '/bin:/usr/bin',
     cwd     => $install_path,
     before  => Exec['unpackSplunk'],
     unless  => "test -d ${dir}"
@@ -146,7 +146,6 @@ class splunk::install
     content   => template("${module_name}/splunk-launch.conf.erb"),
     owner     => $user,
     group     => $group,
-    notify    => Service['splunk'],
     subscribe => Exec['unpackSplunk'],
     require   => Exec['unpackSplunk']
   }
