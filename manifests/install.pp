@@ -165,7 +165,6 @@ class splunk::install
       environment => 'HISTFILE=/dev/null',
       path        => "${dir}/bin:/bin:/usr/bin:",
       cwd         => $dir,
-      subscribe   => Exec['unpackSplunk'],
       timeout     => 600,
       creates     => $installfile,
       require     => Exec['unpackSplunk'],
