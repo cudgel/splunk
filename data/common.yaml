@@ -8,7 +8,7 @@ splunk::autolb: true
 splunk::autolbfrequency: 60
 splunk::cacert: 'cacert.pem'
 splunk::captain_is_adhoc: false
-splunk::ciphersuite: 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:AES256-GCM-SHA:AES256-SHA:AES128-GCM-SHA:AES128-SHA'
+splunk::ciphersuite: 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDH-ECDSA-AES256-GCM-SHA384:ECDH-ECDSA-AES128-GCM-SHA256:ECDH-ECDSA-AES128-SHA256:AES256-GCM-SHA384:AES128-GCM-SHA256:AES128-SHA256'
 splunk::cluster_mode: 'none'
 splunk::cold_path: '/opt/splunk/var/lib/splunk'
 splunk::confdir: 'system'
@@ -49,9 +49,9 @@ splunk::shcluster_mode: 'none'
 splunk::splunknotcp_ssl: false
 splunk::splunknotcp: true
 splunk::sslclientcert: false
-splunk::sslclientcompression: false
-splunk::sslcompression: false
-splunk::sslnegotiation: false
+splunk::sslclientcompression: true
+splunk::sslcompression: true
+splunk::sslnegotiation: true
 splunk::sslstsheader: true
 splunk::sslv3: false
 splunk::sslverify: false

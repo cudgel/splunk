@@ -1,30 +1,11 @@
 # Puppet Name: <%= @title %>
 #
 <%
-dir = scope['::splunk::dir']
+dir  = scope['::splunk::dir']
+type = scope['::splunk::type']
 -%>
 [default]
 host = <%= scope['::hostname'] %>
+<% if type =~ /forwarder/ -%>
 _meta = input_host::<%= scope['::hostname'] %>
-
-[monitor:/<%= dir %>/var/log/splunk/*.log]
-index = _internal
-_TCP_ROUTING = *
-blacklist = (.*.lock$|migration$)
-
-[filter:blacklist:splunkvar]
-regex1 = ^<%= dir %>/var
-
-[fschange:<%= dir %>]
-index = _audit
-disabled = false
-pollPeriod = 60
-recurse = true
-followLinks = false
-hashMaxSize = -1
-fullEvent = false
-sendEventMaxSize = -1
-filesPerDelay = 10
-delayInMills = 100
-signedaudit = false
-filters = splunkvar
+<% end -%>

@@ -20,7 +20,7 @@ class splunk::service {
   $user        = $splunk::user
   $use_systemd = $splunk::use_systemd
 
-    unless $use_systemd == true {
+  unless $use_systemd == true {
     exec { 'test_for_init':
       command => 'test -f /etc/init.d/splunk',
       path    => '/bin:/bin:/usr/bin',
