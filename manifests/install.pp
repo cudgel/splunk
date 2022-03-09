@@ -1,9 +1,7 @@
 # == Class: splunk::install
 #
 # This class maintains the installation of Splunk, installing a new Splunk
-# instance or upgrading an existing one. Currently it tries to fetch the
-# specified version of either splunk or splunkforwarder (depending on the
-# type of install) from splunk.com or a hiera-defined server.
+# instance or upgrading an existing one.
 # Manages system/local config files, certificates (if defined in hiera and
 # served via puppet module), and service installation.
 #
@@ -36,7 +34,7 @@ class splunk::install
   # currently installed version from fact
   $cur_version       = $splunk::cur_version
   # new verion from hiera
-  $new_version       = $splunk::new_version
+  $newsource         = $splunk::newsource
   $os                = $splunk::os
   $arch              = $splunk::arch
   $ext               = $splunk::ext
@@ -122,17 +120,9 @@ class splunk::install
     }
   }
 
-  $newsource   = "${sourcepart}-${new_version}-${os}-${arch}.${ext}"
-
-  splunk::fetch{ 'sourcefile':
-    splunk_bundle => $newsource,
-    type          => $type,
-    source        => $source
-  }
-
   exec { 'splunkDir':
     command => "mkdir -p ${dir} && chown ${user}:${group} ${dir}",
-    path    => "${dir}/bin:/bin:/usr/bin:",
+    path    => '/bin:/usr/bin',
     cwd     => $install_path,
     before  => Exec['unpackSplunk'],
     unless  => "test -d ${dir}"
@@ -140,7 +130,7 @@ class splunk::install
 
   exec { 'unpackSplunk':
     command   => "${tarcmd} ${newsource}",
-    path      => "${dir}/bin:/bin:/usr/bin:",
+    path      => '/bin:/usr/bin',
     user      => $user,
     group     => $group,
     cwd       => $install_path,
@@ -156,8 +146,8 @@ class splunk::install
     content   => template("${module_name}/splunk-launch.conf.erb"),
     owner     => $user,
     group     => $group,
-    notify    => Service['splunk'],
-    subscribe => Exec['unpackSplunk']
+    subscribe => Exec['unpackSplunk'],
+    require   => Exec['unpackSplunk']
   }
 
   if $action == 'upgrade' {
@@ -175,8 +165,8 @@ class splunk::install
       environment => 'HISTFILE=/dev/null',
       path        => "${dir}/bin:/bin:/usr/bin:",
       cwd         => $dir,
-      subscribe   => Exec['unpackSplunk'],
       timeout     => 600,
+      unless      => "test -e ${installfile}",
       creates     => $installfile,
       require     => Exec['unpackSplunk'],
       returns     => [0, 8]
