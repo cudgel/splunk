@@ -1,6 +1,7 @@
 # Puppet Name: <%= @title %>
 #
 <%
+dir  = scope['::splunk::dir']
 type = scope['::splunk::type']
 -%>
 [default]

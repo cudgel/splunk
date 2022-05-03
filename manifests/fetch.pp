@@ -33,7 +33,7 @@ class splunk::fetch
   }
   if $source == 'splunk' or source =~ /http.*/  {
     if $source == 'splunk' {
-      $curl_url = "https://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=linux&version=${version}&product=${product}&filename=${sourcepart}-${version}-${release}-Linux-x86_64.tgz&wget=true"
+      $curl_url = "https://download.splunk.com/products/splunk/releases/${version}/linux/filename=${sourcepart}-${version}-${release}-Linux-x86_64.tgz&wget=true"
     } else {
       $curl_url = "${source}/${newsource}"
     }
