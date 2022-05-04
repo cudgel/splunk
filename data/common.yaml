@@ -61,7 +61,7 @@ splunk::subsearch_maxout: 50000
 splunk::subsearch_maxtime: 60
 splunk::subsearch_ttl: 300
 splunk::use_mounts: false
-splunk::use_systemd: true
+splunk::use_systemd: false
 splunk::warm_path: '/opt/splunk/var/lib/splunk'
 splunk::webcert: 'cert.pem'
 splunk::webssl: true
