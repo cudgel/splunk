@@ -39,7 +39,7 @@ class splunk::fetch
     }
 
     exec{ "retrieve_${newsource}":
-      command => "curl -Los ${newsource} \'${curl_url}\'",
+      command => "curl -Lo ${newsource} \'${curl_url}\'",
       path    => '/bin:/usr/bin:',
       cwd     => $install_path,
       timeout => 600,
