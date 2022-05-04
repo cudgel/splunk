@@ -82,7 +82,6 @@ class splunk::service {
     restart  => $restart,
     start    => $start,
     stop     => $stop,
-    status   => $status,
-    provider => $provider
+    status   => $status
   }
 }
