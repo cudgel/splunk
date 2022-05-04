@@ -33,13 +33,13 @@ class splunk::fetch
   }
   if $source == 'splunk' or source =~ /http.*/  {
     if $source == 'splunk' {
-      $curl_url = "https://download.splunk.com/products/splunk/releases/${version}/linux/${sourcepart}-${version}-${release}-Linux-x86_64.tgz"
+      $wget_url = "https://download.splunk.com/products/splunk/releases/${version}/linux/${sourcepart}-${version}-${release}-Linux-x86_64.tgz"
     } else {
       $curl_url = "${source}/${newsource}"
     }
 
     exec{ "retrieve_${newsource}":
-      command => "curl -Lo ${newsource} \'${curl_url}\'",
+      command => "wget -O ${newsource} \'${wget_url}\'",
       path    => '/bin:/usr/bin:',
       cwd     => $install_path,
       timeout => 600,
