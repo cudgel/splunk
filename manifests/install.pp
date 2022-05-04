@@ -70,7 +70,7 @@ class splunk::install
     $disablecmd = 'splunk disable boot-start -systemd-managed 1'
     $changecmd = "${stopcmd} && ${disablecmd}"
     $upgradecmd = "${stopcmd} && ${startcmd} ${args}"
-    $installcmd = "${startcmd} ${args}" && ${stopcmd} && ${enablecmd} && ${startcmd}"
+    $installcmd = "${startcmd} ${args} && ${stopcmd} && ${enablecmd} && ${startcmd}"
     $installfile = '/etc/systemd/system/splunk.service'
   } else {
     $startcmd = "splunk start ${args}"
