@@ -38,8 +38,14 @@ class splunk::fetch
       $curl_url = "${source}/${newsource}"
     }
 
+    $wget_command = "wget -O ${newsource} \'${wget_url}\'"
+
+    notify { 'wget_command':
+      message => $wget_command
+    }
+
     exec{ "retrieve_${newsource}":
-      command => "wget -O ${newsource} \'${wget_url}\'",
+      command => $wget_command,
       path    => '/bin:/usr/bin:',
       cwd     => $install_path,
       timeout => 600,
