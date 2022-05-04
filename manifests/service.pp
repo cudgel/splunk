@@ -65,8 +65,6 @@ class splunk::service {
 
     if $facts['osfamily'] == 'RedHat' {
       $provider = redhat
-    } elsif $facts['osfamily'] == 'Debian' {
-      $provider = debian
     } else {
       $provider = init
     }
