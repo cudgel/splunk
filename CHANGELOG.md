@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v2.1.7] - 2023-07-20
+
+### Fixed
+
+- Removed stdlib max version
+
+## [v2.1.6] - 2023-07-18
+
+### Fixed
+
+- Initial service start with systemd
+
+
 ## [v2.1.5] - 2021-02-10
 
 ### Changed
