@@ -78,10 +78,10 @@ class splunk::service {
   }
 
   service { 'splunk':
-    ensure   => 'running',
-    restart  => $restart,
-    start    => $start,
-    stop     => $stop,
-    status   => $status
+    ensure  => 'running',
+    restart => $restart,
+    start   => $start,
+    stop    => $stop,
+    status  => $status
   }
 }
