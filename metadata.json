@@ -1,6 +1,6 @@
 {
   "name": "cudgel-splunk",
-  "version": "2.1.6",
+  "version": "2.1.7",
   "author": "Christopher Caldwell",
   "summary": "Deploy and manage stand-alone or distributed Splunk architectures.",
   "license": "Apache-2.0",
@@ -10,7 +10,7 @@
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
-      "version_requirement": ">= 4.0.0 < 5.0.0"
+      "version_requirement": ">= 4.0.0"
     }
   ],
   "operatingsystem_support": [
