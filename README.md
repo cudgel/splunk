@@ -1,3 +1,5 @@
+[![Build Status](https://app.travis-ci.com/cudgel/splunk.svg?branch=master)](https://app.travis-ci.com/cudgel/splunk)
+
 # splunk
 
 ## Table of Contents
