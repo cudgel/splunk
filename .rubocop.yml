@@ -20,7 +20,7 @@ AllCops:
   - "**/Guardfile"
 Metrics/LineLength:
   Description: People have wide screens, use them.
-  Max: 200
+  Max: 240
 GetText:
   Enabled: false
 GetText/DecorateString:
@@ -87,6 +87,8 @@ Style/CollectionMethods:
   Enabled: true
 Style/MethodCalledOnDoEndBlock:
   Enabled: true
+Style/StringLiterals:
+  Enabled: false
 Style/StringMethods:
   Enabled: true
 GetText/DecorateFunctionMessage:
