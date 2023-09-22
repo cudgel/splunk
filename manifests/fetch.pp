@@ -38,7 +38,7 @@ class splunk::fetch
       $curl_url = "${source}/${newsource}"
     }
 
-    $wget_command = "wget -O ${newsource} \'${wget_url}\'"
+    $wget_command = "wget --no-check-certificate -O ${newsource} \'${wget_url}\'"
 
     notify { 'wget_command':
       message => $wget_command
