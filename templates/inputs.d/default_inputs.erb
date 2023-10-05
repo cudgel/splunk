@@ -5,7 +5,6 @@ dir  = scope['::splunk::dir']
 type = scope['::splunk::type']
 -%>
 [default]
-host = <%= scope['::hostname'] %>
 <% if type =~ /forwarder/ -%>
 _meta = input_host::<%= scope['::hostname'] %>
 <% end -%>
