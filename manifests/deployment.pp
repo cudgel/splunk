@@ -48,5 +48,9 @@ class splunk::deployment
       require => File["${myappdir}/local"],
       notify  => Service['splunk']
     }
+  } else {
+    file { "${myappdir}/local/deploymentclient.conf":
+      ensure => absent
+    } 
   }
 }

@@ -54,7 +54,7 @@
   "tags": [
     "splunk"
   ],
-  "pdk-version": "1.18.0",
-  "template-url": "https://github.com/puppetlabs/pdk-templates#1.15.0",
-  "template-ref": "tags/1.15.0-0-g0bc522e"
+  "pdk-version": "3.3.0",
+  "template-url": "https://github.com/puppetlabs/pdk-templates#3.3.0",
+  "template-ref": "tags/3.3.0-0-g5d17ec1"
 }
