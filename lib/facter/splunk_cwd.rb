@@ -1,31 +1,18 @@
-Facter.add(:splunk_version) do
-  confine :kernel => 'Linux'
+# frozen_string_literal: true
+
+Facter.add(:splunk_cwd) do
   setcode do
-    # Define possible Splunk installation paths
-    splunk_paths = {
-      enterprise: '/opt/splunk/bin/splunk',
-      forwarder: '/opt/splunkforwarder/bin/splunk'
-    }
+    splunk_paths = ['/opt/splunk', '/opt/splunkforwarder']
 
-    # Find which Splunk binary exists
-    binary_path = splunk_paths.values.find { |path| File.executable?(path) }
+    splunk_cwd = nil
 
-    if binary_path
-      begin
-        version = Facter::Core::Execution.execute("#{binary_path} version --accept-license")
-        if version =~ /Version\s+([\d.]+)/
-          $1
-        else
-          Facter.debug("Could not parse Splunk version output")
-          nil
-        end
-      rescue Facter::Core::Execution::ExecutionFailure => e
-        Facter.debug("Failed to get Splunk version: #{e.message}")
-        nil
+    splunk_paths.each do |path|
+      if File.directory?(path) && File.exist?("#{path}/bin/splunk")
+        splunk_cwd = path
+        break
       end
-    else
-      Facter.debug("No Splunk binary found in expected locations")
-      nil
     end
+
+    splunk_cwd
   end
 end
