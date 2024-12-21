@@ -141,7 +141,7 @@ class splunk (
   Optional[string] $s3_ecdhcurves     = undef,
   Optional[string] $s3_region         = undef,
   Optional[string] $s3_kms_key        = undef
-) {
+  ) {
   if $type == 'none' {
     exec { 'stop_splunk_service':
       command     => '/opt/splunk/bin/splunk stop',
