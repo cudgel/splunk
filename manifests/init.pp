@@ -143,18 +143,22 @@ class splunk (
   Optional[string] $s3_kms_key        = undef
   ) {
   if $type == 'none' {
-    exec { 'stop_splunk_service':
-      command     => '/opt/splunk/bin/splunk stop',
-      onlyif      => '/opt/splunk/bin/splunk status',
-      path        => '/bin:/usr/bin:/sbin:/usr/sbin',
-      before      => File['/opt/splunk', '/opt/splunkforwarder'],
+    if file('/opt/splunk/bin/splunk') {
+      exec { 'stop_splunk_service':
+        command     => '/opt/splunk/bin/splunk stop',
+        onlyif      => '/opt/splunk/bin/splunk status',
+        path        => '/bin:/usr/bin:/sbin:/usr/sbin',
+        before      => File['/opt/splunk', '/opt/splunkforwarder'],
+      }
     }
 
-    exec { 'stop_splunkforwarder_service':
-      command     => '/opt/splunkforwarder/bin/splunk stop',
-      onlyif      => '/opt/splunkforwarder/bin/splunk status',
-      path        => '/bin:/usr/bin:/sbin:/usr/sbin',
-      before      => File['/opt/splunk', '/opt/splunkforwarder'],
+    if file('/opt/splunkforwarder/bin/splunk') {
+      exec { 'stop_splunkforwarder_service':
+        command     => '/opt/splunkforwarder/bin/splunk stop',
+        onlyif      => '/opt/splunkforwarder/bin/splunk status',
+        path        => '/bin:/usr/bin:/sbin:/usr/sbin',
+        before      => File['/opt/splunk', '/opt/splunkforwarder'],
+      }
     }
 
     file { '/opt/splunk':
