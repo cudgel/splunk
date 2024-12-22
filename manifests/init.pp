@@ -142,16 +142,16 @@ class splunk (
   Optional[string] $s3_region         = undef,
   Optional[string] $s3_kms_key        = undef
   ) {
-  if $type == 'none' and $::splunk_cwd != undef {
+  if $type == 'none' and $facts['splunk_cwd'] != undef {
     exec { 'stop_splunk_service':
-      command     => "${::splunk_cwd}/bin/splunk stop",
-      onlyif      => "${::splunk_cwd}/bin/splunk status",
+      command     => "${facts['splunk_cwd']}/bin/splunk stop",
+      onlyif      => "${facts['splunk_cwd']}/bin/splunk status",
       path        => '/bin:/usr/bin:/sbin:/usr/sbin',
       before      => File['splunk_installation'],
     }
 
     file { 'splunk_installation':
-      path    => $::splunk_cwd,
+      path    => $facts['splunk_cwd'],
       ensure  => absent,
       recurse => true,
       force   => true,
