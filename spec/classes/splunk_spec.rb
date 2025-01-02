@@ -566,6 +566,9 @@ describe 'splunk' do
         'os'               => {
           'architecture' => 'x86_64',
           'family'       => 'Debian',
+          'selinux' => {
+            'enabled'      => 'false',
+          }
         },
       )
     end

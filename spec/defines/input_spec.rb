@@ -9,12 +9,14 @@ describe 'splunk::input' do
     {
       'splunk_home'      => '/home/splunk',
       'kernel'           => 'Linux',
-      'architecture'     => 'x86_64',
       'operatingsystem'  => 'CentOS',
       'osfamily'         => 'RedHat',
       'os'               => {
         'architecture' => 'x86_64',
         'family'       => 'RedHat',
+        'selinux' => {
+          'enabled'      => 'false',
+        }
       },
     }
   end
