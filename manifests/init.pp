@@ -155,12 +155,11 @@ class splunk (
     }
 
     $new_version = "${version}-${release}"
-
-    # $arch = $facts['os']['architecture'] ? {
-    #   'i686'  => 'i686',
-    #   default => 'x86_64'
-    # }
-    $arch='x86_64'
+    $arch = $facts['os']['architecture'] ? {
+      x86_64  => 'x86_64',
+      amd64   => 'x86_64',
+      default => 'i686'
+    }
 
     if $type == 'forwarder' {
       $sourcepart = 'splunkforwarder'
