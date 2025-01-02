@@ -139,18 +139,12 @@ class splunk::install {
     creates   => "${dir}/${manifest}"
   }
 
-  $selinux = $facts['os']['selinux'] ? {
-    undef   => false,
-    default => $facts['os']['selinux']['enabled'],
-  }
-
   file { "${dir}/etc/splunk-launch.conf":
     content   => template("${module_name}/splunk-launch.conf.erb"),
     owner     => $user,
     group     => $group,
     subscribe => Exec['unpackSplunk'],
     require   => Exec['unpackSplunk'],
-    selinux   => $selinux,
   }
 
   if $action == 'upgrade' {
