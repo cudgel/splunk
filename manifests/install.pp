@@ -53,7 +53,7 @@ class splunk::install {
   $is_captain        = $splunk::is_captain
   $shcluster_members = $splunk::shcluster_members
   $symmkey           = $splunk::symmkey
-  $perms = "${user}:${group}"
+  $perms             = "${user}:${group}"
 
   if $admin_pass != undef and ($my_cwd == undef or $my_cwd != $dir) {
     $seed = " --seed-passwd ${admin_pass}"
@@ -64,20 +64,20 @@ class splunk::install {
   $stopcmd = 'splunk stop'
   $args = "--accept-license --answer-yes --no-prompt${seed}"
   if $use_systemd == true {
-    $startcmd = 'splunk start'
-    $enablecmd = "splunk enable boot-start -systemd-managed 1 -user ${user} ${args}"
-    $disablecmd = 'splunk disable boot-start -systemd-managed 1'
-    $changecmd = "${stopcmd} && ${disablecmd}"
-    $upgradecmd = "${stopcmd} && ${startcmd} ${args}"
-    $installcmd = "${enablecmd} && ${startcmd}"
-    $installfile = '/etc/systemd/system/splunk.service'
+    $startcmd    = 'splunk start'
+    $enablecmd   = "splunk enable boot-start -systemd-managed 1 -user ${user} ${args}"
+    $disablecmd  = 'splunk disable boot-start -systemd-managed 1'
+    $changecmd   = "${stopcmd} && ${disablecmd}"
+    $upgradecmd  = "${stopcmd} && ${startcmd} ${args}"
+    $installcmd  = "${enablecmd} && ${startcmd}"
+    $installfile = '/etc/systemd/system/splunkd.service'
   } else {
-    $startcmd = "splunk start ${args}"
-    $enablecmd = "splunk enable boot-start -systemd-managed 0 -user ${user}"
-    $disablecmd = 'splunk disable boot-start'
-    $changecmd = "${disablecmd} && ${stopcmd}"
-    $upgradecmd = "${stopcmd} && ${startcmd}"
-    $installcmd = "${startcmd} && ${enablecmd}"
+    $startcmd    = "splunk start ${args}"
+    $enablecmd   = "splunk enable boot-start -systemd-managed 0 -user ${user}"
+    $disablecmd  = 'splunk disable boot-start'
+    $changecmd   = "${disablecmd} && ${stopcmd}"
+    $upgradecmd  = "${stopcmd} && ${startcmd}"
+    $installcmd  = "${startcmd} && ${enablecmd}"
     $installfile = '/etc/init.d/splunk'
   }
 
