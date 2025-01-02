@@ -167,7 +167,7 @@ class splunk (
       $sourcepart = 'splunk'
     }
 
-    $newsource   = "${sourcepart}-${version}-${release}-${os}-${arch}.${ext}"
+    $newsource   = "${sourcepart}-${version}-${release}-${os}-x86_64.${ext}"
     $dir      = "${install_path}/${sourcepart}"
     $capath   = "${dir}/etc/auth"
     $confpath = $confdir ? {
