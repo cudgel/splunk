@@ -3,8 +3,9 @@
 <%
 dir  = scope['::splunk::dir']
 type = scope['::splunk::type']
+hostname = scope['facts']['networking']['hostname']
 -%>
 [default]
 <% if type =~ /forwarder/ -%>
-_meta = input_host::<%= scope['::hostname'] %>
+_meta = input_host::<%= hostname %>
 <% end -%>
