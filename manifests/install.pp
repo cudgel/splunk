@@ -17,8 +17,7 @@
 #
 # Copyright 2017 Christopher Caldwell
 #
-class splunk::install
-{
+class splunk::install {
   $action            = $splunk::action
   $my_cwd            = $splunk::cwd
   $type              = $splunk::type
@@ -84,7 +83,6 @@ class splunk::install
 
   # clean up a splunk instance running out of the wrong directory for the type
   if $action == 'change' {
-
     exec { 'serviceChange':
       command => $changecmd,
       path    => "${my_cwd}/bin:/bin:/usr/bin:",
@@ -109,7 +107,6 @@ class splunk::install
         backup => false
       }
     }
-
   }
 
   if $action == 'upgrade' {
@@ -180,9 +177,7 @@ class splunk::install
   }
 
   if ($type == 'search') and $shcluster_mode == 'peer' {
-
     unless $shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/ {
-
       $joincmd = "sleep 30 && splunk init shcluster-config -auth admin:${admin_pass} -mgmt_uri https://${::fqdn}:8089 \
 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} \
 -secret ${symmkey} -shcluster_label ${shcluster_label}"
@@ -198,7 +193,6 @@ class splunk::install
       }
 
       if $is_captain == true and $shcluster_members != undef {
-
         $servers_list = join($shcluster_members, ',')
 
         $bootstrap_cmd = "splunk restart && sleep 30 && sudo -u splunk ${dir}/bin/splunk bootstrap shcluster-captain \
@@ -214,5 +208,4 @@ class splunk::install
       }
     }
   }
-
 }
