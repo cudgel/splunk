@@ -156,10 +156,11 @@ class splunk (
 
     $new_version = "${version}-${release}"
 
-    $arch = $facts['os']['architecture'] ? {
-      'i686'  => 'i686',
-      default => 'x86_64'
-    }
+    # $arch = $facts['os']['architecture'] ? {
+    #   'i686'  => 'i686',
+    #   default => 'x86_64'
+    # }
+    $arch='x86_64'
 
     if $type == 'forwarder' {
       $sourcepart = 'splunkforwarder'
@@ -167,7 +168,7 @@ class splunk (
       $sourcepart = 'splunk'
     }
 
-    $newsource   = "${sourcepart}-${version}-${release}-${os}-x86_64.${ext}"
+    $newsource   = "${sourcepart}-${version}-${release}-${os}-${arch}.${ext}"
     $dir      = "${install_path}/${sourcepart}"
     $capath   = "${dir}/etc/auth"
     $confpath = $confdir ? {
