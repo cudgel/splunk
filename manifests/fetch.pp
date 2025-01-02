@@ -35,7 +35,7 @@ class splunk::fetch
     if $source == 'splunk' {
       $wget_url = "https://download.splunk.com/products/splunk/releases/${version}/linux/${sourcepart}-${version}-${release}-Linux-x86_64.tgz"
     } else {
-      $curl_url = "${source}/${newsource}"
+      $wget_url = "${source}/${newsource}"
     }
 
     $wget_command = "wget --no-check-certificate -O ${newsource} \'${wget_url}\'"
