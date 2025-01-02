@@ -6,20 +6,11 @@
 #
 # Document parameters here.
 #
-# [*sample_parameter*]
-#   Explanation of what this parameter affects and what it defaults to.
-#   e.g. "Specify one or more upstream ntp servers as an array."
 #
 # === Variables
 #
 # Here you should define a list of variables that this module would require.
 #
-# [*sample_variable*]
-#   Explanation of how this variable affects the funtion of this class and if
-#   it has a default. e.g. "The parameter enc_ntp_servers must be set by the
-#   External Node Classifier as a comma separated list of hostnames." (Note,
-#   global variables should be avoided in favor of class parameters as
-#   of Puppet 2.6.)
 #
 # === Examples
 #
@@ -141,18 +132,18 @@ class splunk (
   Optional[string] $s3_ecdhcurves     = undef,
   Optional[string] $s3_region         = undef,
   Optional[string] $s3_kms_key        = undef
-  ) {
+) {
   if $type == 'none' and $facts['splunk_cwd'] != undef {
     exec { 'stop_splunk_service':
-      command     => "${facts['splunk_cwd']}/bin/splunk stop",
-      onlyif      => "${facts['splunk_cwd']}/bin/splunk status",
-      path        => '/bin:/usr/bin:/sbin:/usr/sbin',
-      before      => File['splunk_installation'],
+      command => "${facts['splunk_cwd']}/bin/splunk stop",
+      onlyif  => "${facts['splunk_cwd']}/bin/splunk status",
+      path    => '/bin:/usr/bin:/sbin:/usr/sbin',
+      before  => File['splunk_installation'],
     }
 
     file { 'splunk_installation':
-      path    => $facts['splunk_cwd'],
       ensure  => absent,
+      path    => $facts['splunk_cwd'],
       recurse => true,
       force   => true,
     }
@@ -165,9 +156,9 @@ class splunk (
 
     $new_version = "${version}-${release}"
 
-    $arch = $facts['architecture'] ? {
-      x86_64  => 'x86_64',
-      amd64   => 'x86_64',
+    $arch = $facts['os']['architecture'] ? {
+      'x86_64'  => 'x86_64',
+      'amd64'   => 'x86_64',
       default => 'i686'
     }
     if $type == 'forwarder' {
@@ -321,7 +312,7 @@ class splunk (
           user        => $user,
           group       => $group,
           umask       => '027',
-          notify      => Service['splunk']
+          notify      => Service['splunk'],
         }
       }
 
@@ -336,7 +327,7 @@ class splunk (
         user        => $user,
         group       => $group,
         umask       => '027',
-        notify      => Service['splunk']
+        notify      => Service['splunk'],
       }
 
       if $type != 'forwarder' or $deployment_server == undef {
@@ -352,7 +343,7 @@ class splunk (
             user        => $user,
             group       => $group,
             umask       => '027',
-            notify      => Service['splunk']
+            notify      => Service['splunk'],
           }
         }
 
@@ -373,7 +364,7 @@ class splunk (
             user        => $user,
             group       => $group,
             umask       => '027',
-            notify      => Service['splunk']
+            notify      => Service['splunk'],
           }
         }
 
@@ -388,7 +379,7 @@ class splunk (
           user        => $user,
           group       => $group,
           umask       => '027',
-          notify      => Service['splunk']
+          notify      => Service['splunk'],
         }
       }
     }
