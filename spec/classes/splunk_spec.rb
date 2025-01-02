@@ -16,8 +16,10 @@ describe 'splunk' do
       'os'               => {
         'architecture' => 'x86_64',
         'family'       => 'RedHat',
-      },
-      'selinux' => 'false'
+        'selinux' => {
+          'enabled'      => 'false',
+        }
+      }
     }
   end
   let(:params) do

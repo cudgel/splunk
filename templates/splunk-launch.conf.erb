@@ -1,7 +1,7 @@
 # Puppet Name: <%= @title %>
 #
 <%
-selinux = scope['::selinux'] 
+selinux = scope['selinux'] 
 db      = scope['::splunk::splunkdb']
 home    = scope['::splunk::dir']
 user    = scope['::splunk::user']
