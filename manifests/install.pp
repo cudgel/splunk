@@ -34,7 +34,7 @@ class splunk::install {
   $cur_version       = $splunk::cur_version
   # new verion from hiera
   $newsource         = $splunk::newsource
-  $os                = $splunk::os
+  $kernel            = $splunk::kernel
   $arch              = $splunk::arch
   $ext               = $splunk::ext
   $tarcmd            = $splunk::tarcmd
@@ -100,7 +100,7 @@ class splunk::install {
 
     $wsourcepart = basename($my_cwd)
     if $cur_version != undef {
-      $wrongsource = "${wsourcepart}-${cur_version}-${os}-${arch}.${ext}"
+      $wrongsource = "${wsourcepart}-${cur_version}-${kernel}-${arch}.${ext}"
 
       file { "${install_path}/${wrongsource}":
         ensure => absent,
@@ -110,7 +110,7 @@ class splunk::install {
   }
 
   if $action == 'upgrade' {
-    $oldsource = "${sourcepart}-${cur_version}-${os}-${arch}.${ext}"
+    $oldsource = "${sourcepart}-${cur_version}-${kernel}-${arch}.${ext}"
 
     file { "${install_path}/${oldsource}":
       ensure => absent

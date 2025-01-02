@@ -28,6 +28,7 @@ class splunk (
   String $version,
   String $release,
   String $type,
+  String $kernel_version,
   Boolean $adhoc_searchhead,
   Boolean $autolb,
   Integer $autolbfrequency,
@@ -53,8 +54,6 @@ class splunk (
   Boolean $managesecret,
   Integer $max_rawsize_perchunk,
   Integer $max_searches,
-  String $os,
-  String $kernel,
   Boolean $preferred_captain,
   String $privkey,
   Boolean $scheduler_disable,
@@ -155,9 +154,10 @@ class splunk (
     }
 
     $new_version = "${version}-${release}"
+    $kernel = $facts['kernel']
     $arch = $facts['os']['architecture'] ? {
-      x86_64  => 'x86_64',
-      amd64   => 'x86_64',
+      'x86_64'  => 'x86_64',
+      'amd64'   => 'x86_64',
       default => 'i686'
     }
 
@@ -167,7 +167,7 @@ class splunk (
       $sourcepart = 'splunk'
     }
 
-    $newsource   = "${sourcepart}-${version}-${release}-${os}-${arch}.${ext}"
+    $newsource   = "${sourcepart}-${version}-${release}-${kernel}-${arch}.${ext}"
     $dir      = "${install_path}/${sourcepart}"
     $capath   = "${dir}/etc/auth"
     $confpath = $confdir ? {
@@ -177,7 +177,7 @@ class splunk (
     }
     $local    = "${dir}/${confpath}/local"
     $splunkdb = "${dir}/var/lib/splunk"
-    $manifest = downcase("${sourcepart}-${new_version}-${os}-${kernel}-${arch}-manifest")
+    $manifest = downcase("${sourcepart}-${new_version}-${kernel}-${kernel_version}-${arch}-manifest")
 
     # fact containing splunk search head cluster id (if a cluster member)
     # once defined, we add it to our generated files so it is not  lost
