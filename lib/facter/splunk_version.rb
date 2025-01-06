@@ -12,7 +12,7 @@ Facter.add(:splunk_version) do
 
     if binary_path
       begin
-        version = Facter::Core::Execution.execute("#{binary_path} version --accept-license")
+        version = Facter::Core::Execution.execute("#{binary_path} version --accept-license --answer-yes")
         if version =~ /Version\s+([\d.]+)/
           $1
         else
