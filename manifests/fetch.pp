@@ -40,7 +40,7 @@ class splunk::fetch {
     $wget_command = "wget --no-check-certificate -O ${newsource} \'${wget_url}\'"
 
     notify { 'wget_command':
-      message => $wget_command
+      message => $wget_command,
     }
 
     exec { "retrieve_${newsource}":
@@ -49,21 +49,21 @@ class splunk::fetch {
       cwd     => $install_path,
       timeout => 600,
       creates => "${install_path}/${newsource}",
-      onlyif  => 'curl -I https://www.splunk.com -o /dev/null 2>&1'
+      onlyif  => 'curl -I https://www.splunk.com -o /dev/null 2>&1',
     }
 
     file { "${install_path}/${newsource}":
       owner   => $splunk::user,
       group   => $splunk::group,
       mode    => '0750',
-      require => Exec["retrieve_${newsource}"]
+      require => Exec["retrieve_${newsource}"],
     }
   } else {
     file { "${install_path}/${newsource}":
       owner  => $splunk::user,
       group  => $splunk::group,
       mode   => '0750',
-      source => "${source}/${newsource}"
+      source => "${source}/${newsource}",
     }
   }
 }

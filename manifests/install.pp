@@ -86,7 +86,7 @@ class splunk::install {
     exec { 'serviceChange':
       command => $changecmd,
       path    => "${my_cwd}/bin:/bin:/usr/bin:",
-      timeout => 600
+      timeout => 600,
     }
 
     if $my_cwd =~ /\/\w+\/.*/ {
@@ -94,7 +94,7 @@ class splunk::install {
         ensure  => absent,
         force   => true,
         backup  => false,
-        require => Exec['serviceChange']
+        require => Exec['serviceChange'],
       }
     }
 
@@ -104,7 +104,7 @@ class splunk::install {
 
       file { "${install_path}/${wrongsource}":
         ensure => absent,
-        backup => false
+        backup => false,
       }
     }
   }
@@ -113,7 +113,7 @@ class splunk::install {
     $oldsource = "${sourcepart}-${cur_version}-${kernel}-${arch}.${ext}"
 
     file { "${install_path}/${oldsource}":
-      ensure => absent
+      ensure => absent,
     }
   }
 
@@ -122,7 +122,7 @@ class splunk::install {
     path    => '/bin:/usr/bin',
     cwd     => $install_path,
     before  => Exec['unpackSplunk'],
-    unless  => "test -d ${dir}"
+    unless  => "test -d ${dir}",
   }
 
   exec { 'unpackSplunk':
@@ -136,7 +136,7 @@ class splunk::install {
     before    => Exec['test_for_splunk'],
     unless    => "test -e ${dir}/${manifest}",
     onlyif    => "test -s ${newsource}",
-    creates   => "${dir}/${manifest}"
+    creates   => "${dir}/${manifest}",
   }
 
   file { "${dir}/etc/splunk-launch.conf":
@@ -154,7 +154,7 @@ class splunk::install {
       path        => "${dir}/bin:/bin:/usr/bin:",
       subscribe   => Exec['unpackSplunk'],
       timeout     => 600,
-      refreshonly => true
+      refreshonly => true,
     }
   } else {
     exec { 'serviceInstall':
@@ -166,13 +166,13 @@ class splunk::install {
       unless      => "test -e ${installfile}",
       creates     => $installfile,
       require     => Exec['unpackSplunk'],
-      returns     => [0, 8]
+      returns     => [0, 8],
     }
   }
 
   if ($type == 'search') and $shcluster_mode == 'peer' {
     unless $shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/ {
-      $joincmd = "sleep 30 && splunk init shcluster-config -auth admin:${admin_pass} -mgmt_uri https://${::fqdn}:8089 \
+      $joincmd = "sleep 30 && splunk init shcluster-config -auth admin:${admin_pass} -mgmt_uri https://${fqdn}:8089 \
 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} \
 -secret ${symmkey} -shcluster_label ${shcluster_label}"
 
@@ -183,7 +183,7 @@ class splunk::install {
         path        => "${dir}/bin:/bin:/usr/bin:",
         user        => $user,
         group       => $group,
-        require     => Exec['serviceInstall']
+        require     => Exec['serviceInstall'],
       }
 
       if $is_captain == true and $shcluster_members != undef {
@@ -197,7 +197,7 @@ class splunk::install {
           timeout     => 600,
           environment => "SPLUNK_HOME=${dir}",
           path        => "${dir}/bin:/bin:/usr/bin:",
-          require     => Exec['serviceInstall']
+          require     => Exec['serviceInstall'],
         }
       }
     }
