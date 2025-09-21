@@ -1,0 +1,70 @@
+---
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    name: Static Analysis
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.5.3'
+          bundler-cache: true
+
+      - name: Run static checks
+        run: bundle exec rake check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop syntax lint metadata_lint
+
+  spec:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - ruby: '2.4.5'
+            puppet: '~> 5.0'
+          - ruby: '2.5.3'
+            puppet: '~> 6.0'
+    name: Spec Tests (Ruby ${{ matrix.ruby }}, Puppet ${{ matrix.puppet }})
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+
+      - name: Run spec tests
+        run: bundle exec rake parallel_spec
+        env:
+          PUPPET_GEM_VERSION: ${{ matrix.puppet }}
+
+  acceptance:
+    runs-on: ubuntu-latest
+    name: Acceptance Tests
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.5.3'
+          bundler-cache: true
+
+      - name: Run acceptance tests
+        run: |
+          # Add acceptance test commands here if you have them
+          echo "Acceptance tests would run here"
