@@ -1,26 +1,29 @@
-# splunk::auth()
+# @summary Create authentication.conf and authorize.conf files to configure user authentication and roles
 #
-# create authentication.conf and authorize.conf files to configure
-# user authentication and roles
+# @param dir The Splunk directory path
+# @param user The Splunk user
+# @param group The Splunk group
+# @param authentication The authentication method (LDAP, SAML, etc.)
+# @param authconfig Hash containing authentication configuration
+# @param roles Array of role configurations
+# @param body Optional custom body content
 #
-class splunk::auth(
+class splunk::auth (
   Optional[String] $dir            = $splunk::dir,
   Optional[String] $user           = $splunk::user,
   Optional[String] $group          = $splunk::group,
   Optional[String] $authentication = $splunk::authentication,
   Optional[Hash] $authconfig       = $splunk::authconfig,
   Optional[Tuple] $roles           = $splunk::roles,
-  Optional[String] $body           = undef
+  Optional[String] $body           = undef,
 ) {
-
-  $local    = "${dir}/etc/system/local"
-
+  $local = "${dir}/etc/system/local"
 
   file { "${local}/auth.d":
     ensure => 'directory',
     mode   => '0750',
     owner  => $user,
-    group  => $group
+    group  => $group,
   }
 
   if $authentication == 'LDAP' {
@@ -32,7 +35,7 @@ class splunk::auth(
       mode    => '0600',
       content => $content,
       require => File["${local}/auth.d"],
-      notify  => Exec['update-auth']
+      notify  => Exec['update-auth'],
     }
   } elsif $authentication == 'SAML' {
     $content = template("${module_name}/auth.d/saml.erb")
@@ -43,15 +46,15 @@ class splunk::auth(
       mode    => '0600',
       content => $content,
       require => File["${local}/auth.d"],
-      notify  => Exec['update-auth']
+      notify  => Exec['update-auth'],
     }
 
     file { "${local}/auth.d/ldap":
-      ensure => absent
+      ensure => absent,
     }
   } else {
     file { "${local}/auth.d/ldap":
-      ensure => absent
+      ensure => absent,
     }
   }
 
@@ -61,7 +64,7 @@ class splunk::auth(
       group   => $group,
       mode    => '0440',
       content => template("${module_name}/authorize.conf.erb"),
-      notify  => Service['splunk']
+      notify  => Service['splunk'],
     }
   }
 }

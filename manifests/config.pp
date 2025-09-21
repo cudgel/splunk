@@ -15,8 +15,7 @@
 #
 # Copyright 2017 Christopher Caldwell
 #
-class splunk::config
-{
+class splunk::config {
   $type              = $splunk::type
   $install_path      = $splunk::install_path
   $dir               = $splunk::dir
@@ -54,7 +53,7 @@ class splunk::config
   $remote_path       = $splunk::remote_path
   $admin_pass        = $splunk::admin_pass
 
-  $splunk_home = $splunk_home
+  $splunk_home = $facts['splunk_home']
   $perms = "${user}:${group}"
 
   $bashrc = "
@@ -68,7 +67,7 @@ export PATH
     file { "${splunk_home}/.bashrc.custom":
       owner   => $user,
       group   => $group,
-      content => $bashrc
+      content => $bashrc,
     }
   }
 
@@ -78,11 +77,10 @@ export PATH
     cwd     => $install_path,
     user    => $user,
     group   => $group,
-    unless  => "test -d ${dir}/etc"
+    unless  => "test -d ${dir}/etc",
   }
 
   if $cert_source != undef {
-
     if $cacert != 'cacert.pem' {
       file { "${dir}/etc/auth/${cacert}":
         source  => "${cert_source}/auth/${cacert}",
@@ -90,7 +88,7 @@ export PATH
         group   => $group,
         mode    => '0640',
         notify  => Service['splunk'],
-        require => Exec['test_for_splunk']
+        require => Exec['test_for_splunk'],
       }
     }
 
@@ -101,7 +99,7 @@ export PATH
         group   => $group,
         mode    => '0640',
         notify  => Service['splunk'],
-        require => Exec['test_for_splunk']
+        require => Exec['test_for_splunk'],
       }
     }
 
@@ -112,7 +110,7 @@ export PATH
         group   => $group,
         mode    => '0640',
         notify  => Service['splunk'],
-        require => Exec['test_for_splunk']
+        require => Exec['test_for_splunk'],
       }
     }
 
@@ -123,7 +121,7 @@ export PATH
         group   => $group,
         mode    => '0640',
         notify  => Service['splunk'],
-        require => Exec['test_for_splunk']
+        require => Exec['test_for_splunk'],
       }
     }
 
@@ -134,7 +132,7 @@ export PATH
         group   => $group,
         mode    => '0640',
         notify  => Service['splunk'],
-        require => Exec['test_for_splunk']
+        require => Exec['test_for_splunk'],
       }
     }
   }
@@ -143,7 +141,7 @@ export PATH
     ensure  => 'directory',
     owner   => $user,
     group   => $group,
-    require => Exec['test_for_splunk']
+    require => Exec['test_for_splunk'],
   }
 
   if $confpath == 'app' {
@@ -151,7 +149,7 @@ export PATH
       ensure  => 'directory',
       owner   => $user,
       group   => $group,
-      require => Exec['test_for_splunk']
+      require => Exec['test_for_splunk'],
     }
   }
 
@@ -159,7 +157,7 @@ export PATH
     ensure  => 'directory',
     owner   => $user,
     group   => $group,
-    require => Exec['test_for_splunk']
+    require => Exec['test_for_splunk'],
   }
 
   file { "${local}/inputs.d":
@@ -167,7 +165,7 @@ export PATH
     mode    => '0750',
     owner   => $user,
     group   => $group,
-    require => Exec['test_for_splunk']
+    require => Exec['test_for_splunk'],
   }
 
   file { "${local}/inputs.d/000_default":
@@ -175,7 +173,7 @@ export PATH
     owner   => $user,
     group   => $group,
     require => File["${local}/inputs.d"],
-    notify  => Exec['update-inputs']
+    notify  => Exec['update-inputs'],
   }
 
   file { "${local}/inputs.d/001_splunkssl":
@@ -183,7 +181,7 @@ export PATH
     owner   => $user,
     group   => $group,
     require => File["${local}/inputs.d"],
-    notify  => Exec['update-inputs']
+    notify  => Exec['update-inputs'],
   }
 
   if ($type == 'indexer' or $type == 'index_master' or $type == 'standalone') {
@@ -193,7 +191,7 @@ export PATH
         mode    => '0750',
         owner   => $user,
         group   => $group,
-        require => Exec['test_for_splunk']
+        require => Exec['test_for_splunk'],
       }
 
       file { "${local}/indexes.d/000_default":
@@ -201,7 +199,7 @@ export PATH
         owner   => $user,
         group   => $group,
         require => Exec['test_for_splunk'],
-        content => template('splunk/indexes.d/default_indexes.erb')
+        content => template('splunk/indexes.d/default_indexes.erb'),
       }
 
       if $remote_path != undef {
@@ -210,7 +208,7 @@ export PATH
           owner   => $user,
           group   => $group,
           require => File["${local}/indexes.d"],
-          notify  => Exec['update-indexes']
+          notify  => Exec['update-indexes'],
         }
       }
       create_resources('splunk::index', $indexes)
@@ -222,19 +220,19 @@ export PATH
         owner   => $user,
         group   => $group,
         require => File["${local}/server.d"],
-        notify  => Exec['update-server']
+        notify  => Exec['update-server'],
       }
     }
   }
 
   if (($type != 'forwarder' and $type != 'indexer' and $type != 'standalone') or
-    ($type == 'forwarder' and $deployment_server == undef)) and $tcpout =~ Hash {
+  ($type == 'forwarder' and $deployment_server == undef)) and $tcpout =~ Hash {
     file { "${local}/outputs.d":
       ensure  => 'directory',
       mode    => '0750',
       owner   => $user,
       group   => $group,
-      require => Exec['test_for_splunk']
+      require => Exec['test_for_splunk'],
     }
 
     file { "${local}/outputs.d/000_default":
@@ -242,18 +240,17 @@ export PATH
       owner   => $user,
       group   => $group,
       require => File["${local}/outputs.d"],
-      notify  => Exec['update-outputs']
+      notify  => Exec['update-outputs'],
     }
   }
 
   if $type != forwarder {
-
     file { "${local}/server.d":
       ensure  => 'directory',
       mode    => '0750',
       owner   => $user,
       group   => $group,
-      require => Exec['test_for_splunk']
+      require => Exec['test_for_splunk'],
     }
 
     file { "${local}/server.d/000_header":
@@ -261,14 +258,14 @@ export PATH
       owner   => $user,
       group   => $group,
       require => File["${local}/server.d"],
-      notify  => Exec['update-server']
+      notify  => Exec['update-server'],
     }
 
     file { "${local}/server.d/001_license":
       content => template("${module_name}/server.d/license.erb"),
       owner   => $user,
       group   => $group,
-      require => File["${local}/server.d"]
+      require => File["${local}/server.d"],
     }
 
     if $cluster_mode != 'none' {
@@ -277,7 +274,7 @@ export PATH
         owner   => $user,
         group   => $group,
         require => File["${local}/server.d"],
-        notify  => Exec['update-server']
+        notify  => Exec['update-server'],
       }
     }
 
@@ -286,7 +283,7 @@ export PATH
       owner   => $user,
       group   => $group,
       require => File["${local}/server.d"],
-      notify  => Exec['update-server']
+      notify  => Exec['update-server'],
     }
 
     file { "${local}/server.d/999_default":
@@ -294,7 +291,7 @@ export PATH
       owner   => $user,
       group   => $group,
       require => File["${local}/server.d"],
-      notify  => Exec['update-server']
+      notify  => Exec['update-server'],
     }
 
     file { "${local}/web.conf":
@@ -302,18 +299,17 @@ export PATH
       owner   => $user,
       group   => $user,
       require => Exec['test_for_splunk'],
-      notify  => Service['splunk']
+      notify  => Service['splunk'],
     }
   }
 
   if ($type == 'search') or ($type == 'standalone') {
-
     file { "${local}/default-mode.conf":
       content => template("${module_name}/default-mode.conf.erb"),
       owner   => $user,
       group   => $user,
       notify  => Service['splunk'],
-      require => Exec['test_for_splunk']
+      require => Exec['test_for_splunk'],
     }
 
     file { "${local}/alert_actions.conf":
@@ -322,7 +318,7 @@ export PATH
       owner   => $user,
       group   => $user,
       notify  => Service['splunk'],
-      require => Exec['test_for_splunk']
+      require => Exec['test_for_splunk'],
     }
 
     file { "${local}/ui-prefs.conf":
@@ -330,7 +326,7 @@ export PATH
       owner   => $user,
       group   => $user,
       notify  => Service['splunk'],
-      require => Exec['test_for_splunk']
+      require => Exec['test_for_splunk'],
     }
 
     file { "${local}/limits.conf":
@@ -338,7 +334,7 @@ export PATH
       owner   => $user,
       group   => $user,
       notify  => Service['splunk'],
-      require => Exec['test_for_splunk']
+      require => Exec['test_for_splunk'],
     }
 
     if $shcluster_id != undef or $shcluster_mode == 'deployer' {
@@ -348,7 +344,7 @@ export PATH
         owner   => $user,
         group   => $group,
         require => File["${local}/server.d"],
-        notify  => Exec['update-server']
+        notify  => Exec['update-server'],
       }
 
       file { "${local}/server.d/995_replication":
@@ -356,19 +352,18 @@ export PATH
         owner   => $user,
         group   => $group,
         require => File["${local}/server.d"],
-        notify  => Exec['update-server']
+        notify  => Exec['update-server'],
       }
     }
   }
 
   if ($type == 'search') or ($type == 'standalone') or ($type == 'indexer') {
-
     if $geo_source != undef {
       file { "${dir}/share/GeoLite2-City.mmdb":
         source  => "${geo_source}/GeoLite2-City.mmdb",
         owner   => $user,
         group   => $user,
-        require => Exec['test_for_splunk']
+        require => Exec['test_for_splunk'],
       }
 
       file_line { 'geolite2_hash':
@@ -376,7 +371,7 @@ export PATH
         line    => "f 444 ${user} ${group} splunk/share/GeoLite2-City.mmdb ${geo_hash}",
         match   => "^f 444 ${user} ${group} splunk/share/GeoLite2-City.mmdb",
         require => Exec['test_for_splunk'],
-        notify  => Service['splunk']
+        notify  => Service['splunk'],
       }
     }
   }

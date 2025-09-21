@@ -66,8 +66,8 @@ splunk
 │       ├── ixsite2_web.key
 │       ├── srchsite1_web.cert
 │       ├── srchsite1_web.key
-├── splunkforwarder-7.1.3-51d9cac7b837-Linux-x86_64.tgz
-└── splunk-7.1.3-51d9cac7b837-Linux-x86_64.tgz
+├── splunkforwarder-9.3.2-d8bb32809498-Linux-x86_64.tgz
+└── splunk-9.3.2-d8bb32809498-Linux-x86_64.tgz
 ```
 
 The source would have the setting `splunk::source: 'puppet:///splunk_files'` which will compile as using the fileserver for the splunk installer source. A similar setting splunk::cert_source controls where the certs are served from (should they differ). This setting is required if using non-default certs.
