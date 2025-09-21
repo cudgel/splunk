@@ -1,8 +1,18 @@
-# splunk::input()
+# @summary Create a network or file monitor input snippet to be concatenated into inputs.conf
 #
-# create a network or file monitor input snippet to be concatenated into
-# $SPLUNK_HOME/etc/system/local/inputs.conf
-# if creating a file monitor, apply acl to the object as well
+# @param disabled Whether the input is disabled
+# @param inputtype The type of input (monitor, tcp, udp, etc.)
+# @param sourcetype The sourcetype for the input
+# @param index The index to send data to
+# @param cache Whether to use persistent queue for network inputs
+# @param size Size of queue on disk in GB
+# @param recurse Whether to recurse for file monitor inputs
+# @param target The target file or port for the input
+# @param dir The Splunk directory path
+# @param user The Splunk user
+# @param group The Splunk group
+# @param options Additional input options
+# @param content Custom input definition content
 #
 define splunk::input (
   Boolean $disabled  = false,

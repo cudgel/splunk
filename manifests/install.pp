@@ -98,15 +98,26 @@ class splunk::install {
       }
     }
 
-    $wsourcepart = basename($my_cwd)
-    if $cur_version != undef {
-      $wrongsource = "${wsourcepart}-${cur_version}-${kernel}-${arch}.${ext}"
-
-      file { "${install_path}/${wrongsource}":
-        ensure => absent,
-        backup => false,
-      }
+  $wsourcepart = basename($my_cwd)
+  if $cur_version != undef {
+    # Parse current version to determine if it uses new or old naming scheme
+    $cur_version_parts = split($cur_version, '-')
+    $cur_ver = $cur_version_parts[0]
+    $cur_is_new_naming = versioncmp($cur_ver, '9.4.0') >= 0
+    
+    if $cur_is_new_naming {
+      $cur_pkg_platform = 'linux-amd64'
+    } else {
+      $cur_pkg_platform = "${kernel}-${arch}"
     }
+    
+    $wrongsource = "${wsourcepart}-${cur_version}-${cur_pkg_platform}.${ext}"
+
+    file { "${install_path}/${wrongsource}":
+      ensure => absent,
+      backup => false,
+    }
+  }
   }
 
   if $action == 'upgrade' {
@@ -172,7 +183,7 @@ class splunk::install {
 
   if ($type == 'search') and $shcluster_mode == 'peer' {
     unless $shcluster_id =~ /\w{8}-(?:\w{4}-){3}\w{12}/ {
-      $joincmd = "sleep 30 && splunk init shcluster-config -auth admin:${admin_pass} -mgmt_uri https://${fqdn}:8089 \
+      $joincmd = "sleep 30 && splunk init shcluster-config -auth admin:${admin_pass} -mgmt_uri https://${facts['networking']['fqdn']}:8089 \
 -replication_port ${repl_port} -replication_factor ${repl_count} -conf_deploy_fetch_url https://${confdeploy} \
 -secret ${symmkey} -shcluster_label ${shcluster_label}"
 

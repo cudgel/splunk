@@ -5,6 +5,92 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v2.3.0] - 2025-09-21
+
+### Added
+
+- Support for Splunk 9.4+ package naming scheme (linux-amd64 vs Linux-x86_64)
+- Improved version comparison logic for package naming
+- Enhanced hostname fact support
+
+### Changed
+
+- Updated ACL management to use simpler, more reliable ACL testing
+- Improved fact handling to use manifest files instead of binary detection
+- Enhanced architecture detection and handling
+- Updated spec tests to match new package naming conventions
+- Refactored variable handling to disambiguate facts from variables
+
+### Fixed
+
+- Fixed test failures related to file resource naming mismatches
+- Fixed ACL variable reference issue when splunk class is not available
+- Fixed package file removal logic during version changes to handle naming scheme differences
+- Fixed architecture variable references and selinux fact usage
+- Corrected file path expectations in unit tests
+- Improved error handling in ACL define when group parameter is missing
+
+## [v2.2.2] - 2025-04-25
+
+### Changed
+
+- Updated fact collection to use manifest instead of binary for version detection
+
+### Fixed
+
+- Improved reliability of splunk_version fact determination
+
+## [v2.2.1] - 2025-01-08
+
+### Changed
+
+- Version bump for metadata updates
+
+## [v2.2.0] - 2025-01-08
+
+### Added
+
+- Enhanced puppet-lint configuration
+- Improved Rakefile with additional linting tasks
+- Better Gemfile dependency management
+
+### Changed
+
+- Updated metadata.json with improved dependency constraints
+- Refactored multiple manifest files for better code quality
+- Improved spec test structure and reduced redundancy
+- Enhanced deployment.pp, fetch.pp, and service.pp implementations
+- Updated input.pp and install.pp with better error handling
+
+### Fixed
+
+- Fixed linting issues across multiple manifest files
+- Improved code quality and consistency
+- Fixed spec test reliability
+
+## [v2.1.9] - 2025-01-06
+
+### Added
+
+- ACL testing before applying ACLs to prevent errors
+- Improved service file handling
+- PDK updates for better development experience
+
+### Changed
+
+- Simplified ACL implementation with more reliable testing
+- Enhanced fact handling and variable disambiguation
+- Improved architecture detection logic
+- Updated OS-specific configuration handling
+- Better selinux fact integration
+
+### Fixed
+
+- Fixed ACL application logic to be more robust
+- Improved variable references to prevent conflicts
+- Fixed architecture detection issues
+- Enhanced fact collection reliability
+
 ## [v2.1.8] - 2023-09-22
 
 ### Fixed

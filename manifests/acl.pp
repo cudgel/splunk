@@ -1,17 +1,28 @@
-# splunk::acl()
+# @summary Ensures that the Splunk user can read the file inputs defined
 #
-# ensures that the Splunk user can read the file inputs defined
-# optionally set acls on parent paths
+# @param target The target file or directory path
+# @param group The group to apply ACLs for
+# @param type The type of object (file or directory)
+# @param recurse Whether to apply ACLs recursively
+# @param parents Whether to apply ACLs to parent paths
 #
-# not optimal, but I could not find another solution on the puppet forge
-#
-define splunk::acl(
-  Optional[String] $target    = undef,
-  Optional[String] $group     = $splunk::user,
-  Optional[String] $type      = 'file',
-  Optional[Boolean] $recurse  = false,
-  Optional[Boolean] $parents  = false
+define splunk::acl (
+  Optional[String] $target   = undef,
+  Optional[String] $group    = undef,
+  Optional[String] $type     = undef,
+  Optional[Boolean] $recurse = undef,
+  Optional[Boolean] $parents = undef,
 ) {
+  if $group {
+    $_group = $group
+  } elsif defined('::splunk') {
+    $_group = $::splunk::user
+  } else {
+    $_group = 'splunk'
+  }
+  $_type = pick($type, 'file')
+  $_recurse = pick($recurse, false)
+  $_parents = pick($parents, false)
 
   # Validate parameters
   #
@@ -20,26 +31,25 @@ define splunk::acl(
   } else {
     $object = $target
   }
-  if $recurse != true and $recurse != false {
+  if $_recurse != true and $_recurse != false {
     fail('variable "recurse" must be either true or false')
   }
 
   if $facts['kernel'] == 'Linux' {
-
     # returns 0 if the object is a file
     $testdir = "test -d ${object}"
 
-    # Calculate the ACE by combining $group, and $readonly.
+    # Calculate the ACE by combining $_group, and $readonly.
     # Set the $subject and $db to later verify that the subject exists.
     #
-    $subject = $group
-    if $type == 'file' {
+    $subject = $_group
+    if $_type == 'file' {
       $perm = 'r--'
     } else {
       $perm = 'r-x'
     }
-    $acl = "group:${group}:${perm}"
-    $gacl = "group:${group}:r-x"
+    $acl = "group:${_group}:${perm}"
+    $gacl = "group:${_group}:r-x"
 
     # returns 0 if the mount containing the object supports ACLs
     $testacl = "getfacl -e ${object} > /dev/null 2>&1"
@@ -50,7 +60,7 @@ define splunk::acl(
       path    => '/bin:/usr/bin:/sbin:/usr/sbin',
     }
 
-    if $recurse == true {
+    if $_recurse == true {
       exec { "set_acl_recursive_${object}":
         command => "setfacl -R -m ${acl} ${object}",
         onlyif  => $testacl,

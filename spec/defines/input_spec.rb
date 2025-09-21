@@ -15,21 +15,21 @@ describe 'splunk::input' do
         'architecture' => 'x86_64',
         'family'       => 'RedHat',
         'selinux' => {
-          'enabled'      => 'false',
+          'enabled' => 'false',
         }
       },
     }
   end
   let(:params) do
     {
-      'target'  => '/var/log/authlog',
-      'dir'     => '/opt/splunkforwarder',
-      'user'    => 'splunk',
-      'group'   => 'splunk',
+      'target' => '/var/log/authlog',
+      'dir' => '/opt/splunkforwarder',
+      'user' => 'splunk',
+      'group' => 'splunk',
     }
   end
   let(:pre_condition) do
-    "class { splunk: type => 'forwarder', version => '8.0.4.1', release => 'ab7a85abaa98' }"
+    "class { splunk: type => 'forwarder', version => '9.4.4', release => 'f627d88b766b' }"
   end
 
   it { is_expected.to contain_file('/opt/splunkforwarder/etc/system/local/inputs.d/authlog').that_notifies('Exec[update-inputs]') }
