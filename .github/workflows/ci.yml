@@ -18,7 +18,7 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.6.10'
+          ruby-version: '2.7.8'
           bundler-cache: false
 
       - name: Upgrade RubyGems
@@ -36,10 +36,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - ruby: '2.6.10'
-            puppet: '~> 5.0'
-          - ruby: '2.6.10'
+          - ruby: '2.7.8'
             puppet: '~> 6.0'
+          - ruby: '2.7.8'
+            puppet: '~> 7.0'
     name: Spec Tests (Ruby ${{ matrix.ruby }}, Puppet ${{ matrix.puppet }})
     steps:
       - name: Checkout
