@@ -19,7 +19,13 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '2.6.10'
-          bundler-cache: true
+          bundler-cache: false
+
+      - name: Upgrade RubyGems
+        run: gem update --system 3.2.3
+
+      - name: Install dependencies
+        run: bundle install
 
       - name: Run static checks
         run: bundle exec rake check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop syntax lint metadata_lint
@@ -30,7 +36,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - ruby: '2.4.5'
+          - ruby: '2.6.10'
             puppet: '~> 5.0'
           - ruby: '2.6.10'
             puppet: '~> 6.0'
@@ -43,7 +49,13 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
+          bundler-cache: false
+
+      - name: Upgrade RubyGems
+        run: gem update --system 3.2.3
+
+      - name: Install dependencies
+        run: bundle install
 
       - name: Run spec tests
         run: bundle exec rake parallel_spec
@@ -62,7 +74,13 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '2.6.10'
-          bundler-cache: true
+          bundler-cache: false
+
+      - name: Upgrade RubyGems
+        run: gem update --system 3.2.3
+
+      - name: Install dependencies
+        run: bundle install
 
       - name: Run acceptance tests
         run: |
