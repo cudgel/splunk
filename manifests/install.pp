@@ -98,26 +98,26 @@ class splunk::install {
       }
     }
 
-  $wsourcepart = basename($my_cwd)
-  if $cur_version != undef {
-    # Parse current version to determine if it uses new or old naming scheme
-    $cur_version_parts = split($cur_version, '-')
-    $cur_ver = $cur_version_parts[0]
-    $cur_is_new_naming = versioncmp($cur_ver, '9.4.0') >= 0
-    
-    if $cur_is_new_naming {
-      $cur_pkg_platform = 'linux-amd64'
-    } else {
-      $cur_pkg_platform = "${kernel}-${arch}"
-    }
-    
-    $wrongsource = "${wsourcepart}-${cur_version}-${cur_pkg_platform}.${ext}"
+    $wsourcepart = basename($my_cwd)
+    if $cur_version != undef {
+      # Parse current version to determine if it uses new or old naming scheme
+      $cur_version_parts = split($cur_version, '-')
+      $cur_ver = $cur_version_parts[0]
+      $cur_is_new_naming = versioncmp($cur_ver, '9.4.0') >= 0
 
-    file { "${install_path}/${wrongsource}":
-      ensure => absent,
-      backup => false,
+      if $cur_is_new_naming {
+        $cur_pkg_platform = 'linux-amd64'
+      } else {
+        $cur_pkg_platform = "${kernel}-${arch}"
+      }
+
+      $wrongsource = "${wsourcepart}-${cur_version}-${cur_pkg_platform}.${ext}"
+
+      file { "${install_path}/${wrongsource}":
+        ensure => absent,
+        backup => false,
+      }
     }
-  }
   }
 
   if $action == 'upgrade' {

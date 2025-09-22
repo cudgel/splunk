@@ -16,7 +16,7 @@ define splunk::acl (
   if $group {
     $_group = $group
   } elsif defined('::splunk') {
-    $_group = $::splunk::user
+    $_group = $splunk::user
   } else {
     $_group = 'splunk'
   }
