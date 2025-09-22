@@ -18,8 +18,17 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.5.3'
-          bundler-cache: true
+          ruby-version: '2.7.8'
+          bundler-cache: false
+
+      - name: Upgrade RubyGems
+        run: gem update --system 3.2.3
+
+      - name: Clear bundle cache
+        run: rm -rf .bundle vendor/bundle
+
+      - name: Install dependencies
+        run: bundle install
 
       - name: Run static checks
         run: bundle exec rake check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop syntax lint metadata_lint
@@ -30,10 +39,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - ruby: '2.4.5'
-            puppet: '~> 5.0'
-          - ruby: '2.5.3'
-            puppet: '~> 6.0'
+          - ruby: '2.7.8'
+            puppet: '~> 7.0'
+          - ruby: '3.1.0'
+            puppet: '~> 8.0'
     name: Spec Tests (Ruby ${{ matrix.ruby }}, Puppet ${{ matrix.puppet }})
     steps:
       - name: Checkout
@@ -43,7 +52,16 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
+          bundler-cache: false
+
+      - name: Upgrade RubyGems
+        run: gem update --system 3.2.3
+
+      - name: Clear bundle cache
+        run: rm -rf .bundle vendor/bundle
+
+      - name: Install dependencies
+        run: bundle install
 
       - name: Run spec tests
         run: bundle exec rake parallel_spec
@@ -61,8 +79,17 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.5.3'
-          bundler-cache: true
+          ruby-version: '2.7.8'
+          bundler-cache: false
+
+      - name: Upgrade RubyGems
+        run: gem update --system 3.2.3
+
+      - name: Clear bundle cache
+        run: rm -rf .bundle vendor/bundle
+
+      - name: Install dependencies
+        run: bundle install
 
       - name: Run acceptance tests
         run: |
