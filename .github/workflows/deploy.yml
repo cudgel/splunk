@@ -1,0 +1,30 @@
+---
+name: Deploy to Forge
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy to Puppet Forge
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.5.3'
+          bundler-cache: true
+
+      - name: Build and publish to Forge
+        run: |
+          bundle exec rake build
+          bundle exec rake forge:publish
+        env:
+          BLACKSMITH_FORGE_URL: https://forgeapi.puppetlabs.com
+          BLACKSMITH_FORGE_USERNAME: ${{ secrets.FORGE_USERNAME }}
+          BLACKSMITH_FORGE_PASSWORD: ${{ secrets.FORGE_API_KEY }}
