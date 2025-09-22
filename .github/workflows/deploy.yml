@@ -32,8 +32,6 @@ jobs:
       - name: Build and publish to Forge
         run: |
           bundle exec rake module:build
-          bundle exec rake module:push
+          bundle exec pdk release publish --forge-token=${{ secrets.BLACKSMITH_FORGE_PASSWORD }}
         env:
           BLACKSMITH_FORGE_URL: https://forgeapi.puppetlabs.com
-          BLACKSMITH_FORGE_USERNAME: ${{ secrets.BLACKSMITH_FORGE_USERNAME }}
-          BLACKSMITH_FORGE_PASSWORD: ${{ secrets.BLACKSMITH_FORGE_PASSWORD }}
