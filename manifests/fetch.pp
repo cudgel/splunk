@@ -56,7 +56,11 @@ class splunk::fetch {
   }
   if $source == 'splunk' or source =~ /http.*/ {
     if $source == 'splunk' {
-      $wget_url = "https://download.splunk.com/products/splunk/releases/${version}/linux/${sourcepart}-${version}-${release}-${pkg_platform}.tgz"
+      if $is_new_naming {
+        $wget_url = "https://download.splunk.com/products/${product}/releases/${version}/linux/${sourcepart}-${version}-${release}-${pkg_platform}.tgz"
+      } else {
+        $wget_url = "https://download.splunk.com/products/splunk/releases/${version}/linux/${sourcepart}-${version}-${release}-${pkg_platform}.tgz"
+      }
     } else {
       $wget_url = "${source}/${newsource}"
     }

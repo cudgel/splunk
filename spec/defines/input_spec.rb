@@ -34,5 +34,5 @@ describe 'splunk::input' do
 
   it { is_expected.to contain_file('/opt/splunkforwarder/etc/system/local/inputs.d/authlog').that_notifies('Exec[update-inputs]') }
   it { is_expected.to contain_splunk__acl('authlog') }
-  # it { is_expected.to contain_exec('setfacl_authlog') }
+  it { is_expected.to contain_exec('set_acl_/var/log/authlog') }
 end
