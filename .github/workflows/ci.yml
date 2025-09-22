@@ -24,6 +24,9 @@ jobs:
       - name: Upgrade RubyGems
         run: gem update --system 3.2.3
 
+      - name: Clear bundle cache
+        run: rm -rf .bundle vendor/bundle
+
       - name: Install dependencies
         run: bundle install
 
@@ -38,7 +41,7 @@ jobs:
         include:
           - ruby: '2.7.8'
             puppet: '~> 7.0'
-          - ruby: '3.0.0'
+          - ruby: '2.7.8'
             puppet: '~> 8.0'
     name: Spec Tests (Ruby ${{ matrix.ruby }}, Puppet ${{ matrix.puppet }})
     steps:
@@ -53,6 +56,9 @@ jobs:
 
       - name: Upgrade RubyGems
         run: gem update --system 3.2.3
+
+      - name: Clear bundle cache
+        run: rm -rf .bundle vendor/bundle
 
       - name: Install dependencies
         run: bundle install
@@ -78,6 +84,9 @@ jobs:
 
       - name: Upgrade RubyGems
         run: gem update --system 3.2.3
+
+      - name: Clear bundle cache
+        run: rm -rf .bundle vendor/bundle
 
       - name: Install dependencies
         run: bundle install
