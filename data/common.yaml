@@ -1,7 +1,7 @@
 ---
 splunk::group: 'splunk'
 splunk::user: 'splunk'
-splunk::type: 'none'
+splunk::type: 'forwarder'
 splunk::admin_pass: 'changeme'
 splunk::adhoc_searchhead: false
 splunk::autolb: true
