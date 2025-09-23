@@ -271,8 +271,10 @@ class splunk (
 
     if $type == 'forwarder' {
       $sourcepart = 'splunkforwarder'
+      $product = 'universalforwarder'
     } else {
       $sourcepart = 'splunk'
+      $product = 'splunk'
     }
 
     # Use computed platform token when building package filename

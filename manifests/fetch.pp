@@ -20,6 +20,7 @@ class splunk::fetch {
   $source       = $splunk::source
   $sourcepart   = $splunk::sourcepart
   $type         = $splunk::type
+  $product      = $splunk::product
   $version      = $splunk::version
   $release      = $splunk::release
   $newsource    = $splunk::newsource
@@ -49,11 +50,6 @@ class splunk::fetch {
     $pkg_platform = "${pkg_kernel}-${pkg_arch}"
   }
 
-  if $type == 'forwarder' {
-    $product = 'universalforwarder'
-  } else {
-    $product = 'splunk'
-  }
   if $source == 'splunk' or $source =~ /http.*/ {
     if $source == 'splunk' {
       $wget_url = "https://download.splunk.com/products/${product}/releases/${version}/linux/${sourcepart}-${version}-${release}-${pkg_platform}.tgz"

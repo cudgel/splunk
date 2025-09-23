@@ -52,7 +52,7 @@ describe 'splunk' do
     it { is_expected.to contain_file('/home/splunk/.bashrc.custom') }
     it { is_expected.to contain_class('splunk::fetch') }
     it { is_expected.to contain_exec('retrieve_splunkforwarder-9.4.4-f627d88b766b-linux-amd64.tgz') }
-    it { is_expected.to contain_notify('wget_command') }
+    it { is_expected.to contain_notify('wget_command').with_message(/universalforwarder/) }
     it { is_expected.to contain_class('splunk::install') }
     it { is_expected.to contain_file('/opt/splunkforwarder-9.4.4-f627d88b766b-linux-amd64.tgz').that_notifies('Exec[unpackSplunk]') }
     it { is_expected.to contain_class('splunk::config') }
