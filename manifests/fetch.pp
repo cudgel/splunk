@@ -30,29 +30,10 @@ class splunk::fetch {
   $version_parts = split($version, '\.')
   $major = $version_parts[0]
   $minor = pick($version_parts, 1, '0')
-  $is_new_naming = versioncmp("${major}.${minor}.0", '9.4.0') >= 0
-
-  if $is_new_naming {
-    $pkg_kernel = 'linux'
-    $pkg_arch = $facts['os']['architecture'] ? {
-      'x86_64' => 'amd64',
-      'amd64'  => 'amd64',
-      default  => 'amd64'
-    }
-    $pkg_platform = "${pkg_kernel}-${pkg_arch}"
-  } else {
-    $pkg_kernel = $facts['kernel']
-    $pkg_arch = $facts['os']['architecture'] ? {
-      'x86_64'  => 'x86_64',
-      'amd64'   => 'x86_64',
-      default => 'i686'
-    }
-    $pkg_platform = "${pkg_kernel}-${pkg_arch}"
-  }
 
   if $source == 'splunk' or $source =~ /http.*/ {
     if $source == 'splunk' {
-      $wget_url = "https://download.splunk.com/products/${product}/releases/${version}/linux/${sourcepart}-${version}-${release}-${pkg_platform}.tgz"
+      $wget_url = "https://download.splunk.com/products/${product}/releases/${version}/linux/${newsource}"
     } else {
       $wget_url = "${source}/${newsource}"
     }
