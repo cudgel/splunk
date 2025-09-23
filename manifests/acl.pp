@@ -57,6 +57,7 @@ define splunk::acl (
     exec { "set_acl_${object}":
       command => "setfacl -m ${acl} ${object}",
       onlyif  => $testacl,
+      unless  => "getfacl ${object} 2>/dev/null | grep -q '${acl}'",
       path    => '/bin:/usr/bin:/sbin:/usr/sbin',
     }
 
@@ -64,6 +65,7 @@ define splunk::acl (
       exec { "set_acl_recursive_${object}":
         command => "setfacl -R -m ${acl} ${object}",
         onlyif  => $testacl,
+        unless  => "getfacl ${object} 2>/dev/null | grep -q '${acl}'",
         path    => '/bin:/usr/bin:/sbin:/usr/sbin',
       }
     }
